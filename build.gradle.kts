@@ -7,6 +7,19 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 
+
+
+subprojects {
+    group = "love.forte.simple-robot"
+    version = "1.0-SNAPSHOT"
+
+    repositories {
+        mavenCentral()
+        mavenLocal()
+
+    }
+}
