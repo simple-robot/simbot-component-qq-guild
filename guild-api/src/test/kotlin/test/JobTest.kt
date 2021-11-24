@@ -13,6 +13,8 @@ class JobTest {
     fun test(): Unit = runBlocking {
         val pJob = Job()
 
+
+
         val j1 = Job(pJob)
         val j2 = Job(pJob)
 
@@ -27,6 +29,7 @@ class JobTest {
             s1.launch {
                 while (true) {
                     delay(5000)
+                    println("s1===")
                 }
             }
         }
@@ -34,6 +37,7 @@ class JobTest {
             s2.launch {
                 while (true) {
                     delay(5000)
+                    println("s2===")
                 }
             }
         }
@@ -44,7 +48,8 @@ class JobTest {
             println(child)
         }
 
-        pJob.complete()
+        pJob.cancelAndJoin()
+        println("canceled")
 
 
 
