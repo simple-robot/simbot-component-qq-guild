@@ -1,5 +1,13 @@
-package love.forte.simbot.api.tencentguild
+package love.forte.simbot.tencentguild
 
+import io.ktor.client.*
+import io.ktor.client.features.*
+import io.ktor.client.features.auth.*
+import io.ktor.client.features.auth.providers.*
+import io.ktor.client.features.json.*
+import io.ktor.client.features.json.serializer.*
+import io.ktor.client.features.websocket.*
+import io.ktor.http.*
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -11,17 +19,19 @@ import kotlinx.serialization.encoding.Encoder
 import love.forte.simbot.Bot
 import love.forte.simbot.ComplexID
 import love.forte.simbot.ID
+import love.forte.simbot.tencentguild.digest
 import java.security.MessageDigest
 
 /**
  * 一个tencent频道BOT的接口实例。
  * @author ForteScarlet
  */
-public interface TencentGuildBot : Bot {
+public abstract class TencentGuildBot : Bot {
 
-    override val id: ID
+    abstract override val id: TencentGuildBotID
 
-    // override val manager: BotManager<TencentGuildBot>
+    public abstract val client: HttpClient
+
 
     /**
      * Bot的 [票据](https://bot.q.qq.com/wiki/develop/api/#%E7%A5%A8%E6%8D%AE%E8%AF%B4%E6%98%8E)。
@@ -116,6 +126,15 @@ public class TencentGuildBotConfiguration {
         ticket = TicketBuilder().also(block).build()
     }
 
+    public var client: HttpClient = HttpClient {
+        install(WebSockets)
+        install(JsonFeature) {
+            serializer = KotlinxSerializer(kotlinx.serialization.json.Json) // TODO
+        }
+        install(HttpTimeout) {
+            this.connectTimeoutMillis = 6000
+        }
+    }
 
     //endregion
 
@@ -151,10 +170,11 @@ internal fun ByteArray.toHex(): String {
 }
 
 
+@Suppress("EqualsOrHashCode")
 @SerialName("TCG.BOT.ID")
 @Serializable // TODO
-internal class TencentGuildBotID constructor(
-    private val ticket: TencentGuildBot.Ticket
+public class TencentGuildBotID constructor(
+    public val ticket: TencentGuildBot.Ticket
 ) : ComplexID() {
 
     private val ticketMD5: ByteArray by lazy(LazyThreadSafetyMode.NONE) {

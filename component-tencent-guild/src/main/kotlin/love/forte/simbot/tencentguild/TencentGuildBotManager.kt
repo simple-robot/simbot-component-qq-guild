@@ -1,10 +1,10 @@
-package love.forte.simbot.api.tencentguild
+package love.forte.simbot.tencentguild
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import love.forte.simbot.BotManager
-import love.forte.simbot.api.tencentguild.internal.TencentGuildBotManagerImpl
+import love.forte.simbot.tencentguild.internal.TencentGuildBotManagerImpl
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 

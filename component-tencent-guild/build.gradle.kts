@@ -16,9 +16,10 @@ dependencies {
     api(V.Ktor.Client.Jvm.CIO.notation)
     api(V.Ktor.Client.Auth.notation)
     api(V.Ktor.Client.Websockets.notation)
+    api(V.Ktor.Client.Serialization.notation)
+    api(V.Kotlinx.Serialization.Json.notation)
 
     testImplementation(V.Kotlin.Test.Junit.notation)
-    testImplementation(V.Kotlinx.Serialization.Json.notation)
     // implementation("love.forte.simple-robot:api:3.0.0-PREVIEW")
 }
 

@@ -3,9 +3,9 @@ package test
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import love.forte.simbot.api.tencentguild.TencentGuildBot
-import love.forte.simbot.api.tencentguild.TencentGuildBotID
-import love.forte.simbot.api.tencentguild.tencentGuildBotConfiguration
+import love.forte.simbot.tencentguild.TencentGuildBot
+import love.forte.simbot.tencentguild.TencentGuildBotID
+import love.forte.simbot.tencentguild.tencentGuildBotConfiguration
 import org.junit.Test
 
 /**

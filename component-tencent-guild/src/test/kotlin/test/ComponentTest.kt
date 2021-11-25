@@ -1,7 +1,7 @@
 package test
 
 import love.forte.simbot.Components
-import love.forte.simbot.api.tencentguild.TencentGuildApi
+import love.forte.simbot.tencentguild.TencentGuildApi
 import org.junit.Test
 
 /**
