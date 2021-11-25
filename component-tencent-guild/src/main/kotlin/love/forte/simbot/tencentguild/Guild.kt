@@ -1,13 +1,9 @@
-package love.forte.simbot.tencentguild.api
+package love.forte.simbot.tencentguild
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.LongID
-
-
-public class GetGuild
-
-
+import love.forte.simbot.tencentguild.api.TencentApiResult
 
 
 /**
@@ -74,7 +70,7 @@ public data class TencentGuild(
      */
     @SerialName("union_org_id")
     public val unionOrgId: String? = null,
-) {
+) : TencentApiResult {
 
 
 }

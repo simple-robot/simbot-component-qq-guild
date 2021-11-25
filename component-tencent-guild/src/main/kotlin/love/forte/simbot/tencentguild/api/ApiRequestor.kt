@@ -4,14 +4,18 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import love.forte.simbot.tencentguild.ErrInfo
 import love.forte.simbot.tencentguild.TencentGuildApi
 import love.forte.simbot.tencentguild.TencentGuildBot
+import love.forte.simbot.tencentguild.err
 
 
-public suspend inline fun <reified R : TencentApiResult> TencentApi<R>.request(bot: TencentGuildBot): R {
-    val client = bot.client
-    val token = bot.id.ticket.token
-    val api = this
+/**
+ *
+ */
+public suspend inline fun <reified R : TencentApiResult> TencentGuildBot.request(api: TencentApi<R>): R {
+    val client = this.client
+    val token = this.id.ticket.token
     val resp = client.request<HttpResponse> {
         method = api.method
 
@@ -31,16 +35,20 @@ public suspend inline fun <reified R : TencentApiResult> TencentApi<R>.request(b
             protocol = TencentGuildApi.URL.protocol
             host = TencentGuildApi.URL.host
             path(routeBuilder.apiPath)
+            contentType(routeBuilder.contentType)
 
         }
 
     }
 
     // check success
-    if (!resp.status.isSuccess()) {
-
-        TODO("Not Success")
+    val status = resp.status
+    if (!status.isSuccess()) {
+        val info = resp.receive<ErrInfo>()
+        // throw err
+        info.err { status }
     }
+
 
     return resp.receive()
 }

@@ -7,7 +7,7 @@ import kotlinx.serialization.DeserializationStrategy
 /**
  * 表示为一个腾讯频道的API。
  */
-public interface TencentApi<R : TencentApiResult> {
+public interface TencentApi<R> {
 
     /**
      * 得到响应值的反序列化器.
