@@ -23,12 +23,12 @@ dependencies {
     api(V.Ktor.Client.Serialization.notation)
     api(V.Kotlinx.Serialization.Json.notation)
 
-    testImplementation(V.Kotlin.Test.Junit.notation)
+    testImplementation(V.Kotlin.Test.Junit5.notation)
     // implementation("love.forte.simple-robot:api:3.0.0-PREVIEW")
 }
 
 tasks.getByName<Test>("test") {
-    useJUnit()
+    useJUnitPlatform()
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {

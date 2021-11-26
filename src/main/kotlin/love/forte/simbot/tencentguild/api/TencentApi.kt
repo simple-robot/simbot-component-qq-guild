@@ -7,12 +7,12 @@ import kotlinx.serialization.DeserializationStrategy
 /**
  * 表示为一个腾讯频道的API。
  */
-public interface TencentApi<R> {
+public interface TencentApi<out R> {
 
     /**
      * 得到响应值的反序列化器.
      */
-    public val resultDeserializer: DeserializationStrategy<R>
+    public val resultDeserializer: DeserializationStrategy<out R>
 
 
     /**
@@ -37,7 +37,7 @@ public interface TencentApi<R> {
     /**
      * Do something after resp.
      */
-    public fun post(resp: R) {}
+    public fun post(resp: @UnsafeVariance R) {}
 
 
 }

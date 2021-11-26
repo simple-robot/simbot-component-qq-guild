@@ -5,11 +5,35 @@ import kotlinx.serialization.Serializable
 import love.forte.simbot.SimbotRuntimeException
 
 
-public class TencentApiException : SimbotRuntimeException {
-    public constructor() : super()
-    public constructor(message: String?) : super(message)
-    public constructor(message: String?, cause: Throwable?) : super(message, cause)
-    public constructor(cause: Throwable?) : super(cause)
+public class TencentApiException : IllegalStateException {
+    @Suppress("MemberVisibilityCanBePrivate")
+    public val info: ErrInfo?
+
+    public constructor() : super() {
+        this.info = null
+    }
+    public constructor(message: String?) : super(message) {
+        this.info = null
+    }
+    public constructor(message: String?, cause: Throwable?) : super(message, cause) {
+        this.info = null
+    }
+    public constructor(cause: Throwable?) : super(cause) {
+        this.info = null
+    }
+
+    public constructor(info: ErrInfo) : super() {
+        this.info = info
+    }
+    public constructor(info: ErrInfo, message: String?) : super(message) {
+        this.info = info
+    }
+    public constructor(info: ErrInfo, message: String?, cause: Throwable?) : super(message, cause) {
+        this.info = info
+    }
+    public constructor(info: ErrInfo, cause: Throwable?) : super(cause) {
+        this.info = info
+    }
 }
 
 public inline fun ErrInfo.err(codeBlock: () -> HttpStatusCode): Nothing {
@@ -19,7 +43,8 @@ public inline fun ErrInfo.err(codeBlock: () -> HttpStatusCode): Nothing {
 }
 
 
+@Suppress("MemberVisibilityCanBePrivate")
 @Serializable
-public data class ErrInfo(val code: String, val message: String)
+public data class ErrInfo(val code: Int, val message: String)
 
 

@@ -1,21 +1,20 @@
 package love.forte.simbot.tencentguild.api
 
+import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import love.forte.simbot.tencentguild.ErrInfo
 import love.forte.simbot.tencentguild.TencentGuildApi
-import love.forte.simbot.tencentguild.TencentGuildBot
 import love.forte.simbot.tencentguild.err
 
 
 /**
  *
  */
-public suspend inline fun <reified R : TencentApiResult> TencentGuildBot.request(api: TencentApi<R>): R {
-    val client = this.client
-    val token = this.id.ticket.token
+public suspend inline fun <reified R> TencentApi<R>.request(client: HttpClient, token: String): R {
+    val api = this
     val resp = client.request<HttpResponse> {
         method = api.method
 

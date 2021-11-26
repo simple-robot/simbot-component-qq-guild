@@ -1,7 +1,7 @@
 package test
 
 import kotlinx.coroutines.*
-import org.junit.Test
+import kotlin.test.Test
 
 /**
  *

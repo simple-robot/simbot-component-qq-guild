@@ -5,9 +5,10 @@ import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.builtins.ListSerializer
 import love.forte.simbot.ID
 import love.forte.simbot.Limiter
+import love.forte.simbot.tencentguild.TencentGuildInfo
 import love.forte.simbot.tencentguild.api.RouteInfoBuilder
 import love.forte.simbot.tencentguild.api.TencentApi
-import love.forte.simbot.tencentguild.TencentGuild
+import love.forte.simbot.tencentguild.internal.TencentGuildInfoImpl
 
 
 /**
@@ -17,9 +18,9 @@ public class BotGuildListApi(
     private val before: ID? = null,
     private val after: ID? = null,
     private val limiter: Limiter
-) : TencentApi<List<TencentGuild>> {
+) : TencentApi<List<TencentGuildInfo>> {
 
-    override val resultDeserializer: DeserializationStrategy<List<TencentGuild>>
+    override val resultDeserializer: DeserializationStrategy<out List<TencentGuildInfo>>
         get() = serializer
 
     override val method: HttpMethod
@@ -44,7 +45,7 @@ public class BotGuildListApi(
 
     public companion object {
         private val route = listOf("users", "@me", "guilds")
-        private val serializer = ListSerializer(TencentGuild.serializer())
+        private val serializer = ListSerializer(TencentGuildInfoImpl.serializer())
     }
 }
 
