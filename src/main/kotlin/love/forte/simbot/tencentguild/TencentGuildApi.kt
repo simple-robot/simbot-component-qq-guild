@@ -12,6 +12,7 @@ public object TencentGuildApi {
     public val URL: Url = Url("https://api.sgroup.qq.com/")
     public val SANDBOX_URL: Url = Url("https://sandbox.api.sgroup.qq.com")
     public val serializersModule: SerializersModule = SerializersModule {
+        //region infos
         polymorphicDefault(TencentGuildInfo::class) {
             TencentGuildInfoImpl.serializer()
         }
@@ -27,6 +28,8 @@ public object TencentGuildApi {
         polymorphicDefault(TencentChannelInfo::class) {
             TencentChannelInfoImpl.serializer()
         }
+        //endregion
+
     }
 }
 

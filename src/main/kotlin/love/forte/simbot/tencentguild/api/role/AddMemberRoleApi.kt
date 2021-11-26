@@ -8,7 +8,7 @@ import love.forte.simbot.tencentguild.api.TencentApiWithoutResult
 
 /**
  *
- * [为用户增加一个指定角色](https://bot.q.qq.com/wiki/develop/api/openapi/guild/put_guild_member_role.html)
+ * [增加频道身份组成员](https://bot.q.qq.com/wiki/develop/api/openapi/guild/put_guild_member_role.html)
  *
  * @author ForteScarlet
  */

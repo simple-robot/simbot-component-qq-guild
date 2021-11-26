@@ -2,7 +2,6 @@ package love.forte.simbot.tencentguild
 
 import kotlinx.serialization.KSerializer
 import love.forte.simbot.ID
-import love.forte.simbot.LongID
 import love.forte.simbot.tencentguild.internal.TencentRoleInfoImpl
 
 /**
@@ -44,17 +43,34 @@ public interface TencentRoleInfo {
     /**
      * ID是否属于默认权限组
      */
-    public val isDefault: Boolean get() = id in defaultRoleIds
+    public val isDefault: Boolean get() = id.toString() in defaultRoles
 
-    public companion object Defaults {
+    public companion object {
         internal val serializer: KSerializer<out TencentRoleInfo> = TencentRoleInfoImpl.serializer()
 
-        public val defaultRoleIds: Map<LongID, String> = mapOf(
-            0L.ID to "普通成员",
-            1L.ID to "管理员",
-            2L.ID to "群主",
-            3L.ID to "机器人",
-            5L.ID to "子频道管理员"
+        public val defaultRoles: Map<String, DefaultRole> = mapOf(
+            "0" to DefaultRole.UNSPECIFIED,
+            "1" to DefaultRole.ALL_MEMBER,
+            "2" to DefaultRole.ADMIN,
+            "3" to DefaultRole.ROBOTS,
+            "4" to DefaultRole.OWNER,
+            "5" to DefaultRole.CHANNEL_ADMIN
         )
     }
+
+    public enum class DefaultRole(public val code: Int) {
+        /** 无效值 */
+        UNSPECIFIED(0),
+        /** 全体成员身份组 */
+        ALL_MEMBER(1),
+        /** 管理员身份组 */
+        ADMIN(2),
+        /** 机器人分组 */
+        ROBOTS(3),
+        /** 创建者身份组 */
+        OWNER(4),
+        /** 子频道管理员身份组 */
+        CHANNEL_ADMIN(5)
+    }
+
 }
