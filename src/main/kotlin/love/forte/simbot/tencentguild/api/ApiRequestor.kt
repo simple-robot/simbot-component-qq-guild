@@ -23,6 +23,7 @@ public suspend inline fun <reified R> TencentApi<R>.request(
     decoder: StringFormat? = null
 ): R {
     val api = this
+    
     val resp = client.request<HttpResponse> {
         method = api.method
 

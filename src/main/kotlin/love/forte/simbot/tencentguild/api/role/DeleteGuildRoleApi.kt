@@ -1,6 +1,9 @@
 package love.forte.simbot.tencentguild.api.role
 
+import io.ktor.http.*
 import love.forte.simbot.ID
+import love.forte.simbot.tencentguild.api.RouteInfoBuilder
+import love.forte.simbot.tencentguild.api.TencentApiWithoutResult
 
 /**
  *
@@ -10,8 +13,15 @@ import love.forte.simbot.ID
  *
  * @author ForteScarlet
  */
-public class DeleteGuildRoleApi(guildId: ID, roleId: ID) {
-
-
+public class DeleteGuildRoleApi(guildId: ID, roleId: ID) : TencentApiWithoutResult {
     private val path = listOf("guilds", guildId.toString(), "roles", roleId.toString())
+
+    override val method: HttpMethod
+        get() = HttpMethod.Delete
+
+    override fun route(builder: RouteInfoBuilder) {
+        builder.apiPath = path
+    }
+
+    override val body: Any? get() = null
 }

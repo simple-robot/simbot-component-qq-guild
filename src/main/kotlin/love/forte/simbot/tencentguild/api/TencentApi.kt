@@ -2,6 +2,7 @@ package love.forte.simbot.tencentguild.api
 
 import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.builtins.serializer
 
 
 /**
@@ -38,13 +39,10 @@ public interface TencentApi<out R> {
      * Do something after resp.
      */
     public fun post(resp: @UnsafeVariance R) {}
-
-
 }
 
 
-/**
- * 表示为一个腾讯频道API的返回值.
- * @author ForteScarlet
- */
-public interface TencentApiResult
+public interface TencentApiWithoutResult : TencentApi<Unit> {
+    override val resultDeserializer: DeserializationStrategy<out Unit>
+        get() = Unit.serializer()
+}
