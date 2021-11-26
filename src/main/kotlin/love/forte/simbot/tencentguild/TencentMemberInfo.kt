@@ -1,6 +1,8 @@
 package love.forte.simbot.tencentguild
 
+import kotlinx.serialization.KSerializer
 import love.forte.simbot.ID
+import love.forte.simbot.tencentguild.internal.TencentMemberInfoImpl
 
 /**
  * [成员](https://bot.q.qq.com/wiki/develop/api/openapi/member/model.html)
@@ -33,4 +35,7 @@ public interface TencentMemberInfo {
      */
     public val joinedAt: Long
 
+    public companion object {
+        internal val serializer: KSerializer<out TencentMemberInfo> = TencentMemberInfoImpl.serializer()
+    }
 }

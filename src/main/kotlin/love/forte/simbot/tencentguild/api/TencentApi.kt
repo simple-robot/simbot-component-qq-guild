@@ -46,3 +46,11 @@ public interface TencentApiWithoutResult : TencentApi<Unit> {
     override val resultDeserializer: DeserializationStrategy<out Unit>
         get() = Unit.serializer()
 }
+
+public interface GetTencentApi<R> : TencentApi<R> {
+    override val method: HttpMethod
+        get() = HttpMethod.Get
+
+    override val body: Any?
+        get() = null
+}

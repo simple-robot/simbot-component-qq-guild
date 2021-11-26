@@ -1,7 +1,9 @@
 package love.forte.simbot.tencentguild
 
+import kotlinx.serialization.KSerializer
 import love.forte.simbot.ID
 import love.forte.simbot.LongID
+import love.forte.simbot.tencentguild.internal.TencentRoleInfoImpl
 
 /**
  *
@@ -45,6 +47,8 @@ public interface TencentRoleInfo {
     public val isDefault: Boolean get() = id in defaultRoleIds
 
     public companion object Defaults {
+        internal val serializer: KSerializer<out TencentRoleInfo> = TencentRoleInfoImpl.serializer()
+
         public val defaultRoleIds: Map<LongID, String> = mapOf(
             0L.ID to "普通成员",
             1L.ID to "管理员",

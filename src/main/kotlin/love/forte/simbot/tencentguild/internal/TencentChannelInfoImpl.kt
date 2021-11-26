@@ -23,7 +23,5 @@ internal data class TencentChannelInfoImpl(
     override val parentId: String,
 
     @SerialName("owner_id")
-    override val ownerId: String,
-) : TencentChannelInfo {
-
-}
+    override val ownerId: LongID,
+) : TencentChannelInfo

@@ -39,7 +39,7 @@ class TencentSerializerTest {
             }
         """.trimIndent()
 
-        val member = j.decodeFromString<TencentMemberInfo>(memberJsonStr)
+        val member: TencentMemberInfo = j.decodeFromString(TencentMemberInfo.serializer, memberJsonStr)
         println(member)
         println(member::class)
     }

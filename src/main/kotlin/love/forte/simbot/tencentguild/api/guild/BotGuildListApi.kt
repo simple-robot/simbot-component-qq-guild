@@ -8,7 +8,6 @@ import love.forte.simbot.Limiter
 import love.forte.simbot.tencentguild.TencentGuildInfo
 import love.forte.simbot.tencentguild.api.RouteInfoBuilder
 import love.forte.simbot.tencentguild.api.TencentApi
-import love.forte.simbot.tencentguild.internal.TencentGuildInfoImpl
 
 
 /**
@@ -47,7 +46,7 @@ public class BotGuildListApi(
 
     public companion object {
         private val route = listOf("users", "@me", "guilds")
-        private val serializer = ListSerializer(TencentGuildInfoImpl.serializer())
+        private val serializer = ListSerializer(TencentGuildInfo.serializer)
     }
 }
 

@@ -1,6 +1,8 @@
 package love.forte.simbot.tencentguild
 
+import kotlinx.serialization.KSerializer
 import love.forte.simbot.ID
+import love.forte.simbot.tencentguild.internal.TencentUserInfoImpl
 
 /**
  *
@@ -37,4 +39,7 @@ public interface TencentUserInfo {
      */
     public val unionUserAccount: String?
 
+    public companion object {
+        internal val serializer: KSerializer<out TencentUserInfo> = TencentUserInfoImpl.serializer()
+    }
 }

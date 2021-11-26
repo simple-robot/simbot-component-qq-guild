@@ -4,7 +4,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.LongID
 import love.forte.simbot.tencentguild.TencentGuildInfo
-import love.forte.simbot.tencentguild.api.TencentApiResult
 
 
 /**

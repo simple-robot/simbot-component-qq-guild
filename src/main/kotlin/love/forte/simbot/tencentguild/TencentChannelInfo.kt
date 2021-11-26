@@ -1,13 +1,17 @@
 package love.forte.simbot.tencentguild
 
+import kotlinx.serialization.KSerializer
 import love.forte.simbot.ID
+import love.forte.simbot.Timestamp
+import love.forte.simbot.definition.ChannelInfo
+import love.forte.simbot.tencentguild.internal.TencentChannelInfoImpl
 
 /**
  *
  * tencent channel info
  * @author ForteScarlet
  */
-public interface TencentChannelInfo {
+public interface TencentChannelInfo : ChannelInfo {
     /**
      * 子频道id
      */
@@ -16,12 +20,12 @@ public interface TencentChannelInfo {
     /**
      * 频道id
      */
-    public val guildId: ID
+    override val guildId: ID
 
     /**
      * 子频道名
      */
-    public val name: String
+    override val name: String
 
     /**
      * 子频道类型
@@ -48,7 +52,31 @@ public interface TencentChannelInfo {
     /**
      * 创建人 id
      */
-    public val ownerId: String
+    override val ownerId: ID
+
+
+    @Deprecated("子频道没有创建时间信息", ReplaceWith("Timestamp.NotSupport", "love.forte.simbot.Timestamp"))
+    override val createTime: Timestamp get() = Timestamp.NotSupport
+
+    @Deprecated("子频道没有人数信息", ReplaceWith("-1"))
+    override val currentMember: Int
+        get() = -1
+
+    @Deprecated("子频道没有描述信息", ReplaceWith("\"\""))
+    override val description: String
+        get() = ""
+
+    @Deprecated("子频道没有图标", ReplaceWith("\"\""))
+    override val icon: String
+        get() = ""
+
+    @Deprecated("子频道没有人数信息", ReplaceWith("-1"))
+    override val maximumMember: Int
+        get() = -1
+
+    public companion object {
+        internal val serializer: KSerializer<out TencentChannelInfo> = TencentChannelInfoImpl.serializer()
+    }
 }
 
 
@@ -66,7 +94,7 @@ public enum class ChannelType(public val code: Int) {
 
     public companion object {
         @JvmStatic
-        public fun byCode(code: Int): ChannelType = when(code) {
+        public fun byCode(code: Int): ChannelType = when (code) {
             0 -> TEXT
             1 -> UNKNOWN_1
             2 -> VOICE
@@ -84,10 +112,13 @@ public enum class ChannelType(public val code: Int) {
 public enum class ChannelSubType(public val code: Int) {
     /** 闲聊 */
     SMALL_TALK(0),
+
     /** 公告 */
     ANNOUNCEMENT(1),
+
     /** 攻略 */
     RAIDERS(2),
+
     /** 开黑 */
     PLAY_TOGETHER(3),
     ;

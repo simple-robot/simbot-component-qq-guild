@@ -1,7 +1,9 @@
 package love.forte.simbot.tencentguild
 
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import love.forte.simbot.ID
+import love.forte.simbot.tencentguild.internal.TencentGuildInfoImpl
 
 /**
  *
@@ -65,4 +67,8 @@ public interface TencentGuildInfo {
      * 游戏绑定公会/战队ID，需要特殊申请并配置后才会返回
      */
     public val unionOrgId: String?
+
+    public companion object {
+        internal val serializer: KSerializer<out TencentGuildInfo> = TencentGuildInfoImpl.serializer()
+    }
 }
