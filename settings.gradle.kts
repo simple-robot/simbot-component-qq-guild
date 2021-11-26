@@ -1,4 +1,4 @@
-rootProject.name = "tencent-guild"
+rootProject.name = "tencent-guild-api"
 
-include(":component-tencent-guild")
+// include(":component-tencent-guild")
 
