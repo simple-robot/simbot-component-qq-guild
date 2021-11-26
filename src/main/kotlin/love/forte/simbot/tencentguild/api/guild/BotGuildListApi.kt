@@ -13,6 +13,8 @@ import love.forte.simbot.tencentguild.internal.TencentGuildInfoImpl
 
 /**
  * [Limiter.offset] 是无效的。
+ *
+ * https://bot.q.qq.com/wiki/develop/api/openapi/guild/get_guild.html
  */
 public class BotGuildListApi(
     private val before: ID? = null,
