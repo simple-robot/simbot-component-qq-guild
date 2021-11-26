@@ -5,6 +5,10 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.utils.io.*
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.StringFormat
+import kotlinx.serialization.descriptors.StructureKind
 import love.forte.simbot.tencentguild.ErrInfo
 import love.forte.simbot.tencentguild.TencentGuildApi
 import love.forte.simbot.tencentguild.err
@@ -13,7 +17,11 @@ import love.forte.simbot.tencentguild.err
 /**
  *
  */
-public suspend inline fun <reified R> TencentApi<R>.request(client: HttpClient, token: String): R {
+public suspend inline fun <reified R> TencentApi<R>.request(
+    client: HttpClient,
+    token: String,
+    decoder: StringFormat? = null
+): R {
     val api = this
     val resp = client.request<HttpResponse> {
         method = api.method
@@ -48,6 +56,24 @@ public suspend inline fun <reified R> TencentApi<R>.request(client: HttpClient, 
         info.err { status }
     }
 
+    if (decoder == null) {
+        return resp.receive()
+    }
 
-    return resp.receive()
+    return api.decodeFromByteReadChannel(decoder, resp)
+}
+
+@OptIn(ExperimentalSerializationApi::class)
+public suspend inline fun <reified R> TencentApi<R>.decodeFromByteReadChannel(
+    decoder: StringFormat,
+    response: HttpResponse
+): R {
+    val resultKind = resultDeserializer.descriptor.kind
+    if (resultKind == StructureKind.OBJECT) {
+        val objInstance = R::class.objectInstance
+        if (objInstance != null) return objInstance
+    }
+
+    val remainingText = response.content.readRemaining().readText()
+    return decoder.decodeFromString(resultDeserializer, remainingText)
 }

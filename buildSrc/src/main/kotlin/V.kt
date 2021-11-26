@@ -86,6 +86,15 @@ sealed class V(group: String?, id: String, version: String?) : Dep(group, id, ve
     sealed class Kotlinx(id: String, version: String?, override val isAbsolute: Boolean) :
         V("org.jetbrains.kotlinx", "kotlinx-$id", version) {
 
+        sealed class IO(id: String): Kotlinx(id = "kotlinx-io-$id", VERSION, true) {
+            companion object {
+                const val VERSION = "0.1.1"
+            }
+
+            object JvmCore : IO("core-jvm")
+
+
+        }
 
         // https://github.com/Kotlin/kotlinx.coroutines
         sealed class Coroutines(id: String) : Kotlinx(id = "coroutines-$id", VERSION, true) {
@@ -100,6 +109,7 @@ sealed class V(group: String?, id: String, version: String?) : Dep(group, id, ve
             }
             object Debug : Coroutines("debug")
             object Test : Coroutines("test")
+
             // =======
             //   https://github.com/Kotlin/kotlinx.coroutines/blob/master/reactive/README.md
             object Reactive : Coroutines("reactive")
