@@ -115,5 +115,24 @@ Java中，你最好想办法弄到一个 `HttpClient` 实例与 `Json` 实例。
     }
 ```
 
+可以看到，上述命名为 `xxxxxApi` 的类就是用于请求的封装类了，它们存在于路径 `love.forte.simbot.tencentguild.api` 包下，基本与官方API文档中提及的API一一对应：
 
+- channel相关
+  - GetChannelApi
+  - GetGuildChannelList
+- guild相关
+  - BotGuildListApi
+  - GetGuildApi
+- member相关
+  - GetMemberApi
+- message相关
+  - GetMessageApi
+  - MessageSendApi
+- role相关
+  - AddMemberRoleApi
+  - CreateGuildRoleApi
+  - DeleteGuildRoleApi
+  - GetGuildRoleListApi
+  - ModifyGuildRoleApi
+  - RemoveMemberRoleApi
 

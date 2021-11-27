@@ -41,6 +41,10 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
     }
 }
 
+tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
+    outputDirectory.set(File(rootProject.projectDir, "api-doc"))
+}
+
 kotlin {
     // 严格模式
     explicitApiWarning()
