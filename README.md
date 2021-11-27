@@ -16,9 +16,6 @@
 ~~虽然之前是打算通过kotlin做多平台实现的但是最后还是放弃了~~
 
 
-本库将会 `simple-robot` 3.x发布时（或相对较早的时刻）发布于Maven中央仓库。
-
-
 当然, 如果你只需要使用API，不考虑bot、事件相关内容，你可以通过此库来直接使用相关API。
 
 
@@ -27,6 +24,12 @@
 
 ## 使用
 ⚠ 尚未发布至中央仓库
+
+本库将会 `simple-robot` 3.x发布时（或相对较其早的时刻）发布于Maven中央仓库。主要是因为 `simple-robot 3.x` 仍处于设计开发阶段，可能会出现一些接口变动。
+
+如果你现在就想尝试，有两个办法：
+1. issue进行留言，我会临时提供编译版本
+2. 自行clone当前仓库以及 <https://github.com/ForteScarlet/simpler-robot/tree/dev-v3.0.0-preview>(注意观察，分支是 `v3.0.0-preview`), 然后先将 simple-robot 发布至个人本地仓库，然后编译本库。
 
 ### Maven
 ```xml

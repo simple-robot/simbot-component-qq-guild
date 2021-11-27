@@ -4,8 +4,10 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Serializer
 import love.forte.simbot.LongID
+import love.forte.simbot.Timestamp
 import love.forte.simbot.tencentguild.TencentMemberInfo
 import love.forte.simbot.tencentguild.TencentUserInfo
+import love.forte.simbot.tencentguild.TimestampISO8601Serializer
 
 /**
  *
@@ -19,7 +21,8 @@ internal data class TencentMemberInfoImpl(
     override val nick: String,
     override val roles: List<LongID>,
     @SerialName("joined_at")
-    override val joinedAt: Long
+    @Serializable(TimestampISO8601Serializer::class)
+    override val joinedAt: Timestamp
 ) : TencentMemberInfo {
 
 }

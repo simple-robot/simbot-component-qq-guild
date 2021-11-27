@@ -2,27 +2,28 @@ package love.forte.simbot.tencentguild
 
 import kotlinx.serialization.KSerializer
 import love.forte.simbot.ID
+import love.forte.simbot.definition.UserInfo
 import love.forte.simbot.tencentguild.internal.TencentUserInfoImpl
 
 /**
  *
  * @author ForteScarlet
  */
-public interface TencentUserInfo {
+public interface TencentUserInfo : UserInfo {
     /**
      * 用户 id
      */
-    public val id: ID
+    override val id: ID
 
     /**
      * 用户名
      */
-    public val username: String
+    override val username: String
 
     /**
      * 用户头像地址
      */
-    public val avatar: String
+    override val avatar: String
 
     /**
      * 是否是机器人
