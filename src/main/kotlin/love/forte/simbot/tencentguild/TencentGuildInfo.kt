@@ -3,6 +3,8 @@ package love.forte.simbot.tencentguild
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import love.forte.simbot.ID
+import love.forte.simbot.Timestamp
+import love.forte.simbot.definition.GuildInfo
 import love.forte.simbot.tencentguild.internal.TencentGuildInfoImpl
 
 /**
@@ -11,7 +13,7 @@ import love.forte.simbot.tencentguild.internal.TencentGuildInfoImpl
  *
  * @author ForteScarlet
  */
-public interface TencentGuildInfo {
+public interface TencentGuildInfo : GuildInfo {
 
     /**
      * 频道ID
@@ -21,17 +23,17 @@ public interface TencentGuildInfo {
     /**
      * 频道名称
      */
-    public val name: String
+    override val name: String
 
     /**
      * 频道头像地址
      */
-    public val icon: String
+    override val icon: String
 
     /**
      * 创建人用户ID
      */
-    public val ownerId: String
+    override val ownerId: ID
 
     /**
      * 当前人是否是创建人
@@ -51,12 +53,12 @@ public interface TencentGuildInfo {
     /**
      * 描述
      */
-    public val description: String
+    override val description: String
 
     /**
-     * 加入时间
+     * 加入时间.
      */
-    public val joinedAt: String
+    public val joinedAt: Timestamp
 
     /**
      * 游戏绑定公会区服ID，需要特殊申请并配置后才会返回
@@ -67,6 +69,12 @@ public interface TencentGuildInfo {
      * 游戏绑定公会/战队ID，需要特殊申请并配置后才会返回
      */
     public val unionOrgId: String?
+
+    override val currentChannel: Int get() = -1
+    override val maximumChannel: Int get() = -1
+    override val createTime: Timestamp get() = Timestamp.NotSupport
+    override val currentMember: Int get() = memberCount
+    override val maximumMember: Int get() = maxMembers
 
     public companion object {
         internal val serializer: KSerializer<out TencentGuildInfo> = TencentGuildInfoImpl.serializer()

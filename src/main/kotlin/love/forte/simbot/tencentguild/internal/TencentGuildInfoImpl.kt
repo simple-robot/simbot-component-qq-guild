@@ -3,7 +3,9 @@ package love.forte.simbot.tencentguild.internal
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.LongID
+import love.forte.simbot.Timestamp
 import love.forte.simbot.tencentguild.TencentGuildInfo
+import love.forte.simbot.tencentguild.TimestampISO8601Serializer
 
 
 /**
@@ -18,7 +20,7 @@ internal data class TencentGuildInfoImpl(
     override val name: String,
     override val icon: String,
     @SerialName("owner_id")
-    override val ownerId: String,
+    override val ownerId: LongID,
     @SerialName("owner")
     override val isBotOwner: Boolean,
     @SerialName("member_count")
@@ -27,7 +29,8 @@ internal data class TencentGuildInfoImpl(
     override val maxMembers: Int,
     override val description: String,
     @SerialName("joined_at")
-    override val joinedAt: String,
+    @Serializable(TimestampISO8601Serializer::class)
+    override val joinedAt: Timestamp,
     @SerialName("union_world_id")
     override val unionWorldId: String? = null,
     @SerialName("union_org_id")
