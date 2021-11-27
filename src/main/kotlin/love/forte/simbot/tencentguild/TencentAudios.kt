@@ -1,7 +1,10 @@
 package love.forte.simbot.tencentguild
 
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import love.forte.simbot.ID
+import love.forte.simbot.tencentguild.internal.TencentAudioActionImpl
 import java.awt.Event.PAUSE
 
 
@@ -74,6 +77,20 @@ public data class TencentAudioControl(
  * https://bot.q.qq.com/wiki/develop/api/openapi/audio/model.html#audioaction
  */
 public interface TencentAudioAction {
+    public val guildId: ID
+    public val channelId: ID
 
+    /**
+     * 音频数据的url status为0时传
+     */
+    public val audioUrl: String
 
+    /**
+     * 状态文本（比如：简单爱-周杰伦），可选，status为0时传，其他操作不传
+     */
+    public val text: String
+
+    public companion object {
+        public val serializer: KSerializer<out TencentAudioAction> = TencentAudioActionImpl.serializer()
+    }
 }

@@ -9,6 +9,7 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.decodeStructure
+import kotlinx.serialization.json.JsonElement
 
 
 public sealed interface ReceivedSignal // 接收的，下行
@@ -60,14 +61,32 @@ public sealed class Signal<D>(public val op: Opcode) {
     }
 
 
-
+    /**
+     * 心跳包
+     * [https://bot.q.qq.com/wiki/develop/api/gateway/reference.html#%E5%8F%91%E9%80%81%E5%BF%83%E8%B7%B3]
+     */
     @Serializable
     public data class Heartbeat(override val d: Int): Signal<Int>(Opcode.Heartbeat)
 
+    /**
+     * [https://bot.q.qq.com/wiki/develop/api/gateway/reference.html#%E5%8F%91%E9%80%81%E5%BF%83%E8%B7%B3]
+     */
     @Serializable
     public object HeartbeatACK: Signal<Unit>(Opcode.HeartbeatACK) {
         override val d: Unit get() = Unit
     }
+
+
+    @Serializable
+    public data class Resume(override val d: Data) : Signal<Resume.Data>(Opcode.Resume) {
+
+        @Serializable
+        public data class Data(public val token: String, @SerialName("session_id") public val sessionId: String, public val seq: Int)
+    }
+
+
+    @Serializable
+    public data class Dispatch(override val d: JsonElement, public val t: String, public val s: Int) : Signal<JsonElement>(Opcode.Dispatch)
 
 
 }
@@ -94,3 +113,7 @@ public object IntRangeSerializer : KSerializer<IntRange> {
 
 
 }
+
+
+
+

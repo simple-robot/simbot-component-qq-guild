@@ -1,8 +1,17 @@
 package love.forte.simbot.tencentguild
 
 import io.ktor.http.*
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.modules.SerializersModule
+import love.forte.simbot.Timestamp
 import love.forte.simbot.tencentguild.internal.*
+import love.forte.simbot.toTimestamp
+import java.time.Instant
 
 /**
  *
@@ -35,3 +44,15 @@ public object TencentGuildApi {
 
 
 
+public object TimestampISO8601Serializer : KSerializer<Timestamp> {
+    override fun deserialize(decoder: Decoder): Timestamp {
+        return Instant.parse(decoder.decodeString()).toTimestamp()
+    }
+
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("ISO8601Timestamp", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: Timestamp) {
+        encoder.encodeString(value.toString())
+    }
+
+}
