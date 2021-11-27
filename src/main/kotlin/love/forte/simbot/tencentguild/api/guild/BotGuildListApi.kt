@@ -18,7 +18,7 @@ import love.forte.simbot.tencentguild.api.TencentApi
 public class BotGuildListApi(
     private val before: ID? = null,
     private val after: ID? = null,
-    private val limiter: Limiter
+    private val limit: Int
 ) : TencentApi<List<TencentGuildInfo>> {
 
     override val resultDeserializer: DeserializationStrategy<out List<TencentGuildInfo>>
@@ -35,7 +35,7 @@ public class BotGuildListApi(
         if (after != null) {
             builder.parametersAppender.append("after", after.toString())
         }
-        val limit = limiter.limit
+        val limit = limit
         if (limit > 0) {
             builder.parametersAppender.append("limit", limit)
         }
