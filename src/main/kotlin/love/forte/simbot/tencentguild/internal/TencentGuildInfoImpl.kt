@@ -35,7 +35,4 @@ internal data class TencentGuildInfoImpl(
     override val unionWorldId: String? = null,
     @SerialName("union_org_id")
     override val unionOrgId: String? = null,
-) : TencentGuildInfo {
-
-
-}
+) : TencentGuildInfo

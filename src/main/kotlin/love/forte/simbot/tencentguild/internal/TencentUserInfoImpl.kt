@@ -20,5 +20,4 @@ internal data class TencentUserInfoImpl(
     override val unionOpenid: String? = null,
     @SerialName("union_user_account")
     override val unionUserAccount: String? = null
-) : TencentUserInfo {
-}
+) : TencentUserInfo

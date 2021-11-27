@@ -11,7 +11,7 @@ import love.forte.simbot.tencentguild.internal.TencentMemberInfoImpl
  *
  * @author ForteScarlet
  */
-public interface TencentMemberInfo : UserInfo {
+public interface TencentMemberInfo : UserInfo /* MemberInfo? */ {
     /**
      * 频道id
      */

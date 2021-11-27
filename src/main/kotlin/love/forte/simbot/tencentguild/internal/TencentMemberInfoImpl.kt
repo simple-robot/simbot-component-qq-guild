@@ -23,7 +23,5 @@ internal data class TencentMemberInfoImpl(
     @SerialName("joined_at")
     @Serializable(TimestampISO8601Serializer::class)
     override val joinedAt: Timestamp
-) : TencentMemberInfo {
-
-}
+) : TencentMemberInfo
 
