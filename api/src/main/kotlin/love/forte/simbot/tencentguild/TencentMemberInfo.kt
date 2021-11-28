@@ -3,7 +3,7 @@ package love.forte.simbot.tencentguild
 import kotlinx.serialization.KSerializer
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
-import love.forte.simbot.definition.UserInfo
+import love.forte.simbot.definition.MemberInfo
 import love.forte.simbot.tencentguild.internal.TencentMemberInfoImpl
 
 /**
@@ -11,7 +11,7 @@ import love.forte.simbot.tencentguild.internal.TencentMemberInfoImpl
  *
  * @author ForteScarlet
  */
-public interface TencentMemberInfo : UserInfo /* MemberInfo? */ {
+public interface TencentMemberInfo : MemberInfo {
     /**
      * 频道id
      */
@@ -43,6 +43,10 @@ public interface TencentMemberInfo : UserInfo /* MemberInfo? */ {
         get() = user.id
     override val username: String
         get() = user.username
+    override val joinTime: Timestamp
+        get() = joinedAt
+    override val nickname: String
+        get() = nick
 
     public companion object {
         internal val serializer: KSerializer<out TencentMemberInfo> = TencentMemberInfoImpl.serializer()

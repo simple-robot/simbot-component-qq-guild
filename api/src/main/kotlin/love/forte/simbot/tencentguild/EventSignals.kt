@@ -1,7 +1,14 @@
 package love.forte.simbot.tencentguild
 
 import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.serializer
+
+@JvmInline
+@Serializable
+public value class Intents(public val value: Int) {
+    public operator fun plus(intents: Intents): Intents = Intents(value or intents.value)
+}
 
 
 /**
@@ -70,7 +77,7 @@ public sealed class EventSignals<out D>(
         /** 当channel被删除时 */
         public object ChannelDelete : Guilds<TencentChannelInfo>("CHANNEL_DELETE", TencentChannelInfo.serializer)
         public companion object {
-            public const val intents: Int = 1 shl 0
+            public val intents: Intents = Intents(1 shl 0)
         }
     }
 
@@ -82,7 +89,7 @@ public sealed class EventSignals<out D>(
         /** 当成员被移除时 */
         public object GuildMemberRemove : GuildMembers<TencentMemberInfo>("GUILD_MEMBER_REMOVE", TencentMemberInfo.serializer)
         public companion object {
-            public const val intents: Int = 1 shl 1
+            public val intents: Intents = Intents(1 shl 1)
         }
     }
 
@@ -90,7 +97,7 @@ public sealed class EventSignals<out D>(
         /** 当收到用户发给机器人的私信消息时 */
         public object DirectMessageCreate : DirectMessage<TencentMessage>("DIRECT_MESSAGE_CREATE", TencentMessage.serializer)
         public companion object {
-            public const val intents: Int = 1 shl 12
+            public val intents: Intents = Intents(1 shl 12)
         }
     }
 
@@ -104,7 +111,7 @@ public sealed class EventSignals<out D>(
         /** 下麦时 */
         public object AudioOffMic : AudioAction<TencentAudioAction>("AUDIO_OFF_MIC", TencentAudioAction.serializer)
         public companion object {
-            public const val intents: Int = 1 shl 29
+            public val intents: Intents = Intents(1 shl 29)
         }
     }
 
@@ -113,7 +120,7 @@ public sealed class EventSignals<out D>(
         public object AtMessageCreate : AtMessages<TencentMessage>("AT_MESSAGE_CREATE", TencentMessage.serializer)
 
         public companion object {
-            public const val intents: Int = 1 shl 30
+            public val intents: Intents = Intents(1 shl 30)
         }
     }
 

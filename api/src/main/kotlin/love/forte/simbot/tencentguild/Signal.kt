@@ -42,9 +42,8 @@ public sealed class Signal<D>(public val op: Opcode) {
         @Serializable
         public data class Data(
             public val token: String,
-            public val intents: Int, // TODO Intents
-            @Serializable(IntRangeSerializer::class)
-            public val shard: IntRange,
+            public val intents: Intents,
+            public val shard: Shared,
             public val properties: Prop
         ) {
 
@@ -92,26 +91,28 @@ public sealed class Signal<D>(public val op: Opcode) {
 /**
  * 1 .. 2 -> [1, 2]
  */
-public object IntRangeSerializer : KSerializer<IntRange> {
+public object SharedSerializer : KSerializer<Shared> {
     private val arraySerializer = IntArraySerializer()
-    override fun deserialize(decoder: Decoder): IntRange {
+    override fun deserialize(decoder: Decoder): Shared {
         val array = arraySerializer.deserialize(decoder)
         return when {
-            array.isEmpty() -> IntRange.EMPTY
-            array.size == 1 -> array[0]..array[0]
-            else -> array[0]..array[1]
+            array.isEmpty() -> Shared(0, 1)
+            array.size == 1 -> Shared(array[0], array[0])
+            else -> Shared(array[0], array[1])
         }
     }
 
     override val descriptor: SerialDescriptor get() = arraySerializer.descriptor
 
-    override fun serialize(encoder: Encoder, value: IntRange) {
-        arraySerializer.serialize(encoder, intArrayOf(value.first, value.last))
+    override fun serialize(encoder: Encoder, value: Shared) {
+        arraySerializer.serialize(encoder, intArrayOf(value.value, value.total))
     }
 
 
 }
 
 
-
-
+@Serializable(SharedSerializer::class)
+public data class Shared(val value: Int, val total: Int) {
+    public constructor(range: IntRange): this(range.first, range.last)
+}
