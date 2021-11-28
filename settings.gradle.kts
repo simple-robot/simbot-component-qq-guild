@@ -1,5 +1,4 @@
 rootProject.name = "tencent-guild"
 
-include(":api")
-include(":core")
+include(":api", ":core")
 

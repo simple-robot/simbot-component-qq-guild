@@ -4,6 +4,9 @@ import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.serializer
 
+/**
+ * [intents](https://bot.q.qq.com/wiki/develop/api/gateway/intents.html#intents)
+ */
 @JvmInline
 @Serializable
 public value class Intents(public val value: Int) {
@@ -18,6 +21,10 @@ public sealed class EventSignals<out D>(
     public val t: String,
     public val decoder: DeserializationStrategy<out D>
 ) {
+    public companion object {
+        public val allIntents: Intents =
+            Guilds.intents + GuildMembers.intents + DirectMessage.intents + AudioAction.intents + AtMessages.intents
+    }
     /*
     GUILDS (1 << 0)
       - GUILD_CREATE          // 当机器人加入新guild时

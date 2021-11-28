@@ -8,7 +8,7 @@ plugins {
 
 
 dependencies {
-    // api(project(":api"))
+    api(project(":api"))
     api(V.Ktor.Client.Websockets.notation)
 
     // api(V.Kotlin.Reflect.notation)
