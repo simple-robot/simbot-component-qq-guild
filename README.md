@@ -34,24 +34,45 @@
 2. 自行clone当前仓库以及 <https://github.com/ForteScarlet/simpler-robot/tree/dev-v3.0.0-preview>(注意观察，分支是 `v3.0.0-preview`), 然后先将 simple-robot 发布至个人本地仓库，然后编译本库。
 
 ### Maven
+
+api模块：
+
 ```xml
-<dependiency>
-    <dependency>
-        <groupId>love.forte.simple-robot</groupId>
-        <artifactId>tencent-guild-api</artifactId>
-        <version>敬请期待</version>
-    </dependency>
-</dependiency>
+<dependency>
+    <groupId>love.forte.simple-robot</groupId>
+    <artifactId>tencent-guild-api</artifactId>
+    <version>敬请期待</version>
+</dependency>
+```
+
+core模块：
+
+```xml
+<dependency>
+    <groupId>love.forte.simple-robot</groupId>
+    <artifactId>tencent-guild-core</artifactId>
+    <version>敬请期待</version>
+</dependency>
 ```
 
 ### Gradle groovy
+api模块：
 ```groovy
 implementation "love.forte.simple-robot:tencent-guild-api:$version"
 ```
+core模块：
+```groovy
+implementation "love.forte.simple-robot:tencent-guild-core:$version"
+```
 
 ### Gradle kotlin DSL
+api模块：
 ```kotlin
 implementation("love.forte.simple-robot:tencent-guild-api:$version")
+```
+core模块：
+```kotlin
+implementation("love.forte.simple-robot:tencent-guild-core:$version")
 ```
 
 ## 示例
@@ -60,7 +81,7 @@ api请求：
 ### Kotlin
 ```kotlin
     val client: HttpClient = //....
-    val token: String = "" // token    
+    val token: String = "Bot + 你的token" // token    
 
     suspend fun run() {
         // 得到一个api请求对象
@@ -103,7 +124,7 @@ Java中，你最好想办法弄到一个 `HttpClient` 实例与 `Json` 实例。
                 api,
                 client,
                 "https://sandbox.api.sgroup.qq.com",
-                "token",
+                "token: Bot + 你的token",
                 decoder
         );
 
@@ -115,7 +136,7 @@ Java中，你最好想办法弄到一个 `HttpClient` 实例与 `Json` 实例。
     }
 ```
 
-可以看到，上述命名为 `xxxxxApi` 的类就是用于请求的封装类了，它们存在于 `love.forte.simbot.tencentguild.api` 包下，基本与官方API文档中提及的API一一对应：
+可以看到，上述命名为 `xxxxxApi` 的类就是用于请求的封装类了，它们存在于 [api](api) 模块的 `love.forte.simbot.tencentguild.api` 包下，基本与官方API文档中提及的API一一对应：
 
 - channel相关
   - GetChannelApi

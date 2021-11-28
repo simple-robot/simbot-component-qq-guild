@@ -31,7 +31,7 @@ public suspend fun TencentApi<*>.requestForResponse(
         method = api.method
 
         headers {
-            this[HttpHeaders.Authorization] = "Bot $token"
+            this[HttpHeaders.Authorization] = token
         }
 
         url {
