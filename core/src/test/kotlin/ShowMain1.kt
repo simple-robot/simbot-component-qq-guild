@@ -1,3 +1,5 @@
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromJsonElement
 import love.forte.simbot.tencentguild.*
@@ -8,6 +10,9 @@ suspend fun main() {
         appKey = "app_key",
         token = "token",
     )
+
+    // start bot
+    bot.start()
 
     // 添加事件1
     bot.processor { decoder ->
@@ -47,5 +52,14 @@ suspend fun main() {
 
     // 所有事件都存在于 EventSignals 下的子类型中。
 
+    bot.launch {
+        delay(10_000)
+        // 模拟bot关闭
+        bot.cancel()
+    }
+
+    // join bot
+    // 挂起直到bot被关闭
+    bot.join()
 
 }
