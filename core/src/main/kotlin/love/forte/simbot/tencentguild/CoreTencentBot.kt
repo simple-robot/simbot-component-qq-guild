@@ -66,6 +66,17 @@ public class TencentBotConfiguration {
         EventSignals.allIntents
     }
 
+    /**
+     * 根据一个分片信息，得到这个分片下需要监听的事件类型。
+     *
+     * 相对于直接配置 [intentsForSharedFactory], 此方法的配置中，其返回值是 [Int] 而不是 [Intents]。
+     *
+     * @see intentsForSharedFactory
+     */
+    public inline fun intentsForSharedFactoryAsInt(crossinline factory: (Int) -> Int) {
+        intentsForSharedFactory = { s -> Intents(factory(s)) }
+    }
+
     public var clientPropertiesFactory: (Int) -> Signal.Identify.Data.Prop = {
         val os = System.getProperty("os.name", "windows")
         Signal.Identify.Data.Prop(

@@ -28,7 +28,7 @@ sealed class P : SimbotProject() {
 
     object TencentGuild {
         const val GROUP = Simbot.GROUP
-        const val VERSION = "0.0.1-snapshot"
+        const val VERSION = "0.0.1"
 
     }
 

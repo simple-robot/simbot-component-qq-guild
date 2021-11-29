@@ -114,7 +114,17 @@ public interface TencentBot : CoroutineScope {
         /**
          * 事件推送所携带的 `s`.
          */
-        public val s: Long
+        public val seq: Long
+
+        /**
+         * 当前 client 是否处于运行状态。
+         */
+        public val isActive: Boolean
+
+        /**
+         * 是否正处于重新连接状态.
+         */
+        public val isResuming: Boolean
 
     }
 

@@ -47,3 +47,20 @@ subprojects {
 
 }
 
+
+
+val credentialsUsername: String = local().getProperty("credentials.username")!!
+val credentialsPassword: String = local().getProperty("credentials.password")!!
+
+
+nexusPublishing {
+    packageGroup.set(P.Simbot.GROUP)
+
+    repositories {
+        sonatype {
+            username.set(credentialsUsername)
+            password.set(credentialsPassword)
+        }
+
+    }
+}

@@ -16,13 +16,27 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import love.forte.simbot.LoggerFactory
 import love.forte.simbot.tencentguild.*
-import love.forte.simbot.tencentguild.api.*
+import love.forte.simbot.tencentguild.api.GatewayApis
+import love.forte.simbot.tencentguild.api.GatewayInfo
+import love.forte.simbot.tencentguild.api.request
 import org.slf4j.Logger
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.ThreadLocalRandom
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.max
+
+
+internal fun checkResumeCode(code: Short): Boolean {
+    return when (code.toInt()) {
+        // 4008  发送 payload 过快，请重新连接，并遵守连接后返回的频控信息
+        // 4009  连接过期，请重连
+        4008, 4009 -> true
+        // 4900+ 内部错误，请重连
+        else -> code >= 4900
+    }
+}
 
 
 /**
@@ -54,7 +68,7 @@ internal class TencentBotImpl(
 
 
         val requestToken = ticket.botToken
-        var sharedIterFactory = config.sharedIterFactory
+        val sharedIterFactory = config.sharedIterFactory
         lateinit var sharedIter: IntIterator
 
         val gatewayInfo: GatewayInfo
@@ -108,13 +122,18 @@ internal class TencentBotImpl(
 
     internal inner class ClientImpl(
         override val shared: Shared,
+        private val sessionData: EventSignals.Other.ReadyEvent.Data,
         private var heartbeatJob: Job,
         private var processingJob: Job,
-        private val _s: AtomicLong,
-        private var session: DefaultClientWebSocketSession
+        private val _seq: AtomicLong,
+        private var session: DefaultClientWebSocketSession,
+        private val logger: Logger
     ) : TencentBot.Client {
         override val bot: TencentBot get() = this@TencentBotImpl
-        override val s: Long get() = _s.get()
+        override val seq: Long get() = _seq.get()
+        override val isActive: Boolean get() = session.isActive
+        private val _resuming = AtomicBoolean(false)
+        override val isResuming: Boolean get() = _resuming.get()
 
         private var resumeJob = launch {
             val closed = session.closeReason.await()
@@ -124,19 +143,51 @@ internal class TencentBotImpl(
 
         /**
          * 重新连接。
+         * // TODO 增加日志
          */
         private suspend fun resume(closeReason: CloseReason?) {
             if (closeReason == null) {
                 return
             }
+            val code = closeReason.code
+            if (!checkResumeCode(code)) return
 
-            heartbeatJob.cancel()
-            processingJob.cancel()
+            while (!_resuming.compareAndSet(false, true)) {
+                logger.info("In resuming now, delay 100ms")
+                delay(100)
+            }
 
+            try {
 
+                heartbeatJob.cancel()
+                processingJob.cancel()
+                heartbeatJob.join()
+                processingJob.join()
 
-            TODO()
+                val gatewayInfo = GatewayApis.Normal.request(
+                    this@TencentBotImpl.httpClient,
+                    server = this@TencentBotImpl.url,
+                    token = this@TencentBotImpl.ticket.botToken,
+                    decoder = this@TencentBotImpl.decoder,
+                )
+
+                val resumeSession = resumeSession(gatewayInfo, sessionData, _seq, logger)
+                val (session, _, heartbeatJob, _, _) = resumeSession
+                this.session = session
+                this.heartbeatJob = heartbeatJob
+                val processingJob = processEvent(resumeSession)
+                this.processingJob = processingJob
+                this.resumeJob = this@TencentBotImpl.launch {
+                    val closed = session.closeReason.await()
+                    resume(closed)
+                }
+            } finally {
+                _resuming.compareAndSet(true, false)
+            }
+
         }
+
+
     }
 
     private suspend fun createSession(shared: Shared, gatewayInfo: GatewayInfo): SessionInfo {
@@ -155,26 +206,12 @@ internal class TencentBotImpl(
             )
         )
 
-        val url = gatewayInfo.url
-
         val seq = AtomicLong(-1)
 
-        val session = httpClient.webSocketSession {
-            url(url)
-        }
+        val session = httpClient.ws { gatewayInfo }
 
         // receive Hello
-        var hello: Signal.Hello? = null
-        while (session.isActive) {
-            val h = waitForHello(decoder) { session.incoming.receive() }
-            if (h != null) {
-                hello = h
-                break
-            }
-        }
-        if (hello == null) {
-            session.closeReason.await().err()
-        }
+        val hello = session.waitHello()
 
         logger.info("Received Hello: {}", hello)
 
@@ -196,37 +233,52 @@ internal class TencentBotImpl(
         }
         logger.info("Ready Event data: {}", readyEventData)
 
-        val heartbeatInterval = hello.data.heartbeatInterval
-        val helloIntervalFactory: () -> Long = {
-            val r = ThreadLocalRandom.current().nextLong(5000)
-            if (r > heartbeatInterval) 0 else heartbeatInterval - r
-        }
+        val heartbeatJob = session.heartbeatJob(hello, seq)
 
-        // heartbeat Job
-        val heartbeatJob = session.launch {
-            val serializer = Signal.Heartbeat.serializer()
-            while (this.isActive) {
-                delay(helloIntervalFactory())
-                val hb = Signal.Heartbeat(seq.get().takeIf { it >= 0 })
-                session.send(decoder.encodeToString(serializer, hb))
-            }
-        }
+        return SessionInfo(session, seq, heartbeatJob, logger, readyEventData)
+    }
 
+    private suspend fun resumeSession(
+        gatewayInfo: GatewayInfo,
+        sessionData: EventSignals.Other.ReadyEvent.Data,
+        seq: AtomicLong,
+        logger: Logger
+    ): SessionInfo {
+        val requestToken = ticket.botToken
 
-        return SessionInfo(session, seq, heartbeatJob, logger)
+        val resume = Signal.Resume(
+            Signal.Resume.Data(
+                token = requestToken,
+                sessionId = sessionData.sessionId,
+                seq = seq.get()
+            )
+        )
+
+        val session = httpClient.ws { gatewayInfo }
+
+        val hello = session.waitHello()
+
+        logger.info("Received Hello: {}", hello)
+
+        // 重连
+        // see https://bot.q.qq.com/wiki/develop/api/gateway/reference.html#%E9%89%B4%E6%9D%83ß
+        session.send(decoder.encodeToString(Signal.Resume.serializer(), resume))
+
+        val heartbeatJob = session.heartbeatJob(hello, seq)
+
+        return SessionInfo(session, seq, heartbeatJob, logger, sessionData)
     }
 
     /**
      *
      */
     private suspend fun createClient(shared: Shared, gatewayInfo: GatewayInfo): ClientImpl {
-
         val sessionInfo = createSession(shared, gatewayInfo)
-        val (session, seq, heartbeatJob, logger) = sessionInfo
+        val (session, seq, heartbeatJob, logger, sessionData) = sessionInfo
 
         val processingJob = processEvent(sessionInfo)
 
-        return ClientImpl(shared, heartbeatJob, processingJob, seq, session)
+        return ClientImpl(shared, sessionData, heartbeatJob, processingJob, seq, session, logger)
     }
 
 
@@ -286,14 +338,56 @@ internal class TencentBotImpl(
         }.launchIn(this@TencentBotImpl)
     }
 
+    private suspend inline fun HttpClient.ws(crossinline gatewayInfo: () -> GatewayInfo): DefaultClientWebSocketSession {
+        return webSocketSession { url(gatewayInfo().url) }
+    }
+
+    private suspend inline fun DefaultClientWebSocketSession.waitHello(): Signal.Hello {
+        // receive Hello
+        var hello: Signal.Hello? = null
+        while (isActive) {
+            val h = waitForHello(decoder) { incoming.receive() }
+            if (h != null) {
+                hello = h
+                break
+            }
+        }
+        if (hello == null) {
+            closeReason.await().err()
+        }
+        return hello
+    }
+
+    private suspend inline fun DefaultClientWebSocketSession.heartbeatJob(hello: Signal.Hello, seq: AtomicLong): Job {
+        val heartbeatInterval = hello.data.heartbeatInterval
+        val helloIntervalFactory: () -> Long = {
+            val r = ThreadLocalRandom.current().nextLong(5000)
+            if (r > heartbeatInterval) 0 else heartbeatInterval - r
+        }
+
+        // heartbeat Job
+        val heartbeatJob = this.launch {
+            val serializer = Signal.Heartbeat.serializer()
+            while (this.isActive) {
+                delay(helloIntervalFactory())
+                val hb = Signal.Heartbeat(seq.get().takeIf { it >= 0 })
+                send(decoder.encodeToString(serializer, hb))
+            }
+        }
+
+        return heartbeatJob
+    }
 
 }
+
+
 
 private data class SessionInfo(
     val session: DefaultClientWebSocketSession,
     val seq: AtomicLong,
     val heartbeatJob: Job,
-    val logger: Logger
+    val logger: Logger,
+    val sessionData: EventSignals.Other.ReadyEvent.Data
 )
 
 

@@ -1,16 +1,21 @@
 package love.forte.simbot.tencentguild
 
-import kotlinx.serialization.*
+import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.serializer
-import love.forte.simbot.ID
 import love.forte.simbot.LongID
-import love.forte.simbot.definition.UserInfo
-import love.forte.simbot.tencentguild.TencentChannelInfo.Companion.serializer
-import love.forte.simbot.tencentguild.TencentGuildInfo.Companion.serializer
-import love.forte.simbot.tencentguild.TencentMemberInfo.Companion.serializer
 
 /**
  * [intents](https://bot.q.qq.com/wiki/develop/api/gateway/intents.html#intents)
+ *
+ * 合并两种监听类型：
+ * ```kotlin
+ * val intA = Intents(...)
+ * val intB = Intents(...)
+ * val intC = intA + intB
+ * ```
+ *
  */
 @JvmInline
 @Serializable
@@ -59,6 +64,7 @@ public sealed class EventSignals<out D>(
 
     public val events: Map<String, EventSignals<*>> = mapOf(
         "READY" to Other.ReadyEvent,
+        "RESUMED" to Other.Resumed,
         "GUILD_CREATE" to Guilds.GuildCreate,
         "GUILD_UPDATE" to Guilds.GuildUpdate,
         "GUILD_DELETE" to Guilds.GuildDelete,
@@ -77,8 +83,10 @@ public sealed class EventSignals<out D>(
     )
 
     public sealed class Other<D>(t: String, decoder: DeserializationStrategy<out D>): EventSignals<D>(t, decoder) {
+        /**
+         * 鉴权后的ready
+         */
         public object ReadyEvent: Other<ReadyEvent.Data>("READY", Data.serializer()) {
-
             @Serializable
             public data class Data(
                 public val version: Int,
@@ -87,22 +95,12 @@ public sealed class EventSignals<out D>(
                 public val user: TencentBotInfo,
                 public val shared: Shared
             )
-            /*
-            {
-        "version":1,
-        "session_id":"082ee18c-0be3-491b-9d8b-fbd95c51673a",
-        "user":{
-            "id":"6158788878435714165",
-            "username":"群pro测试机器人",
-            "bot":true
-        },
-        "shard":[
-            0,
-            0
-        ]
-    }
-             */
         }
+
+        /**
+         * 连接重连后的事件重放
+         */
+        public object Resumed : Other<String>("RESUMED", String.serializer())
 
     }
 

@@ -84,7 +84,7 @@ public sealed class Signal<D>(@Serializable(Opcode.SerializerByCode::class) publ
         public data class Data(
             public val token: String,
             @SerialName("session_id") public val sessionId: String,
-            public val seq: Int
+            public val seq: Long
         )
     }
 
