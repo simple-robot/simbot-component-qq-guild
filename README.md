@@ -22,4 +22,8 @@
 
 以及，这个README看上去挺乱的，等一切安好之后会再考虑优化一下。
 
+对于各个API的底层封装，参考模块 [api](api)
 
+对于bot事件监听的简易实现，参考模块 [core](core)
+
+对于整个频道bot的应用级的友好框架实现，请关注 [simple-robot](https://github.com/ForteScarlet/simpler-robot) 的3.x版本更新情况。
