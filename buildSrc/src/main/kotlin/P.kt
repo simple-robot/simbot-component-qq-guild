@@ -12,9 +12,6 @@
 
 
 abstract class SimbotProject {
-    // 是否需要推送
-    abstract val isPublishNeed: Boolean
-
     abstract val group: String
     abstract val version: String
 }
@@ -26,9 +23,14 @@ abstract class SimbotProject {
 sealed class P : SimbotProject() {
     object Simbot {
         const val GROUP = "love.forte.simple-robot"
-        const val VERSION = "3.0.0-PREVIEW"
+        const val VERSION = "3.0.0.preview.0.1"
     }
 
+    object TencentGuild {
+        const val GROUP = Simbot.GROUP
+        const val VERSION = "0.0.1-snapshot"
+
+    }
 
 
 }
