@@ -1,8 +1,13 @@
 package love.forte.simbot.tencentguild
 
-import kotlinx.serialization.DeserializationStrategy
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
 import kotlinx.serialization.builtins.serializer
+import love.forte.simbot.ID
+import love.forte.simbot.LongID
+import love.forte.simbot.definition.UserInfo
+import love.forte.simbot.tencentguild.TencentChannelInfo.Companion.serializer
+import love.forte.simbot.tencentguild.TencentGuildInfo.Companion.serializer
+import love.forte.simbot.tencentguild.TencentMemberInfo.Companion.serializer
 
 /**
  * [intents](https://bot.q.qq.com/wiki/develop/api/gateway/intents.html#intents)
@@ -18,7 +23,7 @@ public value class Intents(public val value: Int) {
  * 接收到的事件的类型以及它们对应的数据解析器.
  */
 public sealed class EventSignals<out D>(
-    public val t: String,
+    public val type: String,
     public val decoder: DeserializationStrategy<out D>
 ) {
     public companion object {
@@ -53,6 +58,7 @@ public sealed class EventSignals<out D>(
      */
 
     public val events: Map<String, EventSignals<*>> = mapOf(
+        "READY" to Other.ReadyEvent,
         "GUILD_CREATE" to Guilds.GuildCreate,
         "GUILD_UPDATE" to Guilds.GuildUpdate,
         "GUILD_DELETE" to Guilds.GuildDelete,
@@ -69,6 +75,36 @@ public sealed class EventSignals<out D>(
         "AUDIO_OFF_MIC" to AudioAction.AudioOffMic,
         "AT_MESSAGE_CREATE" to AtMessages.AtMessageCreate,
     )
+
+    public sealed class Other<D>(t: String, decoder: DeserializationStrategy<out D>): EventSignals<D>(t, decoder) {
+        public object ReadyEvent: Other<ReadyEvent.Data>("READY", Data.serializer()) {
+
+            @Serializable
+            public data class Data(
+                public val version: Int,
+                @SerialName("session_id")
+                public val sessionId: String,
+                public val user: TencentBotInfo,
+                public val shared: Shared
+            )
+            /*
+            {
+        "version":1,
+        "session_id":"082ee18c-0be3-491b-9d8b-fbd95c51673a",
+        "user":{
+            "id":"6158788878435714165",
+            "username":"群pro测试机器人",
+            "bot":true
+        },
+        "shard":[
+            0,
+            0
+        ]
+    }
+             */
+        }
+
+    }
 
     public sealed class Guilds<D>(t: String, decoder: DeserializationStrategy<out D>) : EventSignals<D>(t, decoder) {
         /** 当机器人加入新guild时 */
@@ -137,4 +173,16 @@ public sealed class EventSignals<out D>(
 
 
 
-
+@Serializable
+public data class TencentBotInfo(
+    override val id: LongID,
+    override val username: String,
+    override val isBot: Boolean
+) : TencentUserInfo {
+    override val avatar: String
+        get() = ""
+    override val unionOpenid: String?
+        get() = null
+    override val unionUserAccount: String?
+        get() = null
+}

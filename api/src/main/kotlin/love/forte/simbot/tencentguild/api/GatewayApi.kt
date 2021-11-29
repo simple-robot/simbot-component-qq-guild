@@ -5,34 +5,17 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 
-/**
- *
- * [获取通用 WSS 接入点](https://bot.q.qq.com/wiki/develop/api/openapi/wss/url_get.html)
- *
- * @author ForteScarlet
- */
-public object GatewayApi : GetTencentApi<Gateway> {
-    private val path = listOf("gateway")
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-    }
-
-    override val resultDeserializer: DeserializationStrategy<out Gateway> = Gateway.serializer()
-}
-
-/**
- * [获取带分片 WSS 接入点](https://bot.q.qq.com/wiki/develop/api/openapi/wss/shard_url_get.html)
- *
- * @author ForteScarlet
- */
-public object GatewayWithShardApi : GetTencentApi<GatewayWithShard> {
-    private val path = listOf("gateway", "bot")
-    override val resultDeserializer: DeserializationStrategy<out GatewayWithShard> = GatewayWithShard.serializer()
+public sealed class GatewayApis<R : GatewayInfo>(protected val path: List<String>, override val resultDeserializer: DeserializationStrategy<out R>) : GetTencentApi<R> {
 
     override fun route(builder: RouteInfoBuilder) {
         builder.apiPath = path
     }
+
+    public object Normal : GatewayApis<Gateway>(listOf("gateway"), Gateway.serializer())
+    public object Shared : GatewayApis<GatewayWithShard>(listOf("gateway", "bot"), GatewayWithShard.serializer())
 }
+
+
 
 /**
  * Base sealed class for [Gateway] and [GatewayWithShard].

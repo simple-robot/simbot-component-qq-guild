@@ -12,7 +12,7 @@ import kotlinx.serialization.encoding.Encoder
 public sealed interface ReceiveAble
 public sealed interface SendAble
 
-@Serializable(Opcode.Serializer::class)
+@Serializable(Opcode.SerializerByCode::class)
 public sealed class Opcode(public val code: Int) {
     public val isReceive: Boolean get() = this is ReceiveAble
     public val isSend: Boolean get() = this is SendAble
@@ -36,7 +36,7 @@ public sealed class Opcode(public val code: Int) {
     public object HeartbeatACK : Opcode(11), ReceiveAble
 
 
-    public object Serializer : KSerializer<Opcode> {
+    public object SerializerByCode : KSerializer<Opcode> {
         override fun deserialize(decoder: Decoder): Opcode {
             return when(val code = decoder.decodeInt()) {
                 Dispatch.code -> Dispatch

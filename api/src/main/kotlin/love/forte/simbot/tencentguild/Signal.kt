@@ -21,14 +21,15 @@ public sealed interface SendingSignal // 发送的，上行
  * @author ForteScarlet
  */
 @Serializable
-public sealed class Signal<D>(public val op: Opcode) {
-    public abstract val d: D
+public sealed class Signal<D>(@Serializable(Opcode.SerializerByCode::class) public val op: Opcode) {
+    @SerialName("d")
+    public abstract val data: D
 
     /**
      * [https://bot.q.qq.com/wiki/develop/api/gateway/reference.html#%E8%BF%9E%E6%8E%A5%E5%88%B0gateway]
      */
     @Serializable
-    public data class Hello(override val d: Data) : Signal<Hello.Data>(Opcode.Hello) {
+    public data class Hello(@SerialName("d") override val data: Data) : Signal<Hello.Data>(Opcode.Hello) {
         @Serializable
         public data class Data(@SerialName("heartbeat_interval") public val heartbeatInterval: Long)
     }
@@ -37,7 +38,7 @@ public sealed class Signal<D>(public val op: Opcode) {
      * [https://bot.q.qq.com/wiki/develop/api/gateway/reference.html#%E9%89%B4%E6%9D%83]
      */
     @Serializable
-    public data class Identify(override val d: Data) : Signal<Identify.Data>(Opcode.Identify) {
+    public data class Identify(@SerialName("d") override val data: Data) : Signal<Identify.Data>(Opcode.Identify) {
 
         @Serializable
         public data class Data(
@@ -63,33 +64,43 @@ public sealed class Signal<D>(public val op: Opcode) {
      * [https://bot.q.qq.com/wiki/develop/api/gateway/reference.html#%E5%8F%91%E9%80%81%E5%BF%83%E8%B7%B3]
      */
     @Serializable
-    public data class Heartbeat(override val d: Int): Signal<Int>(Opcode.Heartbeat)
+    public data class Heartbeat(@SerialName("d") override val data: Long?) : Signal<Long?>(Opcode.Heartbeat)
 
     /**
      * [https://bot.q.qq.com/wiki/develop/api/gateway/reference.html#%E5%8F%91%E9%80%81%E5%BF%83%E8%B7%B3]
      */
     @Serializable
-    public object HeartbeatACK: Signal<Unit>(Opcode.HeartbeatACK) {
-        override val d: Unit get() = Unit
+    public object HeartbeatACK : Signal<Unit>(Opcode.HeartbeatACK) {
+        @SerialName("d")
+        override val data: Unit
+            get() = Unit
     }
 
 
     @Serializable
-    public data class Resume(override val d: Data) : Signal<Resume.Data>(Opcode.Resume) {
+    public data class Resume(@SerialName("d") override val data: Data) : Signal<Resume.Data>(Opcode.Resume) {
 
         @Serializable
-        public data class Data(public val token: String, @SerialName("session_id") public val sessionId: String, public val seq: Int)
+        public data class Data(
+            public val token: String,
+            @SerialName("session_id") public val sessionId: String,
+            public val seq: Int
+        )
     }
 
 
     @Serializable
-    public data class Dispatch(override val d: JsonElement, public val t: String, public val s: Int) : Signal<JsonElement>(Opcode.Dispatch)
+    public data class Dispatch(
+        @SerialName("d") override val data: JsonElement,
+        @SerialName("t") public val type: String,
+        @SerialName("s") public val seq: Long
+    ) : Signal<JsonElement>(Opcode.Dispatch)
 
 
 }
 
 /**
- * 1 .. 2 -> [1, 2]
+ * 1, 2 -> [1, 2]
  */
 public object SharedSerializer : KSerializer<Shared> {
     private val arraySerializer = IntArraySerializer()
@@ -114,5 +125,11 @@ public object SharedSerializer : KSerializer<Shared> {
 
 @Serializable(SharedSerializer::class)
 public data class Shared(val value: Int, val total: Int) {
-    public constructor(range: IntRange): this(range.first, range.last)
+    public constructor(range: IntRange) : this(range.first, range.last)
+
+    init {
+        require(value < total) { "Shared value must less than total, but value $value >= total $total" }
+    }
+
+    override fun toString(): String = "[$value,$total]"
 }

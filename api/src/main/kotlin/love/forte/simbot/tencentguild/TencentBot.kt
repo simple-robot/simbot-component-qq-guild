@@ -1,5 +1,9 @@
 package love.forte.simbot.tencentguild
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.serialization.json.Json
+import kotlin.coroutines.CoroutineContext
+
 
 /**
  *
@@ -9,12 +13,19 @@ package love.forte.simbot.tencentguild
  *
  * @author ForteScarlet
  */
-public interface TencentBot {
+public interface TencentBot : CoroutineScope {
+    override val coroutineContext: CoroutineContext
 
     /**
      * 当前bot的 [Ticket].
      */
     public val ticket: Ticket
+
+
+    /**
+     * 添加一个事件处理器。
+     */
+    public fun processor(processor: suspend Signal.Dispatch.(decoder: Json) -> Unit)
 
 
     /**
@@ -35,6 +46,11 @@ public interface TencentBot {
          * 机器人token，用于以机器人身份调用 openapi，格式为 ${app_id}.${random_str}
          */
         public val token: String
+
+        /**
+         * 拼接bot token
+         */
+        public val botToken: String get() = "Bot $appId.$token"
     }
 
 

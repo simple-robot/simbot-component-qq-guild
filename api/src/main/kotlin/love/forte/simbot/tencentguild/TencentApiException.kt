@@ -1,6 +1,7 @@
 package love.forte.simbot.tencentguild
 
 import io.ktor.http.*
+import io.ktor.http.cio.websocket.*
 import kotlinx.serialization.Serializable
 
 
@@ -47,3 +48,15 @@ public inline fun ErrInfo.err(codeBlock: () -> HttpStatusCode): Nothing {
 public data class ErrInfo(val code: Int, val message: String)
 
 
+@Suppress("NOTHING_TO_INLINE")
+public inline fun CloseReason?.err(): Nothing {
+    if (this == null) {
+        throw TencentApiException("No reason")
+    }
+    val known = knownReason
+    if (known != null) {
+        throw TencentApiException("${known.name}(${known.code}): $message")
+    } else {
+        throw TencentApiException("$code: $message")
+    }
+}
