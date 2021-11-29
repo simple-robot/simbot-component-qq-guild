@@ -95,7 +95,7 @@ Java中，你最好想办法弄到一个 `HttpClient` 实例与 `Json` 实例。
     }
 ```
 
-可以看到，上述命名为 `xxxxxApi` 的类就是用于请求的封装类了，它们存在于 [api](api) 模块的 `love.forte.simbot.tencentguild.api` 包下，基本与官方API文档中提及的API一一对应：
+可以看到，上述命名为 `xxxxxApi` 的类就是用于请求的封装类了，它们存在于 [api](.) 模块的 `love.forte.simbot.tencentguild.api` 包下，基本与官方API文档中提及的API一一对应：
 
 - channel相关
     - GetChannelApi
