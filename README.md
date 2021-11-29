@@ -90,7 +90,7 @@ api请求：
         // api.request 发起请求
         val guildList: List<TencentGuildInfo> = api.request(
             client = client,
-            server = Url("https://sandbox.api.sgroup.qq.com"), // 请求server地址
+            server = Url("https://sandbox.api.sgroup.qq.com"), // 请求server地址. 你可以通过 TencentGuildApi.URL 得到一个官方地址的默认值。
             token = token,
             decoder = Json // 可以省略，但最好给一个自定义的
         )
