@@ -46,7 +46,15 @@ public suspend fun TencentApi<*>.requestForResponse(
             protocol = server.protocol
             host = server.host
             path(routeBuilder.apiPath)
-            contentType(routeBuilder.contentType)
+            routeBuilder.contentType?.let {
+                headers {
+                    this[HttpHeaders.ContentType] = it.toString()
+                }
+            }
+            // val contentType = routeBuilder.contentType
+            // if (contentType != null) {
+            //     contentType(contentType)
+            // }
         }
 
     }

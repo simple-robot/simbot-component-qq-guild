@@ -4,8 +4,8 @@ import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import love.forte.simbot.CharSequenceID
 import love.forte.simbot.ID
-import love.forte.simbot.LongID
 import love.forte.simbot.tencentguild.TencentRoleInfo
 import love.forte.simbot.tencentguild.api.RouteInfoBuilder
 import love.forte.simbot.tencentguild.api.TencentApi
@@ -59,6 +59,6 @@ public class CreateGuildRoleApi internal constructor(
 @Serializable
 public data class GuildRoleCreated(
     @SerialName("role_id")
-    public val roleId: LongID,
+    public val roleId: CharSequenceID,
     public val role: TencentRoleInfo
 )

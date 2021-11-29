@@ -2,7 +2,7 @@ package love.forte.simbot.tencentguild.internal
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import love.forte.simbot.LongID
+import love.forte.simbot.CharSequenceID
 import love.forte.simbot.tencentguild.TencentRoleInfo
 
 /**
@@ -10,7 +10,7 @@ import love.forte.simbot.tencentguild.TencentRoleInfo
  */
 @Serializable
 internal data class TencentRoleInfoImpl(
-    override val id: LongID,
+    override val id: CharSequenceID,
     override val name: String,
     override val color: Int,
     /** 0-否, 1-是 */

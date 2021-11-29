@@ -4,7 +4,7 @@ import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.serializer
-import love.forte.simbot.LongID
+import love.forte.simbot.CharSequenceID
 
 /**
  * [intents](https://bot.q.qq.com/wiki/develop/api/gateway/intents.html#intents)
@@ -32,7 +32,7 @@ public sealed class EventSignals<out D>(
     public val decoder: DeserializationStrategy<out D>
 ) {
     public companion object {
-        public val allIntents: Intents =
+        public inline val allIntents: Intents get() =
             Guilds.intents + GuildMembers.intents + DirectMessage.intents + AudioAction.intents + AtMessages.intents
     }
     /*
@@ -93,7 +93,7 @@ public sealed class EventSignals<out D>(
                 @SerialName("session_id")
                 public val sessionId: String,
                 public val user: TencentBotInfo,
-                public val shared: Shared
+                public val shard: Shard
             )
         }
 
@@ -173,8 +173,9 @@ public sealed class EventSignals<out D>(
 
 @Serializable
 public data class TencentBotInfo(
-    override val id: LongID,
+    override val id: CharSequenceID,
     override val username: String,
+    @SerialName("bot")
     override val isBot: Boolean
 ) : TencentUserInfo {
     override val avatar: String

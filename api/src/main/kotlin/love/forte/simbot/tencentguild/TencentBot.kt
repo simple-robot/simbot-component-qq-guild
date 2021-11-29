@@ -81,7 +81,7 @@ public interface TencentBot : CoroutineScope {
      * 此bot所需要的全部分片数量。
      * 这并不代表此bot中所**包含**的分片数量，而是代表你通过 /gateway/bot 或者根据你自己的判断而决定的最终的所有分片数量。
      *
-     * 如果你想知道当前bot中包含了那几个分片，启动后通过 [clients] 中的 [shared][Client.shared] 可以得到。
+     * 如果你想知道当前bot中包含了那几个分片，启动后通过 [clients] 中的 [shared][Client.shard] 可以得到。
      *
      */
     public val totalShared: Int
@@ -109,7 +109,7 @@ public interface TencentBot : CoroutineScope {
         /**
          * 此连接对应的分片信息。
          */
-        public val shared: Shared
+        public val shard: Shard
 
         /**
          * 事件推送所携带的 `s`.

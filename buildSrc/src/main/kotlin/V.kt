@@ -164,7 +164,7 @@ sealed class V(group: String?, id: String, version: String?) : Dep(group, id, ve
     // Ktor相关
     sealed class Ktor(id: String) : V(group = "io.ktor", id = "ktor-$id", VERSION) {
         companion object {
-            const val VERSION = "1.6.5"
+            const val VERSION = "1.6.6"
         }
 
         // server
@@ -205,6 +205,15 @@ sealed class V(group: String?, id: String, version: String?) : Dep(group, id, ve
         }
 
         object Api : Slf4j("api")
+    }
+
+
+    sealed class Log4j(id: String) : V("org.apache.logging.log4j", id = "log4j-$id", version = VERSION) {
+        companion object {
+            const val VERSION = "2.14.1"
+        }
+        object Api : Log4j("api")
+        object Core : Log4j("core")
     }
 
 

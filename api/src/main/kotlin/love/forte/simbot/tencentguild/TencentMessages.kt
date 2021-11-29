@@ -3,7 +3,9 @@ package love.forte.simbot.tencentguild
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encoding.Decoder
 import love.forte.simbot.ID
+import love.forte.simbot.Timestamp
 import love.forte.simbot.tencentguild.internal.TencentMessageImpl
 
 
@@ -37,12 +39,12 @@ public interface TencentMessage {
     /**
      * ISO8601 timestamp	消息创建时间
      */
-    public val timestamp: Long
+    public val timestamp: Timestamp
 
     /**
      * ISO8601 timestamp	消息编辑时间
      */
-    public val editedTimestamp: Long
+    public val editedTimestamp: Timestamp
 
     /**
      * 是否是@全员消息
@@ -193,9 +195,16 @@ public interface TencentMessage {
 
 
     public companion object {
-        public val serializer: KSerializer<out TencentMessage> = TencentMessageImpl.serializer()
+        public val serializer: KSerializer<out TencentMessage> = TencentMessageImplSerializer(TencentMessageImpl.serializer())
     }
 }
 
+internal class TencentMessageImplSerializer(private val delegate: KSerializer<TencentMessageImpl>) : KSerializer<TencentMessageImpl> by delegate {
+    override fun deserialize(decoder: Decoder): TencentMessageImpl {
+        val instance = delegate.deserialize(decoder)
+        instance.member.user = instance.author
+        return instance
+    }
+}
 
 
