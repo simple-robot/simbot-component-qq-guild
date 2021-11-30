@@ -30,7 +30,7 @@ public interface TencentMemberInfo : MemberInfo {
     /**
      * 用户在频道内的身份
      */
-    public val roles: List<ID>
+    public val roleIds: List<ID>
 
     /**
      * iISO8601 timestamp	用户加入频道的时间

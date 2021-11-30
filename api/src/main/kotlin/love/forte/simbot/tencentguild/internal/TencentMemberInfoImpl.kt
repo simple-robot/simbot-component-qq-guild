@@ -18,7 +18,8 @@ internal data class TencentMemberInfoImpl(
     override val guildId: CharSequenceID? = null,
     override val user: TencentUserInfoImpl,
     override val nick: String = "",
-    override val roles: List<CharSequenceID>,
+    @SerialName("roles")
+    override val roleIds: List<CharSequenceID>,
     @SerialName("joined_at")
     @Serializable(TimestampISO8601Serializer::class)
     override val joinedAt: Timestamp
@@ -33,7 +34,8 @@ internal data class TencentMemberInfoImplForMessage(
     @SerialName("guild_id")
     override val guildId: CharSequenceID? = null,
     override val nick: String = "",
-    override val roles: List<CharSequenceID>,
+    @SerialName("roles")
+    override val roleIds: List<CharSequenceID>,
     @SerialName("joined_at")
     @Serializable(TimestampISO8601Serializer::class)
     override val joinedAt: Timestamp
