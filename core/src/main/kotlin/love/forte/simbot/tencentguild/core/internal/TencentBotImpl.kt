@@ -97,7 +97,7 @@ internal class TencentBotImpl(
         sharedIter = sharedIterFactory(totalShared)
 
         val clientList = sharedIter.asFlow()
-            .map { shared -> Shared(shared, totalShared) }
+            .map { shared -> Shard(shared, totalShared) }
             .map { shared -> createClient(shared, gatewayInfo) }
             .toList()
 
@@ -122,7 +122,7 @@ internal class TencentBotImpl(
     override lateinit var clients: List<ClientImpl>
 
     internal inner class ClientImpl(
-        override val shared: Shared,
+        override val shard: Shard,
         private val sessionData: EventSignals.Other.ReadyEvent.Data,
         private var heartbeatJob: Job,
         private var processingJob: Job,
@@ -191,18 +191,18 @@ internal class TencentBotImpl(
 
     }
 
-    private suspend fun createSession(shared: Shared, gatewayInfo: GatewayInfo): SessionInfo {
+    private suspend fun createSession(shard: Shard, gatewayInfo: GatewayInfo): SessionInfo {
         val requestToken = ticket.botToken
 
-        val logger = LoggerFactory.getLogger("love.forte.simbot.tencentguild.bot.${ticket.appId}.$shared")
-        val intents = configuration.intentsForSharedFactory(shared.value)
-        val prop = configuration.clientPropertiesFactory(shared.value)
+        val logger = LoggerFactory.getLogger("love.forte.simbot.tencentguild.bot.${ticket.appId}.$shard")
+        val intents = configuration.intentsForSharedFactory(shard.value)
+        val prop = configuration.clientPropertiesFactory(shard.value)
 
         val identify = Signal.Identify(
             data = Signal.Identify.Data(
                 token = requestToken,
                 intents = intents,
-                shard = shared,
+                shard = shard,
                 properties = prop,
             )
         )
@@ -215,7 +215,7 @@ internal class TencentBotImpl(
         val hello = session.waitHello()
 
         logger.info("Received Hello: {}", hello)
-
+        println("Received Hello: $hello")
         // 鉴权
         // see https://bot.q.qq.com/wiki/develop/api/gateway/reference.html#%E9%89%B4%E6%9D%83ß
         session.send(decoder.encodeToString(Signal.Identify.serializer(), identify))
@@ -223,13 +223,16 @@ internal class TencentBotImpl(
         // wait for Ready event
         var readyEventData: EventSignals.Other.ReadyEvent.Data? = null
         while (session.isActive) {
+            println(session.isActive)
             val ready = waitForReady(decoder) { session.incoming.receive() }
+            println("ready: $ready")
             if (ready != null) {
                 readyEventData = ready
                 break
             }
         }
         if (readyEventData == null) {
+            println("canceled.")
             session.closeReason.await().err()
         }
         logger.info("Ready Event data: {}", readyEventData)
@@ -273,13 +276,13 @@ internal class TencentBotImpl(
     /**
      *
      */
-    private suspend fun createClient(shared: Shared, gatewayInfo: GatewayInfo): ClientImpl {
-        val sessionInfo = createSession(shared, gatewayInfo)
+    private suspend fun createClient(shard: Shard, gatewayInfo: GatewayInfo): ClientImpl {
+        val sessionInfo = createSession(shard, gatewayInfo)
         val (session, seq, heartbeatJob, logger, sessionData) = sessionInfo
 
         val processingJob = processEvent(sessionInfo)
 
-        return ClientImpl(shared, sessionData, heartbeatJob, processingJob, seq, session, logger)
+        return ClientImpl(shard, sessionData, heartbeatJob, processingJob, seq, session, logger)
     }
 
 
@@ -332,7 +335,11 @@ internal class TencentBotImpl(
         }.onEach { dispatch ->
             val nowSeq = dispatch.seq
             processorQueue.forEach { p ->
-                p(dispatch, decoder)
+                try {
+                    p(dispatch, decoder)
+                } catch (e: Exception) {
+                    e.printStackTrace() // TODO log
+                }
             }
             // 留下最大的值。
             seq.updateAndGet { prev -> max(prev, nowSeq) }
@@ -412,6 +419,7 @@ private inline fun waitForReady(decoder: Json, frameBlock: () -> Frame): EventSi
     // for hello
     if (frame is Frame.Text) {
         val json = decoder.parseToJsonElement(frame.readText())
+        println(json)
         if (json.jsonObject["op"]?.jsonPrimitive?.int == Opcode.Dispatch.code) {
             val dis = decoder.decodeFromJsonElement(Signal.Dispatch.serializer(), json)
             if (dis.type == EventSignals.Other.ReadyEvent.type) {

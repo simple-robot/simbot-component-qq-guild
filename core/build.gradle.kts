@@ -8,7 +8,6 @@ plugins {
 
 
 dependencies {
-    P.TencentGuild
     api(project(":tencent-guild-api"))
     api(V.Ktor.Client.Websockets.notation)
 
@@ -20,6 +19,8 @@ dependencies {
     // api(V.Kotlinx.Serialization.Json.notation)
 
     testImplementation(V.Kotlin.Test.Junit5.notation)
+    testImplementation(V.Log4j.Api.notation)
+    testImplementation(V.Log4j.Core.notation)
 }
 
 tasks.getByName<Test>("test") {

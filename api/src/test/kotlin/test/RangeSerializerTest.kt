@@ -2,7 +2,7 @@ package test
 
 import kotlinx.serialization.json.Json
 import love.forte.simbot.tencentguild.Intents
-import love.forte.simbot.tencentguild.Shared
+import love.forte.simbot.tencentguild.Shard
 import love.forte.simbot.tencentguild.Signal
 import kotlin.test.Test
 
@@ -21,7 +21,7 @@ class RangeSerializerTest {
         val id = Signal.Identify(Signal.Identify.Data(
             token = "token",
             intents = Intents(153) + Intents(224) + Intents(810),
-            shard = Shared(0..4),
+            shard = Shard(0..4),
             properties = Signal.Identify.Data.Prop(
                 os = "windows",
                 browser = "chrome",

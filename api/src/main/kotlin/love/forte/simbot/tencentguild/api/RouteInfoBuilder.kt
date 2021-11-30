@@ -12,7 +12,7 @@ public class RouteInfoBuilder(public val parametersAppender: ParametersAppender)
     /**
      * 请求头中的 [ContentType], 绝大多数情况下，此参数默认为 [ContentType.Application.Json].
      */
-    public var contentType: ContentType = ContentType.Application.Json
+    public var contentType: ContentType? = ContentType.Application.Json
 
 }
 

@@ -2,7 +2,7 @@ package love.forte.simbot.tencentguild.internal
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import love.forte.simbot.LongID
+import love.forte.simbot.CharSequenceID
 import love.forte.simbot.tencentguild.TencentUserInfo
 
 /**
@@ -11,7 +11,7 @@ import love.forte.simbot.tencentguild.TencentUserInfo
  */
 @Serializable
 internal data class TencentUserInfoImpl(
-    override val id: LongID,
+    override val id: CharSequenceID,
     override val username: String,
     override val avatar: String,
     @SerialName("bot")

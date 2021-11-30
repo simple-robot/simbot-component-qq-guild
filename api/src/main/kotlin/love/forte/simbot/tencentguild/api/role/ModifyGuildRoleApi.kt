@@ -4,8 +4,8 @@ import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import love.forte.simbot.CharSequenceID
 import love.forte.simbot.ID
-import love.forte.simbot.LongID
 import love.forte.simbot.tencentguild.TencentRoleInfo
 import love.forte.simbot.tencentguild.api.RouteInfoBuilder
 import love.forte.simbot.tencentguild.api.TencentApi
@@ -59,13 +59,13 @@ public data class GuildRoleModified(
      * 频道ID
      */
     @SerialName("guild_id")
-    public val guildId: LongID,
+    public val guildId: CharSequenceID,
 
     /**
      * 身份组ID
      */
     @SerialName("role_id")
-    public val roleId: LongID,
+    public val roleId: CharSequenceID,
 
     /**
      * 修改后的频道身份组对象
