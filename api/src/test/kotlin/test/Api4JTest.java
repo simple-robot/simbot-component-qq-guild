@@ -4,7 +4,7 @@ import io.ktor.client.HttpClient;
 import kotlinx.serialization.json.Json;
 import love.forte.simbot.tencentguild.TencentGuildInfo;
 import love.forte.simbot.tencentguild.api.ApiRequestUtil;
-import love.forte.simbot.tencentguild.api.guild.BotGuildListApi;
+import love.forte.simbot.tencentguild.api.guild.GetBotGuildListApi;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ public class Api4JTest {
         });
 
         // 构建请求
-        final BotGuildListApi api = new BotGuildListApi(null, null, 10);
+        final GetBotGuildListApi api = new GetBotGuildListApi(null, null, 10);
 
         // 使用 ApiRequestUtil.doRequest
         final List<? extends TencentGuildInfo> infoList = ApiRequestUtil.doRequest(

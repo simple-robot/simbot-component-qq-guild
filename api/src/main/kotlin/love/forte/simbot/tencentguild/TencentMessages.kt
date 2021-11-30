@@ -105,7 +105,7 @@ public interface TencentMessage {
         /**
          * iISO8601 消息创建时间
          */
-        public val timestamp: Long,
+        public val timestamp: Timestamp,
 
         /**
          * MessageEmbedField 对象数组	字段信息
@@ -195,11 +195,14 @@ public interface TencentMessage {
 
 
     public companion object {
-        public val serializer: KSerializer<out TencentMessage> = TencentMessageImplSerializer(TencentMessageImpl.serializer())
+        internal val serializer: KSerializer<out TencentMessage> = TencentMessageImplSerializer(TencentMessageImpl.serializer())
     }
 }
 
-internal class TencentMessageImplSerializer(private val delegate: KSerializer<TencentMessageImpl>) : KSerializer<TencentMessageImpl> by delegate {
+/**
+ * 反序列化后进行后处理。
+ */
+private class TencentMessageImplSerializer(private val delegate: KSerializer<TencentMessageImpl>) : KSerializer<TencentMessageImpl> by delegate {
     override fun deserialize(decoder: Decoder): TencentMessageImpl {
         val instance = delegate.deserialize(decoder)
         instance.member.user = instance.author

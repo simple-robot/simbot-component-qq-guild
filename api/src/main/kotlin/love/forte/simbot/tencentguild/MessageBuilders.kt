@@ -3,6 +3,8 @@
 package love.forte.simbot.tencentguild
 
 import love.forte.simbot.ID
+import love.forte.simbot.toTimestamp
+import java.time.Instant
 
 
 /**
@@ -44,6 +46,11 @@ internal annotation class ArkBuilderDSL
 
 @ArkBuilderDSL
 public class ArkBuilder(public var templateId: ID) {
+
+    public fun from(ark: TencentMessage.Ark): ArkBuilder = also {
+        templateId = ark.templateId
+        kvs = ark.kv.toMutableList()
+    }
 
     @ArkBuilderDSL
     public var kvs: MutableList<TencentMessage.Ark.Kv> = mutableListOf()
@@ -128,3 +135,45 @@ public class ArkObjKvListBuilder {
 
     public fun build(): List<TencentMessage.Ark.Obj.Kv> = objKvs.toList()
 }
+
+
+
+@Retention(AnnotationRetention.BINARY)
+@DslMarker
+internal annotation class EmbedBuilderDsl
+
+@EmbedBuilderDsl
+public class EmbedBuilder {
+    /**
+     * 标题
+     */
+    public lateinit var title: String
+
+    /**
+     * 描述
+     */
+    public lateinit var description: String
+
+    /**
+     * 消息弹窗内容
+     */
+    public lateinit var prompt: String
+
+
+    /**
+     * MessageEmbedField 对象数组	字段信息
+     */
+    public var fields: MutableList<TencentMessage.Embed.Field> = mutableListOf()
+
+
+    public fun addField(name: String, value: String) {
+        fields.add(TencentMessage.Embed.Field(name, value))
+    }
+
+
+    public fun build(): TencentMessage.Embed {
+        return TencentMessage.Embed(title, description, prompt, Instant.now().toTimestamp(), fields.toList())
+    }
+}
+
+

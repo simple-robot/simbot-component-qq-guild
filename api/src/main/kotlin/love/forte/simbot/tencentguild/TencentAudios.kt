@@ -90,6 +90,6 @@ public interface TencentAudioAction {
     public val text: String
 
     public companion object {
-        public val serializer: KSerializer<out TencentAudioAction> = TencentAudioActionImpl.serializer()
+        internal val serializer: KSerializer<out TencentAudioAction> = TencentAudioActionImpl.serializer()
     }
 }

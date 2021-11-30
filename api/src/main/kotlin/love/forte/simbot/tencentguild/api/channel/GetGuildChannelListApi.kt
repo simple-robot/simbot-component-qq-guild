@@ -14,7 +14,7 @@ import love.forte.simbot.tencentguild.api.RouteInfoBuilder
  *
  * @author ForteScarlet
  */
-public class GetGuildChannelList(guildId: ID) : GetTencentApi<List<TencentChannelInfo>> {
+public class GetGuildChannelListApi(guildId: ID) : GetTencentApi<List<TencentChannelInfo>> {
     // GET /guilds/{guild_id}/channels
     private val path = listOf("guilds", guildId.toString(), "channels")
 

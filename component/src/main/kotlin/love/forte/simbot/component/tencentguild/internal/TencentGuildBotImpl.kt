@@ -14,7 +14,10 @@ package love.forte.simbot.component.tencentguild.internal
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import love.forte.simbot.Grouping
+import love.forte.simbot.ID
 import love.forte.simbot.Limiter
 import love.forte.simbot.component.tencentguild.TencentGuildBot
 import love.forte.simbot.component.tencentguild.TencentGuildBotManager
@@ -23,6 +26,9 @@ import love.forte.simbot.definition.Group
 import love.forte.simbot.definition.Guild
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.tencentguild.TencentBot
+import love.forte.simbot.tencentguild.TencentGuildInfo
+import love.forte.simbot.tencentguild.api.guild.GetBotGuildListApi
+import love.forte.simbot.tencentguild.request
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
@@ -38,10 +44,31 @@ internal class TencentGuildBotImpl(
     private val activeStatus = AtomicInteger(0)
 
 
+    /**
+     * grouping是无效的.
+     */
     override suspend fun guilds(grouping: Grouping, limiter: Limiter): Flow<Guild> {
-        // TODO
-        // GetGuildApi
-        TODO("Not yet implemented")
+        val batch = if (limiter.batchSize > 0) {
+            if (limiter.batchSize > 100) 100 else limiter.batchSize
+        } else {
+            100
+        }
+
+        val limit = if (limiter.limit <= 0) Int.MAX_VALUE else limiter.limit
+        val skip = if (limiter.offset <= 0) 0 else limiter.offset
+        return getGuilds(skip, batch, limit).map { info ->
+            TencentGuildImpl(bot = this, guildInfo = info)
+        }
+    }
+
+
+    private fun getGuilds(skip: Int, batch: Int, limit: Int): Flow<TencentGuildInfo> = flow {
+        var lastId: ID? = null
+        flowForLimiter(skip, limit) {
+            GetBotGuildListApi(after = lastId, limit = batch).request(sourceBot).also {
+                lastId = it.lastOrNull()?.id
+            }
+        }
     }
 
 

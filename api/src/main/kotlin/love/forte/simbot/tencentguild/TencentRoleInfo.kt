@@ -49,28 +49,24 @@ public interface TencentRoleInfo {
         internal val serializer: KSerializer<out TencentRoleInfo> = TencentRoleInfoImpl.serializer()
 
         public val defaultRoles: Map<String, DefaultRole> = mapOf(
-            "0" to DefaultRole.UNSPECIFIED,
             "1" to DefaultRole.ALL_MEMBER,
             "2" to DefaultRole.ADMIN,
-            "3" to DefaultRole.ROBOTS,
             "4" to DefaultRole.OWNER,
             "5" to DefaultRole.CHANNEL_ADMIN
         )
     }
 
-    public enum class DefaultRole(public val code: Int) {
-        /** 无效值 */
-        UNSPECIFIED(0),
+    public enum class DefaultRole(
+        public val code: Int
+    ) {
         /** 全体成员身份组 */
         ALL_MEMBER(1),
         /** 管理员身份组 */
         ADMIN(2),
-        /** 机器人分组 */
-        ROBOTS(3),
-        /** 创建者身份组 */
+        /** 群主/创建者身份组 */
         OWNER(4),
         /** 子频道管理员身份组 */
-        CHANNEL_ADMIN(5)
+        CHANNEL_ADMIN(5);
     }
 
 }

@@ -4,7 +4,7 @@ import io.ktor.client.*
 import io.ktor.http.*
 import kotlinx.serialization.json.Json
 import love.forte.simbot.tencentguild.TencentGuildInfo
-import love.forte.simbot.tencentguild.api.guild.BotGuildListApi
+import love.forte.simbot.tencentguild.api.guild.GetBotGuildListApi
 import love.forte.simbot.tencentguild.api.request
 
 
@@ -18,7 +18,7 @@ class ApiTest {
 
     suspend fun run() {
         // 得到一个api请求对象
-        val api = BotGuildListApi(before = null, after = null, limit = 10)
+        val api = GetBotGuildListApi(before = null, after = null, limit = 10)
 
         val guildList: List<TencentGuildInfo> = api.request(
             client = client,

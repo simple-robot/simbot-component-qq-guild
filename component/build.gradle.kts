@@ -11,7 +11,6 @@ repositories {
 }
 
 dependencies {
-    api(V.Simbot.Api.notation)
     api(V.Simbot.Core.notation)
     api(project(":tencent-guild-core"))
     api(V.Ktor.Client.Jvm.Core.notation)
