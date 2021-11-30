@@ -12,20 +12,21 @@
 
 package love.forte.simbot.component.tencentguild.internal
 
-import love.forte.simbot.Bot
 import love.forte.simbot.Component
 import love.forte.simbot.ID
 import love.forte.simbot.component.tencentguild.TencentGuildBot
 import love.forte.simbot.component.tencentguild.TencentGuildBotManager
 import love.forte.simbot.component.tencentguild.TencentGuildBotManagerConfiguration
 import love.forte.simbot.component.tencentguild.TencentGuildComponent
+import love.forte.simbot.tencentguild.TencentBotConfiguration
+import love.forte.simbot.tencentguild.tencentBot
 
 /**
  *
  * @author ForteScarlet
  */
 internal class TencentGuildBotManagerImpl(
-    internal val configuration: TencentGuildBotManagerConfiguration
+    override val configuration: TencentGuildBotManagerConfiguration
 ) : TencentGuildBotManager() {
 
     override val component: Component
@@ -40,7 +41,14 @@ internal class TencentGuildBotManagerImpl(
         TODO("Not yet implemented")
     }
 
-    override suspend fun register(properties: Map<String, String>): Bot {
-        TODO("Not yet implemented")
+
+    override suspend fun register(
+        appId: String,
+        appKey: String,
+        token: String,
+        block: TencentBotConfiguration.() -> Unit
+    ): TencentGuildBot {
+        val sourceBot = tencentBot(appId, appKey, token, block)
+        return TencentGuildBotImpl(sourceBot, this, configuration.eventProcessor)
     }
 }

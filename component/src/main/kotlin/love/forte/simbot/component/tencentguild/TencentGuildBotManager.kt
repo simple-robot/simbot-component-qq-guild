@@ -14,6 +14,8 @@ package love.forte.simbot.component.tencentguild
 
 import love.forte.simbot.BotManager
 import love.forte.simbot.component.tencentguild.internal.TencentGuildBotManagerImpl
+import love.forte.simbot.event.EventProcessor
+import love.forte.simbot.tencentguild.TencentBotConfiguration
 
 /**
  *
@@ -23,6 +25,22 @@ import love.forte.simbot.component.tencentguild.internal.TencentGuildBotManagerI
  */
 public abstract class TencentGuildBotManager : BotManager<TencentGuildBot>() {
 
+    override suspend fun register(properties: Map<String, String>): TencentGuildBot {
+
+
+
+        TODO()
+    }
+
+    public abstract suspend fun register(
+        appId: String,
+        appKey: String,
+        token: String,
+        block: TencentBotConfiguration.() -> Unit
+    ): TencentGuildBot
+
+
+    public abstract val configuration: TencentGuildBotManagerConfiguration
 
     public companion object {
         @JvmStatic
@@ -51,7 +69,16 @@ public fun tencentGuildBotManager(block: TencentGuildBotManagerConfiguration.() 
  */
 @Suppress("MemberVisibilityCanBePrivate")
 public class TencentGuildBotManagerConfiguration {
+    /**
+     * 提供一个事件处理器。
+     */
+    public lateinit var eventProcessor: EventProcessor
 
+    /**
+     * 从此处对所有bot的配置信息进行统一处理。
+     */
+    public var botConfigure: TencentBotConfiguration.(appId: String, appKey: String, token: String) -> Unit =
+        { _, _, _ -> }
 
 }
 
