@@ -30,7 +30,7 @@ public interface TencentBot : CoroutineScope {
      * Bot自己的信息。
      * 一般来讲，只有当bot启动后才能获取到此属性。
      */
-    public var botInfo: TencentBotInfo
+    public val botInfo: TencentBotInfo
 
     /**
      * 添加一个事件处理器。
