@@ -179,7 +179,7 @@ public data class TencentBotInfoImpl(
     override val id: CharSequenceID,
     override val username: String,
     @SerialName("bot")
-    override val isBot: Boolean,
+    override val isBot: Boolean = true,
     override val avatar: String = "",
     override val unionOpenid: String? = null,
     override val unionUserAccount: String? = null,
