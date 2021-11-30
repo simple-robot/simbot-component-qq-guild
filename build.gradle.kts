@@ -18,6 +18,9 @@ repositories {
 
 
 subprojects {
+    group = P.TencentGuild.GROUP
+    version = P.TencentGuild.VERSION
+    
     apply(plugin = "maven-publish")
     apply(plugin = "java")
     apply(plugin = "signing")

@@ -27,6 +27,12 @@ public interface TencentBot : CoroutineScope {
     public val configuration: TencentBotConfiguration
 
     /**
+     * Bot自己的信息。
+     * 一般来讲，只有当bot启动后才能获取到此属性。
+     */
+    public var botInfo: TencentBotInfo
+
+    /**
      * 添加一个事件处理器。
      */
     public fun processor(processor: suspend Signal.Dispatch.(decoder: Json) -> Unit)

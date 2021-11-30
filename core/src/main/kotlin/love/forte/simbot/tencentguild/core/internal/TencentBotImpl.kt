@@ -47,6 +47,8 @@ internal class TencentBotImpl(
     override val ticket: TicketImpl,
     override val configuration: TencentBotConfiguration
 ) : TencentBot {
+    override lateinit var botInfo: TencentBotInfo
+
     private val parentJob: Job
     override val coroutineContext: CoroutineContext
     private val httpClient: HttpClient get() = configuration.httpClient
@@ -235,6 +237,7 @@ internal class TencentBotImpl(
             println("canceled.")
             session.closeReason.await().err()
         }
+        botInfo = readyEventData.user
         logger.info("Ready Event data: {}", readyEventData)
 
         val heartbeatJob = session.heartbeatJob(hello, seq)

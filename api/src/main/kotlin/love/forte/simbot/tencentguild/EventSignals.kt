@@ -4,6 +4,7 @@ import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.serializer
+import love.forte.simbot.BotInfo
 import love.forte.simbot.CharSequenceID
 
 /**
@@ -177,7 +178,7 @@ public data class TencentBotInfo(
     override val username: String,
     @SerialName("bot")
     override val isBot: Boolean
-) : TencentUserInfo {
+) : TencentUserInfo, BotInfo {
     override val avatar: String
         get() = ""
     override val unionOpenid: String?
