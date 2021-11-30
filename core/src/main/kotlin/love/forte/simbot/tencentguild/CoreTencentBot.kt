@@ -27,6 +27,10 @@ public fun tencentBot(
 }
 
 
+/**
+ * 对于一个Bot的配置信息。
+ * 如果在配置bot之后对内容进行后续修改，可能会影响到当前bot的使用。
+ */
 @Suppress("MemberVisibilityCanBePrivate")
 public class TencentBotConfiguration {
 

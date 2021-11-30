@@ -45,18 +45,19 @@ internal fun checkResumeCode(code: Short): Boolean {
  */
 internal class TencentBotImpl(
     override val ticket: TicketImpl,
-    private val config: TencentBotConfiguration
+    override val configuration: TencentBotConfiguration
 ) : TencentBot {
     private val parentJob: Job
     override val coroutineContext: CoroutineContext
-    private val httpClient: HttpClient = config.httpClient
-    private val url: Url = config.serverUrl
-    private val decoder: Json = config.decoder
+    private val httpClient: HttpClient get() = configuration.httpClient
+    private val url: Url get() = configuration.serverUrl
+    private val decoder: Json get() = configuration.decoder
+
     private val processorQueue: ConcurrentLinkedQueue<suspend Signal.Dispatch.(Json) -> Unit> = ConcurrentLinkedQueue()
 
     init {
-        parentJob = SupervisorJob(config.parentJob)
-        coroutineContext = config.coroutineContext + parentJob + CoroutineName("TencentBot.${ticket.appId}")
+        parentJob = SupervisorJob(configuration.parentJob)
+        coroutineContext = configuration.coroutineContext + parentJob + CoroutineName("TencentBot.${ticket.appId}")
     }
 
     override fun processor(processor: suspend Signal.Dispatch.(decoder: Json) -> Unit) {
@@ -68,13 +69,13 @@ internal class TencentBotImpl(
 
 
         val requestToken = ticket.botToken
-        val sharedIterFactory = config.sharedIterFactory
+        val sharedIterFactory = configuration.sharedIterFactory
         lateinit var sharedIter: IntIterator
 
         val gatewayInfo: GatewayInfo
 
         // gateway info.
-        var totalShared = config.totalShared
+        var totalShared = configuration.totalShared
         if (totalShared > 0) {
             gatewayInfo = GatewayApis.Normal.request(
                 client = httpClient,
@@ -116,7 +117,7 @@ internal class TencentBotImpl(
         parentJob.join()
     }
 
-    override val totalShared: Int = config.totalShared
+    override val totalShared: Int = configuration.totalShared
 
     override lateinit var clients: List<ClientImpl>
 
@@ -194,8 +195,8 @@ internal class TencentBotImpl(
         val requestToken = ticket.botToken
 
         val logger = LoggerFactory.getLogger("love.forte.simbot.tencentguild.bot.${ticket.appId}.$shared")
-        val intents = config.intentsForSharedFactory(shared.value)
-        val prop = config.clientPropertiesFactory(shared.value)
+        val intents = configuration.intentsForSharedFactory(shared.value)
+        val prop = configuration.clientPropertiesFactory(shared.value)
 
         val identify = Signal.Identify(
             data = Signal.Identify.Data(

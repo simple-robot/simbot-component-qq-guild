@@ -84,6 +84,11 @@ suspend fun main() {
     // 指定监听事件类型1
     bot.processor(EventSignals.AtMessages.AtMessageCreate) { message ->
         println(message)
+
+        val api = MessageSendApi(channelId = message.channelId, content = "content", msgId = message.id)
+        // 发送回复消息
+        val result = api.request(bot)
+        println(result)
     }
 
     // 所有事件都存在于 EventSignals 下的子类型中。

@@ -21,6 +21,10 @@ public interface TencentBot : CoroutineScope {
      */
     public val ticket: Ticket
 
+    /**
+     * Bot当前的配置信息。
+     */
+    public val configuration: TencentBotConfiguration
 
     /**
      * 添加一个事件处理器。

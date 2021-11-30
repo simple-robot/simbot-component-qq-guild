@@ -1,8 +1,8 @@
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.decodeFromJsonElement
 import love.forte.simbot.tencentguild.*
+import love.forte.simbot.tencentguild.api.message.MessageSendApi
 
 suspend fun main() {
     val bot = tencentBot(
@@ -48,6 +48,11 @@ suspend fun main() {
     // 指定监听事件类型1
     bot.processor(EventSignals.AtMessages.AtMessageCreate) { message ->
         println(message)
+
+        val api = MessageSendApi(channelId = message.channelId, content = "content", msgId = message.id)
+        // 发送回复消息
+        val result = api.request(bot)
+        println(result)
     }
 
     // 所有事件都存在于 EventSignals 下的子类型中。
