@@ -155,8 +155,10 @@ internal class TencentBotImpl(
          */
         private suspend fun resume(closeReason: CloseReason?) {
             if (closeReason == null) {
+                logger.warn("Client was closed, but no reason. just stop this client.")
                 return
             }
+
             val code = closeReason.code
             if (!checkResumeCode(code)) return
 
@@ -164,6 +166,8 @@ internal class TencentBotImpl(
                 logger.info("In resuming now, delay 100ms")
                 delay(100)
             }
+
+            logger.info("Resume. reason: $closeReason")
 
             try {
 

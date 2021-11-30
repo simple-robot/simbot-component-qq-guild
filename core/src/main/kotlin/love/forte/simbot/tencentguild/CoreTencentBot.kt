@@ -110,6 +110,9 @@ public class TencentBotConfiguration {
 
     /**
      * 使用的数据解码器。
+     *
+     * 如果有必要，记得重新设置 [httpClient].
+     *
      */
     public var decoder: Json = defaultJson
 
