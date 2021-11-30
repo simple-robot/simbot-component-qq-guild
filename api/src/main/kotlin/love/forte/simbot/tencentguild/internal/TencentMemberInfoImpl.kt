@@ -26,9 +26,6 @@ internal data class TencentMemberInfoImpl(
 ) : TencentMemberInfo
 
 
-// TODO 临时处理
-internal val defImpl = TencentUserInfoImpl
-
 @Serializable
 internal data class TencentMemberInfoImplForMessage(
     @SerialName("guild_id")

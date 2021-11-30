@@ -34,7 +34,7 @@ class TencentSerializerTest {
             },
             "nick": "ForteScarlet",
             "roles": [1, 55, 67, 255],
-            "joined_at": 119988752231134
+            "joined_at": "2021-01-01T11:11:11.111Z"
             }
         """.trimIndent()
 

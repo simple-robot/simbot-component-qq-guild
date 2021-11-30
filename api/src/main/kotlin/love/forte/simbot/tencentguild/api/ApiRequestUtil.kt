@@ -123,6 +123,9 @@ internal suspend fun <R> TencentApi<R>.decodeFromHttpResponseViaString(
     response: HttpResponse
 ): R {
     val remainingText = response.content.readRemaining().readText()
+
+    println("resp: $remainingText")
+
     return decoder.decodeFromString(resultDeserializer, remainingText)
 }
 

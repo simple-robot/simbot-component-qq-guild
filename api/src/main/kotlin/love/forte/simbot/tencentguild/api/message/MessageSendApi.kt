@@ -2,10 +2,16 @@ package love.forte.simbot.tencentguild.api.message
 
 import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import love.forte.simbot.CharSequenceID
 import love.forte.simbot.ID
-import love.forte.simbot.tencentguild.TencentMessage
+import love.forte.simbot.Timestamp
+import love.forte.simbot.tencentguild.*
 import love.forte.simbot.tencentguild.api.RouteInfoBuilder
 import love.forte.simbot.tencentguild.api.TencentApi
+import love.forte.simbot.tencentguild.internal.TencentUserInfoImpl
 
 
 /**
@@ -54,7 +60,7 @@ public class MessageSendApi(channelId: ID, override val body: TencentMessageForS
     private val path = listOf("channels", channelId.toString(), "messages")
 
     override val resultDeserializer: DeserializationStrategy<out TencentMessage>
-        get() = serializer
+        get() = SendMessageResult.serializer()
 
     override val method: HttpMethod
         get() = HttpMethod.Post
@@ -63,8 +69,42 @@ public class MessageSendApi(channelId: ID, override val body: TencentMessageForS
         builder.apiPath = path
     }
 
-    public companion object {
-        private val serializer = TencentMessage.serializer
-    }
 
+}
+
+@Serializable
+private data class SendMessageResult(
+    override val id: CharSequenceID,
+    @SerialName("channel_id")
+    override val channelId: CharSequenceID,
+    @SerialName("guild_id")
+    override val guildId: CharSequenceID,
+    override val content: String,
+    @Serializable(TimestampISO8601Serializer::class)
+    override val timestamp: Timestamp,
+    @SerialName("edited_timestamp")
+    override val editedTimestamp: Timestamp = Timestamp.NotSupport,
+    @SerialName("mention_everyone")
+    override val mentionEveryone: Boolean = false,
+    override val author: TencentUserInfoImpl,
+    override val attachments: List<TencentMessage.Attachment> = emptyList(),
+    override val embeds: List<TencentMessage.Embed> = emptyList(),
+    override val mentions: List<TencentUserInfoImpl> = emptyList(),
+    override val ark: TencentMessage.Ark? = null
+) : TencentMessage {
+    @Transient
+    override val member: AuthorAsMember = AuthorAsMember(guildId, author)
+}
+
+private data class AuthorAsMember(
+    override val guildId: ID?,
+    private val author: TencentUserInfoImpl
+) : TencentMemberInfo {
+    override val user: TencentUserInfo
+        get() = author
+    override val nick: String
+        get() = ""
+    override val roleIds: List<ID> = listOf(TencentRoleInfo.DefaultRole.ALL_MEMBER.code.ID)
+    override val joinedAt: Timestamp
+        get() = Timestamp.NotSupport
 }
