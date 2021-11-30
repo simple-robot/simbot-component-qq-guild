@@ -19,8 +19,8 @@ dependencies {
     // api(V.Kotlinx.Serialization.Json.notation)
 
     testImplementation(V.Kotlin.Test.Junit5.notation)
-    testImplementation(V.Log4j.Api.notation)
-    testImplementation(V.Log4j.Core.notation)
+    implementation(V.Log4j.Api.notation)
+    implementation(V.Log4j.Core.notation)
 }
 
 tasks.getByName<Test>("test") {

@@ -4,7 +4,6 @@ import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.serializer
-import love.forte.simbot.BotInfo
 import love.forte.simbot.CharSequenceID
 
 /**
@@ -93,9 +92,12 @@ public sealed class EventSignals<out D>(
                 public val version: Int,
                 @SerialName("session_id")
                 public val sessionId: String,
-                public val user: TencentBotInfo,
+                @SerialName("user")
+                private val _user: TencentBotInfoImpl,
                 public val shard: Shard
-            )
+            ) {
+                public val user: TencentBotInfo get() = _user
+            }
         }
 
         /**
@@ -173,16 +175,12 @@ public sealed class EventSignals<out D>(
 
 
 @Serializable
-public data class TencentBotInfo(
+public data class TencentBotInfoImpl(
     override val id: CharSequenceID,
     override val username: String,
     @SerialName("bot")
-    override val isBot: Boolean
-) : TencentUserInfo, BotInfo {
-    override val avatar: String
-        get() = ""
-    override val unionOpenid: String?
-        get() = null
-    override val unionUserAccount: String?
-        get() = null
-}
+    override val isBot: Boolean,
+    override val avatar: String = "",
+    override val unionOpenid: String? = null,
+    override val unionUserAccount: String? = null,
+) : TencentBotInfo

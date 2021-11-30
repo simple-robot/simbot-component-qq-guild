@@ -41,6 +41,6 @@ public interface TencentUserInfo : UserInfo {
     public val unionUserAccount: String?
 
     public companion object {
-        internal val serializer: KSerializer<out TencentUserInfo> = TencentUserInfoImpl.serializer()
+        internal val serializer: KSerializer<TencentUserInfoImpl> = TencentUserInfoImpl.serializer()
     }
 }

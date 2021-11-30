@@ -19,6 +19,7 @@ import love.forte.simbot.tencentguild.*
 import love.forte.simbot.tencentguild.api.GatewayApis
 import love.forte.simbot.tencentguild.api.GatewayInfo
 import love.forte.simbot.tencentguild.api.request
+import love.forte.simbot.tencentguild.api.user.GetBotInfoApi
 import org.slf4j.Logger
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.ThreadLocalRandom
@@ -47,7 +48,11 @@ internal class TencentBotImpl(
     override val ticket: TicketImpl,
     override val configuration: TencentBotConfiguration
 ) : TencentBot {
-    override lateinit var botInfo: TencentBotInfo
+
+    // verify bot with bot info api.
+    override val botInfo: TencentBotInfo = runBlocking {
+         GetBotInfoApi.request(this@TencentBotImpl)
+    }
 
     private val parentJob: Job
     override val coroutineContext: CoroutineContext
@@ -237,7 +242,6 @@ internal class TencentBotImpl(
             println("canceled.")
             session.closeReason.await().err()
         }
-        botInfo = readyEventData.user
         logger.info("Ready Event data: {}", readyEventData)
 
         val heartbeatJob = session.heartbeatJob(hello, seq)

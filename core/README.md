@@ -34,23 +34,35 @@ implementation("love.forte.simple-robot:tencent-guild-core:$version")
 ```
 
 ## 示例
-bot注册
-
 ### Kotlin
-
 ```kotlin
 
 suspend fun main() {
-    val bot = tencentBot(
-        appId = "app_id",
-        appKey = "app_key",
-        token = "token",
-    )
+    val bot = tencentBot(appId = "app_id", appKey = "app_key", token = "token") {
+        // 假设监听 AT_MESSAGE 事件。
+        serverUrl = TencentGuildApi.URL // or TencentGuildApi.SANDBOX_URL, 或者自定义
+        
+        // 假设所有分片下都要监听 "AT_MESSAGE" 事件。
+        intentsForSharedFactory = { EventSignals.AtMessages.intents }
+        
+        // 其他自定义配置
+        
+    }
 
-    // start bot
+    // start bot, 即尝试进行ws连接。
     bot.start()
 
-    // 添加事件1
+    // 指定监听事件类型1 - 会自动decode数据为目标事件所提供的数据。
+    bot.processor(EventSignals.AtMessages.AtMessageCreate) { message ->
+        println(message)
+
+        val api = MessageSendApi(channelId = message.channelId, content = "我在！", msgId = message.id)
+        // 发送回复消息
+        val result = api.request(bot) // 可以注意到，在core模块下，可以直接通过 Api.request(bot) 来提供bot进行api请求。
+        println(result)
+    }
+
+    // 添加事件1 - 不加过滤, 不会自动decode json数据, 但是提供decoder和json data
     bot.processor { decoder ->
         val dispatch: Signal.Dispatch = this
         val jsonElement: JsonElement = dispatch.data
@@ -63,7 +75,7 @@ suspend fun main() {
         // do something..
     }
 
-    // 指定监听事件名称1
+    // 指定监听事件名称1 - 不会自动decode json数据, 但是提供decoder和json data
     bot.processor("AT_MESSAGE_CREATE") { decoder ->
         val dispatch: Signal.Dispatch = this
         val message: TencentMessage =
@@ -72,23 +84,13 @@ suspend fun main() {
         println(message)
     }
 
-    // 指定监听事件名称2
+    // 指定监听事件名称2 - 不会自动decode json数据, 但是提供decoder和json data
     bot.processor(EventSignals.AtMessages.AtMessageCreate.type) { decoder ->
         val dispatch: Signal.Dispatch = this
         val message: TencentMessage =
             decoder.decodeFromJsonElement(EventSignals.AtMessages.AtMessageCreate.decoder, dispatch.data)
 
         println(message)
-    }
-
-    // 指定监听事件类型1
-    bot.processor(EventSignals.AtMessages.AtMessageCreate) { message ->
-        println(message)
-
-        val api = MessageSendApi(channelId = message.channelId, content = "content", msgId = message.id)
-        // 发送回复消息
-        val result = api.request(bot) // 可以注意到，在core模块下，可以直接通过 Api.request(bot) 来提供bot进行api请求。
-        println(result)
     }
 
     // 所有事件都存在于 EventSignals 下的子类型中。
