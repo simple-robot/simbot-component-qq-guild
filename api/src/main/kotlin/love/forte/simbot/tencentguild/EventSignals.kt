@@ -181,6 +181,8 @@ public data class TencentBotInfoImpl(
     @SerialName("bot")
     override val isBot: Boolean = true,
     override val avatar: String = "",
+    @SerialName("union_openid")
     override val unionOpenid: String? = null,
+    @SerialName("union_user_account")
     override val unionUserAccount: String? = null,
 ) : TencentBotInfo

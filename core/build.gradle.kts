@@ -6,9 +6,11 @@ plugins {
 
 }
 
+println(path)
 
 dependencies {
-    api(project(":tencent-guild-api"))
+    // api(project(":tencent-guild-api"))
+    api(project(P.TencentGuild.apiPath))
     api(V.Ktor.Client.Websockets.notation)
 
     // api(V.Kotlin.Reflect.notation)

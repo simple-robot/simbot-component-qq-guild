@@ -100,10 +100,8 @@ private data class AuthorAsMember(
     override val guildId: ID?,
     private val author: TencentUserInfoImpl
 ) : TencentMemberInfo {
-    override val user: TencentUserInfo
-        get() = author
-    override val nick: String
-        get() = ""
+    override val user: TencentUserInfo get() = author
+    override val nick: String get() = ""
     override val roleIds: List<ID> = listOf(TencentRoleInfo.DefaultRole.ALL_MEMBER.code.ID)
     override val joinedAt: Timestamp
         get() = Timestamp.NotSupport

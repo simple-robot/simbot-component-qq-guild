@@ -158,6 +158,7 @@ sealed class V(group: String?, id: String, version: String?) : Dep(group, id, ve
             object Protobuf : Serialization("protobuf")
             object Cbor : Serialization("cbor")
             object Properties : Serialization("properties")
+            object Yaml : V("com.charleskorn.kaml", "kaml", "0.37.0")
         }
 
     }
@@ -220,11 +221,6 @@ sealed class V(group: String?, id: String, version: String?) : Dep(group, id, ve
         object Slf4jImpl : Log4j("slf4j-impl")
     }
 
-    sealed class Logback(id: String) : V("ch.qos.logback", id = "logback-$id", version = VERSION) {
-        companion object {
-            const val VERSION = ""
-        }
-    }
 
 
     /**

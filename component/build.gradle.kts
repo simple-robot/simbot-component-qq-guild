@@ -11,14 +11,19 @@ repositories {
 }
 
 dependencies {
+    // api(project(":tencent-guild-core"))
+    api(project(P.TencentGuild.corePath))
     api(V.Simbot.Core.notation)
-    api(project(":tencent-guild-core"))
     api(V.Ktor.Client.Jvm.Core.notation)
     api(V.Ktor.Client.Jvm.CIO.notation)
     api(V.Ktor.Client.Auth.notation)
     api(V.Ktor.Client.Websockets.notation)
     api(V.Ktor.Client.Serialization.notation)
     api(V.Kotlinx.Serialization.Json.notation)
+    api(V.Kotlinx.Serialization.Properties.notation)
+    api(V.Kotlinx.Serialization.Yaml.notation)
+
+
 
     testImplementation(V.Kotlin.Test.Junit.notation)
     // implementation("love.forte.simple-robot:api:3.0.0-PREVIEW")

@@ -17,6 +17,15 @@ import love.forte.simbot.component.tencentguild.internal.TencentGuildBotManagerI
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.tencentguild.TencentBotConfiguration
 
+private inline fun <reified K, reified V> Map<K, V>.find(vararg keys: K, nullMessage: () -> String): V {
+    for (k in keys) {
+        val v = this[k]
+        if (v != null) return v
+    }
+    throw NullPointerException(nullMessage())
+}
+
+
 /**
  *
  * QQ频道BOT的bot管理器。
@@ -26,10 +35,14 @@ import love.forte.simbot.tencentguild.TencentBotConfiguration
 public abstract class TencentGuildBotManager : BotManager<TencentGuildBot>() {
 
     override suspend fun register(properties: Map<String, String>): TencentGuildBot {
-
-
-
-        TODO()
+        val appId = properties.find("app_id", "appId", "appid", "id") {
+            "Required property 'app_id'"
+        }
+        val appKey = properties.find("app_key", "app_secret", "appKey", "appSecret") {
+            "Required property 'app_key'"
+        }
+        val token = properties["token"] ?: throw NullPointerException("Required property 'token'")
+        return register(appId,  appKey,  token) {}
     }
 
     public abstract suspend fun register(

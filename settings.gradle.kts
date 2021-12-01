@@ -1,9 +1,20 @@
 rootProject.name = "tencent-guild"
+val pathMap = mutableMapOf<String, String>()
 
-include(":api")
-include(":core")
-include(":component")
-project(":api").name = "tencent-guild-api"
-project(":core").name = "tencent-guild-core"
-project(":component").name = "tencent-guild-component"
+includeAndSaveFilePath(":api", "tencent-guild-api")
+includeAndSaveFilePath(":core", "tencent-guild-core")
+includeAndSaveFilePath(":component", "component-tencent-guild")
 
+rootProject.children.forEach {
+
+}
+
+// project(":api").name = "tencent-guild-api"
+
+// project(":core").name = "tencent-guild-core"
+// project(":component").name = "tencent-guild-component"
+
+fun includeAndSaveFilePath(path: String, setName: String) {
+    include(path)
+    project(path).name = setName
+}
