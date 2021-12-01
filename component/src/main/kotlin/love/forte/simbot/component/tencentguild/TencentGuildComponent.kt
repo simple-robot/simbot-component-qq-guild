@@ -12,7 +12,12 @@
 
 package love.forte.simbot.component.tencentguild
 
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
 import love.forte.simbot.*
+import love.forte.simbot.component.tencentguild.message.Ark
+import love.forte.simbot.component.tencentguild.message.MentionChannel
+import love.forte.simbot.message.Message
 
 /**
  *
@@ -26,11 +31,26 @@ public object TencentGuildComponent {
 }
 
 
+public class TencentGuildComponentInformationRegistrar : ComponentInformationRegistrar {
+    override fun informations(): ComponentInformationRegistrar.Result {
+        return ComponentInformationRegistrar.Result.ok(listOf(TencentGuildComponentInformation()))
+    }
+
+}
+
+
 public class TencentGuildComponentInformation : ComponentInformation {
     override val id: ID
         get() = TencentGuildComponent.COMPONENT_ID
     override val name: String
         get() = TencentGuildComponent.COMPONENT_ID.toString()
+
+    override val messageSerializersModule: SerializersModule = SerializersModule {
+        polymorphic(Message.Element::class) {
+            subclass(Ark::class, Ark.serializer())
+            subclass(MentionChannel::class, MentionChannel.serializer())
+        }
+    }
 
     override fun configAttributes(attributes: MutableAttributeMap) {
         // nothing now.

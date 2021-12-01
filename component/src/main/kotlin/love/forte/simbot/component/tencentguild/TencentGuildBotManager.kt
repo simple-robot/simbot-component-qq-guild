@@ -30,6 +30,8 @@ private inline fun <reified K, reified V> Map<K, V>.find(vararg keys: K, nullMes
  *
  * QQ频道BOT的bot管理器。
  *
+ * [TencentGuildBotManager] 不允许注册相同 `appId` 的bot。
+ *
  * @author ForteScarlet
  */
 public abstract class TencentGuildBotManager : BotManager<TencentGuildBot>() {
@@ -42,6 +44,8 @@ public abstract class TencentGuildBotManager : BotManager<TencentGuildBot>() {
             "Required property 'app_key'"
         }
         val token = properties["token"] ?: throw NullPointerException("Required property 'token'")
+
+        // no config
         return register(appId,  appKey,  token) {}
     }
 
@@ -49,7 +53,7 @@ public abstract class TencentGuildBotManager : BotManager<TencentGuildBot>() {
         appId: String,
         appKey: String,
         token: String,
-        block: TencentBotConfiguration.() -> Unit
+        block: TencentBotConfiguration.() -> Unit = {}
     ): TencentGuildBot
 
 

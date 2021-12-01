@@ -10,4 +10,4 @@
 #   有关许可证下的权限和限制的具体语言，请参见许可证。
 #
 
-love.forte.simbot.component.tencentguild.TencentGuildComponentInformation
+love.forte.simbot.component.tencentguild.TencentGuildComponentInformationRegistrar

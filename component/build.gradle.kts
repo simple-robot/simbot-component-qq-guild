@@ -26,6 +26,9 @@ dependencies {
 
 
     testImplementation(V.Kotlin.Test.Junit.notation)
+    testImplementation(V.Log4j.Api.notation)
+    testImplementation(V.Log4j.Core.notation)
+    testImplementation(V.Log4j.Slf4jImpl.notation)
     // implementation("love.forte.simple-robot:api:3.0.0-PREVIEW")
 }
 

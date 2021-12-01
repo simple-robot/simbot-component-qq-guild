@@ -1,13 +1,14 @@
 import com.charleskorn.kaml.Yaml
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.plus
-import kotlinx.serialization.modules.polymorphic
-import kotlinx.serialization.modules.subclass
+import love.forte.simbot.Components
 import love.forte.simbot.ID
 import love.forte.simbot.component.tencentguild.message.Ark
 import love.forte.simbot.component.tencentguild.message.MentionChannel
-import love.forte.simbot.message.*
+import love.forte.simbot.message.At
+import love.forte.simbot.message.Messages
+import love.forte.simbot.message.Text
+import love.forte.simbot.message.plus
 import love.forte.simbot.tencentguild.buildArk
 import kotlin.test.Test
 
@@ -16,13 +17,10 @@ import kotlin.test.Test
  * @author ForteScarlet
  */
 class MessageSerializerTest {
-
-    val module = Messages.serializersModule + SerializersModule {
-        polymorphic(Message.Element::class) {
-            subclass(MentionChannel.serializer())
-            subclass(Ark.serializer())
-        }
+    init {
+        Components
     }
+    val module = Messages.serializersModule
 
     val json get() = Json {
         isLenient = true

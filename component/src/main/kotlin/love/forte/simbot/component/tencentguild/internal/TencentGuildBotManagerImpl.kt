@@ -12,14 +12,20 @@
 
 package love.forte.simbot.component.tencentguild.internal
 
+import kotlinx.coroutines.Job
 import love.forte.simbot.Component
 import love.forte.simbot.ID
+import love.forte.simbot.LoggerFactory
 import love.forte.simbot.component.tencentguild.TencentGuildBot
 import love.forte.simbot.component.tencentguild.TencentGuildBotManager
 import love.forte.simbot.component.tencentguild.TencentGuildBotManagerConfiguration
 import love.forte.simbot.component.tencentguild.TencentGuildComponent
 import love.forte.simbot.tencentguild.TencentBotConfiguration
 import love.forte.simbot.tencentguild.tencentBot
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.concurrent.read
+import kotlin.concurrent.write
 
 /**
  *
@@ -28,17 +34,34 @@ import love.forte.simbot.tencentguild.tencentBot
 internal class TencentGuildBotManagerImpl(
     override val configuration: TencentGuildBotManagerConfiguration
 ) : TencentGuildBotManager() {
+    companion object {
+        private val logger = LoggerFactory.getLogger(TencentGuildBotManager::class)
+    }
+    private val isCanceled = AtomicBoolean(false)
+    private val lock = ReentrantReadWriteLock()
+    private val eventProcessor = configuration.eventProcessor
+
+    private var botMap = mutableMapOf<String, TencentGuildBotImpl>()
 
     override val component: Component
         get() = TencentGuildComponent.component
 
 
     override suspend fun doCancel() {
-        TODO("Not yet implemented")
+        lock.write {
+            isCanceled.compareAndSet(false, true)
+            for (bot in botMap.values.toList()) {
+                bot.cancel()
+            }
+        }
     }
 
     override fun get(id: ID): TencentGuildBot? {
-        TODO("Not yet implemented")
+        lock.read {
+            if (isCanceled.get()) throw IllegalStateException("This manager has already canceled.")
+
+            return botMap[id.toString()]
+        }
     }
 
 
@@ -48,7 +71,26 @@ internal class TencentGuildBotManagerImpl(
         token: String,
         block: TencentBotConfiguration.() -> Unit
     ): TencentGuildBot {
-        val sourceBot = tencentBot(appId, appKey, token, block)
-        return TencentGuildBotImpl(sourceBot, this, configuration.eventProcessor)
+        val configure = configuration.botConfigure
+
+        lock.write {
+            val sourceBot = tencentBot(appId, appKey, token) {
+                configure(appId, appKey, token)
+                block()
+            }
+            // check botInfo
+            logger.info("Registered bot info: {}", sourceBot.botInfo)
+            val guildBot = TencentGuildBotImpl(sourceBot, this, eventProcessor)
+            botMap.compute(appId) { key, old ->
+                if (old != null) throw IllegalStateException("Bot appId '$key' already registered.")
+                guildBot.apply {
+                    coroutineContext[Job]!!.invokeOnCompletion {
+                        // remove self on completion
+                        botMap.remove(key)
+                    }
+                }
+            }
+            return guildBot
+        }
     }
 }

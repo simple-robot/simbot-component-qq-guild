@@ -62,7 +62,7 @@ internal class TencentBotImpl(
 
     val logger = LoggerFactory.getLogger("love.forte.simbot.tencentguild.bot.${ticket.appId}")
 
-    private val parentJob: Job
+    // private val parentJob: Job
     override val coroutineContext: CoroutineContext
     private val httpClient: HttpClient get() = configuration.httpClient
     private val url: Url get() = configuration.serverUrl
@@ -71,9 +71,11 @@ internal class TencentBotImpl(
     private val processorQueue: ConcurrentLinkedQueue<suspend Signal.Dispatch.(Json) -> Unit> = ConcurrentLinkedQueue()
 
     init {
-        parentJob = SupervisorJob(configuration.parentJob)
+        val parentJob = SupervisorJob(configuration.parentJob)
         coroutineContext = configuration.coroutineContext + parentJob + CoroutineName("TencentBot.${ticket.appId}")
     }
+
+    private val parentJob: Job get() = coroutineContext[Job]!!
 
     override fun processor(processor: suspend Signal.Dispatch.(decoder: Json) -> Unit) {
         processorQueue.add(processor)
