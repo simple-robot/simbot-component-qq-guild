@@ -385,7 +385,7 @@ internal class TencentBotImpl(
                 try {
                     p(dispatch, decoder)
                 } catch (e: Exception) {
-                    e.printStackTrace() // TODO log
+                    logger.error("processing failed.", e)
                 }
             }
             // 留下最大的值。
