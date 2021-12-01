@@ -10,9 +10,6 @@ plugins {
 dependencies {
     api(project(":tencent-guild-api"))
     api(V.Ktor.Client.Websockets.notation)
-    api(V.Ktor.Client.Jvm.Core.notation)
-    api(V.Ktor.Client.Jvm.CIO.notation)
-    // api(V.Ktor.Client.Jvm.OkHttp.notation)
 
     // api(V.Kotlin.Reflect.notation)
     // api(V.Ktor.Client.Jvm.Core.notation)

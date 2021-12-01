@@ -27,6 +27,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.max
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.ExperimentalTime
 
@@ -112,22 +114,23 @@ internal class TencentBotImpl(
 
         val clientList = shardIter.asFlow()
             .map { shard ->
-                logger.info("Ready for shard $shard in $totalShard")
+                logger.debug("Ready for shard $shard in $totalShard")
                 Shard(shard, totalShard)
             }
             .buffer(totalShard)
             .map { shard ->
-                logger.info("Create client for shard $shard")
+                logger.debug("Create client for shard $shard")
                 createClient(shard, gatewayInfo).also { client: ClientImpl ->
                     val time = client.nextDelay
-                    logger.info("Client {} for shard {}", client, shard)
-                    logger.info("delay wait {} for next......", time)
-                    delay(time)
+                    logger.debug("Client {} for shard {}", client, shard)
+                    if (time.inWholeMilliseconds > 0) {
+                        logger.debug("delay wait {} for next......", time)
+                        delay(time)
+                    }
 
 
                 }
-            }
-            .toList()
+            }.toList()
 
 
         this.clients = clientList
@@ -159,7 +162,7 @@ internal class TencentBotImpl(
         private val logger: Logger
     ) : TencentBot.Client {
         @OptIn(ExperimentalTime::class)
-        val nextDelay = 5.seconds
+        val nextDelay: Duration = if (shard.total - shard.value == 1) 0.milliseconds else 5.seconds
 
         override val bot: TencentBot get() = this@TencentBotImpl
         override val seq: Long get() = _seq.get()
@@ -182,7 +185,7 @@ internal class TencentBotImpl(
          */
         private suspend fun resume(closeReason: CloseReason?) {
             if (closeReason == null) {
-                logger.warn("Client was closed, but no reason. just stop this client.")
+                logger.warn("Client $this was closed, but no reason. stop this client without any action, including resuming.")
                 return
             }
 
@@ -254,8 +257,7 @@ internal class TencentBotImpl(
             // receive Hello
             val hello = session.waitHello()
 
-            logger.info("Received Hello: {}", hello)
-            println("Received Hello: $hello")
+            logger.debug("Received Hello: {}", hello)
             // 鉴权
             // see https://bot.q.qq.com/wiki/develop/api/gateway/reference.html#%E9%89%B4%E6%9D%83ß
             session.send(decoder.encodeToString(Signal.Identify.serializer(), identify))
@@ -264,7 +266,7 @@ internal class TencentBotImpl(
             var readyEventData: EventSignals.Other.ReadyEvent.Data? = null
             while (session.isActive) {
                 val ready = waitForReady(decoder) { session.incoming.receive() }
-                println("ready: $ready")
+                logger.debug("ready: $ready")
                 if (ready != null) {
                     readyEventData = ready
                     break
