@@ -47,17 +47,17 @@ public class TencentBotConfiguration {
     /**
      * 分片总数。如果为0，则会通过 [love.forte.simbot.tencentguild.api.GatewayWithShard] 来决定分片结果。
      */
-    public var totalShared: Int = 0
+    public var totalShard: Int = 0
 
 
     /**
-     * 得到所需的所有分片。函数参数为目前全部的shared（如果 [totalShared] > 0, 那么此值为 [totalShared], 否则为通过 [love.forte.simbot.tencentguild.api.GatewayApis.Shared] 得到的建议分片数。）
+     * 得到所需的所有分片。函数参数为目前全部的shared（如果 [totalShard] > 0, 那么此值为 [totalShard], 否则为通过 [love.forte.simbot.tencentguild.api.GatewayApis.Shared] 得到的建议分片数。）
      *
-     * 你可以通过 [sharedIterFactory] 来提供当前bot所需要连接的所有分片，且会通过 [intentsForSharedFactory] 来决定每一个分片对应的 intent 值。
+     * 你可以通过 [shardIterFactory] 来提供当前bot所需要连接的所有分片，且会通过 [intentsForShardFactory] 来决定每一个分片对应的 intent 值。
      *
-     * 如果 [sharedIterFactory] 为 null，则代表使用 `0 until [totalShared]`，即当前bot连接全部分片。
+     * 如果 [shardIterFactory] 为 null，则代表使用 `0 until [totalShard]`，即当前bot连接全部分片。
      */
-    public var sharedIterFactory: (Int) -> IntIterator = { (0 until it).iterator() }
+    public var shardIterFactory: (Int) -> IntIterator = { (0 until it).iterator() }
 
     /**
      * 根据一个分片信息，得到这个分片下需要监听的事件类型。
@@ -66,19 +66,19 @@ public class TencentBotConfiguration {
      *
      * @see Intents
      */
-    public var intentsForSharedFactory: (Int) -> Intents = {
+    public var intentsForShardFactory: (Int) -> Intents = {
         EventSignals.allIntents
     }
 
     /**
      * 根据一个分片信息，得到这个分片下需要监听的事件类型。
      *
-     * 相对于直接配置 [intentsForSharedFactory], 此方法的配置中，其返回值是 [Int] 而不是 [Intents]。
+     * 相对于直接配置 [intentsForShardFactory], 此方法的配置中，其返回值是 [Int] 而不是 [Intents]。
      *
-     * @see intentsForSharedFactory
+     * @see intentsForShardFactory
      */
-    public inline fun intentsForSharedFactoryAsInt(crossinline factory: (Int) -> Int) {
-        intentsForSharedFactory = { s -> Intents(factory(s)) }
+    public inline fun intentsForShardFactoryAsInt(crossinline factory: (Int) -> Int) {
+        intentsForShardFactory = { s -> Intents(factory(s)) }
     }
 
     public var clientPropertiesFactory: (Int) -> Signal.Identify.Data.Prop = {

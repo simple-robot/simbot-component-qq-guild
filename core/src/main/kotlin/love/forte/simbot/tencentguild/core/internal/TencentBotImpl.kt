@@ -76,13 +76,13 @@ internal class TencentBotImpl(
 
 
         val requestToken = ticket.botToken
-        val sharedIterFactory = configuration.sharedIterFactory
+        val sharedIterFactory = configuration.shardIterFactory
         lateinit var sharedIter: IntIterator
 
         val gatewayInfo: GatewayInfo
 
         // gateway info.
-        var totalShared = configuration.totalShared
+        var totalShared = configuration.totalShard
         if (totalShared > 0) {
             gatewayInfo = GatewayApis.Normal.request(
                 client = httpClient,
@@ -124,7 +124,7 @@ internal class TencentBotImpl(
         parentJob.join()
     }
 
-    override val totalShared: Int = configuration.totalShared
+    override val totalShared: Int = configuration.totalShard
 
     override lateinit var clients: List<ClientImpl>
 
@@ -206,7 +206,7 @@ internal class TencentBotImpl(
         val requestToken = ticket.botToken
 
         val logger = LoggerFactory.getLogger("love.forte.simbot.tencentguild.bot.${ticket.appId}.$shard")
-        val intents = configuration.intentsForSharedFactory(shard.value)
+        val intents = configuration.intentsForShardFactory(shard.value)
         val prop = configuration.clientPropertiesFactory(shard.value)
 
         val identify = Signal.Identify(
