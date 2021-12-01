@@ -27,6 +27,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.max
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.ExperimentalTime
 
 
 internal fun checkResumeCode(code: Short): Boolean {
@@ -50,9 +52,13 @@ internal class TencentBotImpl(
 ) : TencentBot {
 
     // verify bot with bot info api.
-    override val botInfo: TencentBotInfo = runBlocking {
-         GetBotInfoApi.request(this@TencentBotImpl)
+    override val botInfo: TencentBotInfo by lazy {
+        runBlocking {
+            GetBotInfoApi.request(this@TencentBotImpl)
+        }
     }
+
+    val logger = LoggerFactory.getLogger("love.forte.simbot.tencentguild.bot.${ticket.appId}")
 
     private val parentJob: Job
     override val coroutineContext: CoroutineContext
@@ -71,19 +77,20 @@ internal class TencentBotImpl(
         processorQueue.add(processor)
     }
 
+    @OptIn(ExperimentalTime::class)
     override suspend fun start(): Boolean {
         if (::clients.isInitialized) return false
 
 
         val requestToken = ticket.botToken
-        val sharedIterFactory = configuration.shardIterFactory
-        lateinit var sharedIter: IntIterator
+        val shardIterFactory = configuration.shardIterFactory
+        lateinit var shardIter: IntIterator
 
         val gatewayInfo: GatewayInfo
 
         // gateway info.
-        var totalShared = configuration.totalShard
-        if (totalShared > 0) {
+        var totalShard = configuration.totalShard
+        if (totalShard > 0) {
             gatewayInfo = GatewayApis.Normal.request(
                 client = httpClient,
                 server = url,
@@ -97,15 +104,29 @@ internal class TencentBotImpl(
                 token = requestToken,
                 decoder = decoder
             )
-            totalShared = info.shards
+            totalShard = info.shards
             gatewayInfo = info
         }
 
-        sharedIter = sharedIterFactory(totalShared)
+        shardIter = shardIterFactory(totalShard)
 
-        val clientList = sharedIter.asFlow()
-            .map { shared -> Shard(shared, totalShared) }
-            .map { shared -> createClient(shared, gatewayInfo) }
+        val clientList = shardIter.asFlow()
+            .map { shard ->
+                logger.info("Ready for shard $shard in $totalShard")
+                Shard(shard, totalShard)
+            }
+            .buffer(totalShard)
+            .map { shard ->
+                logger.info("Create client for shard $shard")
+                createClient(shard, gatewayInfo).also { client: ClientImpl ->
+                    val time = client.nextDelay
+                    logger.info("Client {} for shard {}", client, shard)
+                    logger.info("delay wait {} for next......", time)
+                    delay(time)
+
+
+                }
+            }
             .toList()
 
 
@@ -130,13 +151,16 @@ internal class TencentBotImpl(
 
     internal inner class ClientImpl(
         override val shard: Shard,
-        private val sessionData: EventSignals.Other.ReadyEvent.Data,
+        val sessionData: EventSignals.Other.ReadyEvent.Data,
         private var heartbeatJob: Job,
         private var processingJob: Job,
         private val _seq: AtomicLong,
         private var session: DefaultClientWebSocketSession,
         private val logger: Logger
     ) : TencentBot.Client {
+        @OptIn(ExperimentalTime::class)
+        val nextDelay = 5.seconds
+
         override val bot: TencentBot get() = this@TencentBotImpl
         override val seq: Long get() = _seq.get()
         override val isActive: Boolean get() = session.isActive
@@ -148,6 +172,9 @@ internal class TencentBotImpl(
             resume(closed)
         }
 
+        override fun toString(): String {
+            return "TencentBot.Client(shard=$shard, sessionData=$sessionData)"
+        }
 
         /**
          * 重新连接。
@@ -222,35 +249,42 @@ internal class TencentBotImpl(
 
         val session = httpClient.ws { gatewayInfo }
 
-        // receive Hello
-        val hello = session.waitHello()
+        kotlin.runCatching {
 
-        logger.info("Received Hello: {}", hello)
-        println("Received Hello: $hello")
-        // 鉴权
-        // see https://bot.q.qq.com/wiki/develop/api/gateway/reference.html#%E9%89%B4%E6%9D%83ß
-        session.send(decoder.encodeToString(Signal.Identify.serializer(), identify))
+            // receive Hello
+            val hello = session.waitHello()
 
-        // wait for Ready event
-        var readyEventData: EventSignals.Other.ReadyEvent.Data? = null
-        while (session.isActive) {
-            println(session.isActive)
-            val ready = waitForReady(decoder) { session.incoming.receive() }
-            println("ready: $ready")
-            if (ready != null) {
-                readyEventData = ready
-                break
+            logger.info("Received Hello: {}", hello)
+            println("Received Hello: $hello")
+            // 鉴权
+            // see https://bot.q.qq.com/wiki/develop/api/gateway/reference.html#%E9%89%B4%E6%9D%83ß
+            session.send(decoder.encodeToString(Signal.Identify.serializer(), identify))
+
+            // wait for Ready event
+            var readyEventData: EventSignals.Other.ReadyEvent.Data? = null
+            while (session.isActive) {
+                val ready = waitForReady(decoder) { session.incoming.receive() }
+                println("ready: $ready")
+                if (ready != null) {
+                    readyEventData = ready
+                    break
+                }
             }
-        }
-        if (readyEventData == null) {
-            println("canceled.")
-            session.closeReason.await().err()
-        }
-        logger.info("Ready Event data: {}", readyEventData)
+            if (readyEventData == null) {
+                println("canceled.")
+                session.closeReason.await().err()
+            }
+            logger.info("Ready Event data: {}", readyEventData)
 
-        val heartbeatJob = session.heartbeatJob(hello, seq)
+            val heartbeatJob = session.heartbeatJob(hello, seq)
 
-        return SessionInfo(session, seq, heartbeatJob, logger, readyEventData)
+            return SessionInfo(session, seq, heartbeatJob, logger, readyEventData)
+        }.getOrElse {
+            // logger.error(it.localizedMessage, it)
+            session.closeReason.await().err(it)
+
+        }
+
     }
 
     private suspend fun resumeSession(
@@ -398,7 +432,6 @@ internal class TencentBotImpl(
     }
 
 }
-
 
 
 private data class SessionInfo(

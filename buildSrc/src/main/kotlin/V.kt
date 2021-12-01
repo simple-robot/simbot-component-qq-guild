@@ -165,7 +165,9 @@ sealed class V(group: String?, id: String, version: String?) : Dep(group, id, ve
     // Ktor相关
     sealed class Ktor(id: String) : V(group = "io.ktor", id = "ktor-$id", VERSION) {
         companion object {
-            const val VERSION = "1.6.6"
+            // NoSuchMethodError: java.nio.ByteBuffer.limit(I)Ljava/nio/ByteBuffer;
+            // https://youtrack.jetbrains.com/issue/KTOR-3358
+            const val VERSION = "1.6.4" // 1.6.6
         }
 
         // server
@@ -215,6 +217,13 @@ sealed class V(group: String?, id: String, version: String?) : Dep(group, id, ve
         }
         object Api : Log4j("api")
         object Core : Log4j("core")
+        object Slf4jImpl : Log4j("slf4j-impl")
+    }
+
+    sealed class Logback(id: String) : V("ch.qos.logback", id = "logback-$id", version = VERSION) {
+        companion object {
+            const val VERSION = ""
+        }
     }
 
 

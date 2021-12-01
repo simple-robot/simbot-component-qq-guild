@@ -49,7 +49,7 @@ public data class ErrInfo(val code: Int, val message: String)
 
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun CloseReason?.err(): Nothing {
+public inline fun CloseReason?.err(e: Throwable? = null): Nothing {
     if (this == null) {
         throw TencentApiException("No reason")
     }

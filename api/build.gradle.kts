@@ -16,7 +16,7 @@ dependencies {
 
     api(V.Ktor.Client.Jvm.Core.notation)
     api(V.Ktor.Client.Jvm.CIO.notation)
-    api(V.Ktor.Client.Auth.notation)
+    // api(V.Ktor.Client.Auth.notation)
     // api(V.Ktor.Client.Websockets.notation)
     api(V.Ktor.Client.Serialization.notation)
 
@@ -37,7 +37,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 }
 
 tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
-    outputDirectory.set(File(rootProject.projectDir, "api-doc/core"))
+    outputDirectory.set(File(rootProject.projectDir, "api-doc/api"))
 }
 
 kotlin {
