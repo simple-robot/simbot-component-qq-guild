@@ -46,9 +46,6 @@ private val botManager = tencentGuildBotManager {
     }
 }
 
-private val appId = ""
-private val appKey = ""
-private val token = ""
 
 suspend fun main() {
     listenerManager.listen(eventKey = ChannelMessageEvent) { context, event ->

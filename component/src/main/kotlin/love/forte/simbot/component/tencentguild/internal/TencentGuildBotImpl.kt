@@ -80,12 +80,10 @@ internal class TencentGuildBotImpl(
             // event processor
             logger.trace("EventSignals.events[{}]: {}", type, EventSignals.events[type])
             EventSignals.events[this.type]?.let {
-                println(eventSignalParsers[it])
                 logger.trace("eventSignalParsers[{}]: {}", it, eventSignalParsers[it])
 
                 eventSignalParsers[it]?.let { parser ->
 
-                    println(eventProcessor.isProcessable(parser.key))
                     logger.trace("eventProcessor.isProcessable({}): {}", parser.key, eventProcessor.isProcessable(parser.key))
                     eventProcessor.pushIfProcessable(parser.key) { parser(
                         bot = this@TencentGuildBotImpl,

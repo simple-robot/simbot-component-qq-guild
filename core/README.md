@@ -6,7 +6,7 @@ core模块是针对bot事件监听的简易实现，是一个半 **底层** 库�
 
 
 ## 使用
-本库，目前仅基于 `simple-robot 3.0.0-preview.0.1` 版本api，从版本可以看出来，simbot 3.x的版本仍然处于极早期的预览阶段，
+本库，目前仅基于 `simple-robot 3.0.0-preview.x.x` 版本api，从版本可以看出来，simbot 3.x的版本仍然处于极早期的预览阶段，
 因此当前模块也相应的仅仅只是一个"预览"版本。
 
 本库将会 `simple-robot` 3.x发布时（或相对较其早的时刻）发布相应的正式版本。主要是因为 `simple-robot 3.x` 仍处于设计开发阶段，可能会出现一些接口变动。
@@ -23,7 +23,7 @@ core模块是针对bot事件监听的简易实现，是一个半 **底层** 库�
 <dependency>
     <groupId>love.forte.simple-robot</groupId>
     <artifactId>tencent-guild-core</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
 </dependency>
 ```
 

@@ -16,27 +16,27 @@ public data class TencentMessageForSending @JvmOverloads constructor(
     /**
      * 消息内容，文本内容，支持内嵌格式
      */
-    public val content: String? = null,
+    public var content: String? = null,
 
     /**
      * MessageEmbed	embed 消息，一种特殊的 ark
      */
-    public val embed: TencentMessage.Embed? = null,
+    public var embed: TencentMessage.Embed? = null,
 
     /**
      * ark消息对象	ark 消息
      */
-    public val ark: TencentMessage.Ark? = null,
+    public var ark: TencentMessage.Ark? = null,
 
     /**
      * 图片url地址
      */
-    public val image: String? = null,
+    public var image: String? = null,
 
     /**
      * 要回复的消息id(Message.id), 在 CREATE_MESSAGE 事件中获取。带了 msg_id 视为被动回复消息，否则视为主动推送消息
      */
     @SerialName("msg_id")
     @Serializable(ID.AsCharSequenceIDSerializer::class)
-    public val msgId: ID? = null,
+    public var msgId: ID? = null,
 )

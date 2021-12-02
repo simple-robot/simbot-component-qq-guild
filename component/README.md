@@ -27,7 +27,7 @@
 <dependency>
     <groupId>love.forte.simple-robot</groupId>
     <artifactId>component-tencent-guild</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
 </dependency>
 ```
 
@@ -128,8 +128,19 @@ val listener = coreListener(eventKey = TcgChannelAtMessageEvent) { context: Even
     // Ark(tencent guild 专属)
     // AttachmentMessage(tencent guild 专属)
 
-    // 消息：@事件发送者 你好啊
-    channel.send(At(event.id) + Text { "你好啊！" })
+    // 🌟 消息：@事件发送者 你好啊
+    // channel.send(At(event.id) + Text { "你好啊！" }) // err
+    
+    // ⚠️ 注意！目前来看，频道bot不一定能够允许直接发送消息，因此目前有两种方案：
+    // 1. tencent-guild 模块会提供一个特殊的Message用于拼接：ReplyTo(xxx.ID)
+    // 比如：At(123.ID) + Text { "233" } + ReplyTo(xxx.ID)
+    // 但是这种情况仅限于你知道message的ID是什么
+    
+    // 2. event.reply
+    event.replyIfSupport(At(event.id) + Text { "你好啊！" })
+    
+    // 如果你监听的是 TcgChannelAtMessageEvent，那么可以直接使用 event.reply
+    event.reply(Text{ "HELLO!" })
 
     null // 事件返回值，爱是啥是啥
 }

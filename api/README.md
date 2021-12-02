@@ -18,7 +18,7 @@ api模块是对官方提供的所有 api 的 **底层** 级别封装，不提供
 <dependency>
     <groupId>love.forte.simple-robot</groupId>
     <artifactId>tencent-guild-api</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
 </dependency>
 ```
 

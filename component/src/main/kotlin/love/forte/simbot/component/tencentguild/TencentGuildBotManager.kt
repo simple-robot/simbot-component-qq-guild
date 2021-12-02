@@ -14,6 +14,7 @@ package love.forte.simbot.component.tencentguild
 
 import love.forte.simbot.BotManager
 import love.forte.simbot.component.tencentguild.internal.TencentGuildBotManagerImpl
+import love.forte.simbot.core.event.coreEventManager
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.tencentguild.TencentBotConfiguration
 
@@ -46,7 +47,7 @@ public abstract class TencentGuildBotManager : BotManager<TencentGuildBot>() {
         val token = properties["token"] ?: throw NullPointerException("Required property 'token'")
 
         // no config
-        return register(appId,  appKey,  token) {}
+        return register(appId, appKey, token) {}
     }
 
     public abstract fun register(
@@ -76,8 +77,11 @@ internal annotation class TencentGuildBMDsl
  * 得到一个BotManager.
  */
 @TencentGuildBMDsl
-public fun tencentGuildBotManager(block: TencentGuildBotManagerConfiguration.() -> Unit): TencentGuildBotManager {
-    return TencentGuildBotManager.newInstance(TencentGuildBotManagerConfiguration().also(block))
+public fun tencentGuildBotManager(
+    processor: EventProcessor = coreEventManager { },
+    block: TencentGuildBotManagerConfiguration.() -> Unit = { }
+): TencentGuildBotManager {
+    return TencentGuildBotManager.newInstance(TencentGuildBotManagerConfiguration(processor).also(block))
 }
 
 
@@ -85,11 +89,11 @@ public fun tencentGuildBotManager(block: TencentGuildBotManagerConfiguration.() 
  * [TencentGuildBotManager] 使用的配置类。
  */
 @Suppress("MemberVisibilityCanBePrivate")
-public class TencentGuildBotManagerConfiguration {
-    /**
+public class TencentGuildBotManagerConfiguration(public var eventProcessor: EventProcessor) {
+
+    /*
      * 提供一个事件处理器。
      */
-    public lateinit var eventProcessor: EventProcessor
 
     /**
      * 从此处对所有bot的配置信息进行统一处理。
