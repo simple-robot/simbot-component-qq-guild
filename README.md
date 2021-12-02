@@ -1,7 +1,7 @@
 # Simply-Robot for tencent-guild
 
 
-这是 [simply-robot](https://github.com/ForteScarlet/simpler-robot) (**注意，是v3.0.0-preview分支**) 下的子项目，本库提供对 [腾讯频道机器人](https://bot.q.qq.com/wiki/develop/api/) 中`API`内容的完整实现以及事件相关的信令实现，但 **不提供** 直接的BOT事件监听与交互。
+这是 [simply-robot](https://github.com/ForteScarlet/simpler-robot/tree/dev-v3.0.0-preview) (**注意，是dev-v3.0.0-preview分支**) 下的子项目，本库提供对 [腾讯频道机器人](https://bot.q.qq.com/wiki/develop/api/) 中`API`内容的完整实现以及事件相关的信令实现，但 **不提供** 直接的BOT事件监听与交互。
 本库中的api响应数据会一定程度实现 `simple-robot` 的`v3.x`api模块接口。
 
 <br>
@@ -17,6 +17,13 @@
 <br>
 
 *以及，这个README看上去挺乱的，等一切安好之后会再考虑优化一下。*
+
+## 前言
+
+目前无论是当前仓库还是 `simple-robot v3.x` 都处于紧张的早中期建设阶段，在正式版发布之前必然存在很多不可预知的问题，并且开发进度无法清晰预估，毕竟一天一共就24个小时，而我们团队的精力并非无限。
+
+如果你想要协助我们对当前仓库或者 [simply-robot](https://github.com/ForteScarlet/simpler-robot/tree/dev-v3.0.0-preview) 的建设，欢迎通过issue提出宝贵意见或者通过pr参与到建设当中，十分感谢。
+
 
 ## 模块简介
 
@@ -60,5 +67,6 @@ core模块还针对bot调用api的情况提供了较为友善的扩展函数，�
 而 [component模块](component) 便是这样的标准实现下的组件之一。`component` 模块实现simple-robot的标准事件并可以使用`simple-robot`提供的诸多特性（例如统一事件调度）
 
 
+<hr>
 
-对于整个频道bot的应用级的友好框架实现，请期待基于 [simple-robot](https://github.com/ForteScarlet/simpler-robot) 3.x版本的 [component](component) 模块更新情况。
+**详情前往 >>>** [**component模块**](component)
