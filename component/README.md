@@ -204,7 +204,7 @@ val botManager = tencentGuildBotManager {
 }
 
 // 事件监听
-eventManager.listen(eventType = ChannelMessageEvent) { context, event ->
+eventManager.listen(eventKey = ChannelMessageEvent) { context, event ->
     // do
     null
 }
