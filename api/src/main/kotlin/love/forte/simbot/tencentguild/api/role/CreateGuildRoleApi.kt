@@ -2,6 +2,7 @@ package love.forte.simbot.tencentguild.api.role
 
 import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.CharSequenceID
@@ -9,6 +10,7 @@ import love.forte.simbot.ID
 import love.forte.simbot.tencentguild.TencentRoleInfo
 import love.forte.simbot.tencentguild.api.RouteInfoBuilder
 import love.forte.simbot.tencentguild.api.TencentApi
+import love.forte.simbot.tencentguild.internal.TencentRoleInfoImpl
 
 /**
  *
@@ -33,7 +35,7 @@ public class CreateGuildRoleApi internal constructor(
     private val path = listOf("guilds", guildId.toString(), "roles")
 
 
-    override val resultDeserializer: DeserializationStrategy<out GuildRoleCreated> get() = serializer
+    override val resultDeserializer: DeserializationStrategy<out GuildRoleCreated> get() = GuildRoleCreated.serializer
     override val method: HttpMethod get() = HttpMethod.Post
 
     override fun route(builder: RouteInfoBuilder) {
@@ -43,7 +45,6 @@ public class CreateGuildRoleApi internal constructor(
     override val body: Any get() = _body
 
     public companion object {
-        private val serializer = GuildRoleCreated.serializer()
         private val defBody = Body(GuildRoleFilter.default, GuildRoleInfo.default)
     }
 
@@ -56,9 +57,25 @@ public class CreateGuildRoleApi internal constructor(
 
 }
 
-@Serializable
-public data class GuildRoleCreated(
-    @SerialName("role_id")
-    public val roleId: CharSequenceID,
+/**
+ * [CreateGuildRoleApi] 创建成功后的返回值
+ */
+public interface GuildRoleCreated {
+    public val roleId: CharSequenceID
     public val role: TencentRoleInfo
-)
+    public companion object {
+        public val serializer: KSerializer<out GuildRoleCreated> = GuildRoleCreatedImpl.serializer()
+    }
+}
+
+
+
+
+@Serializable
+internal data class GuildRoleCreatedImpl(
+    @SerialName("role_id")
+    override val roleId: CharSequenceID,
+    override val role: TencentRoleInfoImpl
+) : GuildRoleCreated
+
+

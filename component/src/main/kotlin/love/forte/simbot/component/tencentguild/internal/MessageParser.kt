@@ -12,11 +12,19 @@ import love.forte.simbot.tencentguild.api.message.TencentMessageForSending
 /**
  * 通过消息体和message builder, 以责任链的形式构建消息体。
  */
-public fun interface MessageParser : (Int, Message.Element<*>, Messages?, TencentMessageForSendingBuilder) -> Unit {
-    override fun invoke(index: Int, element: Message.Element<*>, messages: Messages?, builder: TencentMessageForSendingBuilder)
+public fun interface MessageParser {
+    /**
+     * 将 [Message.Element] 拼接到 [TencentMessageForSendingBuilder] 中。
+     *
+     * @param index 当前消息链中的数据.
+     */
+    public operator fun invoke(index: Int, element: Message.Element<*>, messages: Messages?, builder: TencentMessageForSendingBuilder)
 }
 
 
+/**
+ * 将一个 [Message.Element] 拼接到 [TencentMessageForSendingBuilder] 中，或者将一个 [TencentMessage] 转化为 [Message].
+ */
 public object MessageParsers {
     @Experimental
     @Suppress("NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING")
