@@ -6,11 +6,12 @@ import kotlinx.coroutines.flow.FlowCollector
 public suspend inline fun <reified R> FlowCollector<R>.flowForLimiter(
     skip: Int,
     limit: Int,
+    maxIfZero: Boolean = true,
     listGetter: () -> List<R>,
 ) {
 
     var remainingSkip = skip
-    var remainingAmount = limit
+    var remainingAmount = if (maxIfZero && limit <= 0) Int.MAX_VALUE else limit
 
     while (remainingAmount > 0) {
         val list = listGetter()
@@ -59,10 +60,11 @@ public suspend inline fun <reified R> FlowCollector<R>.flowForLimiter(
 public suspend inline fun <reified R> SequenceScope<R>.sequenceForLimiter(
     skip: Int,
     limit: Int,
+    maxIfZero: Boolean = true,
     listGetter: () -> List<R>,
 ) {
     var remainingSkip = skip
-    var remainingAmount = limit
+    var remainingAmount = if (maxIfZero && limit <= 0) Int.MAX_VALUE else limit
 
     while (remainingAmount > 0) {
         val list = listGetter()
@@ -106,3 +108,6 @@ public suspend inline fun <reified R> SequenceScope<R>.sequenceForLimiter(
 
     }
 }
+
+
+

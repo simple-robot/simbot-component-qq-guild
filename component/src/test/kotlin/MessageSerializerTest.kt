@@ -3,8 +3,8 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.plus
 import love.forte.simbot.Components
 import love.forte.simbot.ID
-import love.forte.simbot.component.tencentguild.message.Ark
 import love.forte.simbot.component.tencentguild.message.MentionChannel
+import love.forte.simbot.component.tencentguild.message.toMessage
 import love.forte.simbot.message.At
 import love.forte.simbot.message.Messages
 import love.forte.simbot.message.Text
@@ -30,20 +30,18 @@ class MessageSerializerTest {
 
     val yaml = Yaml(module)
 
-    val messages = At(1.ID) + Text { "Forte" } + MentionChannel(555.ID) + Ark(
-        buildArk(114514.ID) {
-            kvs {
-                kv("Key", "value-145")
-                kv("KK2") {
-                    obj()
-                    obj {
-                        kv("O-K", "O-V-2")
-                        kv("F-F", "O-V-3")
-                    }
+    val messages = At(1.ID) + Text { "Forte" } + MentionChannel(555.ID) + buildArk(114514.ID) {
+        kvs {
+            kv("Key", "value-145")
+            kv("KK2") {
+                obj()
+                obj {
+                    kv("O-K", "O-V-2")
+                    kv("F-F", "O-V-3")
                 }
             }
         }
-    )
+    }.toMessage()
 
     @Test
     fun test1() {

@@ -26,6 +26,7 @@ public value class Intents(public val value: Int) {
 
 /**
  * 接收到的事件的类型以及它们对应的数据解析器.
+ *
  */
 public sealed class EventSignals<out D>(
     public val type: String,
@@ -34,7 +35,29 @@ public sealed class EventSignals<out D>(
     public companion object {
         public inline val allIntents: Intents get() =
             Guilds.intents + GuildMembers.intents + DirectMessage.intents + AudioAction.intents + AtMessages.intents
+
+        @JvmStatic
+        public val events: Map<String, EventSignals<*>> = mapOf(
+            "READY" to Other.ReadyEvent,
+            "RESUMED" to Other.Resumed,
+            "GUILD_CREATE" to Guilds.GuildCreate,
+            "GUILD_UPDATE" to Guilds.GuildUpdate,
+            "GUILD_DELETE" to Guilds.GuildDelete,
+            "CHANNEL_CREATE" to Guilds.ChannelCreate,
+            "CHANNEL_UPDATE" to Guilds.ChannelUpdate,
+            "CHANNEL_DELETE" to Guilds.ChannelDelete,
+            "GUILD_MEMBER_ADD" to GuildMembers.GuildMemberAdd,
+            "GUILD_MEMBER_UPDATE" to GuildMembers.GuildMemberUpdate,
+            "GUILD_MEMBER_REMOVE" to GuildMembers.GuildMemberRemove,
+            "DIRECT_MESSAGE_CREATE" to DirectMessage.DirectMessageCreate,
+            "AUDIO_START" to AudioAction.AudioStart,
+            "AUDIO_FINISH" to AudioAction.AudioFinish,
+            "AUDIO_ON_MIC" to AudioAction.AudioOnMic,
+            "AUDIO_OFF_MIC" to AudioAction.AudioOffMic,
+            "AT_MESSAGE_CREATE" to AtMessages.AtMessageCreate,
+        )
     }
+
     /*
     GUILDS (1 << 0)
       - GUILD_CREATE          // 当机器人加入新guild时
@@ -61,26 +84,6 @@ public sealed class EventSignals<out D>(
     AT_MESSAGES (1 << 30)
       - AT_MESSAGE_CREATE     // 当收到@机器人的消息时
      */
-
-    public val events: Map<String, EventSignals<*>> = mapOf(
-        "READY" to Other.ReadyEvent,
-        "RESUMED" to Other.Resumed,
-        "GUILD_CREATE" to Guilds.GuildCreate,
-        "GUILD_UPDATE" to Guilds.GuildUpdate,
-        "GUILD_DELETE" to Guilds.GuildDelete,
-        "CHANNEL_CREATE" to Guilds.ChannelCreate,
-        "CHANNEL_UPDATE" to Guilds.ChannelUpdate,
-        "CHANNEL_DELETE" to Guilds.ChannelDelete,
-        "GUILD_MEMBER_ADD" to GuildMembers.GuildMemberAdd,
-        "GUILD_MEMBER_UPDATE" to GuildMembers.GuildMemberUpdate,
-        "GUILD_MEMBER_REMOVE" to GuildMembers.GuildMemberRemove,
-        "DIRECT_MESSAGE_CREATE" to DirectMessage.DirectMessageCreate,
-        "AUDIO_START" to AudioAction.AudioStart,
-        "AUDIO_FINISH" to AudioAction.AudioFinish,
-        "AUDIO_ON_MIC" to AudioAction.AudioOnMic,
-        "AUDIO_OFF_MIC" to AudioAction.AudioOffMic,
-        "AT_MESSAGE_CREATE" to AtMessages.AtMessageCreate,
-    )
 
     public sealed class Other<D>(t: String, decoder: DeserializationStrategy<out D>): EventSignals<D>(t, decoder) {
         /**

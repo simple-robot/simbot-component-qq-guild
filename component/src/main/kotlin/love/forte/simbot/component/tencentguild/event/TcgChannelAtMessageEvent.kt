@@ -19,21 +19,24 @@ import love.forte.simbot.tencentguild.TencentMessage
  *
  * @author ForteScarlet
  */
-public interface TcgChannelAtMessageEvent : ChannelMessageEvent {
-    public val sourceMessage: TencentMessage
-    override val author: Member
-    override val source: Channel
-    override val timestamp: Timestamp
-    override val visibleScope: Event.VisibleScope
-    override val bot: Bot
-    override val messageContent: ReceivedMessageContent
-    override val metadata: Event.Metadata
+public abstract class TcgChannelAtMessageEvent : ChannelMessageEvent {
+    public abstract val sourceMessage: TencentMessage
+    abstract override val author: Member
+    abstract override val source: Channel
+    abstract override val timestamp: Timestamp
+    abstract override val visibleScope: Event.VisibleScope
+    abstract override val bot: Bot
+    abstract override val messageContent: ReceivedMessageContent
+    abstract override val metadata: Event.Metadata
 
     override suspend fun delete(): Boolean = false // not support, maybe.
     override val key: Event.Key<out Event>
         get() = Key
 
-    public companion object Key : BaseEventKey<TcgChannelAtMessageEvent>("sr.tcg.at_msg") {
+    public companion object Key : BaseEventKey<TcgChannelAtMessageEvent>(
+        "sr.tcg.at_msg",
+        setOf(ChannelMessageEvent.Key)
+    ) {
         override fun safeCast(value: Any): TcgChannelAtMessageEvent? = doSafeCast(value)
     }
 }

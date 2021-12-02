@@ -36,7 +36,7 @@ private inline fun <reified K, reified V> Map<K, V>.find(vararg keys: K, nullMes
  */
 public abstract class TencentGuildBotManager : BotManager<TencentGuildBot>() {
 
-    override suspend fun register(properties: Map<String, String>): TencentGuildBot {
+    override fun register(properties: Map<String, String>): TencentGuildBot {
         val appId = properties.find("app_id", "appId", "appid", "id") {
             "Required property 'app_id'"
         }
@@ -49,7 +49,7 @@ public abstract class TencentGuildBotManager : BotManager<TencentGuildBot>() {
         return register(appId,  appKey,  token) {}
     }
 
-    public abstract suspend fun register(
+    public abstract fun register(
         appId: String,
         appKey: String,
         token: String,

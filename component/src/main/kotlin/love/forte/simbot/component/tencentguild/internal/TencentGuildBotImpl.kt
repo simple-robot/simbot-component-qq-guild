@@ -16,15 +16,18 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import love.forte.simbot.Api4J
 import love.forte.simbot.Grouping
 import love.forte.simbot.ID
 import love.forte.simbot.Limiter
 import love.forte.simbot.component.tencentguild.TencentGuildBot
 import love.forte.simbot.component.tencentguild.TencentGuildBotManager
+import love.forte.simbot.component.tencentguild.internal.event.eventSignalParsers
 import love.forte.simbot.definition.Friend
 import love.forte.simbot.definition.Group
-import love.forte.simbot.definition.Guild
 import love.forte.simbot.event.EventProcessor
+import love.forte.simbot.event.pushIfProcessable
+import love.forte.simbot.tencentguild.EventSignals
 import love.forte.simbot.tencentguild.TencentBot
 import love.forte.simbot.tencentguild.TencentGuildInfo
 import love.forte.simbot.tencentguild.api.guild.GetBotGuildListApi
@@ -43,11 +46,10 @@ internal class TencentGuildBotImpl(
     // 0 init 1 start 2 cancel
     private val activeStatus = AtomicInteger(0)
 
-
     /**
      * grouping是无效的.
      */
-    override suspend fun guilds(grouping: Grouping, limiter: Limiter): Flow<Guild> {
+    override suspend fun guilds(grouping: Grouping, limiter: Limiter): Flow<TencentGuildImpl> {
         val batch = if (limiter.batchSize > 0) {
             if (limiter.batchSize > 100) 100 else limiter.batchSize
         } else {
@@ -74,6 +76,25 @@ internal class TencentGuildBotImpl(
 
     override suspend fun start(): Boolean = sourceBot.start().also {
         activeStatus.compareAndSet(0, 1)
+        // process event.
+        sourceBot.processor { json ->
+            // event processor
+            println(EventSignals.events[this.type])
+
+            EventSignals.events[this.type]?.let {
+                println(eventSignalParsers[it])
+
+                eventSignalParsers[it]?.let { parser ->
+
+                    println(eventProcessor.isProcessable(parser.key))
+                    eventProcessor.pushIfProcessable(parser.key) { parser(
+                        bot = this@TencentGuildBotImpl,
+                        decoder = json,
+                        dispatch = this
+                    ) }
+                }
+            }
+        }
     }
 
 
@@ -98,6 +119,7 @@ internal class TencentGuildBotImpl(
         return emptyFlow()
     }
 
+    @Api4J
     override fun getGroups(grouping: Grouping, limiter: Limiter): List<Group> {
         return emptyList()
     }
@@ -106,6 +128,7 @@ internal class TencentGuildBotImpl(
         return emptyFlow()
     }
 
+    @Api4J
     override fun getFriends(grouping: Grouping, limiter: Limiter): List<Friend> {
         return emptyList()
     }

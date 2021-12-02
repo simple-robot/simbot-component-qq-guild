@@ -8,7 +8,7 @@ import love.forte.simbot.event.*
 import love.forte.simbot.tencentguild.EventSignals
 
 
-val listenerManager = coreEventManager {
+private val listenerManager = coreEventManager {
     interceptors {
         processingIntercept(114514.ID) {
             println("Processing Intercept 1 start")
@@ -38,13 +38,10 @@ val listenerManager = coreEventManager {
 }
 
 
-val botManager = tencentGuildBotManager {
+private val botManager = tencentGuildBotManager {
     this.eventProcessor = listenerManager
 }
 
-val appId = ""
-val appKey = ""
-val token = ""
 
 
 suspend fun main() {
@@ -71,7 +68,7 @@ suspend fun main() {
 }
 
 
-fun <E : Event> listener(id: ID, type: Event.Key<E>, invoker: (EventProcessingContext, E) -> Any?): EventListener =
+fun <E : Event> listener(id: ID, type: Event.Key<E>, invoker: suspend (EventProcessingContext, E) -> Any?): EventListener =
     object : EventListener {
         override val id: ID get() = id
         override fun isTarget(eventType: Event.Key<*>): Boolean = eventType.isSubFrom(type)

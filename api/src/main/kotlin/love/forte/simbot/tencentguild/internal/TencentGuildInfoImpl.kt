@@ -19,7 +19,7 @@ import love.forte.simbot.tencentguild.TimestampISO8601Serializer
 internal data class TencentGuildInfoImpl(
     override val id: CharSequenceID,
     override val name: String,
-    override val icon: String,
+    override val icon: String = "", // TODO 缺失
     @SerialName("owner_id")
     override val ownerId: CharSequenceID = "".ID, // TODO 缺失
     @SerialName("owner")

@@ -65,14 +65,13 @@ internal class TencentGuildBotManagerImpl(
     }
 
 
-    override suspend fun register(
+    override fun register(
         appId: String,
         appKey: String,
         token: String,
         block: TencentBotConfiguration.() -> Unit
     ): TencentGuildBot {
         val configure = configuration.botConfigure
-
         lock.write {
             val sourceBot = tencentBot(appId, appKey, token) {
                 configure(appId, appKey, token)

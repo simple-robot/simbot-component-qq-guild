@@ -18,7 +18,6 @@ import love.forte.simbot.*
 import love.forte.simbot.action.NotSupportActionException
 import love.forte.simbot.definition.Friend
 import love.forte.simbot.definition.Group
-import love.forte.simbot.definition.Guild
 import love.forte.simbot.definition.UserStatus
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.message.Image
@@ -57,7 +56,7 @@ public abstract class TencentGuildBot : Bot, TencentBot {
 
     abstract override suspend fun groups(grouping: Grouping, limiter: Limiter): Flow<Group>
 
-    abstract override suspend fun guilds(grouping: Grouping, limiter: Limiter): Flow<Guild>
+    abstract override suspend fun guilds(grouping: Grouping, limiter: Limiter): Flow<TencentGuild>
 
     override suspend fun uploadImage(resource: Resource): Image {
         // TODO fake remote image.

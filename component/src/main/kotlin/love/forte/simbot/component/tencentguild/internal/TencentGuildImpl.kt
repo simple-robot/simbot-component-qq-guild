@@ -1,8 +1,8 @@
 package love.forte.simbot.component.tencentguild.internal
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import love.forte.simbot.Api4J
@@ -35,33 +35,28 @@ internal class TencentGuildImpl(
 
     @Api4J
     override fun getRoles(groupingId: ID?, limiter: Limiter): Stream<TencentRole> {
-        return getRoleSequence(limiter.offset, limiter.limit, guildInfo.id).map { info ->
+        return getRoleSequence(guildInfo.id).map { info ->
             TencentRoleImpl(bot, info)
         }.asStream()
     }
 
 
     override suspend fun roles(groupingId: ID?, limiter: Limiter): Flow<TencentRole> {
-        return getRoleFlow(limiter.offset, limiter.limit, guildInfo.id).map { info ->
+        return getRoleFlow(guildInfo.id).map { info ->
             TencentRoleImpl(bot, info)
         }
     }
 
-    private fun getRoleFlow(skip: Int, limit: Int, guildId: ID): Flow<TencentRoleInfo> = flow {
-        flowForLimiter(skip, limit) {
-            GetGuildRoleListApi(guildId).request(bot).roles
-        }
-    }
+    private suspend fun getRoleFlow(guildId: ID): Flow<TencentRoleInfo> =
+        GetGuildRoleListApi(guildId).request(bot).roles.asFlow()
 
-    private fun getRoleSequence(skip: Int, limit: Int, guildId: ID): Sequence<TencentRoleInfo> = sequence {
-        sequenceForLimiter(skip, limit) {
-            runBlocking { GetGuildRoleListApi(guildId).request(bot).roles }
-        }
+    private fun getRoleSequence(guildId: ID): Sequence<TencentRoleInfo> = runBlocking {
+        GetGuildRoleListApi(guildId).request(bot).roles.asSequence()
     }
 
 
     override suspend fun children(groupingId: ID?, limiter: Limiter): Flow<TencentChannel> {
-        return getChildrenFlow(limiter.offset, limiter.limit, guildInfo.id).map { info ->
+        return getChildrenFlow(guildInfo.id).map { info ->
             TencentChannelImpl(bot, info, this)
         }
     }
@@ -69,13 +64,14 @@ internal class TencentGuildImpl(
 
     @Api4J
     override fun getChildren(groupingId: ID?, limiter: Limiter): Stream<TencentChannel> {
-        return getChildrenSequence(limiter.offset, limiter.limit, guildInfo.id).map { info ->
+        return getChildrenSequence(guildInfo.id).map { info ->
             TencentChannelImpl(bot, info, this)
         }.asStream()
     }
 
     override suspend fun mute(): Boolean = false // not support
     override suspend fun previous(): Organization? = null
+
     @Api4J
     override fun getPrevious(): Organization? = null
 
@@ -92,22 +88,19 @@ internal class TencentGuildImpl(
         }
     }
 
-    private fun getChildrenFlow(skip: Int, limit: Int, guildId: ID): Flow<TencentChannelInfo> = flow {
-        flowForLimiter(skip, limit) {
-            GetGuildChannelListApi(guildId = guildId).request(bot)
-        }
-    }
-    private fun getChildrenSequence(skip: Int, limit: Int, guildId: ID): Sequence<TencentChannelInfo> = sequence {
-        sequenceForLimiter(skip, limit) {
-            runBlocking { GetGuildChannelListApi(guildId = guildId).request(bot) }
-        }
-    }
+    private suspend fun getChildrenFlow(guildId: ID): Flow<TencentChannelInfo> =
+        GetGuildChannelListApi(guildId = guildId).request(bot).asFlow()
+
+
+    private fun getChildrenSequence(guildId: ID): Sequence<TencentChannelInfo> =
+        runBlocking { GetGuildChannelListApi(guildId = guildId).request(bot).asSequence() }
 
 
     @Api4J
     override fun getMembers(groupingId: ID?, limiter: Limiter): Stream<out Member> {
         return Stream.empty()
     }
+
     override suspend fun members(groupingId: ID?, limiter: Limiter): Flow<Member> {
         return emptyFlow()
     }
