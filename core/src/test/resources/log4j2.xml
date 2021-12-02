@@ -8,7 +8,7 @@
     <appenders>
         <!--console :控制台输出的配置-->
         <console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{%-5level} [%t] %highlight{%c{1.}.%M(%L): %msg%n" />
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{%-5level} [%t] %highlight{%c{1.}.%M(%L)}: %msg%n" />
             <!--<PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{%-5level} [%t] %highlight{%c{1.}.%M(%L)}: %msg%n" />-->
             <!--PatternLayout :输出日志的格式,LOG4J2定义了输出代码,详见第二部分-->
             <!--<PatternLayout pattern="[%d{HH:mm:ss:SSS}] [%p] - %l - %m%n"/>-->
