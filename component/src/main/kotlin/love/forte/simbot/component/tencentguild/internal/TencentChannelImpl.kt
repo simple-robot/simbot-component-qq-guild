@@ -6,9 +6,7 @@ import love.forte.simbot.ID
 import love.forte.simbot.Limiter
 import love.forte.simbot.component.tencentguild.TencentChannel
 import love.forte.simbot.component.tencentguild.TencentGuild
-import love.forte.simbot.component.tencentguild.TencentMember
 import love.forte.simbot.component.tencentguild.TencentRole
-import love.forte.simbot.definition.Guild
 import love.forte.simbot.definition.Organization
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageReceipt
@@ -24,7 +22,7 @@ import java.util.stream.Stream
 internal class TencentChannelImpl(
     override val bot: TencentGuildBotImpl,
     private val info: TencentChannelInfo,
-    private val from: TencentGuild
+    private val from: TencentGuildImpl
 ) : TencentChannel, TencentChannelInfo by info {
     override suspend fun send(message: Message): MessageReceipt {
         val messageForSend = MessageParsers.parse(message)
@@ -32,16 +30,16 @@ internal class TencentChannelImpl(
     }
 
 
-    override suspend fun guild(): Guild = from
+    override suspend fun guild(): TencentGuildImpl = from
 
     @Api4J
-    override val guild: TencentGuild
+    override val guild: TencentGuildImpl
         get() = from
 
-    override suspend fun owner(): TencentMember = from.owner()
+    override suspend fun owner(): TencentMemberImpl = from.owner()
 
     @Api4J
-    override val owner: TencentMember
+    override val owner: TencentMemberImpl
         get() = from.owner
 
     @Api4J

@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.runBlocking
 import love.forte.simbot.*
 import love.forte.simbot.definition.Guild
-import love.forte.simbot.definition.Member
 import java.util.stream.Stream
 
 /**
@@ -22,12 +21,19 @@ public interface TencentGuild : Guild {
     override val maximumMember: Int
     override val name: String
     override val ownerId: ID
+
+    override suspend fun children(groupingId: ID?, limiter: Limiter): Flow<TencentChannel>
+    override suspend fun children(groupingId: ID?): Flow<TencentChannel>
+    @Api4J
+    override fun getChildren(groupingId: ID?, limiter: Limiter): Stream<out TencentChannel>
+
+
     override suspend fun owner(): TencentMember
     @Api4J
     override val owner: TencentMember get() = runBlocking { owner() }
-    override suspend fun members(groupingId: ID?, limiter: Limiter): Flow<Member> = emptyFlow()
+    override suspend fun members(groupingId: ID?, limiter: Limiter): Flow<TencentMember> = emptyFlow()
     @Api4J
-    override fun getMembers(groupingId: ID?, limiter: Limiter): Stream<out Member> = Stream.empty()
+    override fun getMembers(groupingId: ID?, limiter: Limiter): Stream<out TencentMember> = Stream.empty()
 
     override suspend fun roles(groupingId: ID?, limiter: Limiter): Flow<TencentRole>
     @Api4J

@@ -2,7 +2,7 @@ package love.forte.simbot.component.tencentguild.event
 
 import love.forte.simbot.Bot
 import love.forte.simbot.Timestamp
-import love.forte.simbot.definition.Channel
+import love.forte.simbot.component.tencentguild.TencentChannel
 import love.forte.simbot.definition.Member
 import love.forte.simbot.event.BaseEventKey
 import love.forte.simbot.event.ChannelMessageEvent
@@ -22,7 +22,7 @@ import love.forte.simbot.tencentguild.TencentMessage
 public abstract class TcgChannelAtMessageEvent : ChannelMessageEvent {
     public abstract val sourceMessage: TencentMessage
     abstract override val author: Member
-    abstract override val source: Channel
+    abstract override val source: TencentChannel
     abstract override val timestamp: Timestamp
     abstract override val visibleScope: Event.VisibleScope
     abstract override val bot: Bot

@@ -4,7 +4,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import love.forte.simbot.*
 import love.forte.simbot.definition.Channel
-import love.forte.simbot.definition.Guild
 import love.forte.simbot.definition.Member
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageReceipt
@@ -29,7 +28,7 @@ public interface TencentChannel : Channel, TencentChannelInfo {
     override val name: String
     override val ownerId: ID
 
-    override suspend fun guild(): Guild
+    override suspend fun guild(): TencentGuild
 
     override suspend fun owner(): Member
 

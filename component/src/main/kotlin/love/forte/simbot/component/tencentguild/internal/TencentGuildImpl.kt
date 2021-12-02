@@ -8,11 +8,9 @@ import kotlinx.coroutines.runBlocking
 import love.forte.simbot.Api4J
 import love.forte.simbot.ID
 import love.forte.simbot.Limiter
-import love.forte.simbot.component.tencentguild.TencentChannel
 import love.forte.simbot.component.tencentguild.TencentGuild
 import love.forte.simbot.component.tencentguild.TencentMember
 import love.forte.simbot.component.tencentguild.TencentRole
-import love.forte.simbot.definition.Member
 import love.forte.simbot.definition.Organization
 import love.forte.simbot.tencentguild.TencentChannelInfo
 import love.forte.simbot.tencentguild.TencentGuildInfo
@@ -41,7 +39,7 @@ internal class TencentGuildImpl(
     }
 
 
-    override suspend fun roles(groupingId: ID?, limiter: Limiter): Flow<TencentRole> {
+    override suspend fun roles(groupingId: ID?, limiter: Limiter): Flow<TencentRoleImpl> {
         return getRoleFlow(guildInfo.id).map { info ->
             TencentRoleImpl(bot, info)
         }
@@ -55,7 +53,7 @@ internal class TencentGuildImpl(
     }
 
 
-    override suspend fun children(groupingId: ID?, limiter: Limiter): Flow<TencentChannel> {
+    override suspend fun children(groupingId: ID?, limiter: Limiter): Flow<TencentChannelImpl> {
         return getChildrenFlow(guildInfo.id).map { info ->
             TencentChannelImpl(bot, info, this)
         }
@@ -63,7 +61,7 @@ internal class TencentGuildImpl(
 
 
     @Api4J
-    override fun getChildren(groupingId: ID?, limiter: Limiter): Stream<TencentChannel> {
+    override fun getChildren(groupingId: ID?, limiter: Limiter): Stream<TencentChannelImpl> {
         return getChildrenSequence(guildInfo.id).map { info ->
             TencentChannelImpl(bot, info, this)
         }.asStream()
@@ -75,9 +73,9 @@ internal class TencentGuildImpl(
     @Api4J
     override fun getPrevious(): Organization? = null
 
-    private lateinit var _owner: TencentMember
+    private lateinit var _owner: TencentMemberImpl
 
-    override suspend fun owner(): TencentMember {
+    override suspend fun owner(): TencentMemberImpl {
         // 暂时不管线程安全问题
         if (::_owner.isInitialized) return _owner
         val member = GetMemberApi(guildInfo.id, guildInfo.ownerId).request(bot)
@@ -88,6 +86,10 @@ internal class TencentGuildImpl(
         }
     }
 
+    @Api4J
+    override val owner: TencentMemberImpl
+        get() = runBlocking { owner() }
+
     private suspend fun getChildrenFlow(guildId: ID): Flow<TencentChannelInfo> =
         GetGuildChannelListApi(guildId = guildId).request(bot).asFlow()
 
@@ -97,11 +99,11 @@ internal class TencentGuildImpl(
 
 
     @Api4J
-    override fun getMembers(groupingId: ID?, limiter: Limiter): Stream<out Member> {
+    override fun getMembers(groupingId: ID?, limiter: Limiter): Stream<out TencentMember> {
         return Stream.empty()
     }
 
-    override suspend fun members(groupingId: ID?, limiter: Limiter): Flow<Member> {
+    override suspend fun members(groupingId: ID?, limiter: Limiter): Flow<TencentMember> {
         return emptyFlow()
     }
 

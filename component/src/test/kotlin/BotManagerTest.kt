@@ -4,6 +4,7 @@ import love.forte.simbot.ID
 import love.forte.simbot.component.tencentguild.TencentGuildBot
 import love.forte.simbot.component.tencentguild.tencentGuildBotManager
 import love.forte.simbot.core.event.coreEventManager
+import love.forte.simbot.core.event.listen
 import love.forte.simbot.event.*
 import love.forte.simbot.tencentguild.EventSignals
 
@@ -40,11 +41,21 @@ private val listenerManager = coreEventManager {
 
 private val botManager = tencentGuildBotManager {
     this.eventProcessor = listenerManager
+    botConfigure = { appId, appKey, token ->
+        intentsForShardFactory = { EventSignals.AtMessages.intents }
+    }
 }
 
-
+private val appId = ""
+private val appKey = ""
+private val token = ""
 
 suspend fun main() {
+    listenerManager.listen(eventKey = ChannelMessageEvent) { context, event ->
+        // do
+
+        null // result
+    }
     val bot: TencentGuildBot = botManager.register(appId, appKey, token) {
         intentsForShardFactory = { EventSignals.AtMessages.intents }
     }
