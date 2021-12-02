@@ -1,8 +1,47 @@
 # Simple-Robot 腾讯频道BOT组件
 
-建设中。。
+<br>
+
+# 建设中。。
+
 
 基于 [simple-robot](https://github.com/ForteScarlet/simpler-robot) 3.x版本API的 `simple-robot` 组件。
+
+
+
+
+
+## 事件支持
+
+目前，在 `component-tencent-guild` 下仅支持 `TcgChannelAtMessageEvent`。
+
+
+当然，这不影响你直接使用 `tencent-guild-core` 中定义的事件，但是你无法使用下述的诸如调度器、拦截器等内容。
+
+
+
+## 使用
+### Maven
+
+```xml
+<dependency>
+    <groupId>love.forte.simple-robot</groupId>
+    <artifactId>component-tencent-guild</artifactId>
+    <version>0.0.1</version>
+</dependency>
+```
+
+### Gradle groovy
+
+```groovy
+implementation "love.forte.simple-robot:component-tencent-guild:$version"
+```
+
+### Gradle kotlin DSL
+
+```kotlin
+implementation("love.forte.simple-robot:component-tencent-guild:$version")
+```
 
 
 
