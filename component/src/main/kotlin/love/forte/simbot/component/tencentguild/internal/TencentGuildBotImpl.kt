@@ -16,10 +16,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import love.forte.simbot.Api4J
-import love.forte.simbot.Grouping
-import love.forte.simbot.ID
-import love.forte.simbot.Limiter
+import love.forte.simbot.*
 import love.forte.simbot.component.tencentguild.TencentGuildBot
 import love.forte.simbot.component.tencentguild.TencentGuildBotManager
 import love.forte.simbot.component.tencentguild.internal.event.eventSignalParsers
@@ -45,6 +42,8 @@ internal class TencentGuildBotImpl(
 ) : TencentGuildBot(), TencentBot by sourceBot {
     // 0 init 1 start 2 cancel
     private val activeStatus = AtomicInteger(0)
+
+    private val logger = LoggerFactory.getLogger("love.forte.simbot.component.tencentguild.bot.${sourceBot.ticket.appKey}")
 
     /**
      * grouping是无效的.
@@ -79,14 +78,15 @@ internal class TencentGuildBotImpl(
         // process event.
         sourceBot.processor { json ->
             // event processor
-            println(EventSignals.events[this.type])
-
+            logger.trace("EventSignals.events[{}]: {}", type, EventSignals.events[type])
             EventSignals.events[this.type]?.let {
                 println(eventSignalParsers[it])
+                logger.trace("eventSignalParsers[{}]: {}", it, eventSignalParsers[it])
 
                 eventSignalParsers[it]?.let { parser ->
 
                     println(eventProcessor.isProcessable(parser.key))
+                    logger.trace("eventProcessor.isProcessable({}): {}", parser.key, eventProcessor.isProcessable(parser.key))
                     eventProcessor.pushIfProcessable(parser.key) { parser(
                         bot = this@TencentGuildBotImpl,
                         decoder = json,

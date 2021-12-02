@@ -23,7 +23,7 @@ public interface TencentGuild : Guild {
     override val ownerId: ID
 
     override suspend fun children(groupingId: ID?, limiter: Limiter): Flow<TencentChannel>
-    override suspend fun children(groupingId: ID?): Flow<TencentChannel>
+    override suspend fun children(groupingId: ID?): Flow<TencentChannel> = children(groupingId, Limiter)
     @Api4J
     override fun getChildren(groupingId: ID?, limiter: Limiter): Stream<out TencentChannel>
 

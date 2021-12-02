@@ -60,7 +60,7 @@ internal class TencentBotImpl(
         }
     }
 
-    val logger = LoggerFactory.getLogger("love.forte.simbot.tencentguild.bot.${ticket.appId}")
+    private val logger = LoggerFactory.getLogger("love.forte.simbot.tencentguild.bot.${ticket.appId}")
 
     // private val parentJob: Job
     override val coroutineContext: CoroutineContext
@@ -275,7 +275,7 @@ internal class TencentBotImpl(
                 }
             }
             if (readyEventData == null) {
-                println("canceled.")
+                logger.trace("readyEventData was null, canceled and waiting closeReason.")
                 session.closeReason.await().err()
             }
             logger.info("Ready Event data: {}", readyEventData)
@@ -467,7 +467,9 @@ private inline fun waitForReady(decoder: Json, frameBlock: () -> Frame): EventSi
     // for hello
     if (frame is Frame.Text) {
         val json = decoder.parseToJsonElement(frame.readText())
-        println(json)
+
+        // TODO log
+
         if (json.jsonObject["op"]?.jsonPrimitive?.int == Opcode.Dispatch.code) {
             val dis = decoder.decodeFromJsonElement(Signal.Dispatch.serializer(), json)
             if (dis.type == EventSignals.Other.ReadyEvent.type) {

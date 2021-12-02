@@ -15,10 +15,12 @@ import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonBuilder
 import love.forte.simbot.Api4J
+import love.forte.simbot.LoggerFactory
 import love.forte.simbot.tencentguild.ErrInfo
 import love.forte.simbot.tencentguild.err
 import java.util.function.Consumer
 
+internal val logger = LoggerFactory.getLogger("love.forte.simbot.tencentguild.api.request")
 
 public suspend fun TencentApi<*>.requestForResponse(
     client: HttpClient,
@@ -124,7 +126,7 @@ internal suspend fun <R> TencentApi<R>.decodeFromHttpResponseViaString(
 ): R {
     val remainingText = response.content.readRemaining().readText()
 
-    println("resp: $remainingText")
+    logger.trace("resp: {}", remainingText)
 
     return decoder.decodeFromString(resultDeserializer, remainingText)
 }
