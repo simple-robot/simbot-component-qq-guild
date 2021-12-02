@@ -3,6 +3,7 @@
 
 这是 [simple-robot](https://github.com/ForteScarlet/simpler-robot) 下的子项目，本库提供对 [腾讯频道机器人](https://bot.q.qq.com/wiki/develop/api/) 中`API`内容的完整实现以及事件相关的信令实现，但 **不提供** 直接的BOT事件监听与交互。
 
+了解simple-robot 3.x: [simple-robot文档](https://www.yuque.com/simpler-robot/simpler-robot-doc/mudleb)
 
 本库中的api响应数据会一定程度实现 `simple-robot` 的`v3.x`api模块接口。
 
