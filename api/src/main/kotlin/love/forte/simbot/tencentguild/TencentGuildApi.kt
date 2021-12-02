@@ -12,6 +12,7 @@ import love.forte.simbot.Timestamp
 import love.forte.simbot.tencentguild.internal.*
 import love.forte.simbot.toTimestamp
 import java.time.Instant
+import java.time.format.DateTimeFormatter
 
 /**
  *
@@ -48,7 +49,8 @@ public object TencentGuildApi {
 
 public object TimestampISO8601Serializer : KSerializer<Timestamp> {
     override fun deserialize(decoder: Decoder): Timestamp {
-        return Instant.parse(decoder.decodeString()).toTimestamp()
+        return DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(decoder.decodeString(), Instant::from).toTimestamp()
+        // return Instant.parse(decoder.decodeString()).toTimestamp()
     }
 
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("ISO8601Timestamp", PrimitiveKind.STRING)

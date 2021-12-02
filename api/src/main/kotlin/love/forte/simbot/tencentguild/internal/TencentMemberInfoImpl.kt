@@ -29,7 +29,7 @@ internal data class TencentMemberInfoImpl(
 @Serializable
 internal data class TencentMemberInfoImplForMessage(
     @SerialName("guild_id")
-    override val guildId: CharSequenceID? = null,
+    override var guildId: CharSequenceID? = null,
     override val nick: String = "",
     @SerialName("roles")
     override val roleIds: List<CharSequenceID>,

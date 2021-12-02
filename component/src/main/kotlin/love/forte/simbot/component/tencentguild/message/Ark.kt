@@ -3,24 +3,48 @@ package love.forte.simbot.component.tencentguild.message
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.Component
+import love.forte.simbot.ID
 import love.forte.simbot.component.tencentguild.TencentGuildComponent
+import love.forte.simbot.component.tencentguild.message.Ark.Key.byArk
 import love.forte.simbot.message.Message
 import love.forte.simbot.tencentguild.TencentMessage
 import kotlin.reflect.KClass
 
+/**
+ * [TencentMessage.Ark] 对应的 [Message.Element].
+ *
+ * 需要注意在直接使用 [byArk] 构建实例的时候，属性拷贝为浅拷贝。
+ */
 @SerialName("tc.ark")
 @Serializable
-public data class Ark(public val ark: TencentMessage.Ark) : Message.Element<Ark> {
+public data class Ark internal constructor(
+    @SerialName("template_id")
+    @Serializable(ID.AsCharSequenceIDSerializer::class)
+    public val templateId: ID,
+    public val kv: List<TencentMessage.Ark.Kv> = emptyList()
+) : Message.Element<Ark> {
     override val key: Message.Key<Ark>
         get() = Key
 
+    /**
+     * 转化为一个真正的 [TencentMessage.Ark].
+     */
+    public fun toRealArk(): TencentMessage.Ark = TencentMessage.Ark(templateId, kv.toList())
 
     public companion object Key : Message.Key<Ark> {
         override val component: Component
             get() = TencentGuildComponent.component
         override val elementType: KClass<Ark>
             get() = Ark::class
+
+        @JvmStatic
+        public fun byArk(ark: TencentMessage.Ark) : Ark = Ark(ark.templateId, ark.kv.toList())
+
+        @JvmStatic
+        public fun create(templateId: ID, kv: List<TencentMessage.Ark.Kv> = emptyList()) : Ark = Ark(templateId, kv.toList())
     }
 
 }
 
+
+public fun TencentMessage.Ark.toMessage(): Ark = Ark(templateId, kv)

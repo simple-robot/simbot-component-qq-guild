@@ -27,4 +27,12 @@ internal data class TencentMessageImpl(
     override val mentions: List<TencentUserInfoImpl> = emptyList(),
     override val member: TencentMemberInfoImplForMessage,
     override val ark: TencentMessage.Ark? = null
-) : TencentMessage
+) : TencentMessage {
+    init {
+        if (member.guildId == null) {
+            member.guildId = guildId
+        }
+        member.user = author
+
+    }
+}
