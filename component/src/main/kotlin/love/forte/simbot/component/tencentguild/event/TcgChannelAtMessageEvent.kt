@@ -1,5 +1,6 @@
 package love.forte.simbot.component.tencentguild.event
 
+import love.forte.simbot.Api4J
 import love.forte.simbot.Timestamp
 import love.forte.simbot.action.MessageReplyReceipt
 import love.forte.simbot.action.MessageReplySupport
@@ -36,17 +37,28 @@ public abstract class TcgChannelAtMessageEvent : TcgEvent<TencentMessage>(), Cha
     abstract override val bot: TencentGuildBot
     abstract override val messageContent: ReceivedMessageContent
     abstract override val metadata: Event.Metadata
+    abstract override suspend fun channel(): TencentChannel
+
+    @Api4J
+    override val organization: TencentChannel
+        get() = source
+
+    @JvmSynthetic
+    override suspend fun organization(): TencentChannel = channel()
 
     /**
      * Tcg支持消息回复。
      */
+    @JvmSynthetic
     abstract override suspend fun reply(message: Message): MessageReplyReceipt
 
     /**
      * Tcg暂不支持撤回他人消息。
      */
+    @JvmSynthetic
     override suspend fun delete(): Boolean = false // not support, maybe.
     override val key: Key get() = Key
+
     public companion object Key : BaseEventKey<TcgChannelAtMessageEvent>(
         "sr.tcg.at_msg",
         setOf(ChannelMessageEvent.Key)

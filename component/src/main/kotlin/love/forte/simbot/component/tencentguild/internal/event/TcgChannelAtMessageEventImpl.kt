@@ -63,6 +63,7 @@ internal class TcgChannelAtMessageEventImpl(
         )
     }
 
+    override suspend fun channel(): TencentChannelImpl = _sourceChannel.await()
     override val source: TencentChannelImpl by lazy { runBlocking { _sourceChannel.await() } }
 
     override val timestamp: Timestamp
