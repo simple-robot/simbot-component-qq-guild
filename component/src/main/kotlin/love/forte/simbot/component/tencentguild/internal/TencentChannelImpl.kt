@@ -1,6 +1,8 @@
 package love.forte.simbot.component.tencentguild.internal
 
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.runBlocking
 import love.forte.simbot.Api4J
 import love.forte.simbot.ID
 import love.forte.simbot.Limiter
@@ -19,39 +21,52 @@ import java.util.stream.Stream
  *
  * @author ForteScarlet
  */
-internal class TencentChannelImpl(
+internal class TencentChannelImpl private constructor(
     override val bot: TencentGuildBotImpl,
     private val info: TencentChannelInfo,
-    private val from: TencentGuildImpl
+    private val from: suspend () -> TencentGuildImpl
 ) : TencentChannel, TencentChannelInfo by info {
+
+    internal constructor(
+        bot: TencentGuildBotImpl,
+        info: TencentChannelInfo,
+        from: TencentGuildImpl
+    ): this(bot, info, { from })
+
+    internal constructor(
+        bot: TencentGuildBotImpl,
+        info: TencentChannelInfo,
+        deferred: Deferred<TencentGuildImpl>
+    ): this(bot, info, { deferred.await() })
+
     override suspend fun send(message: Message): MessageReceipt {
         val messageForSend = MessageParsers.parse(message)
         return MessageSendApi(info.id, messageForSend).request(bot).asReceipt()
     }
 
 
-    override suspend fun guild(): TencentGuildImpl = from
+    override suspend fun guild(): TencentGuildImpl = from()
 
     @Api4J
     override val guild: TencentGuildImpl
-        get() = from
+        get() = runBlocking { from() }
 
-    override suspend fun owner(): TencentMemberImpl = from.owner()
+    override suspend fun owner(): TencentMemberImpl = guild().owner()
 
     @Api4J
     override val owner: TencentMemberImpl
-        get() = from.owner
+        get() = guild.owner
 
     @Api4J
-    override fun getRoles(groupingId: ID?, limiter: Limiter): Stream<TencentRole> = from.getRoles(groupingId, limiter)
+    override fun getRoles(groupingId: ID?, limiter: Limiter): Stream<TencentRole> = guild.getRoles(groupingId, limiter)
 
     override suspend fun mute(): Boolean = false
 
-    override suspend fun previous(): TencentGuild = from
+    override suspend fun previous(): TencentGuild = guild()
 
     @Api4J
-    override fun getPrevious(): Organization = from
+    override fun getPrevious(): Organization = guild
 
-    override suspend fun roles(groupingId: ID?, limiter: Limiter): Flow<TencentRole> = from.roles(groupingId, limiter)
+    override suspend fun roles(groupingId: ID?, limiter: Limiter): Flow<TencentRole> = guild().roles(groupingId, limiter)
 
 }

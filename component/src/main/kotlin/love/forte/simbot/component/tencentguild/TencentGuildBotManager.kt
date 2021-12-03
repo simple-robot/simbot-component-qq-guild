@@ -14,7 +14,6 @@ package love.forte.simbot.component.tencentguild
 
 import love.forte.simbot.BotManager
 import love.forte.simbot.component.tencentguild.internal.TencentGuildBotManagerImpl
-import love.forte.simbot.core.event.coreEventManager
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.tencentguild.TencentBotConfiguration
 
@@ -78,7 +77,7 @@ internal annotation class TencentGuildBMDsl
  */
 @TencentGuildBMDsl
 public fun tencentGuildBotManager(
-    processor: EventProcessor = coreEventManager { },
+    processor: EventProcessor,
     block: TencentGuildBotManagerConfiguration.() -> Unit = { }
 ): TencentGuildBotManager {
     return TencentGuildBotManager.newInstance(TencentGuildBotManagerConfiguration(processor).also(block))

@@ -16,7 +16,9 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import love.forte.simbot.*
 import love.forte.simbot.component.tencentguild.message.Ark
+import love.forte.simbot.component.tencentguild.message.AttachmentMessage
 import love.forte.simbot.component.tencentguild.message.MentionChannel
+import love.forte.simbot.component.tencentguild.message.ReplyTo
 import love.forte.simbot.message.Message
 
 /**
@@ -49,6 +51,8 @@ public class TencentGuildComponentInformation : ComponentInformation {
         polymorphic(Message.Element::class) {
             subclass(Ark::class, Ark.serializer())
             subclass(MentionChannel::class, MentionChannel.serializer())
+            subclass(AttachmentMessage::class, AttachmentMessage.serializer())
+            subclass(ReplyTo::class, ReplyTo.serializer())
         }
     }
 

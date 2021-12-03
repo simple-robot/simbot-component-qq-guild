@@ -27,10 +27,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.max
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.ExperimentalTime
 
 
 internal fun checkResumeCode(code: Short): Boolean {
@@ -81,7 +77,6 @@ internal class TencentBotImpl(
         processorQueue.add(processor)
     }
 
-    @OptIn(ExperimentalTime::class)
     override suspend fun start(): Boolean {
         if (::clients.isInitialized) return false
 
@@ -125,7 +120,7 @@ internal class TencentBotImpl(
                 createClient(shard, gatewayInfo).also { client: ClientImpl ->
                     val time = client.nextDelay
                     logger.debug("Client {} for shard {}", client, shard)
-                    if (time.inWholeMilliseconds > 0) {
+                    if (time > 0) {
                         logger.debug("delay wait {} for next......", time)
                         delay(time)
                     }
@@ -163,8 +158,7 @@ internal class TencentBotImpl(
         private var session: DefaultClientWebSocketSession,
         private val logger: Logger
     ) : TencentBot.Client {
-        @OptIn(ExperimentalTime::class)
-        val nextDelay: Duration = if (shard.total - shard.value == 1) 0.milliseconds else 5.seconds
+        val nextDelay: Long = if (shard.total - shard.value == 1) 0 else 5000L // 5s
 
         override val bot: TencentBot get() = this@TencentBotImpl
         override val seq: Long get() = _seq.get()

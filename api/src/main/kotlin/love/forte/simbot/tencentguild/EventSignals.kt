@@ -25,7 +25,7 @@ public value class Intents(public val value: Int) {
 
 
 /**
- * 接收到的事件的类型以及它们对应的数据解析器.
+ * 接收到的事件的类型以及它们对应的数据解析器, 同时代表了数据所对应的类型。
  *
  */
 public sealed class EventSignals<out D>(

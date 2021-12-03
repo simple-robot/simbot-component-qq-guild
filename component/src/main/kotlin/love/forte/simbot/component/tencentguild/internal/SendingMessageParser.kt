@@ -2,6 +2,10 @@ package love.forte.simbot.component.tencentguild.internal
 
 import love.forte.simbot.Experimental
 import love.forte.simbot.ID
+import love.forte.simbot.component.tencentguild.message.ArkParser
+import love.forte.simbot.component.tencentguild.message.AttachmentParser
+import love.forte.simbot.component.tencentguild.message.MentionParser
+import love.forte.simbot.component.tencentguild.message.ReplyToParser
 import love.forte.simbot.message.*
 import love.forte.simbot.tencentguild.ArkBuilder
 import love.forte.simbot.tencentguild.EmbedBuilder
@@ -52,6 +56,8 @@ public object MessageParsers {
         add(ContentParser)
         add(MentionParser)
         add(ArkParser)
+        add(AttachmentParser)
+        add(ReplyToParser)
     }
 
     @Experimental
@@ -119,6 +125,9 @@ internal annotation class TmfsbDsl // TencentMessageForSendingBuilderDsl
 public class TencentMessageForSendingBuilder {
 
     @TmfsbDsl
+    public var msgId: ID? = null
+
+    @TmfsbDsl
     public var content: String? = null
 
     public fun contentAppend(contentText: String) {
@@ -169,7 +178,7 @@ public class TencentMessageForSendingBuilder {
 
     public fun build(): TencentMessageForSending {
         return TencentMessageForSending(
-            content, embed?.build(), ark?.build(), image
+            content, embed?.build(), ark?.build(), image, msgId
         )
     }
 }

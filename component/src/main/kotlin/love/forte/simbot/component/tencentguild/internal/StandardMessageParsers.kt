@@ -1,7 +1,5 @@
 package love.forte.simbot.component.tencentguild.internal
 
-import love.forte.simbot.component.tencentguild.message.Ark
-import love.forte.simbot.component.tencentguild.message.MentionChannel
 import love.forte.simbot.component.tencentguild.message.toMessage
 import love.forte.simbot.message.*
 import love.forte.simbot.tencentguild.TencentMessage
@@ -20,36 +18,6 @@ internal object ContentParser : SendingMessageParser {
     }
 }
 
-internal object MentionParser : SendingMessageParser {
-    override fun invoke(
-        index: Int,
-        element: Message.Element<*>,
-        messages: Messages?,
-        builder: TencentMessageForSendingBuilder
-    ) {
-        if (element is At) {
-            builder.contentAppend("<@${element.target}>")
-        }
-        if (element is MentionChannel) {
-            builder.contentAppend("<#${element.target}>")
-        }
-    }
-}
-
-internal object ArkParser : SendingMessageParser {
-    override fun invoke(
-        index: Int,
-        element: Message.Element<*>,
-        messages: Messages?,
-        builder: TencentMessageForSendingBuilder
-    ) {
-        if (element is Ark) {
-            builder.arkAppend {
-                from(element.toRealArk())
-            }
-        }
-    }
-}
 
 
 internal object TencentMessageParser : ReceivingMessageParser {

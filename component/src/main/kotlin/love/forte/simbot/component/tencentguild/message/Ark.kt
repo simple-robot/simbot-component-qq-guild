@@ -5,9 +5,13 @@ import kotlinx.serialization.Serializable
 import love.forte.simbot.Component
 import love.forte.simbot.ID
 import love.forte.simbot.component.tencentguild.TencentGuildComponent
+import love.forte.simbot.component.tencentguild.internal.SendingMessageParser
+import love.forte.simbot.component.tencentguild.internal.TencentMessageForSendingBuilder
 import love.forte.simbot.component.tencentguild.message.Ark.Key.byArk
 import love.forte.simbot.message.Message
+import love.forte.simbot.message.Messages
 import love.forte.simbot.tencentguild.TencentMessage
+import love.forte.simbot.tencentguild.buildArk
 import kotlin.reflect.KClass
 
 /**
@@ -21,7 +25,7 @@ public data class Ark internal constructor(
     @SerialName("template_id")
     @Serializable(ID.AsCharSequenceIDSerializer::class)
     public val templateId: ID,
-    public val kv: List<TencentMessage.Ark.Kv> = emptyList()
+    public val kvs: List<TencentMessage.Ark.Kv> = emptyList()
 ) : Message.Element<Ark> {
     override val key: Message.Key<Ark>
         get() = Key
@@ -29,7 +33,7 @@ public data class Ark internal constructor(
     /**
      * 转化为一个真正的 [TencentMessage.Ark].
      */
-    public fun toRealArk(): TencentMessage.Ark = TencentMessage.Ark(templateId, kv.toList())
+    public fun toRealArk(): TencentMessage.Ark = TencentMessage.Ark(templateId, kvs.toList())
 
     public companion object Key : Message.Key<Ark> {
         override val component: Component
@@ -48,3 +52,24 @@ public data class Ark internal constructor(
 
 
 public fun TencentMessage.Ark.toMessage(): Ark = Ark(templateId, kv)
+
+public fun Ark.toArk(): TencentMessage.Ark = buildArk(templateId) {
+    kvs = this@toArk.kvs.toMutableList()
+}
+
+
+
+internal object ArkParser : SendingMessageParser {
+    override fun invoke(
+        index: Int,
+        element: Message.Element<*>,
+        messages: Messages?,
+        builder: TencentMessageForSendingBuilder
+    ) {
+        if (element is Ark) {
+            builder.arkAppend {
+                from(element.toRealArk())
+            }
+        }
+    }
+}
