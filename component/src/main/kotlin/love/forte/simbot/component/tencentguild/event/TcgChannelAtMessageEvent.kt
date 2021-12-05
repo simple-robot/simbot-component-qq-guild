@@ -40,7 +40,7 @@ public abstract class TcgChannelAtMessageEvent : TcgEvent<TencentMessage>(), Cha
     abstract override suspend fun channel(): TencentChannel
 
     @Api4J
-    val organization: TencentChannel
+    override val organization: TencentChannel
         get() = source
 
     @JvmSynthetic
