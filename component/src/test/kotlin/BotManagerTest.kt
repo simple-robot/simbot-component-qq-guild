@@ -3,13 +3,13 @@ import kotlinx.coroutines.launch
 import love.forte.simbot.ID
 import love.forte.simbot.component.tencentguild.TencentGuildBot
 import love.forte.simbot.component.tencentguild.tencentGuildBotManager
-import love.forte.simbot.core.event.coreEventManager
+import love.forte.simbot.core.event.coreListenerManager
 import love.forte.simbot.core.event.listen
 import love.forte.simbot.event.*
 import love.forte.simbot.tencentguild.EventSignals
 
 
-private val listenerManager = coreEventManager {
+private val listenerManager = coreListenerManager {
     interceptors {
         processingIntercept(114514.ID) {
             println("Processing Intercept 1 start")
@@ -39,9 +39,8 @@ private val listenerManager = coreEventManager {
 }
 
 
-private val botManager = tencentGuildBotManager {
-    this.eventProcessor = listenerManager
-    botConfigure = { appId, appKey, token ->
+private val botManager = tencentGuildBotManager(listenerManager) {
+    botConfigure = { _, _, _ ->
         intentsForShardFactory = { EventSignals.AtMessages.intents }
     }
 }

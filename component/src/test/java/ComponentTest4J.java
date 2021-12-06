@@ -25,7 +25,7 @@ public class ComponentTest4J {
 
         final TencentGuildBotManagerConfiguration tcgConfig = new TencentGuildBotManagerConfiguration(manager);
         tcgConfig.setBotConfigure((c, id, key, t) -> {
-            c.intentsForShardFactoryAsInt((s) -> EventSignals.AtMessages.getIntents());
+            c.intentsForShardFactoryAsInt((s) -> EventSignals.AtMessages.getIntentsValue());
             return Unit.INSTANCE;
         });
 

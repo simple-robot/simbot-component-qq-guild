@@ -132,8 +132,12 @@ public sealed class EventSignals<out D>(
         /** 当channel被删除时 */
         public object ChannelDelete : Guilds<TencentChannelInfo>("CHANNEL_DELETE", TencentChannelInfo.serializer)
         public companion object {
-            @JvmStatic
+            @JvmSynthetic
             public val intents: Intents = Intents(1 shl 0)
+
+            @JvmStatic
+            public val intentsValue: Int
+                get() = AtMessages.intents.value
         }
     }
 
@@ -150,8 +154,12 @@ public sealed class EventSignals<out D>(
             GuildMembers<TencentMemberInfo>("GUILD_MEMBER_REMOVE", TencentMemberInfo.serializer)
 
         public companion object {
-            @JvmStatic
+            @JvmSynthetic
             public val intents: Intents = Intents(1 shl 1)
+
+            @JvmStatic
+            public val intentsValue: Int
+                get() = AtMessages.intents.value
         }
     }
 
@@ -162,8 +170,12 @@ public sealed class EventSignals<out D>(
             DirectMessage<TencentMessage>("DIRECT_MESSAGE_CREATE", TencentMessage.serializer)
 
         public companion object {
-            @JvmStatic
+            @JvmSynthetic
             public val intents: Intents = Intents(1 shl 12)
+
+            @JvmStatic
+            public val intentsValue: Int
+                get() = AtMessages.intents.value
         }
     }
 
@@ -181,8 +193,12 @@ public sealed class EventSignals<out D>(
         /** 下麦时 */
         public object AudioOffMic : AudioAction<TencentAudioAction>("AUDIO_OFF_MIC", TencentAudioAction.serializer)
         public companion object {
-            @JvmStatic
+            @JvmSynthetic
             public val intents: Intents = Intents(1 shl 29)
+
+            @JvmStatic
+            public val intentsValue: Int
+                get() = AtMessages.intents.value
         }
     }
 
@@ -192,8 +208,12 @@ public sealed class EventSignals<out D>(
         public object AtMessageCreate : AtMessages<TencentMessage>("AT_MESSAGE_CREATE", TencentMessage.serializer)
 
         public companion object {
-            @JvmStatic
+            @JvmSynthetic
             public val intents: Intents = Intents(1 shl 30)
+
+            @JvmStatic
+            public val intentsValue: Int
+                get() = intents.value
         }
     }
 

@@ -12,12 +12,15 @@ public class TencentApiException : IllegalStateException {
     public constructor() : super() {
         this.info = null
     }
+
     public constructor(message: String?) : super(message) {
         this.info = null
     }
+
     public constructor(message: String?, cause: Throwable?) : super(message, cause) {
         this.info = null
     }
+
     public constructor(cause: Throwable?) : super(cause) {
         this.info = null
     }
@@ -25,12 +28,15 @@ public class TencentApiException : IllegalStateException {
     public constructor(info: ErrInfo) : super() {
         this.info = info
     }
+
     public constructor(info: ErrInfo, message: String?) : super(message) {
         this.info = info
     }
+
     public constructor(info: ErrInfo, message: String?, cause: Throwable?) : super(message, cause) {
         this.info = info
     }
+
     public constructor(info: ErrInfo, cause: Throwable?) : super(cause) {
         this.info = info
     }
@@ -55,8 +61,16 @@ public inline fun CloseReason?.err(e: Throwable? = null): Nothing {
     }
     val known = knownReason
     if (known != null) {
-        throw TencentApiException("${known.name}(${known.code}): $message")
+        if (e != null) {
+            throw TencentApiException("${known.name}(${known.code}): $message", e)
+        } else {
+            throw TencentApiException("${known.name}(${known.code}): $message")
+        }
     } else {
-        throw TencentApiException("$code: $message")
+        if (e != null) {
+            throw TencentApiException("$code: $message", e)
+        } else {
+            throw TencentApiException("$code: $message")
+        }
     }
 }
