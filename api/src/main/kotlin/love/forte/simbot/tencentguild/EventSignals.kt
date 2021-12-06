@@ -33,8 +33,11 @@ public sealed class EventSignals<out D>(
     public val decoder: DeserializationStrategy<out D>
 ) {
     public companion object {
-        public inline val allIntents: Intents get() =
-            Guilds.intents + GuildMembers.intents + DirectMessage.intents + AudioAction.intents + AtMessages.intents
+        public inline val allIntents: Intents
+            get() =
+                Guilds.intents + GuildMembers.intents +
+                        DirectMessage.intents + AudioAction.intents +
+                        AtMessages.intents
 
         @JvmStatic
         public val events: Map<String, EventSignals<*>> = mapOf(
@@ -85,11 +88,11 @@ public sealed class EventSignals<out D>(
       - AT_MESSAGE_CREATE     // 当收到@机器人的消息时
      */
 
-    public sealed class Other<D>(t: String, decoder: DeserializationStrategy<out D>): EventSignals<D>(t, decoder) {
+    public sealed class Other<D>(t: String, decoder: DeserializationStrategy<out D>) : EventSignals<D>(t, decoder) {
         /**
          * 鉴权后的ready
          */
-        public object ReadyEvent: Other<ReadyEvent.Data>("READY", Data.serializer()) {
+        public object ReadyEvent : Other<ReadyEvent.Data>("READY", Data.serializer()) {
             @Serializable
             public data class Data(
                 public val version: Int,
@@ -113,68 +116,88 @@ public sealed class EventSignals<out D>(
     public sealed class Guilds<D>(t: String, decoder: DeserializationStrategy<out D>) : EventSignals<D>(t, decoder) {
         /** 当机器人加入新guild时 */
         public object GuildCreate : Guilds<TencentGuildInfo>("GUILD_CREATE", TencentGuildInfo.serializer)
+
         /** 当guild资料发生变更时 */
         public object GuildUpdate : Guilds<TencentGuildInfo>("GUILD_UPDATE", TencentGuildInfo.serializer)
+
         /** 当机器人退出guild时 */
         public object GuildDelete : Guilds<TencentGuildInfo>("GUILD_DELETE", TencentGuildInfo.serializer)
+
         /** 当channel被创建时 */
         public object ChannelCreate : Guilds<TencentChannelInfo>("CHANNEL_CREATE", TencentChannelInfo.serializer)
+
         /** 当channel被更新时 */
         public object ChannelUpdate : Guilds<TencentChannelInfo>("CHANNEL_UPDATE", TencentChannelInfo.serializer)
+
         /** 当channel被删除时 */
         public object ChannelDelete : Guilds<TencentChannelInfo>("CHANNEL_DELETE", TencentChannelInfo.serializer)
         public companion object {
+            @JvmStatic
             public val intents: Intents = Intents(1 shl 0)
         }
     }
 
-    public sealed class GuildMembers<D>(t: String, decoder: DeserializationStrategy<out D>) : EventSignals<D>(t, decoder) {
+    public sealed class GuildMembers<D>(t: String, decoder: DeserializationStrategy<out D>) :
+        EventSignals<D>(t, decoder) {
         /** 当成员加入时 */
         public object GuildMemberAdd : GuildMembers<TencentMemberInfo>("GUILD_MEMBER_ADD", TencentMemberInfo.serializer)
+
         /** 当成员资料变更时 */
         public object GuildMemberUpdate : GuildMembers<Unit>("GUILD_MEMBER_UPDATE", Unit.serializer())
+
         /** 当成员被移除时 */
-        public object GuildMemberRemove : GuildMembers<TencentMemberInfo>("GUILD_MEMBER_REMOVE", TencentMemberInfo.serializer)
+        public object GuildMemberRemove :
+            GuildMembers<TencentMemberInfo>("GUILD_MEMBER_REMOVE", TencentMemberInfo.serializer)
+
         public companion object {
+            @JvmStatic
             public val intents: Intents = Intents(1 shl 1)
         }
     }
 
-    public sealed class DirectMessage<D>(t: String, decoder: DeserializationStrategy<out D>) : EventSignals<D>(t, decoder) {
+    public sealed class DirectMessage<D>(t: String, decoder: DeserializationStrategy<out D>) :
+        EventSignals<D>(t, decoder) {
         /** 当收到用户发给机器人的私信消息时 */
-        public object DirectMessageCreate : DirectMessage<TencentMessage>("DIRECT_MESSAGE_CREATE", TencentMessage.serializer)
+        public object DirectMessageCreate :
+            DirectMessage<TencentMessage>("DIRECT_MESSAGE_CREATE", TencentMessage.serializer)
+
         public companion object {
+            @JvmStatic
             public val intents: Intents = Intents(1 shl 12)
         }
     }
 
-    public sealed class AudioAction<D>(t: String, decoder: DeserializationStrategy<out D>) : EventSignals<D>(t, decoder) {
+    public sealed class AudioAction<D>(t: String, decoder: DeserializationStrategy<out D>) :
+        EventSignals<D>(t, decoder) {
         /** 音频开始播放时 */
         public object AudioStart : AudioAction<TencentAudioAction>("AUDIO_START", TencentAudioAction.serializer)
+
         /** 音频播放结束时 */
         public object AudioFinish : AudioAction<TencentAudioAction>("AUDIO_FINISH", TencentAudioAction.serializer)
+
         /** 上麦时 */
         public object AudioOnMic : AudioAction<TencentAudioAction>("AUDIO_ON_MIC", TencentAudioAction.serializer)
+
         /** 下麦时 */
         public object AudioOffMic : AudioAction<TencentAudioAction>("AUDIO_OFF_MIC", TencentAudioAction.serializer)
         public companion object {
+            @JvmStatic
             public val intents: Intents = Intents(1 shl 29)
         }
     }
 
-    public sealed class AtMessages<D>(t: String, decoder: DeserializationStrategy<out D>) : EventSignals<D>(t, decoder) {
+    public sealed class AtMessages<D>(t: String, decoder: DeserializationStrategy<out D>) :
+        EventSignals<D>(t, decoder) {
         /** 当收到@机器人的消息时 */
         public object AtMessageCreate : AtMessages<TencentMessage>("AT_MESSAGE_CREATE", TencentMessage.serializer)
 
         public companion object {
+            @JvmStatic
             public val intents: Intents = Intents(1 shl 30)
         }
     }
 
 }
-
-
-
 
 
 @Serializable

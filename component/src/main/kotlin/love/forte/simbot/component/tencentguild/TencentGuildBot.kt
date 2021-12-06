@@ -52,11 +52,15 @@ public abstract class TencentGuildBot : Bot, TencentBot {
 
     override val status: UserStatus get() = BotStatus
 
+    @JvmSynthetic
     abstract override suspend fun friends(grouping: Grouping, limiter: Limiter): Flow<Friend>
 
+    @JvmSynthetic
     abstract override suspend fun groups(grouping: Grouping, limiter: Limiter): Flow<Group>
 
+    @JvmSynthetic
     abstract override suspend fun guilds(grouping: Grouping, limiter: Limiter): Flow<TencentGuild>
+
 
     override suspend fun uploadImage(resource: Resource): Image {
         // TODO fake remote image.

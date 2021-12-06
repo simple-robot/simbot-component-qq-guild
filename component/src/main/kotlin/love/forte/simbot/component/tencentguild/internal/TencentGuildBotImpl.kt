@@ -12,16 +12,15 @@
 
 package love.forte.simbot.component.tencentguild.internal
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.runBlocking
 import love.forte.simbot.*
 import love.forte.simbot.component.tencentguild.TencentGuildBot
 import love.forte.simbot.component.tencentguild.TencentGuildBotManager
 import love.forte.simbot.component.tencentguild.internal.event.eventSignalParsers
 import love.forte.simbot.definition.Friend
 import love.forte.simbot.definition.Group
+import love.forte.simbot.definition.Guild
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.event.pushIfProcessable
 import love.forte.simbot.tencentguild.EventSignals
@@ -30,6 +29,8 @@ import love.forte.simbot.tencentguild.TencentGuildInfo
 import love.forte.simbot.tencentguild.api.guild.GetBotGuildListApi
 import love.forte.simbot.tencentguild.request
 import java.util.concurrent.atomic.AtomicInteger
+import java.util.stream.Stream
+import kotlin.streams.asStream
 
 /**
  *
@@ -43,7 +44,8 @@ internal class TencentGuildBotImpl(
     // 0 init 1 start 2 cancel
     private val activeStatus = AtomicInteger(0)
 
-    private val logger = LoggerFactory.getLogger("love.forte.simbot.component.tencentguild.bot.${sourceBot.ticket.appKey}")
+    private val logger =
+        LoggerFactory.getLogger("love.forte.simbot.component.tencentguild.bot.${sourceBot.ticket.appKey}")
 
     /**
      * grouping是无效的.
@@ -55,23 +57,78 @@ internal class TencentGuildBotImpl(
             100
         }
 
-        val limit = if (limiter.limit <= 0) Int.MAX_VALUE else limiter.limit
-        val skip = if (limiter.offset <= 0) 0 else limiter.offset
-        return getGuilds(skip, batch, limit).map { info ->
+        return getGuilds(limiter.offset, batch, limiter.limit).map { info ->
             TencentGuildImpl(bot = this, guildInfo = info)
         }
     }
 
+    @Api4J
+    override fun getGuilds(grouping: Grouping, limiter: Limiter): Stream<out Guild> {
+        val batch = if (limiter.batchSize > 0) {
+            if (limiter.batchSize > 100) 100 else limiter.batchSize
+        } else {
+            100
+        }
 
-    private fun getGuilds(skip: Int, batch: Int, limit: Int): Flow<TencentGuildInfo> = flow {
-        var lastId: ID? = null
-        flowForLimiter(skip, limit) {
-            GetBotGuildListApi(after = lastId, limit = batch).request(sourceBot).also {
-                lastId = it.lastOrNull()?.id
+        return getGuildSequence(limiter.offset, batch, limiter.limit).map { info ->
+            TencentGuildImpl(bot = this, guildInfo = info)
+        }.asStream()
+    }
+
+
+    private fun getGuilds(skip: Int, batch: Int, limit: Int): Flow<TencentGuildInfo> {
+        return flow {
+            var lastId: ID? = null
+
+            while (true) {
+                val list = GetBotGuildListApi(after = lastId, limit = batch).request(sourceBot)
+                if (list.isEmpty()) break
+
+                lastId = list.lastOrNull()?.id
+
+                for (tencentGuildInfo in list) {
+                    emit(tencentGuildInfo)
+                }
             }
+        }.let {
+            var f = it
+            if (skip > 0) {
+                f = f.drop(skip)
+            }
+            if (limit > 0) {
+                f = f.take(limit)
+            }
+
+            f
         }
     }
 
+    private fun getGuildSequence(skip: Int, batch: Int, limit: Int): Sequence<TencentGuildInfo> {
+        return sequence {
+            var lastId: ID? = null
+            while (true) {
+                val list = runBlocking {
+                    GetBotGuildListApi(after = lastId, limit = batch).request(sourceBot)
+                }
+                if (list.isEmpty()) break
+
+                lastId = list.lastOrNull()?.id
+
+                yieldAll(list)
+            }
+        }.let {
+            var f = it
+            if (skip > 0) {
+                f = f.drop(skip)
+            }
+            if (limit > 0) {
+                f = f.take(limit)
+            }
+
+            f
+        }
+
+    }
 
     override suspend fun start(): Boolean = sourceBot.start().also {
         activeStatus.compareAndSet(0, 1)
@@ -84,12 +141,18 @@ internal class TencentGuildBotImpl(
 
                 eventSignalParsers[it]?.let { parser ->
 
-                    logger.trace("eventProcessor.isProcessable({}): {}", parser.key, eventProcessor.isProcessable(parser.key))
-                    eventProcessor.pushIfProcessable(parser.key) { parser(
-                        bot = this@TencentGuildBotImpl,
-                        decoder = json,
-                        dispatch = this
-                    ) }
+                    logger.trace(
+                        "eventProcessor.isProcessable({}): {}",
+                        parser.key,
+                        eventProcessor.isProcessable(parser.key)
+                    )
+                    eventProcessor.pushIfProcessable(parser.key) {
+                        parser(
+                            bot = this@TencentGuildBotImpl,
+                            decoder = json,
+                            dispatch = this
+                        )
+                    }
                 }
             }
         }
@@ -108,7 +171,6 @@ internal class TencentGuildBotImpl(
         get() = activeStatus.get() >= 1
 
 
-
     override val isCancelled: Boolean
         get() = activeStatus.get() == 2
 
@@ -118,8 +180,8 @@ internal class TencentGuildBotImpl(
     }
 
     @Api4J
-    override fun getGroups(grouping: Grouping, limiter: Limiter): List<Group> {
-        return emptyList()
+    override fun getGroups(grouping: Grouping, limiter: Limiter): Stream<out Group> {
+        return Stream.empty()
     }
 
     override suspend fun friends(grouping: Grouping, limiter: Limiter): Flow<Friend> {
@@ -127,7 +189,8 @@ internal class TencentGuildBotImpl(
     }
 
     @Api4J
-    override fun getFriends(grouping: Grouping, limiter: Limiter): List<Friend> {
-        return emptyList()
+    override fun getFriends(grouping: Grouping, limiter: Limiter): Stream<out Friend> {
+        return Stream.empty()
     }
+
 }

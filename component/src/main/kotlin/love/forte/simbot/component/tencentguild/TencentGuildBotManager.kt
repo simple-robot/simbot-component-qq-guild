@@ -86,13 +86,11 @@ public fun tencentGuildBotManager(
 
 /**
  * [TencentGuildBotManager] 使用的配置类。
+ *
+ * @param eventProcessor 当前bot所使用的事件处理器
  */
 @Suppress("MemberVisibilityCanBePrivate")
 public class TencentGuildBotManagerConfiguration(public var eventProcessor: EventProcessor) {
-
-    /*
-     * 提供一个事件处理器。
-     */
 
     /**
      * 从此处对所有bot的配置信息进行统一处理。
