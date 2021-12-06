@@ -38,10 +38,10 @@ internal val eventSignalParsers =
 
         // EventSignals.DirectMessage.DirectMessageCreate to TODO(),
 
-        // EventSignals.AudioAction.AudioStart to TODO(),
-        // EventSignals.AudioAction.AudioFinish to TODO(),
-        // EventSignals.AudioAction.AudioOnMic to TODO(),
-        // EventSignals.AudioAction.AudioOffMic to TODO(),
+        EventSignals.AudioAction.AudioStart to TcgAudioStart.Parser,
+        EventSignals.AudioAction.AudioFinish to TcgAudioFinish.Parser,
+        EventSignals.AudioAction.AudioOnMic to TcgAudioOnMic.Parser,
+        EventSignals.AudioAction.AudioOffMic to TcgAudioOffMic.Parser,
 
         EventSignals.AtMessages.AtMessageCreate to TcgChannelAtMessageEventImpl.Parser,
     )
