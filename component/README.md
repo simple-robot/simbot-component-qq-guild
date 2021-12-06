@@ -139,6 +139,8 @@ val listener = coreListener(eventKey = TcgChannelAtMessageEvent) { context: Even
     // At
     // Ark(tencent guild 专属)
     // AttachmentMessage(tencent guild 专属)
+    // MentionChannel(tencent guild 专属)
+    // ReplyTo(tencent guild 专属)
 
     // 🌟 消息：@事件发送者 你好啊
     // channel.send(At(event.id) + Text { "你好啊！" }) // err
