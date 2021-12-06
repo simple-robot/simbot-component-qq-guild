@@ -13,7 +13,19 @@
 
 ## 事件支持
 
-目前，在 `component-tencent-guild` 下仅支持 `TcgChannelAtMessageEvent`。
+目前，组件对core下事件的支持：
+- TcgGuildModifyEvent -> 频道服务器相关事件
+  - TcgGuildModifyEvent.Create -> 频道服务器 - 进入
+  - TcgGuildModifyEvent.Update -> 频道服务器 - 更新
+  - TcgGuildModifyEvent.Delete -> 频道服务器 - 离开
+- TcgGuildMemberEvent -> 频道服务器成员相关事件
+  - TcgGuildMemberEvent.Increase -> 成员 - 增加
+  - TcgGuildMemberEvent.Decrease -> 成员 - 减少
+- TcgChannelModifyEvent -> 子频道相关事件
+  - TcgChannelModifyEvent.Create -> 子频道 - 新增
+  - TcgChannelModifyEvent.Update -> 子频道 - 信息变更
+  - TcgChannelModifyEvent.Delete -> 子频道 - 删除
+- TcgChannelAtMessageEvent -> 被At消息事件
 
 
 当然，这不影响你直接使用 `tencent-guild-core` 中定义的事件，但是你无法使用下述的诸如调度器、拦截器等内容。
@@ -27,7 +39,7 @@
 <dependency>
     <groupId>love.forte.simple-robot</groupId>
     <artifactId>component-tencent-guild</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
 </dependency>
 ```
 
@@ -50,14 +62,14 @@ implementation("love.forte.simple-robot:component-tencent-guild:$version")
 首先，根据 `simple-robot`, 你需要一个 `EventListenerManager` 来作为针对一系列事件的 **调度入口**, 而 `simple-robot-core` 为我们提供了一个`coreEventManager`:
 ```kotlin
 // 最简配置
-val eventManager = coreEventManager {
+val eventManager = coreListenerManager {
     // 配置，例如拦截器
 }
 ```
 
 上面的示例提到了拦截器，如果要配置拦截器可以这样：
 ```kotlin
-val eventManager = coreEventManager {
+val eventManager = coreListenerManager {
     // 配置拦截器
     interceptors {
         // 事件流程拦截器，提供一个唯一的拦截器ID
@@ -153,7 +165,7 @@ listenerManager.register(listener)
 
 当然，你也可以直接用以下方式注册，而不需要提前创建Listener实例：
 ```kotlin
-eventManager.listen(eventKey = ChannelMessageEvent) { context, event ->
+listenerManager.listen(eventKey = ChannelMessageEvent) { context, event ->
     
     // do something
 
@@ -167,9 +179,8 @@ eventManager.listen(eventKey = ChannelMessageEvent) { context, event ->
 事件调度管理器结束后，便需要一个Bot管理器。根据 `simple-robot` 规范，所有的Bot应全部产出自其专属的 `BotManager` 并由其进行统一管理。
 在 `component-tencent-guild`, 提供了一个此模块下专属的bot管理器：
 ```kotlin
-val botManager = tencentGuildBotManager {
-    // 注意！botManager 必须配置一个事件管理器，也就是一开始创建的东西。
-    eventProcessor = eventManager
+// 注意！botManager 必须配置一个事件管理器，也就是一开始创建的东西。
+val botManager = tencentGuildBotManager(listenerManager) {
     
     // 考虑到目前bot最常见的事件是 AT_MESSAGE, 这里统一配置所有bot的设置，让他们只监听 AT_MESSAGE。
     // botConfigure 是所有注册的bot的前置配置器。
@@ -205,18 +216,19 @@ bot.join() // 直到关闭
 
 ### 最简示例：
 ```kotlin
-val eventManager = coreEventManager {
+val listenerManager = coreListenerManager {
     // 配置
 }
 
-val botManager = tencentGuildBotManager {
-    eventProcessor = eventManager // 后期可能会直接调整到方法参数中，而不是DSL中
+val botManager = tencentGuildBotManager(listenerManager) {
     // config
 }
 
 // 事件监听
-eventManager.listen(eventKey = ChannelMessageEvent) { context, event ->
+listenerManager.listen(eventKey = ChannelMessageEvent) { context, event ->
     // do
+    
+    // result
     null
 }
 

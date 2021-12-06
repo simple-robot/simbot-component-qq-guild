@@ -23,7 +23,7 @@ core模块是针对bot事件监听的简易实现，是一个半 **底层** 库�
 <dependency>
     <groupId>love.forte.simple-robot</groupId>
     <artifactId>tencent-guild-core</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
 </dependency>
 ```
 
