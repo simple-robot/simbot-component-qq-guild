@@ -18,6 +18,7 @@ internal abstract class BaseSignalToEvent<S> : SignalToEvent {
         val data = decoder.decodeFromJsonElement(type.decoder, dispatch.data)
         return doParser(data, bot)
     }
+
     protected abstract suspend fun doParser(data: S, bot: TencentGuildBotImpl): Event
 }
 
@@ -31,9 +32,9 @@ internal val eventSignalParsers =
         EventSignals.Guilds.ChannelUpdate to TcgChannelUpdate.Parser,
         EventSignals.Guilds.ChannelDelete to TcgChannelDelete.Parser,
 
-        // EventSignals.GuildMembers.GuildMemberAdd to TODO(),
+        EventSignals.GuildMembers.GuildMemberAdd to TcgGuildMemberIncrease.Parser,
         // EventSignals.GuildMembers.GuildMemberUpdate to TODO(),
-        // EventSignals.GuildMembers.GuildMemberRemove to TODO(),
+        EventSignals.GuildMembers.GuildMemberRemove to TcgGuildMemberDecrease.Parser,
 
         // EventSignals.DirectMessage.DirectMessageCreate to TODO(),
 

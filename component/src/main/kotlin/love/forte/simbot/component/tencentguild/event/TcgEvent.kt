@@ -1,5 +1,7 @@
 package love.forte.simbot.component.tencentguild.event
 
+import love.forte.simbot.component.tencentguild.TencentGuildBot
+import love.forte.simbot.definition.BotContainer
 import love.forte.simbot.tencentguild.EventSignals
 
 /**
@@ -10,7 +12,10 @@ import love.forte.simbot.tencentguild.EventSignals
  *
  * @author ForteScarlet
  */
-public abstract class TcgEvent<T> {
+public abstract class TcgEvent<T> : BotContainer {
+    abstract override val bot: TencentGuildBot
+
+
     /**
      * 真正的原始事件所得到的事件实体。
      */
