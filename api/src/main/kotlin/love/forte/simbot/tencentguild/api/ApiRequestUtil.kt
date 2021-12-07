@@ -17,11 +17,13 @@ import kotlinx.serialization.json.JsonBuilder
 import love.forte.simbot.Api4J
 import love.forte.simbot.LoggerFactory
 import love.forte.simbot.tencentguild.ErrInfo
+import love.forte.simbot.tencentguild.InternalSrTcgApi
 import love.forte.simbot.tencentguild.err
 import java.util.function.Consumer
 
 internal val logger = LoggerFactory.getLogger("love.forte.simbot.tencentguild.api.request")
 
+@JvmSynthetic
 public suspend fun TencentApi<*>.requestForResponse(
     client: HttpClient,
     server: Url,
@@ -73,6 +75,7 @@ public suspend fun TencentApi<*>.requestForResponse(
  *
  * @throws love.forte.simbot.tencentguild.TencentApiException 如果响应码不在 200..300 范围内。
  */
+@JvmSynthetic
 public suspend inline fun <reified R> TencentApi<R>.request(
     client: HttpClient,
     server: Url,
@@ -104,7 +107,7 @@ internal suspend inline fun checkStatus(resp: HttpResponse, status: () -> HttpSt
 
 
 @PublishedApi
-@OptIn(ExperimentalSerializationApi::class)
+@OptIn(ExperimentalSerializationApi::class, InternalSrTcgApi::class)
 internal suspend inline fun <reified R> TencentApi<R>.decodeFromHttpResponse(
     decoder: StringFormat,
     response: HttpResponse
@@ -118,9 +121,9 @@ internal suspend inline fun <reified R> TencentApi<R>.decodeFromHttpResponse(
     return decodeFromHttpResponseViaString(decoder, response)
 }
 
-
-@PublishedApi
-internal suspend fun <R> TencentApi<R>.decodeFromHttpResponseViaString(
+@InternalSrTcgApi
+@JvmSynthetic
+public suspend fun <R> TencentApi<R>.decodeFromHttpResponseViaString(
     decoder: StringFormat,
     response: HttpResponse
 ): R {
@@ -135,6 +138,7 @@ internal suspend fun <R> TencentApi<R>.decodeFromHttpResponseViaString(
 /**
  * for Java
  */
+@OptIn(InternalSrTcgApi::class)
 @Api4J
 @JvmOverloads
 public fun <R> doRequest(
@@ -158,11 +162,13 @@ public fun newHttpClient(): HttpClient = HttpClient()
 
 @Api4J
 @JvmOverloads
-public fun newJson(build: Consumer<JsonBuilder> = Consumer {
-    it.apply {
-        isLenient = true
-        ignoreUnknownKeys = true
+public fun newJson(
+    build: Consumer<JsonBuilder> = Consumer {
+        it.apply {
+            isLenient = true
+            ignoreUnknownKeys = true
+        }
     }
-}): Json = Json {
+): Json = Json {
     build.accept(this)
 }

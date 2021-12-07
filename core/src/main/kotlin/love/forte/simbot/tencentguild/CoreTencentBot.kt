@@ -1,3 +1,4 @@
+@file:JvmName("TencentBotFactory")
 package love.forte.simbot.tencentguild
 
 import io.ktor.client.*
@@ -12,7 +13,8 @@ import love.forte.simbot.tencentguild.core.internal.TicketImpl
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
-
+@JvmName("newBot")
+@JvmOverloads
 public fun tencentBot(
     appId: String,
     appKey: String,

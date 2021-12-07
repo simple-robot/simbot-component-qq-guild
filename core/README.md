@@ -2,24 +2,25 @@
 
 core模块是针对bot事件监听的简易实现，是一个半 **底层** 库，仅提供最基础的 DSL 事件注册，不提供过多的应用级功能整合（例如依赖注入、自动扫描等等）
 
-如果你想使用更友好更高阶的使用，请关注 [simple-robot](https://github.com/ForteScarlet/simpler-robot) 框架的3.x版本发布情况。更友好的应用级实现将会通过 `simple-robot` 的组件进行实现与提供。
-
+如果你想使用更友好更高阶的使用，请关注 [simple-robot](https://github.com/ForteScarlet/simpler-robot)
+框架的3.x版本发布情况。更友好的应用级实现将会通过 `simple-robot` 的组件进行实现与提供。
 
 ## 使用
-本库，目前仅基于 `simple-robot 3.0.0-preview.x.x` 版本api，从版本可以看出来，simbot 3.x的版本仍然处于极早期的预览阶段，
-因此当前模块也相应的仅仅只是一个"预览"版本。
+
+本库，目前仅基于 `simple-robot 3.0.0-preview.x.x` 版本api，从版本可以看出来，simbot 3.x的版本仍然处于极早期的预览阶段， 因此当前模块也相应的仅仅只是一个"预览"版本。
 
 本库将会 `simple-robot` 3.x发布时（或相对较其早的时刻）发布相应的正式版本。主要是因为 `simple-robot 3.x` 仍处于设计开发阶段，可能会出现一些接口变动。
 
 ## 目前情况
+
 - 测试了基本的 `AT_MESSAGE` 事件接收与对此消息事件通过 `MessageSendApi` 进行回复（测试频道，语料无限制情况下）。
 - 测试了获取bot的guild列表。
 - 测试了30分钟之内的挂机。（疑似重连成功，但是我没加日志所以不确定）
 
-
 ### Maven
 
 ```xml
+
 <dependency>
     <groupId>love.forte.simple-robot</groupId>
     <artifactId>tencent-guild-core</artifactId>
@@ -40,19 +41,21 @@ implementation("love.forte.simple-robot:tencent-guild-core:$version")
 ```
 
 ## 示例
+
 ### Kotlin
+
 ```kotlin
 
 suspend fun main() {
     val bot = tencentBot(appId = "app_id", appKey = "app_key", token = "token") {
         // 假设监听 AT_MESSAGE 事件。
         serverUrl = TencentGuildApi.URL // or TencentGuildApi.SANDBOX_URL, 或者自定义
-        
+
         // 假设所有分片下都要监听 "AT_MESSAGE" 事件。
         intentsForSharedFactory = { EventSignals.AtMessages.intents }
-        
+
         // 其他自定义配置
-        
+
     }
 
     // start bot, 即尝试进行ws连接。
@@ -118,6 +121,38 @@ suspend fun main() {
 
 对于所有的事件类型（以及他们的数据类型定义）都囊括在 `EventSignals` 的子类中，你可以直接参考此类的源码定义。
 
+### Java
+
+```java
+TencentBot bot = TencentBotFactory.newBot("appId", "appKey", "token", c -> {
+        // Listen AT_MESSAGES
+        c.intentsForShardFactoryAsInt(shard -> EventSignals.AtMessages.getIntentsValue());
+
+        // config.. 
+        
+        return Unit.INSTANCE;
+})
+
+// 事件处理
+bot.process(EventSignals.AtMessages.AtMessageCreate.INSTANCE, (tencentMessage) -> {
+    
+    System.out.println(tencentMessage.getContent());
+    
+    // 构建API
+    final MessageSendApi sendApi = new MessageSendApi(tencentMessage.getChannelId(), "Hi", tencentMessage.getId());
+    
+    // 发送消息
+    final TencentMessage result = BotRequestUtil.doRequest(bot, sendApi);
+    
+    System.out.println(result);
+    
+    return Unit.INSTANCE;
+});
+
+bot.startBlocking()
+bot.joinBlocking()
+
+```
 
 ## 待建设内容
 

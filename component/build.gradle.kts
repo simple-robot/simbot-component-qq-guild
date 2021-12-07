@@ -20,8 +20,9 @@ dependencies {
     api(V.Ktor.Client.Websockets.notation)
     api(V.Ktor.Client.Serialization.notation)
     api(V.Kotlinx.Serialization.Json.notation)
-    api(V.Kotlinx.Serialization.Properties.notation)
-    api(V.Kotlinx.Serialization.Yaml.notation)
+    compileOnly(V.Kotlinx.Serialization.Properties.notation)
+    compileOnly(V.Kotlinx.Serialization.Yaml.notation)
+
 
 
 

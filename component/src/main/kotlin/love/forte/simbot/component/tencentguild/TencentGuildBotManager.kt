@@ -43,7 +43,8 @@ public abstract class TencentGuildBotManager : BotManager<TencentGuildBot>() {
         val appKey = properties.find("app_key", "app_secret", "appKey", "appSecret") {
             "Required property 'app_key'"
         }
-        val token = properties["token"] ?: throw NullPointerException("Required property 'token'")
+        val token = properties["token"]
+            ?: throw NullPointerException("Required property 'token'")
 
         // no config
         return register(appId, appKey, token) {}

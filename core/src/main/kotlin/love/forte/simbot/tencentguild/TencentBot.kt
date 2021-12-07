@@ -1,7 +1,9 @@
 package love.forte.simbot.tencentguild
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
+import love.forte.simbot.Api4J
 import kotlin.coroutines.CoroutineContext
 
 
@@ -35,8 +37,30 @@ public interface TencentBot : CoroutineScope {
     /**
      * 添加一个事件处理器。
      */
+    @JvmSynthetic
     public fun processor(processor: suspend Signal.Dispatch.(decoder: Json) -> Unit)
 
+
+    /**
+     * process for java
+     */
+    @Api4J
+    public fun process(processor: (Signal.Dispatch, Json) -> Unit) {
+        processor { decoder -> processor(this, decoder) }
+    }
+
+    /**
+     * process for java
+     */
+    @Api4J
+    public fun <R> process(eventType: EventSignals<R>, processor: (R) -> Unit) {
+        processor { decoder ->
+            if (type == eventType.type) {
+                val eventData: R = decoder.decodeFromJsonElement(eventType.decoder, data)
+                processor(eventData)
+            }
+        }
+    }
 
     /**
      * [票据](https://bot.q.qq.com/wiki/develop/api/#%E7%A5%A8%E6%8D%AE)
@@ -69,7 +93,12 @@ public interface TencentBot : CoroutineScope {
      *
      * @return 当且仅当启动了并且成功了才会得到true。
      */
+    @JvmSynthetic
     public suspend fun start(): Boolean
+
+
+    @Api4J
+    public fun startBlocking(): Boolean = runBlocking { start() }
 
 
     /**
@@ -77,14 +106,21 @@ public interface TencentBot : CoroutineScope {
      *
      * @return 当且仅当此BOT未关闭且关闭成功才会得到true。
      */
+    @JvmSynthetic
     public suspend fun cancel(): Boolean
 
-
+    @Api4J
+    public fun cancelBlocking(): Boolean = runBlocking { cancel() }
 
     /**
      * 挂起直到此bot被 [cancel]. 如果已经 [cancel], 则不会挂起。
      */
+    @JvmSynthetic
     public suspend fun join()
+
+
+    @Api4J
+    public fun joinBlocking(): Unit = runBlocking { join() }
 
 
     /**
