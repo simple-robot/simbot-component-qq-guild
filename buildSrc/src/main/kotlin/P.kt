@@ -23,12 +23,12 @@ abstract class SimbotProject {
 sealed class P : SimbotProject() {
     object Simbot {
         const val GROUP = "love.forte.simple-robot"
-        const val VERSION = "3.0.0.preview.0.4"
+        const val VERSION = "3.0.0.preview.0.5"
     }
 
     object TencentGuild {
         const val GROUP = Simbot.GROUP
-        const val VERSION = "0.0.3"
+        const val VERSION = "0.0.4"
 
         const val apiPath = ":tencent-guild-api"
         const val corePath = ":tencent-guild-core"
