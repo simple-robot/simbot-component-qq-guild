@@ -12,6 +12,7 @@
 
 package love.forte.simbot.component.tencentguild.internal
 
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.runBlocking
 import love.forte.simbot.*
@@ -43,6 +44,8 @@ internal class TencentGuildBotImpl(
 ) : TencentGuildBot(), TencentBot by sourceBot {
     // 0 init 1 start 2 cancel
     private val activeStatus = AtomicInteger(0)
+
+    private val job get() = sourceBot.coroutineContext[Job]!!
 
     private val logger =
         LoggerFactory.getLogger("love.forte.simbot.component.tencentguild.bot.${sourceBot.ticket.appKey}")
@@ -173,9 +176,7 @@ internal class TencentGuildBotImpl(
         return super<TencentGuildBot>.startBlocking()
     }
 
-    override suspend fun cancel(reason: Throwable?): Boolean = sourceBot.cancel(reason).also {
-        activeStatus.set(2)
-    }
+    override suspend fun cancel(reason: Throwable?): Boolean = sourceBot.cancel(reason)
 
     @Api4J
     override fun cancelBlocking(reason: Throwable?): Boolean {
@@ -183,11 +184,11 @@ internal class TencentGuildBotImpl(
     }
 
     override val isStarted: Boolean
-        get() = activeStatus.get() >= 1
+        get() = job.isCompleted || job.isActive
 
 
     override val isCancelled: Boolean
-        get() = activeStatus.get() == 2
+        get() = job.isCancelled
 
 
     override suspend fun groups(grouping: Grouping, limiter: Limiter): Flow<Group> {
