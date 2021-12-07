@@ -163,8 +163,23 @@ internal class TencentGuildBotImpl(
         sourceBot.join()
     }
 
-    override suspend fun cancel(): Boolean = sourceBot.cancel().also {
+    @Api4J
+    override fun joinBlocking() {
+        super<TencentGuildBot>.joinBlocking()
+    }
+
+    @Api4J
+    override fun startBlocking(): Boolean {
+        return super<TencentGuildBot>.startBlocking()
+    }
+
+    override suspend fun cancel(reason: Throwable?): Boolean = sourceBot.cancel(reason).also {
         activeStatus.set(2)
+    }
+
+    @Api4J
+    override fun cancelBlocking(reason: Throwable?): Boolean {
+        return runBlocking { cancel(reason) }
     }
 
     override val isStarted: Boolean

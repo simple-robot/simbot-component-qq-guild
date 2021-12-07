@@ -8,6 +8,7 @@ import io.ktor.client.features.websocket.*
 import io.ktor.http.*
 import kotlinx.coroutines.Job
 import kotlinx.serialization.json.Json
+import love.forte.simbot.ExceptionProcessor
 import love.forte.simbot.tencentguild.core.internal.TencentBotImpl
 import love.forte.simbot.tencentguild.core.internal.TicketImpl
 import kotlin.coroutines.CoroutineContext
@@ -50,6 +51,12 @@ public class TencentBotConfiguration {
      * 分片总数。如果为0，则会通过 [love.forte.simbot.tencentguild.api.GatewayWithShard] 来决定分片结果。
      */
     public var totalShard: Int = 0
+
+
+    /**
+     * 异常处理器。
+     */
+    public var exceptionHandler: ExceptionProcessor<Unit>? = null
 
 
     /**

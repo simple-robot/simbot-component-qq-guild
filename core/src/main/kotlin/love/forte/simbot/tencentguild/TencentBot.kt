@@ -1,5 +1,6 @@
 package love.forte.simbot.tencentguild
 
+import io.ktor.http.cio.websocket.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
@@ -107,10 +108,10 @@ public interface TencentBot : CoroutineScope {
      * @return 当且仅当此BOT未关闭且关闭成功才会得到true。
      */
     @JvmSynthetic
-    public suspend fun cancel(): Boolean
+    public suspend fun cancel(reason: Throwable? = null): Boolean
 
     @Api4J
-    public fun cancelBlocking(): Boolean = runBlocking { cancel() }
+    public fun cancelBlocking(reason: Throwable?): Boolean = runBlocking { cancel(reason) }
 
     /**
      * 挂起直到此bot被 [cancel]. 如果已经 [cancel], 则不会挂起。

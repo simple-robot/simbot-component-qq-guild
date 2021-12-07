@@ -68,9 +68,26 @@ public abstract class TencentGuildBot : Bot, TencentBot {
     }
 
 
-
     override val isActive: Boolean
         get() = sourceBot.isActive
+
+    @Api4J
+    override fun joinBlocking() {
+        super<Bot>.joinBlocking()
+    }
+
+    @Api4J
+    override fun cancelBlocking(reason: Throwable?): Boolean {
+        return super<TencentBot>.cancelBlocking(reason)
+    }
+
+    @Api4J
+    override fun startBlocking(): Boolean {
+        return super<TencentBot>.startBlocking()
+    }
+
+
+
 }
 
 

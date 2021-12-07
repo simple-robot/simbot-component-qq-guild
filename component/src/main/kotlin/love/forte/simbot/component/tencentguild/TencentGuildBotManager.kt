@@ -36,6 +36,9 @@ private inline fun <reified K, reified V> Map<K, V>.find(vararg keys: K, nullMes
  */
 public abstract class TencentGuildBotManager : BotManager<TencentGuildBot>() {
 
+    /**
+     * 注册一个Bot的信息，并使用默认配置。
+     */
     override fun register(properties: Map<String, String>): TencentGuildBot {
         val appId = properties.find("app_id", "appId", "appid", "id") {
             "Required property 'app_id'"

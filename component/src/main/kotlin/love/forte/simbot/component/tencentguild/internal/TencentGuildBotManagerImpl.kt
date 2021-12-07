@@ -12,7 +12,9 @@
 
 package love.forte.simbot.component.tencentguild.internal
 
+import kotlinx.coroutines.CompletionHandler
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import love.forte.simbot.Component
 import love.forte.simbot.ID
 import love.forte.simbot.LoggerFactory
@@ -22,7 +24,6 @@ import love.forte.simbot.component.tencentguild.TencentGuildBotManagerConfigurat
 import love.forte.simbot.component.tencentguild.TencentGuildComponent
 import love.forte.simbot.tencentguild.TencentBotConfiguration
 import love.forte.simbot.tencentguild.tencentBot
-import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
@@ -35,11 +36,37 @@ internal class TencentGuildBotManagerImpl(
     override val configuration: TencentGuildBotManagerConfiguration
 ) : TencentGuildBotManager() {
     companion object {
-        private val logger = LoggerFactory.getLogger(TencentGuildBotManager::class)
+        private val logger = LoggerFactory.getLogger(TencentGuildBotManagerImpl::class)
     }
-    private val isCanceled = AtomicBoolean(false)
+
+    private val completableJob = Job()
+
+    // private val isCanceled = AtomicBoolean(false)
+
     private val lock = ReentrantReadWriteLock()
     private val eventProcessor = configuration.eventProcessor
+
+    override val isActive: Boolean
+        get() = completableJob.isActive
+
+    override val isCancelled: Boolean
+        get() = completableJob.isCancelled
+
+    override val isStarted: Boolean
+        get() = completableJob.isActive
+
+    override fun invokeOnCompletion(handler: CompletionHandler) {
+        completableJob.invokeOnCompletion(handler)
+    }
+
+    override suspend fun join() {
+        completableJob.join()
+    }
+
+    // nothing to start
+    override suspend fun start(): Boolean {
+        return !completableJob.isCompleted
+    }
 
     private var botMap = mutableMapOf<String, TencentGuildBotImpl>()
 
@@ -47,18 +74,29 @@ internal class TencentGuildBotManagerImpl(
         get() = TencentGuildComponent.component
 
 
-    override suspend fun doCancel() {
+    override suspend fun doCancel(reason: Throwable?): Boolean {
         lock.write {
-            isCanceled.compareAndSet(false, true)
+            val cancelled = completableJob.isCancelled
             for (bot in botMap.values.toList()) {
-                bot.cancel()
+                bot.cancel(reason)
             }
+            if (cancelled) {
+                return false
+            }
+
+            if (reason != null) {
+                completableJob.cancel(reason.localizedMessage, reason)
+            } else {
+                completableJob.cancel()
+            }
+            completableJob.join()
+            return true
         }
     }
 
     override fun get(id: ID): TencentGuildBot? {
         lock.read {
-            if (isCanceled.get()) throw IllegalStateException("This manager has already canceled.")
+            if (completableJob.isCancelled) throw IllegalStateException("This manager has already cancelled.")
 
             return botMap[id.toString()]
         }

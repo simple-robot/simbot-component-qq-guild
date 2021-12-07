@@ -135,9 +135,11 @@ internal class TencentBotImpl(
         return true
     }
 
-    override suspend fun cancel(): Boolean {
+    override suspend fun cancel(reason: Throwable?): Boolean {
         if (parentJob.isCancelled) return false
-        parentJob.cancelAndJoin()
+
+        parentJob.cancel(reason?.let { CancellationException(it.localizedMessage, it) })
+        parentJob.join()
         return true
     }
 
@@ -317,7 +319,7 @@ internal class TencentBotImpl(
     }
 
     /**
-     *
+     * 新建一个 client。
      */
     private suspend fun createClient(shard: Shard, gatewayInfo: GatewayInfo): ClientImpl {
         val sessionInfo = createSession(shard, gatewayInfo)
@@ -352,36 +354,48 @@ internal class TencentBotImpl(
                     }
                 }
                 is Frame.Binary -> {
-                    logger.info("Frame.Binary: {}", it)
+                    logger.debug("Frame.Binary: {}", it)
                     null
                 }
                 is Frame.Close -> {
                     // closed. 不需要处理，大概
-                    logger.info("Frame.Close: {}", it)
+                    logger.trace("Frame.Close: {}", it)
                     null
                 }
                 is Frame.Ping -> {
                     // nothing
-                    logger.info("Frame.Ping: {}", it)
+                    logger.trace("Frame.Ping: {}", it)
                     null
                 }
                 is Frame.Pong -> {
                     // nothing
-                    logger.info("Frame.Pong: {}", it)
+                    logger.trace("Frame.Pong: {}", it)
                     null
                 }
                 else -> {
-                    logger.info("Unknown frame: {}", it)
+                    logger.trace("Unknown frame: {}", it)
                     null
                 }
             }
         }.onEach { dispatch ->
+
             val nowSeq = dispatch.seq
             processorQueue.forEach { p ->
                 try {
                     p(dispatch, decoder)
                 } catch (e: Exception) {
-                    logger.error("processing failed.", e)
+                    val processor = configuration.exceptionHandler
+                    processor?.also { exProcess ->
+                        try {
+                            exProcess.process(e)
+                        } catch (pe: Throwable) {
+                            logger.error("processing failed, exception processing also failed.")
+                            logger.error("processing exception: ${e.localizedMessage}", e)
+                            logger.error("exception processing exception: ${pe.localizedMessage}", pe)
+                        }
+                    } ?: run {
+                        logger.error("processing failed.", e)
+                    }
                 }
             }
             // 留下最大的值。
