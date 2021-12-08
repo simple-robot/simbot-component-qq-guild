@@ -274,7 +274,7 @@ internal class TencentBotImpl(
                 logger.trace("readyEventData was null, canceled and waiting closeReason.")
                 session.closeReason.await().err()
             }
-            logger.info("Ready Event data: {}", readyEventData)
+            logger.debug("Ready Event data: {}", readyEventData)
 
             val heartbeatJob = session.heartbeatJob(hello, seq)
 
@@ -307,7 +307,7 @@ internal class TencentBotImpl(
 
         val hello = session.waitHello()
 
-        logger.info("Received Hello: {}", hello)
+        logger.debug("Received Hello: {}", hello)
 
         // 重连
         // see https://bot.q.qq.com/wiki/develop/api/gateway/reference.html#%E9%89%B4%E6%9D%83ß
@@ -378,7 +378,7 @@ internal class TencentBotImpl(
                 }
             }
         }.onEach { dispatch ->
-
+            logger.debug("On dispatch: $dispatch")
             val nowSeq = dispatch.seq
             processorQueue.forEach { p ->
                 try {

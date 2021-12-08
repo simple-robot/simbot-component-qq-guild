@@ -42,7 +42,6 @@ public fun TencentMessage.Attachment.toMessage(): AttachmentMessage = Attachment
 public fun AttachmentMessage.toAttachment(): TencentMessage.Attachment = TencentMessage.Attachment(url)
 
 
-
 internal object AttachmentParser : SendingMessageParser {
     private val logger = LoggerFactory.getLogger(AttachmentParser::class)
     override fun invoke(
@@ -51,7 +50,9 @@ internal object AttachmentParser : SendingMessageParser {
         messages: Messages?,
         builder: TencentMessageForSendingBuilder
     ) {
-        logger.warn("Attachment message is not yet supported for sending")
+        if (element is AttachmentMessage) {
+            logger.warn("Attachment message is not yet supported for sending")
+        }
     }
 
 }

@@ -134,9 +134,12 @@ internal class TencentGuildBotImpl(
     }
 
     override suspend fun start(): Boolean = sourceBot.start().also {
-        activeStatus.compareAndSet(0, 1)
+        if (!it) return@also
+
+        //activeStatus.compareAndSet(0, 1)
         // process event.
         sourceBot.processor { json ->
+            println("event: $this")
             // event processor
             logger.trace("EventSignals.events[{}]: {}", type, EventSignals.events[type])
             EventSignals.events[this.type]?.let {
