@@ -28,7 +28,7 @@ public value class Intents(public val value: Int) {
  * 接收到的事件的类型以及它们对应的数据解析器, 同时代表了数据所对应的类型。
  *
  */
-public sealed class EventSignals<out D>(
+public sealed class EventSignals<out D : Any>(
     public val type: String,
     public val decoder: DeserializationStrategy<out D>
 ) {
@@ -88,7 +88,7 @@ public sealed class EventSignals<out D>(
       - AT_MESSAGE_CREATE     // 当收到@机器人的消息时
      */
 
-    public sealed class Other<D>(t: String, decoder: DeserializationStrategy<out D>) : EventSignals<D>(t, decoder) {
+    public sealed class Other<D : Any>(t: String, decoder: DeserializationStrategy<out D>) : EventSignals<D>(t, decoder) {
         /**
          * 鉴权后的ready
          */
@@ -113,7 +113,7 @@ public sealed class EventSignals<out D>(
 
     }
 
-    public sealed class Guilds<D>(t: String, decoder: DeserializationStrategy<out D>) : EventSignals<D>(t, decoder) {
+    public sealed class Guilds<D : Any>(t: String, decoder: DeserializationStrategy<out D>) : EventSignals<D>(t, decoder) {
         /** 当机器人加入新guild时 */
         public object GuildCreate : Guilds<TencentGuildInfo>("GUILD_CREATE", TencentGuildInfo.serializer)
 
@@ -141,7 +141,7 @@ public sealed class EventSignals<out D>(
         }
     }
 
-    public sealed class GuildMembers<D>(t: String, decoder: DeserializationStrategy<out D>) :
+    public sealed class GuildMembers<D : Any>(t: String, decoder: DeserializationStrategy<out D>) :
         EventSignals<D>(t, decoder) {
         /** 当成员加入时 */
         public object GuildMemberAdd : GuildMembers<TencentMemberInfo>("GUILD_MEMBER_ADD", TencentMemberInfo.serializer)
@@ -163,7 +163,7 @@ public sealed class EventSignals<out D>(
         }
     }
 
-    public sealed class DirectMessage<D>(t: String, decoder: DeserializationStrategy<out D>) :
+    public sealed class DirectMessage<D : Any>(t: String, decoder: DeserializationStrategy<out D>) :
         EventSignals<D>(t, decoder) {
         /** 当收到用户发给机器人的私信消息时 */
         public object DirectMessageCreate :
@@ -179,7 +179,7 @@ public sealed class EventSignals<out D>(
         }
     }
 
-    public sealed class AudioAction<D>(t: String, decoder: DeserializationStrategy<out D>) :
+    public sealed class AudioAction<D : Any>(t: String, decoder: DeserializationStrategy<out D>) :
         EventSignals<D>(t, decoder) {
         /** 音频开始播放时 */
         public object AudioStart : AudioAction<TencentAudioAction>("AUDIO_START", TencentAudioAction.serializer)
@@ -202,7 +202,7 @@ public sealed class EventSignals<out D>(
         }
     }
 
-    public sealed class AtMessages<D>(t: String, decoder: DeserializationStrategy<out D>) :
+    public sealed class AtMessages<D : Any>(t: String, decoder: DeserializationStrategy<out D>) :
         EventSignals<D>(t, decoder) {
         /** 当收到@机器人的消息时 */
         public object AtMessageCreate : AtMessages<TencentMessage>("AT_MESSAGE_CREATE", TencentMessage.serializer)

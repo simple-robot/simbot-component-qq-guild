@@ -6,7 +6,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.action.MessageReplyReceipt
@@ -16,7 +15,6 @@ import love.forte.simbot.component.tencentguild.message.TencentReceiveMessageCon
 import love.forte.simbot.event.Event
 import love.forte.simbot.message.Message
 import love.forte.simbot.tencentguild.EventSignals
-import love.forte.simbot.tencentguild.Signal
 import love.forte.simbot.tencentguild.TencentMessage
 import love.forte.simbot.tencentguild.api.channel.GetChannelApi
 import love.forte.simbot.tencentguild.api.guild.GetGuildApi
@@ -86,18 +84,15 @@ internal class TcgChannelAtMessageEventImpl(
     data class Metadata(override val id: ID) : Event.Metadata
 
 
-    internal object Parser : SignalToEvent {
+    internal object Parser : BaseSignalToEvent<TencentMessage>() {
         override val key = Key
+        override val type: EventSignals<TencentMessage>
+            get() = EventSignals.AtMessages.AtMessageCreate
 
-        override suspend fun invoke(
-            bot: TencentGuildBotImpl,
-            decoder: Json,
-            dispatch: Signal.Dispatch
-        ): TcgChannelAtMessageEventImpl {
-            val type = EventSignals.AtMessages.AtMessageCreate
-            val message = decoder.decodeFromJsonElement(type.decoder, dispatch.data)
-            return TcgChannelAtMessageEventImpl(message, bot)
+        override suspend fun doParser(data: TencentMessage, bot: TencentGuildBotImpl): Event {
+            return TcgChannelAtMessageEventImpl(data, bot)
         }
+
     }
 }
 

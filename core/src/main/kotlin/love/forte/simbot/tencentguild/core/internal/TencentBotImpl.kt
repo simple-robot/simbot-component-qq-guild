@@ -15,6 +15,7 @@ import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import love.forte.simbot.LoggerFactory
+import love.forte.simbot.SimbotIllegalStateException
 import love.forte.simbot.tencentguild.*
 import love.forte.simbot.tencentguild.api.GatewayApis
 import love.forte.simbot.tencentguild.api.GatewayInfo
@@ -64,7 +65,7 @@ internal class TencentBotImpl(
     private val url: Url get() = configuration.serverUrl
     private val decoder: Json get() = configuration.decoder
 
-    private val processorQueue: ConcurrentLinkedQueue<suspend Signal.Dispatch.(Json) -> Unit> = ConcurrentLinkedQueue()
+    private val processorQueue: ConcurrentLinkedQueue<suspend Signal.Dispatch.(Json, () -> Any) -> Unit> = ConcurrentLinkedQueue()
 
     init {
         val parentJob = SupervisorJob(configuration.parentJob)
@@ -73,7 +74,7 @@ internal class TencentBotImpl(
 
     private val parentJob: Job get() = coroutineContext[Job]!!
 
-    override fun processor(processor: suspend Signal.Dispatch.(decoder: Json) -> Unit) {
+    override fun processor(processor: suspend Signal.Dispatch.(decoder: Json, decoded: () -> Any) -> Unit) {
         processorQueue.add(processor)
     }
 
@@ -378,29 +379,47 @@ internal class TencentBotImpl(
                 }
             }
         }.onEach { dispatch ->
-            logger.debug("On dispatch: $dispatch")
             val nowSeq = dispatch.seq
-            processorQueue.forEach { p ->
-                try {
-                    p(dispatch, decoder)
-                } catch (e: Exception) {
-                    val processor = configuration.exceptionHandler
-                    processor?.also { exProcess ->
-                        try {
-                            exProcess.process(e)
-                        } catch (pe: Throwable) {
-                            logger.error("processing failed, exception processing also failed.")
-                            logger.error("processing exception: ${e.localizedMessage}", e)
-                            logger.error("exception processing exception: ${pe.localizedMessage}", pe)
-                        }
-                    } ?: run {
-                        logger.error("processing failed.", e)
+            if (processorQueue.isNotEmpty()) {
+                logger.debug("On dispatch: $dispatch")
+                val eventType = dispatch.type
+                val signal = EventSignals.events[eventType] ?: run {
+                    val e = SimbotIllegalStateException("Unknown event type: $eventType. data: $dispatch")
+                    e.process(logger) { "Event receiving" }
+                    return@onEach
+                }
+
+                val lazy = lazy { decoder.decodeFromJsonElement(signal.decoder, dispatch.data) }
+                val lazyDecoded = lazy::value
+                processorQueue.forEach { p ->
+                    try {
+                        p(dispatch, decoder, lazyDecoded)
+                    } catch (e: Exception) {
+                        e.process(logger) { "Processing" }
                     }
                 }
             }
+
             // 留下最大的值。
             seq.updateAndGet { prev -> max(prev, nowSeq) }
         }.launchIn(this@TencentBotImpl)
+    }
+
+
+    private suspend inline fun Throwable.process(logger: Logger, msg: () -> String) {
+        val processor = configuration.exceptionHandler
+        val m = msg()
+        processor?.also { exProcess ->
+            try {
+                exProcess.process(this)
+            } catch (pe: Throwable) {
+                logger.error("$m failed, exception processing also failed.")
+                logger.error("$m exception: ${this.localizedMessage}", this)
+                logger.error("exception processing exception: ${pe.localizedMessage}", pe)
+            }
+        } ?: run {
+            logger.error("$m failed.", this)
+        }
     }
 
     private suspend inline fun HttpClient.ws(crossinline gatewayInfo: () -> GatewayInfo): DefaultClientWebSocketSession {

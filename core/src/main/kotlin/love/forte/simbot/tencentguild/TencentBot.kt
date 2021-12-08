@@ -37,28 +37,32 @@ public interface TencentBot : CoroutineScope {
 
     /**
      * 添加一个事件处理器。
+     * processor 中的参数 `decoded` 所代表的为 `decoder.decodeFromJsonElement(eventType.decoder, data)` 后的结果，
+     * 但是为了避免在多个事件处理器中频繁进行反序列化，因此提供这个 `decoded` 来预先提供一个懒实例化的获取器。
+     *
      */
     @JvmSynthetic
-    public fun processor(processor: suspend Signal.Dispatch.(decoder: Json) -> Unit)
+    public fun processor(processor: suspend Signal.Dispatch.(decoder: Json, decoded: () -> Any) -> Unit)
 
 
     /**
      * process for java
      */
     @Api4J
-    public fun process(processor: (Signal.Dispatch, Json) -> Unit) {
-        processor { decoder -> processor(this, decoder) }
+    public fun process(processor: (Signal.Dispatch, Json, decoded: () -> Any) -> Unit) {
+        processor { decoder, decoded -> processor(this, decoder, decoded) }
     }
 
     /**
      * process for java
      */
     @Api4J
-    public fun <R> process(eventType: EventSignals<R>, processor: (R) -> Unit) {
-        processor { decoder ->
+    public fun <R: Any> process(eventType: EventSignals<R>, processor: (R) -> Unit) {
+        processor { _, decoded ->
             if (type == eventType.type) {
-                val eventData: R = decoder.decodeFromJsonElement(eventType.decoder, data)
-                processor(eventData)
+                // val eventData: R = decoder.decodeFromJsonElement(eventType.decoder, data)
+                @Suppress("UNCHECKED_CAST")
+                processor(decoded() as R)
             }
         }
     }

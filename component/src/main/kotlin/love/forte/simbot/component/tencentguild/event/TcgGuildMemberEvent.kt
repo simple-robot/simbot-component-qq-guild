@@ -19,7 +19,7 @@ import love.forte.simbot.tencentguild.TencentMemberInfo
  *
  * @author ForteScarlet
  */
-public sealed class TcgGuildMemberEvent<T> : TcgEvent<T>(), GuildEvent, MemberEvent {
+public sealed class TcgGuildMemberEvent<T : Any> : TcgEvent<T>(), GuildEvent, MemberEvent {
     abstract override val key: Event.Key<out TcgGuildMemberEvent<*>>
     abstract override val metadata: Event.Metadata
     abstract override val timestamp: Timestamp

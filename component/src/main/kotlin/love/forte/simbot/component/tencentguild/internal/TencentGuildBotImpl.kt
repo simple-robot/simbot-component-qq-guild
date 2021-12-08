@@ -29,7 +29,6 @@ import love.forte.simbot.tencentguild.TencentBot
 import love.forte.simbot.tencentguild.TencentGuildInfo
 import love.forte.simbot.tencentguild.api.guild.GetBotGuildListApi
 import love.forte.simbot.tencentguild.request
-import java.util.concurrent.atomic.AtomicInteger
 import java.util.stream.Stream
 import kotlin.streams.asStream
 
@@ -42,8 +41,6 @@ internal class TencentGuildBotImpl(
     override val manager: TencentGuildBotManager,
     override val eventProcessor: EventProcessor,
 ) : TencentGuildBot(), TencentBot by sourceBot {
-    // 0 init 1 start 2 cancel
-    private val activeStatus = AtomicInteger(0)
 
     private val job get() = sourceBot.coroutineContext[Job]!!
 
@@ -138,14 +135,14 @@ internal class TencentGuildBotImpl(
 
         //activeStatus.compareAndSet(0, 1)
         // process event.
-        sourceBot.processor { json ->
+        sourceBot.processor { json, decoded ->
             println("event: $this")
             // event processor
             logger.trace("EventSignals.events[{}]: {}", type, EventSignals.events[type])
-            EventSignals.events[this.type]?.let {
-                logger.trace("eventSignalParsers[{}]: {}", it, eventSignalParsers[it])
+            EventSignals.events[this.type]?.let { signals ->
+                logger.trace("eventSignalParsers[{}]: {}", it, eventSignalParsers[signals])
 
-                eventSignalParsers[it]?.let { parser ->
+                eventSignalParsers[signals]?.let { parser ->
 
                     logger.trace(
                         "eventProcessor.isProcessable({}): {}",
@@ -156,6 +153,7 @@ internal class TencentGuildBotImpl(
                         parser(
                             bot = this@TencentGuildBotImpl,
                             decoder = json,
+                            decoded = decoded,
                             dispatch = this
                         )
                     }

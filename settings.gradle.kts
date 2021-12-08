@@ -5,9 +5,7 @@ includeAndSaveFilePath(":api", "tencent-guild-api")
 includeAndSaveFilePath(":core", "tencent-guild-core")
 includeAndSaveFilePath(":component", "component-tencent-guild")
 
-rootProject.children.forEach {
 
-}
 
 // project(":api").name = "tencent-guild-api"
 

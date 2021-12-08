@@ -1,6 +1,7 @@
 package love.forte.simbot.component.tencentguild.internal.event
 
 import kotlinx.serialization.json.Json
+import love.forte.simbot.Simbot
 import love.forte.simbot.component.tencentguild.internal.TencentGuildBotImpl
 import love.forte.simbot.event.Event
 import love.forte.simbot.tencentguild.EventSignals
@@ -9,14 +10,25 @@ import love.forte.simbot.tencentguild.Signal
 
 internal interface SignalToEvent {
     val key: Event.Key<*>
-    suspend operator fun invoke(bot: TencentGuildBotImpl, decoder: Json, dispatch: Signal.Dispatch): Event
+    suspend operator fun invoke(
+        bot: TencentGuildBotImpl,
+        decoder: Json,
+        dispatch: Signal.Dispatch, decoded: () -> Any
+    ): Event
 }
 
-internal abstract class BaseSignalToEvent<S> : SignalToEvent {
+internal abstract class BaseSignalToEvent<S : Any> : SignalToEvent {
     abstract val type: EventSignals<S>
-    override suspend fun invoke(bot: TencentGuildBotImpl, decoder: Json, dispatch: Signal.Dispatch): Event {
-        val data = decoder.decodeFromJsonElement(type.decoder, dispatch.data)
-        return doParser(data, bot)
+    override suspend fun invoke(
+        bot: TencentGuildBotImpl, decoder: Json,
+        dispatch: Signal.Dispatch, decoded: () -> Any
+    ): Event {
+        Simbot.check(dispatch.type == type.type) {
+            "Event type does not match: ${dispatch.type} != ${type.type}"
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        return doParser(decoded() as S, bot)
     }
 
     protected abstract suspend fun doParser(data: S, bot: TencentGuildBotImpl): Event
