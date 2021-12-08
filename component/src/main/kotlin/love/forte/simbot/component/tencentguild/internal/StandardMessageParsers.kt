@@ -19,22 +19,22 @@ internal object ContentParser : SendingMessageParser {
 }
 
 
-
 internal object TencentMessageParser : ReceivingMessageParser {
     // private val mentionRegex = Regex("<@!(?<uid>\\d+)>|<#!(?<cid>\\d+)>")
 
     override fun invoke(tencentMessage: TencentMessage, messages: Messages): Messages {
         val messageList = mutableListOf<Message.Element<*>>()
 
+        // at and text
+        val content = tencentMessage.content
+
+        // 与 plainText 属性不同，此处不对 content 做任何操作。
+        messageList.add(Text { content })
+
         if (tencentMessage.mentionEveryone) {
             messageList.add(AtAll)
         }
-
-        // at and text
-        val content = tencentMessage.content
-        // TODO 考虑是否移除at的特殊码
-
-        messageList.add(Text { content })
+        
         tencentMessage.mentions.takeIf { it.isNotEmpty() }?.also {
             messageList.addAll(it.map { u -> At(u.id) })
         }

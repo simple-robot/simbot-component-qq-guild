@@ -11,7 +11,6 @@ import love.forte.simbot.Timestamp
 import love.forte.simbot.action.MessageReplyReceipt
 import love.forte.simbot.component.tencentguild.event.TcgChannelAtMessageEvent
 import love.forte.simbot.component.tencentguild.internal.*
-import love.forte.simbot.component.tencentguild.message.TencentReceiveMessageContent
 import love.forte.simbot.event.Event
 import love.forte.simbot.message.Message
 import love.forte.simbot.tencentguild.EventSignals
@@ -72,8 +71,8 @@ internal class TcgChannelAtMessageEventImpl(
      */
     override val visibleScope: Event.VisibleScope get() = Event.VisibleScope.PUBLIC
 
-    override val messageContent: TencentReceiveMessageContent by lazy(LazyThreadSafetyMode.NONE) {
-        TencentReceiveMessageContent(sourceEventEntity)
+    override val messageContent: TencentReceiveMessageContentImpl by lazy(LazyThreadSafetyMode.NONE) {
+        TencentReceiveMessageContentImpl(sourceEventEntity)
     }
 
     /** AT_MESSAGES 的事件meta的id就是消息的ID。 */
