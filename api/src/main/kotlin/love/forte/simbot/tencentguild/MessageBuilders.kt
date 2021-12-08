@@ -55,6 +55,9 @@ public class ArkBuilder(public var templateId: ID) {
     @ArkBuilderDSL
     public var kvs: MutableList<TencentMessage.Ark.Kv> = mutableListOf()
 
+    public fun kv(key: String, value: String): ArkBuilder = also {
+        kvs.add(TencentMessage.Ark.Kv(key, value))
+    }
 
     @ArkBuilderDSL
     public fun kvs(block: ArkKvListBuilder.() -> Unit): ArkBuilder = also {
@@ -135,7 +138,6 @@ public class ArkObjKvListBuilder {
 
     public fun build(): List<TencentMessage.Ark.Obj.Kv> = objKvs.toList()
 }
-
 
 
 @Retention(AnnotationRetention.BINARY)

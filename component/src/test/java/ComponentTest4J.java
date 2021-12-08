@@ -1,8 +1,8 @@
 import kotlin.Unit;
 import love.forte.simbot.component.tencentguild.TencentGuildBotManager;
 import love.forte.simbot.component.tencentguild.TencentGuildBotManagerConfiguration;
-import love.forte.simbot.core.event.CoreEventManagerConfiguration;
 import love.forte.simbot.core.event.CoreListenerManager;
+import love.forte.simbot.core.event.CoreListenerManagerConfiguration;
 import love.forte.simbot.core.event.CoreListenerUtil;
 import love.forte.simbot.definition.Channel;
 import love.forte.simbot.event.ChannelMessageEvent;
@@ -19,7 +19,7 @@ public class ComponentTest4J {
         String appKey = "";
         String token = "";
 
-        final CoreEventManagerConfiguration config = new CoreEventManagerConfiguration();
+        final CoreListenerManagerConfiguration config = new CoreListenerManagerConfiguration();
 
         final CoreListenerManager manager = CoreListenerManager.newInstance(config);
 

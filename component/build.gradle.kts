@@ -30,6 +30,8 @@ dependencies {
     testImplementation(V.Log4j.Api.notation)
     testImplementation(V.Log4j.Core.notation)
     testImplementation(V.Log4j.Slf4jImpl.notation)
+    testImplementation(V.Kotlinx.Serialization.Yaml.notation)
+
     // implementation("love.forte.simple-robot:api:3.0.0-PREVIEW")
 }
 
