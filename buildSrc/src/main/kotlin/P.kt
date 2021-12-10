@@ -28,7 +28,7 @@ sealed class P : SimbotProject() {
 
     object TencentGuild {
         const val GROUP = Simbot.GROUP
-        const val VERSION = "0.0.4"
+        const val VERSION = "${Simbot.VERSION}-0.0.4"
 
         const val apiPath = ":tencent-guild-api"
         const val corePath = ":tencent-guild-core"
