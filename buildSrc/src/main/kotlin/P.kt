@@ -28,10 +28,10 @@ sealed class P : SimbotProject() {
 
     object TencentGuild {
         const val GROUP = Simbot.GROUP
-        const val VERSION = "${Simbot.VERSION}-0.0.4"
+        const val VERSION = "${Simbot.VERSION}-0.0.5"
 
-        const val apiPath = ":tencent-guild-api"
-        const val corePath = ":tencent-guild-core"
+        const val apiPath = ":component-tencent-guild-api"
+        const val corePath = ":component-tencent-guild-core"
         const val componentPath = ":component-tencent-guild"
     }
 

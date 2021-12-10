@@ -1,8 +1,8 @@
 rootProject.name = "tencent-guild"
 val pathMap = mutableMapOf<String, String>()
 
-includeAndSaveFilePath(":api", "tencent-guild-api")
-includeAndSaveFilePath(":core", "tencent-guild-core")
+includeAndSaveFilePath(":api", "component-tencent-guild-api")
+includeAndSaveFilePath(":core", "component-tencent-guild-core")
 includeAndSaveFilePath(":component", "component-tencent-guild")
 
 
