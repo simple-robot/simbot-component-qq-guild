@@ -72,11 +72,6 @@ public abstract class TencentGuildBot : Bot, TencentBot {
         get() = sourceBot.isActive
 
     @Api4J
-    override fun joinBlocking() {
-        super<Bot>.joinBlocking()
-    }
-
-    @Api4J
     override fun cancelBlocking(reason: Throwable?): Boolean {
         return super<TencentBot>.cancelBlocking(reason)
     }

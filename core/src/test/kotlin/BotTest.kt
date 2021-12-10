@@ -34,8 +34,8 @@ class BotTest {
 
         }
 
-        bot.processor { json ->
-        }
+        // bot.processor { json ->
+        // }
 
 
     }

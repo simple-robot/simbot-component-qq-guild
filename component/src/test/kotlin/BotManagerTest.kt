@@ -52,7 +52,7 @@ suspend fun main() {
 
         null // result
     }
-    val bot: TencentGuildBot = botManager.register(appId, appKey, token) {
+    val bot: TencentGuildBot = botManager.register("", "", "") {
         intentsForShardFactory = { EventSignals.AtMessages.intents }
     }
 
