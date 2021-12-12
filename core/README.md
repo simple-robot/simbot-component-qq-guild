@@ -2,9 +2,9 @@
 
 <div align="center">
     <img src="../.simbot/logo.png" alt="logo" style="width:230px; height:230px; border-radius:50%; " />
-    <h3>
+    <h2>
         - simple-robot-component : tencent-guild -
-    </h3>
+    </h2>
     <h4>
         ~ core ~
     </h4>

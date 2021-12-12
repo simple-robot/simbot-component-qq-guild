@@ -2,9 +2,9 @@
 
 <div align="center">
 <img src=".simbot/logo.png" alt="logo" style="width:230px; height:230px; border-radius:50%; " />
-<h3>
+<h2>
     ~ simple-robot for tencent-guild ~ 
-</h3>
+</h2>
 </div>
 
 这是 [simply-robot](https://github.com/ForteScarlet/simpler-robot/tree/dev-v3.0.0-preview) (**注意，是dev-v3.0.0-preview分支**) 下的子项目，
