@@ -1,5 +1,12 @@
-# API
-
+<div align="center">
+    <img src="../.simbot/logo.png" alt="logo" style="width:230px; height:230px; border-radius:50%; " />
+    <h3>
+        - simple-robot-component : tencent-guild -
+    </h3>
+    <h4>
+        ~ api ~
+    </h4>
+</div>
 api模块是对官方提供的所有 api 的 **底层** 级别封装，不提供较为高级的应用层面封装，是一个单纯的底层api库。
 
 如果你想配合bot的事件监听的简易实现，请参考 [core](../core) 模块。

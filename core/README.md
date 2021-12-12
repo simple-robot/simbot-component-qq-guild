@@ -1,5 +1,16 @@
 # Core
 
+<div align="center">
+    <img src="../.simbot/logo.png" alt="logo" style="width:230px; height:230px; border-radius:50%; " />
+    <h3>
+        - simple-robot-component : tencent-guild -
+    </h3>
+    <h4>
+        ~ core ~
+    </h4>
+</div>
+
+
 core模块是针对bot事件监听的简易实现，是一个半 **底层** 库，仅提供最基础的 DSL 事件注册，不提供过多的应用级功能整合（例如依赖注入、自动扫描等等）
 
 如果你想使用更友好更高阶的使用，请关注 [simple-robot](https://github.com/ForteScarlet/simpler-robot)
