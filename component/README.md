@@ -23,16 +23,16 @@
 
 目前，组件对core下事件的支持：
 - TcgGuildModifyEvent -> 频道服务器相关事件
-  - TcgGuildModifyEvent.Create -> 频道服务器 - 进入
-  - TcgGuildModifyEvent.Update -> 频道服务器 - 更新
-  - TcgGuildModifyEvent.Delete -> 频道服务器 - 离开
+    - TcgGuildModifyEvent.Create -> 频道服务器 - 进入
+    - TcgGuildModifyEvent.Update -> 频道服务器 - 更新
+    - TcgGuildModifyEvent.Delete -> 频道服务器 - 离开
 - TcgGuildMemberEvent -> 频道服务器成员相关事件
-  - TcgGuildMemberEvent.Increase -> 成员 - 增加
-  - TcgGuildMemberEvent.Decrease -> 成员 - 减少
+    - TcgGuildMemberEvent.Increase -> 成员 - 增加
+    - TcgGuildMemberEvent.Decrease -> 成员 - 减少
 - TcgChannelModifyEvent -> 子频道相关事件
-  - TcgChannelModifyEvent.Create -> 子频道 - 新增
-  - TcgChannelModifyEvent.Update -> 子频道 - 信息变更
-  - TcgChannelModifyEvent.Delete -> 子频道 - 删除
+    - TcgChannelModifyEvent.Create -> 子频道 - 新增
+    - TcgChannelModifyEvent.Update -> 子频道 - 信息变更
+    - TcgChannelModifyEvent.Delete -> 子频道 - 删除
 - TcgChannelAtMessageEvent -> 被At消息事件
 
 
@@ -106,7 +106,7 @@ val eventManager = coreListenerManager {
 ### 注册事件
 向 `EventListener` 中注册事件是通过注册 `EventListener` 实例完成的，你可以构建一个最基础简单的监听器：
 ```kotlin
-val listener = coreListener(eventKey = ChannelMessageEvent) { context: EventProcessingContext, event: ChannelMessageEvent ->
+val listener = coreListener(eventKey = ChannelMessageEvent) { context: EventListenerProcessingContext, event: ChannelMessageEvent ->
     // do 
 }
 ```
@@ -115,7 +115,7 @@ val listener = coreListener(eventKey = ChannelMessageEvent) { context: EventProc
 此事件类型是由 `simple-robot-api` 进行定义的规范事件，
 当然，对于当前库来讲，你也可以监听一个QQ频道专属的事件，例如：
 ```kotlin
-val listener = coreListener(eventKey = TcgChannelAtMessageEvent) { context: EventProcessingContext, event: TcgChannelAtMessageEvent ->
+val listener = coreListener(eventKey = TcgChannelAtMessageEvent) { context: EventListenerProcessingContext, event: TcgChannelAtMessageEvent ->
     // do
 }
 ```
@@ -125,7 +125,7 @@ val listener = coreListener(eventKey = TcgChannelAtMessageEvent) { context: Even
 
 至于这个事件的使用：
 ```kotlin
-val listener = coreListener(eventKey = TcgChannelAtMessageEvent) { context: EventProcessingContext, event: TcgChannelAtMessageEvent ->
+val listener = coreListener(eventKey = TcgChannelAtMessageEvent) { context: EventListenerProcessingContext, event: TcgChannelAtMessageEvent ->
     // 一次事件流程的上下文
     println(context)
     // 此消息事件的子频道
@@ -208,7 +208,7 @@ val bot: TencentGuildBot = botManager.register(appId, appKey, token) {
 }
 ```
 
-到这里，可以启动bot了: 
+到这里，可以启动bot了:
 ```kotlin
 bot.start()
 
@@ -252,4 +252,3 @@ bot.start()
 // join 
 bot.join()
 ```
-

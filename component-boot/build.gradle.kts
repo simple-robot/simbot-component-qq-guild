@@ -11,15 +11,17 @@ repositories {
 }
 
 dependencies {
-    api(project(P.TencentGuild.corePath))
-    api(V.Simbot.Core.notation)
-    api(V.Ktor.Client.Jvm.Core.notation)
-    api(V.Ktor.Client.Jvm.CIO.notation)
-    api(V.Ktor.Client.Websockets.notation)
-    api(V.Ktor.Client.Serialization.notation)
-    api(V.Kotlinx.Serialization.Json.notation)
-    compileOnly(V.Kotlinx.Serialization.Properties.notation)
-    compileOnly(V.Kotlinx.Serialization.Yaml.notation)
+    api(project(P.TencentGuild.componentPath))
+    api(V.Simbot.BootApi.notation)
+
+    // api(V.Ktor.Client.Jvm.Core.notation)
+    // api(V.Ktor.Client.Jvm.CIO.notation)
+    // api(V.Ktor.Client.Auth.notation)
+    // api(V.Ktor.Client.Websockets.notation)
+    // api(V.Ktor.Client.Serialization.notation)
+    // api(V.Kotlinx.Serialization.Json.notation)
+    // compileOnly(V.Kotlinx.Serialization.Properties.notation)
+    // compileOnly(V.Kotlinx.Serialization.Yaml.notation)
 
 
 
