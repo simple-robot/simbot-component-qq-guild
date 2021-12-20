@@ -46,11 +46,10 @@ sealed class V(group: String?, id: String, version: String?) : Dep(group, id, ve
             const val VERSION = P.Simbot.VERSION
         }
 
-        object Api : Simbot(id = "api")
-        object Core : Simbot(id = "core")
-        object BootApi : Simbot(id = "boot-api")
-        object BootCore : Simbot(id = "boot-core")
-
+        object Api : Simbot(id = "simbot-api")
+        object Core : Simbot(id = "simbot-core")
+        object BootApi : Simbot(group = P.Simbot.BOOT_GROUP, id = "simboot-api")
+        object BootCore : Simbot(group = P.Simbot.BOOT_GROUP, id = "simboot-core")
     }
 
     // org.jetbrains:annotations:23.0.0

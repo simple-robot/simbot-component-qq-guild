@@ -13,6 +13,7 @@
 package love.forte.simbot.component.tencentguild
 
 import love.forte.simbot.BotManager
+import love.forte.simbot.BotVerifyInfo
 import love.forte.simbot.component.tencentguild.internal.TencentGuildBotManagerImpl
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.tencentguild.TencentBotConfiguration
@@ -39,14 +40,14 @@ public abstract class TencentGuildBotManager : BotManager<TencentGuildBot>() {
     /**
      * 注册一个Bot的信息，并使用默认配置。
      */
-    override fun register(properties: Map<String, String>): TencentGuildBot {
-        val appId = properties.find("app_id", "appId", "appid", "id") {
+    override fun register(verifyInfo: BotVerifyInfo): TencentGuildBot {
+        val appId = verifyInfo.find("app_id", "appId", "appid", "id") {
             "Required property 'app_id'"
         }
-        val appKey = properties.find("app_key", "app_secret", "appKey", "appSecret") {
+        val appKey = verifyInfo.find("app_key", "app_secret", "appKey", "appSecret") {
             "Required property 'app_key'"
         }
-        val token = properties["token"]
+        val token = verifyInfo["token"]
             ?: throw NullPointerException("Required property 'token'")
 
         // no config

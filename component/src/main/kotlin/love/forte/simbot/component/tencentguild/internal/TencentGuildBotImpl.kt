@@ -44,7 +44,7 @@ internal class TencentGuildBotImpl(
 
     private val job get() = sourceBot.coroutineContext[Job]!!
 
-    private val logger =
+    override val logger =
         LoggerFactory.getLogger("love.forte.simbot.component.tencentguild.bot.${sourceBot.ticket.appKey}")
 
     /**

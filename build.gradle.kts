@@ -50,6 +50,11 @@ subprojects {
 
 }
 
+tasks.withType<JavaCompile>() {
+    options.encoding = "UTF-8"
+}
+
+
 
 
 val credentialsUsername: String = local().getProperty("credentials.username")!!

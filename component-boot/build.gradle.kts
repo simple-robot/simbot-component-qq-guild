@@ -13,6 +13,9 @@ repositories {
 dependencies {
     api(project(P.TencentGuild.componentPath))
     api(V.Simbot.BootApi.notation)
+    testImplementation(V.Simbot.BootCore.notation)
+    // api("love.forte.simbot.boot:simboot-api:3.0.0.preview.0.5")
+
 
     // api(V.Ktor.Client.Jvm.Core.notation)
     // api(V.Ktor.Client.Jvm.CIO.notation)

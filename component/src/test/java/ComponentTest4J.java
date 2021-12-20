@@ -41,7 +41,7 @@ public class ComponentTest4J {
 
         // 构建监听函数实例
         final EventListener listener = CoreListenerUtil.newCoreListener(
-                GroupMessageEvent.Key,    // 需要监听的事件类型（的伴生Key）
+                GroupMessageEvent.Key,      // 需要监听的事件类型（的伴生Key）
                 Identifies.ID(123), // 可选重载参数，ID, 默认UUID
                 false,                      // 可选重载参数，blockNext, 默认false
                 false,                      // 可选重载参数，isAsync, 默认false
