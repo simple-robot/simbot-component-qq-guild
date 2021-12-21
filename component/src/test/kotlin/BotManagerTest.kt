@@ -2,6 +2,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import love.forte.simbot.ID
+import love.forte.simbot.LoggerFactory
 import love.forte.simbot.action.replyIfSupport
 import love.forte.simbot.component.tencentguild.TencentGuildBot
 import love.forte.simbot.component.tencentguild.tencentGuildBotManager
@@ -13,6 +14,7 @@ import love.forte.simbot.message.At
 import love.forte.simbot.message.Text
 import love.forte.simbot.message.plus
 import love.forte.simbot.tencentguild.EventSignals
+import org.slf4j.Logger
 
 
 private val listenerManager = coreListenerManager {
@@ -120,6 +122,7 @@ fun <E : Event> listener(
     invoker: suspend (EventListenerProcessingContext, E) -> Any?
 ): EventListener =
     object : EventListener {
+        override val logger: Logger = LoggerFactory.getLogger("a")
         override val id: ID get() = id
         override val isAsync: Boolean get() = false
 

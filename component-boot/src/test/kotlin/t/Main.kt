@@ -1,3 +1,5 @@
+package t
+
 import love.forte.di.annotation.Beans
 import love.forte.simboot.SimbootApp
 import love.forte.simboot.annotation.Listener
