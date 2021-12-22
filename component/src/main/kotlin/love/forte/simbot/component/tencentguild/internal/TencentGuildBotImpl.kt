@@ -136,7 +136,6 @@ internal class TencentGuildBotImpl(
         //activeStatus.compareAndSet(0, 1)
         // process event.
         sourceBot.processor { json, decoded ->
-            println("event: $this")
             // event processor
             logger.trace("EventSignals.events[{}]: {}", type, EventSignals.events[type])
             EventSignals.events[this.type]?.let { signals ->

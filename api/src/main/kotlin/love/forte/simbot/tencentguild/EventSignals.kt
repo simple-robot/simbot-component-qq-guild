@@ -16,6 +16,9 @@ import love.forte.simbot.CharSequenceID
  * val intC = intA + intB
  * ```
  *
+ * @see EventSignals
+ * @see EventSignals.allIntents
+ *
  */
 @JvmInline
 @Serializable

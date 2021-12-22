@@ -19,10 +19,16 @@ import java.time.format.DateTimeFormatter
  * https://bot.q.qq.com/wiki/develop/api/openapi/guild/model.html
  */
 public object TencentGuildApi {
+    @Suppress("MemberVisibilityCanBePrivate")
+    public const val URL_STRING: String = "https://api.sgroup.qq.com"
     @JvmField
-    public val URL: Url = Url("https://api.sgroup.qq.com/")
+    public val URL: Url = Url(URL_STRING)
+
+    @Suppress("MemberVisibilityCanBePrivate")
+    public const val SANDBOX_URL_STRING: String = "https://sandbox.api.sgroup.qq.com"
     @JvmField
-    public val SANDBOX_URL: Url = Url("https://sandbox.api.sgroup.qq.com")
+    public val SANDBOX_URL: Url = Url(SANDBOX_URL_STRING)
+
     public val serializersModule: SerializersModule = SerializersModule {
         //region infos
         polymorphicDefault(TencentGuildInfo::class) {
