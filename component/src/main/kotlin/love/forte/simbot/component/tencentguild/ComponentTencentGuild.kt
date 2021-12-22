@@ -12,6 +12,7 @@
 
 package love.forte.simbot.component.tencentguild
 
+import com.google.auto.service.AutoService
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import love.forte.simbot.*
@@ -33,6 +34,7 @@ public object ComponentTencentGuild {
 }
 
 
+@AutoService(ComponentInformationRegistrar::class)
 public class TencentGuildComponentInformationRegistrar : ComponentInformationRegistrar {
     override fun informations(): ComponentInformationRegistrar.Result {
         return ComponentInformationRegistrar.Result.ok(listOf(TencentGuildComponentInformation()))

@@ -2,6 +2,7 @@ plugins {
     `java-library`
     kotlin("jvm")
     kotlin("plugin.serialization")
+    kotlin("kapt")
 }
 
 
@@ -11,7 +12,7 @@ repositories {
 }
 
 dependencies {
-    api(project(P.TencentGuild.corePath))
+    api(project(P.TencentGuild.apiCorePath))
     api(V.Simbot.Core.notation)
     api(V.Ktor.Client.Jvm.Core.notation)
     api(V.Ktor.Client.Jvm.CIO.notation)
@@ -28,7 +29,8 @@ dependencies {
     testImplementation(V.Log4j.Slf4jImpl.notation)
     testImplementation(V.Kotlinx.Serialization.Yaml.notation)
 
-    // implementation("love.forte.simple-robot:api:3.0.0-PREVIEW")
+    compileOnly("com.google.auto.service:auto-service:1.0.1")
+    kapt("com.google.auto.service:auto-service:1.0.1")
 }
 
 tasks.getByName<Test>("test") {
