@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.Component
 import love.forte.simbot.ID
-import love.forte.simbot.component.tencentguild.TencentGuildComponent
+import love.forte.simbot.component.tencentguild.ComponentTencentGuild
 import love.forte.simbot.component.tencentguild.internal.SendingMessageParser
 import love.forte.simbot.component.tencentguild.internal.TencentMessageForSendingBuilder
 import love.forte.simbot.message.At
@@ -24,7 +24,7 @@ public data class MentionChannel(
 
     public companion object Key : Message.Key<MentionChannel> {
         override val component: Component
-            get() = TencentGuildComponent.component
+            get() = ComponentTencentGuild.component
         override val elementType: KClass<MentionChannel>
             get() = MentionChannel::class
     }

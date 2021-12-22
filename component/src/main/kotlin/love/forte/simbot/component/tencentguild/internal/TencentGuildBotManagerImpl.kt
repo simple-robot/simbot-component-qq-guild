@@ -18,10 +18,10 @@ import kotlinx.coroutines.cancel
 import love.forte.simbot.Component
 import love.forte.simbot.ID
 import love.forte.simbot.LoggerFactory
+import love.forte.simbot.component.tencentguild.ComponentTencentGuild
 import love.forte.simbot.component.tencentguild.TencentGuildBot
 import love.forte.simbot.component.tencentguild.TencentGuildBotManager
 import love.forte.simbot.component.tencentguild.TencentGuildBotManagerConfiguration
-import love.forte.simbot.component.tencentguild.TencentGuildComponent
 import love.forte.simbot.tencentguild.TencentBotConfiguration
 import love.forte.simbot.tencentguild.tencentBot
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -71,7 +71,7 @@ internal class TencentGuildBotManagerImpl(
     private var botMap = mutableMapOf<String, TencentGuildBotImpl>()
 
     override val component: Component
-        get() = TencentGuildComponent.component
+        get() = ComponentTencentGuild.component
 
 
     override suspend fun doCancel(reason: Throwable?): Boolean {

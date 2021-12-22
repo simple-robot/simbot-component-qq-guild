@@ -1,4 +1,4 @@
-import love.forte.simbot.component.tencentguild.TencentGuildComponent
+import love.forte.simbot.component.tencentguild.ComponentTencentGuild
 import kotlin.test.Test
 
 /**
@@ -9,7 +9,7 @@ class ComponentTest {
 
     @Test
     fun test() {
-        println(TencentGuildComponent.component)
+        println(ComponentTencentGuild.component)
     }
 
 }

@@ -5,7 +5,7 @@ import kotlinx.serialization.Transient
 import love.forte.simbot.Component
 import love.forte.simbot.ID
 import love.forte.simbot.LoggerFactory
-import love.forte.simbot.component.tencentguild.TencentGuildComponent
+import love.forte.simbot.component.tencentguild.ComponentTencentGuild
 import love.forte.simbot.component.tencentguild.internal.SendingMessageParser
 import love.forte.simbot.component.tencentguild.internal.TencentMessageForSendingBuilder
 import love.forte.simbot.message.Message
@@ -31,7 +31,7 @@ public data class AttachmentMessage(override val url: String) : RemoteResource<A
 
     public companion object Key : Message.Key<AttachmentMessage> {
         override val component: Component
-            get() = TencentGuildComponent.component
+            get() = ComponentTencentGuild.component
         override val elementType: KClass<AttachmentMessage>
             get() = AttachmentMessage::class
     }

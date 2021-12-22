@@ -25,8 +25,8 @@ import love.forte.simbot.message.Message
  *
  * https://bot.q.qq.com/wiki/develop/api/openapi/guild/model.html
  */
-public object TencentGuildComponent {
-    public val COMPONENT_ID: CharSequenceID = "simbot.tencentguild".ID
+public object ComponentTencentGuild {
+    @JvmField public val COMPONENT_ID: CharSequenceID = "simbot.tencentguild".ID
     @Suppress("ObjectPropertyName")
     internal lateinit var _component: Component
     public val component: Component get() = if (::_component.isInitialized) _component else Components[COMPONENT_ID]
@@ -43,9 +43,9 @@ public class TencentGuildComponentInformationRegistrar : ComponentInformationReg
 
 public class TencentGuildComponentInformation : ComponentInformation {
     override val id: ID
-        get() = TencentGuildComponent.COMPONENT_ID
+        get() = ComponentTencentGuild.COMPONENT_ID
     override val name: String
-        get() = TencentGuildComponent.COMPONENT_ID.toString()
+        get() = ComponentTencentGuild.COMPONENT_ID.toString()
 
     override val messageSerializersModule: SerializersModule = SerializersModule {
         polymorphic(Message.Element::class) {
@@ -61,7 +61,7 @@ public class TencentGuildComponentInformation : ComponentInformation {
     }
 
     override fun setComponent(component: Component) {
-        TencentGuildComponent._component = component
+        ComponentTencentGuild._component = component
     }
 
 }

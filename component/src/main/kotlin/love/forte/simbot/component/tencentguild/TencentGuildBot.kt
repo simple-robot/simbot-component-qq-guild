@@ -48,7 +48,7 @@ public abstract class TencentGuildBot : Bot, TencentBot {
 
 
     override val component: Component
-        get() = TencentGuildComponent.component
+        get() = ComponentTencentGuild.component
 
     override val status: UserStatus get() = BotStatus
 

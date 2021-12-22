@@ -3,7 +3,7 @@ package love.forte.simbot.component.tencentguild.message
 import kotlinx.serialization.Serializable
 import love.forte.simbot.Component
 import love.forte.simbot.ID
-import love.forte.simbot.component.tencentguild.TencentGuildComponent
+import love.forte.simbot.component.tencentguild.ComponentTencentGuild
 import love.forte.simbot.component.tencentguild.internal.SendingMessageParser
 import love.forte.simbot.component.tencentguild.internal.TencentMessageForSendingBuilder
 import love.forte.simbot.message.Message
@@ -21,7 +21,7 @@ public data class ReplyTo(@Serializable(ID.AsCharSequenceIDSerializer::class) va
 
     public companion object Key : Message.Key<ReplyTo> {
         override val component: Component
-            get() = TencentGuildComponent.component
+            get() = ComponentTencentGuild.component
 
         override val elementType: KClass<ReplyTo>
             get() = ReplyTo::class
