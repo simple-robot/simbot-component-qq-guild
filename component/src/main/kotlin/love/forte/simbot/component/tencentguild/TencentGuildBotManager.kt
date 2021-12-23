@@ -15,24 +15,17 @@ package love.forte.simbot.component.tencentguild
 import io.ktor.http.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.properties.Properties
-import love.forte.simbot.BotManager
-import love.forte.simbot.BotVerifyInfo
+import love.forte.simbot.*
 import love.forte.simbot.component.tencentguild.internal.TencentGuildBotManagerImpl
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.tencentguild.EventSignals
 import love.forte.simbot.tencentguild.Intents
 import love.forte.simbot.tencentguild.TencentBotConfiguration
 import love.forte.simbot.tencentguild.TencentGuildApi
-
-private inline fun <reified K, reified V> Map<K, V>.find(vararg keys: K, nullMessage: () -> String): V {
-    for (k in keys) {
-        val v = this[k]
-        if (v != null) return v
-    }
-    throw NullPointerException(nullMessage())
-}
 
 
 /**
@@ -50,19 +43,37 @@ public abstract class TencentGuildBotManager : BotManager<TencentGuildBot>() {
      */
     @OptIn(ExperimentalSerializationApi::class)
     override fun register(verifyInfo: BotVerifyInfo): TencentGuildBot {
-        val appId = verifyInfo.find("appId", "app_id", "appid", "id") {
-            "Required property 'app_id'"
-        }
-        val appKey = verifyInfo.find("appKey", "app_key", "app_secret", "appSecret") {
-            "Required property 'app_key'"
-        }
-        val token = verifyInfo["token"]
-            ?: throw NullPointerException("Required property 'token'")
+        val serializer = PropertiesConfiguration.serializer()
 
-        val configuration = Prop.decodeFromStringMap(PropertiesConfiguration.serializer(), verifyInfo)
+        val configuration = verifyInfo.tryResolveVerifyInfo(
+            ::VerifyFailureException,
+            {
+                CJson.decodeFromStream(serializer, it)
+            },
+            {
+                CYaml.decodeFromStream(serializer, it)
+            },
+            {
+                val p = java.util.Properties().also { p -> p.load(it) }
+                val stringMap = mutableMapOf<String, String>()
+                for (key in p.stringPropertyNames()) {
+                    stringMap[key] = p.getProperty(key)
+                }
+                CProp.decodeFromStringMap(serializer, stringMap)
+            },
+        ).getOrThrow()
+
+        if (configuration.component == null) {
+            throw NoSuchComponentException("Component is not found in [${verifyInfo.infoName}]")
+        }
+
+        if (configuration.component != ComponentTencentGuild.COMPONENT_ID.toString()) {
+            throw ComponentMismatchException("[${configuration.component}] != [${ComponentTencentGuild.COMPONENT_ID}]")
+        }
+
 
         // no config
-        return register(appId, appKey, token, configuration::includeConfig)
+        return register(configuration.appId, configuration.appKey, configuration.token, configuration::includeConfig)
     }
 
     public abstract fun register(
@@ -117,7 +128,12 @@ public class TencentGuildBotManagerConfiguration(public var eventProcessor: Even
 }
 
 @OptIn(ExperimentalSerializationApi::class)
-private val Prop = Properties(SerializersModule { })
+private val CProp = Properties(SerializersModule { })
+private val CYaml = com.charleskorn.kaml.Yaml()
+private val CJson = Json {
+    isLenient = true
+    ignoreUnknownKeys = true
+}
 
 /**
  * 通过 `Map<String, Object>` 进行反序列化的配置类，
@@ -126,6 +142,15 @@ private val Prop = Properties(SerializersModule { })
 @Suppress("MemberVisibilityCanBePrivate")
 @Serializable
 internal class PropertiesConfiguration(
+    val component: String? = null,
+
+    val appId: String,
+
+    val appKey: String,
+
+    val token: String,
+
+
     /**
      * 分片总数。
      * @see [TencentBotConfiguration.totalShard]

@@ -1,6 +1,6 @@
 package love.forte.simboot.component.tencentguild
 
-import love.forte.di.annotation.SpareBean
+import love.forte.di.annotation.Depend
 import love.forte.simboot.factory.BotRegistrarFactory
 import love.forte.simbot.BotRegistrar
 import love.forte.simbot.component.tencentguild.tencentGuildBotManager
@@ -13,13 +13,12 @@ import javax.inject.Named
  * @author ForteScarlet
  */
 @Named("tencentGuildBotRegistrarFactory")
-@SpareBean
-public class TencentGuildBotRegistrarFactory(
-    private val configure: TencentGuildBotManagerConfigure
+public class TencentGuildBotRegistrarFactory @Depend(required = false) constructor(
+    @Depend(required = false) private val configure: TencentGuildBotManagerConfigure? = null
 ) : BotRegistrarFactory {
     override fun invoke(processor: EventProcessor): BotRegistrar {
         return tencentGuildBotManager(processor) {
-            configure.config(this)
+            configure?.config(this)
         }
     }
 }
