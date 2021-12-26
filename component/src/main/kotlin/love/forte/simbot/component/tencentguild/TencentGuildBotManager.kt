@@ -70,7 +70,7 @@ public abstract class TencentGuildBotManager : BotManager<TencentGuildBot>() {
                 if (defaultIntents != null) {
                     val defaultIntentsSplit = defaultIntents.split(Regex(" *, *"))
                     defaultIntentsSplit.forEachIndexed { index, intent ->
-                        stringMap["$defaultIntents.$index"] = intent
+                        stringMap["defaultIntents.$index"] = intent
                     }
                 }
 
