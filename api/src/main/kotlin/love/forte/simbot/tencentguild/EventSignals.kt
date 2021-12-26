@@ -38,9 +38,7 @@ public sealed class EventSignals<out D : Any>(
     public companion object {
         public inline val allIntents: Intents
             get() =
-                Guilds.intents + GuildMembers.intents +
-                        DirectMessage.intents + AudioAction.intents +
-                        AtMessages.intents
+                intents.values.reduce { acc, intents -> acc + intents }
 
         public val intents: Map<String, Intents> = mapOf(
             "GUILDS" to Guilds.intents,
