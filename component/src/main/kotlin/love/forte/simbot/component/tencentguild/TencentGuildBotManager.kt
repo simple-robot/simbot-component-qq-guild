@@ -192,7 +192,7 @@ internal class PropertiesConfiguration(
     /**
      * 默认的 [Intents]. 如果对应分片下 [intentValues] 无法找到指定的 intent, 则使用此默认值。
      */
-    val defaultIntents: List<String> = listOf(EventSignals.allIntents.value.toString()),
+    val defaultIntents: List<String> = EventSignals.intents.keys.toList(),
 
     /**
      * 服务器路径地址。
@@ -203,7 +203,7 @@ internal class PropertiesConfiguration(
 ) {
 
     internal val defaultIntentsValue: Intents get() {
-        return defaultIntents.map { v ->
+        return defaultIntents.distinct().map { v ->
             EventSignals.intents[v]
                 ?: kotlin.runCatching {
                     Intents(v.toInt())
