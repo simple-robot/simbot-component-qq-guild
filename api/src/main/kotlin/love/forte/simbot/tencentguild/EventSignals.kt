@@ -42,6 +42,14 @@ public sealed class EventSignals<out D : Any>(
                         DirectMessage.intents + AudioAction.intents +
                         AtMessages.intents
 
+        public val intents: Map<String, Intents> = mapOf(
+            "GUILDS" to Guilds.intents,
+            "GUILD_MEMBERS" to GuildMembers.intents,
+            "DIRECT_MESSAGE" to DirectMessage.intents,
+            "AUDIO_ACTION" to AudioAction.intents,
+            "AT_MESSAGES" to AtMessages.intents,
+        )
+
         @JvmStatic
         public val events: Map<String, EventSignals<*>> = mapOf(
             "READY" to Other.ReadyEvent,
