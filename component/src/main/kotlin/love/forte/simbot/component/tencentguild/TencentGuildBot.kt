@@ -46,7 +46,6 @@ public abstract class TencentGuildBot : Bot, TencentBot {
     abstract override val eventProcessor: EventProcessor
 
 
-
     override val component: Component
         get() = ComponentTencentGuild.component
 
@@ -82,20 +81,14 @@ public abstract class TencentGuildBot : Bot, TencentBot {
     }
 
 
-
 }
 
 
 private object BotStatus : UserStatus {
-    override val isNormal: Boolean
-        get() = false
-    override val isOfficial: Boolean
-        get() = false
-    override val isFakeUser: Boolean
-        get() = true
-    override val isAnonymous: Boolean
-        get() = false
-    override val isBot: Boolean
-        get() = true
+    override val isNormal: Boolean get() = false
+    override val isOfficial: Boolean get() = false
+    override val isFake: Boolean get() = true
+    override val isAnonymous: Boolean get() = false
+    override val isBot: Boolean get() = true
 
 }
