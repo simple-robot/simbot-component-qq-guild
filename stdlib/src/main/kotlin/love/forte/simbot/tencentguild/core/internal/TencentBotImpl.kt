@@ -391,11 +391,13 @@ internal class TencentBotImpl(
 
                 val lazy = lazy { decoder.decodeFromJsonElement(signal.decoder, dispatch.data) }
                 val lazyDecoded = lazy::value
-                processorQueue.forEach { p ->
-                    try {
-                        p(dispatch, decoder, lazyDecoded)
-                    } catch (e: Exception) {
-                        e.process(logger) { "Processing" }
+                launch {
+                    processorQueue.forEach { p ->
+                        try {
+                            p(dispatch, decoder, lazyDecoded)
+                        } catch (e: Exception) {
+                            e.process(logger) { "Processing" }
+                        }
                     }
                 }
             }
