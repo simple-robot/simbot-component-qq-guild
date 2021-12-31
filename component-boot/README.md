@@ -19,10 +19,10 @@
 # 建设中。。
 
 
-基于 [simple-robot](https://github.com/ForteScarlet/simpler-robot) 3.x版本API的 `simple-robot` 组件的boot支持。
+基于 [simple-robot](https://github.com/ForteScarlet/simpler-robot) 3.x版本API的 `simbot` 组件的boot支持。
 
 
-`component-boot-xxx` 相关组件用于与 `simbot-boot-core` 配合使用，实现模块化开发、多组件快速协同等功能。
+`component-boot-xxx` 相关组件用于与 `simboot-core` 配合使用，实现模块化开发、多组件快速协同等功能。
 
 
 
