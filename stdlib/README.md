@@ -35,13 +35,13 @@ core模块是针对bot事件监听的简易实现，是一个半 **底层** 库�
 - 测试了一周以上的挂机。
 
 ### Maven
-
+版本参考：*见头部图标*
 ```xml
 
 <dependency>
     <groupId>love.forte.simbot.component</groupId>
     <artifactId>simbot-component-tencent-guild-stdlib</artifactId>
-    <version>3.0.0.preview.0.5-0.5</version>
+    <version>${version}</version>
 </dependency>
 ```
 

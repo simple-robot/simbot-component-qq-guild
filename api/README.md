@@ -25,13 +25,13 @@ api模块是对官方提供的所有 api 的 **底层** 级别封装，不提供
 本库将会 `simple-robot` 3.x发布时（或相对较其早的时刻）发布相应的正式版本。主要是因为 `simple-robot 3.x` 仍处于设计开发阶段，可能会出现一些接口变动。
 
 ### Maven
-
+版本参考：*见头部图标*
 
 ```xml
 <dependency>
     <groupId>love.forte.simbot.component</groupId>
     <artifactId>simbot-component-tencent-guild-api</artifactId>
-    <version>3.0.0.preview.0.5-0.5</version>
+    <version>${version}</version>
 </dependency>
 ```
 

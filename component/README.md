@@ -48,12 +48,12 @@
 
 ## 使用
 ### Maven
-
+版本参考：*见头部图标*
 ```xml
 <dependency>
     <groupId>love.forte.simbot.component</groupId>
     <artifactId>simbot-component-tencent-guild-core</artifactId>
-    <version>3.0.0.preview.0.5-0.5</version>
+    <version>${version}</version>
 </dependency>
 ```
 

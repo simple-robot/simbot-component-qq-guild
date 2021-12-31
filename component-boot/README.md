@@ -28,33 +28,35 @@
 
 ## 使用
 ### Maven
+simbot.tcg-guild版本参考：*见头部图标*
 
+simboot核心版本参考：![](https://img.shields.io/maven-central/v/love.forte.simbot.boot/simboot-core)
 ```xml
 <dependency>
     <groupId>love.forte.simbot.component</groupId>
     <artifactId>simbot-component-tencent-guild-boot</artifactId>
-    <version>3.0.0.preview.0.5-0.5</version>
+    <version>${simbot.tcg-guild.version}</version>
 </dependency>
 <!-- simbot boot核心 -->
 <dependency>
     <groupId>love.forte.simbot.boot</groupId>
     <artifactId>simboot-core</artifactId>
-    <version>3.0.0.preview.0.5</version>
+    <version>${simbot.version}</version>
 </dependency>
 ```
 
 ### Gradle groovy
 
 ```groovy
-implementation "love.forte.simbot.component:simbot-component-tencent-guild-boot:$version"
-implementation "love.forte.simbot.boot:simboot-core:3.0.0.preview.0.5"
+implementation "love.forte.simbot.component:simbot-component-tencent-guild-boot:$simbotTcgGuildVersion"
+implementation "love.forte.simbot.boot:simboot-core:$simbotVersion"
 ```
 
 ### Gradle kotlin DSL
 
 ```kotlin
-implementation("love.forte.simbot.component:simbot-component-tencent-guild-boot:$version")
-implementation("love.forte.simbot.boot:simboot-core:3.0.0.preview.0.5")
+implementation("love.forte.simbot.component:simbot-component-tencent-guild-boot:$simbotTcgGuildVersion")
+implementation("love.forte.simbot.boot:simboot-core:$simbotVersion")
 ```
 
 
