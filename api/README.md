@@ -23,22 +23,22 @@ api模块是对官方提供的所有 api 的 **底层** 级别封装，不提供
 
 ```xml
 <dependency>
-    <groupId>love.forte.simple-robot</groupId>
-    <artifactId>tencent-guild-api</artifactId>
-    <version>0.0.3</version>
+    <groupId>love.forte.simbot.component</groupId>
+    <artifactId>simbot-component-tencent-guild-api</artifactId>
+    <version>3.0.0.preview.0.5-0.5</version>
 </dependency>
 ```
 
 ### Gradle groovy
 api模块：
 ```groovy
-implementation "love.forte.simple-robot:tencent-guild-api:$version"
+implementation "love.forte.simbot.component:simbot-component-tencent-guild-api:$version"
 ```
 
 ### Gradle kotlin DSL
 api模块：
 ```kotlin
-implementation("love.forte.simple-robot:tencent-guild-api:$version")
+implementation("love.forte.simbot.component:simbot-component-tencent-guild-api:$version")
 ```
 
 ## 示例

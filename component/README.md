@@ -45,22 +45,22 @@
 
 ```xml
 <dependency>
-    <groupId>love.forte.simple-robot</groupId>
-    <artifactId>component-tencent-guild</artifactId>
-    <version>0.0.3</version>
+    <groupId>love.forte.simbot.component</groupId>
+    <artifactId>simbot-component-tencent-guild-core</artifactId>
+    <version>3.0.0.preview.0.5-0.5</version>
 </dependency>
 ```
 
 ### Gradle groovy
 
 ```groovy
-implementation "love.forte.simple-robot:component-tencent-guild:$version"
+implementation "love.forte.simbot.component:simbot-component-tencent-guild-core:$version"
 ```
 
 ### Gradle kotlin DSL
 
 ```kotlin
-implementation("love.forte.simple-robot:component-tencent-guild:$version")
+implementation("love.forte.simbot.component:simbot-component-tencent-guild-core:$version")
 ```
 
 
@@ -80,16 +80,16 @@ val eventManager = coreListenerManager {
 val eventManager = coreListenerManager {
     // 配置拦截器
     interceptors {
-        // 事件流程拦截器，提供一个唯一的拦截器ID
-        processingIntercept(114514.ID) {
+        // 事件流程拦截器，
+        processingIntercept {
             println("Processing Intercept 1 start")
             it.proceed() // 下一段拦截器，或者真正的逻辑
                 .also {
                     println("Processing Intercept 1 end")
                 }
         }
-        // 监听函数拦截器，提供一个唯一的ID
-        listenerIntercept(1.ID) {
+        // 监听函数拦截器
+        listenerIntercept {
             println("Listener Intercept 2 start")
             it.proceed()
                 .also {
@@ -106,8 +106,12 @@ val eventManager = coreListenerManager {
 ### 注册事件
 向 `EventListener` 中注册事件是通过注册 `EventListener` 实例完成的，你可以构建一个最基础简单的监听器：
 ```kotlin
-val listener = coreListener(eventKey = ChannelMessageEvent) { context: EventListenerProcessingContext, event: ChannelMessageEvent ->
+val listener = coreListener<ChannelMessageEvent> { context: EventListenerProcessingContext, event ->
     // do 
+}
+// 或者
+val listener2 = coreListener(eventKey = ChannelEvent) { context: EventListenerProcessingContext, event: ChannelMessageEvent ->
+  // do 
 }
 ```
 
@@ -115,7 +119,7 @@ val listener = coreListener(eventKey = ChannelMessageEvent) { context: EventList
 此事件类型是由 `simple-robot-api` 进行定义的规范事件，
 当然，对于当前库来讲，你也可以监听一个QQ频道专属的事件，例如：
 ```kotlin
-val listener = coreListener(eventKey = TcgChannelAtMessageEvent) { context: EventListenerProcessingContext, event: TcgChannelAtMessageEvent ->
+val listener = coreListener<TcgChannelAtMessageEvent> { context: EventListenerProcessingContext, event ->
     // do
 }
 ```
@@ -125,7 +129,7 @@ val listener = coreListener(eventKey = TcgChannelAtMessageEvent) { context: Even
 
 至于这个事件的使用：
 ```kotlin
-val listener = coreListener(eventKey = TcgChannelAtMessageEvent) { context: EventListenerProcessingContext, event: TcgChannelAtMessageEvent ->
+val listener = coreListener<TcgChannelAtMessageEvent> { context: EventListenerProcessingContext, event ->
     // 一次事件流程的上下文
     println(context)
     // 此消息事件的子频道
@@ -235,7 +239,7 @@ val botManager = tencentGuildBotManager(listenerManager) {
 }
 
 // 事件监听
-listenerManager.listen(eventKey = ChannelMessageEvent) { context, event ->
+listenerManager.listen<ChannelMessageEvent> { context, event ->
     // do
     
     // result
