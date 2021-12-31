@@ -35,18 +35,26 @@
     <artifactId>simbot-component-tencent-guild-boot</artifactId>
     <version>3.0.0.preview.0.5-0.5</version>
 </dependency>
+<!-- simbot boot核心 -->
+<dependency>
+    <groupId>love.forte.simbot.boot</groupId>
+    <artifactId>simboot-core</artifactId>
+    <version>3.0.0.preview.0.5</version>
+</dependency>
 ```
 
 ### Gradle groovy
 
 ```groovy
 implementation "love.forte.simbot.component:simbot-component-tencent-guild-boot:$version"
+implementation "love.forte.simbot.boot:simboot-core:3.0.0.preview.0.5"
 ```
 
 ### Gradle kotlin DSL
 
 ```kotlin
 implementation("love.forte.simbot.component:simbot-component-tencent-guild-boot:$version")
+implementation("love.forte.simbot.boot:simboot-core:3.0.0.preview.0.5")
 ```
 
 
