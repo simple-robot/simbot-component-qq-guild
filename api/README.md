@@ -6,6 +6,12 @@
     <h4>
         ~ api ~
     </h4>
+    <br />
+<a href="https://repo1.maven.org/maven2/love/forte/simbot/component/simbot-component-tencent-guild-api" target="_blank">
+  <img alt="release" src="https://img.shields.io/maven-central/v/love.forte.simbot.component/simbot-component-tencent-guild-api" /></a>
+<a href="https://www.yuque.com/simpler-robot/simpler-robot-doc" target="_blank">
+  <img alt="doc" src="https://img.shields.io/badge/doc-yuque-brightgreen" /></a>
+<hr />
 </div>
 api模块是对官方提供的所有 api 的 **底层** 级别封装，不提供较为高级的应用层面封装，是一个单纯的底层api库。
 

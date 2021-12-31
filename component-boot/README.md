@@ -6,6 +6,12 @@
     <h4>
         ~ tencent-guild ~
     </h4>
+    <br />
+<a href="https://repo1.maven.org/maven2/love/forte/simbot/component/simbot-component-tencent-guild-boot" target="_blank">
+  <img alt="release" src="https://img.shields.io/maven-central/v/love.forte.simbot.component/simbot-component-tencent-guild-boot" /></a>
+<a href="https://www.yuque.com/simpler-robot/simpler-robot-doc" target="_blank">
+  <img alt="doc" src="https://img.shields.io/badge/doc-yuque-brightgreen" /></a>
+<hr />
 </div>
 
 <br>
