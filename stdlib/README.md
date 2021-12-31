@@ -26,29 +26,29 @@ core模块是针对bot事件监听的简易实现，是一个半 **底层** 库�
 
 - 测试了基本的 `AT_MESSAGE` 事件接收与对此消息事件通过 `MessageSendApi` 进行回复（测试频道，语料无限制情况下）。
 - 测试了获取bot的guild列表。
-- 测试了30分钟之内的挂机。（疑似重连成功，但是我没加日志所以不确定）
+- 测试了一周以上的挂机。
 
 ### Maven
 
 ```xml
 
 <dependency>
-    <groupId>love.forte.simple-robot</groupId>
-    <artifactId>tencent-guild-core</artifactId>
-    <version>0.0.3</version>
+    <groupId>love.forte.simbot.component</groupId>
+    <artifactId>simbot-component-tencent-guild-stdlib</artifactId>
+    <version>3.0.0.preview.0.5-0.5</version>
 </dependency>
 ```
 
 ### Gradle groovy
 
 ```groovy
-implementation "love.forte.simple-robot:tencent-guild-core:$version"
+implementation "love.forte.simbot.component:simbot-component-tencent-guild-stdlib:$version"
 ```
 
 ### Gradle kotlin DSL
 
 ```kotlin
-implementation("love.forte.simple-robot:tencent-guild-core:$version")
+implementation("love.forte.simbot.component:simbot-component-tencent-guild-stdlib:$version")
 ```
 
 ## 示例
@@ -59,9 +59,9 @@ implementation("love.forte.simple-robot:tencent-guild-core:$version")
 
 suspend fun main() {
     val bot = tencentBot(appId = "app_id", appKey = "app_key", token = "token") {
-        // 假设监听 AT_MESSAGE 事件。
         serverUrl = TencentGuildApi.URL // or TencentGuildApi.SANDBOX_URL, 或者自定义
 
+        // 假设监听 AT_MESSAGE 事件。
         // 假设所有分片下都要监听 "AT_MESSAGE" 事件。
         intentsForSharedFactory = { EventSignals.AtMessages.intents }
 
@@ -71,6 +71,8 @@ suspend fun main() {
 
     // start bot, 即尝试进行ws连接。
     bot.start()
+    
+    // 所有事件都存在于 EventSignals 下的子类型中。
 
     // 指定监听事件类型1 - 会自动decode数据为目标事件所提供的数据。
     bot.processor(EventSignals.AtMessages.AtMessageCreate) { message ->
@@ -112,8 +114,6 @@ suspend fun main() {
 
         println(message)
     }
-
-    // 所有事件都存在于 EventSignals 下的子类型中。
 
     bot.launch {
         delay(10_000)
@@ -165,7 +165,3 @@ bot.joinBlocking()
 
 ```
 
-## 待建设内容
-
-- 支持事件处理的异常处理
-- 增加更多日志

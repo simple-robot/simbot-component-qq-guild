@@ -1,4 +1,3 @@
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.runBlocking
 import love.forte.simbot.tencentguild.tencentBot
@@ -12,12 +11,10 @@ import kotlin.concurrent.thread
  */
 class BotTest {
 
-    fun test0() = runBlocking {
 
-    }
-
-    @OptIn(ObsoleteCoroutinesApi::class)
     fun test() = runBlocking {
+
+        // 直接构建一个BOT
         val bot = tencentBot(
             "appid",
             appKey = "key",
@@ -30,13 +27,10 @@ class BotTest {
                 thread(start = false, isDaemon = true, name = "Test-thread-${threadN.getAndIncrement()}") { it.run() }
             }.asCoroutineDispatcher()
 
-
-
         }
 
-        // bot.processor { json ->
-        // }
-
+        bot.start()
+        bot.join()
 
     }
 
