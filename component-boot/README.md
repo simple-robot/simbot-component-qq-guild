@@ -83,3 +83,29 @@ suspend fun ChannelMessageEvent.myListener2() {
 ```
 
 ### 监听函数 - 持续会话
+有时候，你可能会有需要进行连续对话的情况：
+
+> 注意，下述逻辑经过简化，仅供参考
+
+```kotlin
+@Listener(async = true)
+@ContentTrim
+@Filter("记录", matchType = MatchType.TEXT_EQUALS)
+suspend fun ChannelMessageEvent.roulette(session: ContinuousSessionContext): EventResult {
+    
+    val userId = author.id
+    val channelId = channel().id
+    
+    replyIfSupport(Text { "请输入你的名称" })
+    // session.waitingFor 会挂起，直到超时，或者监听函数内调用了 provider.push / provider.pushException
+    val name: String = session.waitingFor(id = randomID(), timeout = 1.minutes) { event: ChannelMessageEvent, context, provider ->
+        // session构建的临时监听器暂时无法整合例如 @Filter 等便捷过滤的方法，你需要手动匹配事件是否是你所需要的
+        if (channel().id == channelId && author.id == userId) {
+            val value = event.messageContent.plainText.trim()
+            provider.push(value) // 当得到的需要的值，推送结果以结束外层挂起
+        }
+    }
+    
+    replyIfSupport(Text { "你的名称：$name" })
+}
+```
