@@ -13,10 +13,10 @@
 # 建设中。。
 
 
-基于 [simple-robot](https://github.com/ForteScarlet/simpler-robot) 3.x版本API的 `simple-robot` 组件boot。
+基于 [simple-robot](https://github.com/ForteScarlet/simpler-robot) 3.x版本API的 `simple-robot` 组件的boot支持。
 
 
-`component-boot-xxx` 相关组件用于与 `simple-robot-boot-core` 配合使用，实现模块化开发、多组件快速协同等功能。
+`component-boot-xxx` 相关组件用于与 `simbot-boot-core` 配合使用，实现模块化开发、多组件快速协同等功能。
 
 
 
@@ -25,7 +25,7 @@
 
 ```xml
 <dependency>
-    <groupId>love.forte.simbot</groupId>
+    <groupId>love.forte.simbot.component</groupId>
     <artifactId>simbot-component-tencent-guild-boot</artifactId>
     <version>3.0.0.preview.0.5-0.5</version>
 </dependency>
@@ -34,13 +34,13 @@
 ### Gradle groovy
 
 ```groovy
-implementation "love.forte.simbot:simbot-component-tencent-guild-boot:$version"
+implementation "love.forte.simbot.component:simbot-component-tencent-guild-boot:$version"
 ```
 
 ### Gradle kotlin DSL
 
 ```kotlin
-implementation("love.forte.simbot:simbot-component-tencent-guild-boot:$version")
+implementation("love.forte.simbot.component:simbot-component-tencent-guild-boot:$version")
 ```
 
 
