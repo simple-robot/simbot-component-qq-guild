@@ -46,7 +46,7 @@ public interface TencentRoleInfo {
     public val isDefault: Boolean get() = id.toString() in defaultRoles
 
     public companion object {
-        internal val serializer: KSerializer<out TencentRoleInfo> = TencentRoleInfoImpl.serializer()
+        public val serializer: KSerializer<out TencentRoleInfo> = TencentRoleInfoImpl.serializer()
 
         public val defaultRoles: Map<String, DefaultRole> = mapOf(
             "1" to DefaultRole.ALL_MEMBER,

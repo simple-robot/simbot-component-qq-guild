@@ -29,7 +29,7 @@ sealed class P : SimbotProject() {
     }
 
     object TencentGuild {
-        private const val CURRENT_VERSION = "0.5"
+        private const val CURRENT_VERSION = "0.6"
         const val GROUP = "${Simbot.GROUP}.component"
         const val VERSION = "${Simbot.VERSION}-$CURRENT_VERSION"
 
