@@ -14,7 +14,7 @@ import love.forte.simbot.tencentguild.api.RouteInfoBuilder
 public class GetMemberApi(
     guildId: ID,
     userId: ID
-) : GetTencentApi<TencentMemberInfo> {
+) : GetTencentApi<TencentMemberInfo>() {
     // GET /guilds/{guild_id}/members/{user_id}
     private val path = listOf("guilds", guildId.toString(), "members", userId.toString())
 

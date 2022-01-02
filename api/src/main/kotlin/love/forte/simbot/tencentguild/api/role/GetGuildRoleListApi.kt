@@ -14,7 +14,7 @@ import love.forte.simbot.tencentguild.api.RouteInfoBuilder
  * [获取频道身份组列表](https://bot.q.qq.com/wiki/develop/api/openapi/guild/get_guild_roles.html#%E8%8E%B7%E5%8F%96%E9%A2%91%E9%81%93%E8%BA%AB%E4%BB%BD%E7%BB%84%E5%88%97%E8%A1%A8)
  * @author ForteScarlet
  */
-public class GetGuildRoleListApi(guildId: ID) : GetTencentApi<GuildRoleList> {
+public class GetGuildRoleListApi(guildId: ID) : GetTencentApi<GuildRoleList>() {
 
     override val resultDeserializer: DeserializationStrategy<out GuildRoleList> = serializer
 

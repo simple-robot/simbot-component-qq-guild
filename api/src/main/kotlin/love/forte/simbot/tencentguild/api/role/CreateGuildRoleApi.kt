@@ -20,7 +20,7 @@ import love.forte.simbot.tencentguild.internal.TencentRoleInfoImpl
 public class CreateGuildRoleApi internal constructor(
     guildId: ID,
     private val _body: Body
-) : TencentApi<GuildRoleCreated> {
+) : TencentApi<GuildRoleCreated>() {
     @JvmOverloads
     public constructor(
         guildId: ID,

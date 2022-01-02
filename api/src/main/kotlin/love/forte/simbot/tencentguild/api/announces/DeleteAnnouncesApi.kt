@@ -17,7 +17,7 @@ import love.forte.simbot.tencentguild.api.TencentApiWithoutResult
 public class DeleteAnnouncesApi(
     channelId: ID,
     messageId: ID
-) : TencentApiWithoutResult {
+) : TencentApiWithoutResult() {
 
     // DELETE /channels/{channel_id}/announces/{message_id}
     private val path = listOf("channels", channelId.toString(), "announces", messageId.toString())

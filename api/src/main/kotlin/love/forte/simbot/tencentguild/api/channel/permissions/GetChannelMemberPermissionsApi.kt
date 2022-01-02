@@ -14,7 +14,7 @@ import love.forte.simbot.tencentguild.api.RouteInfoBuilder
 public class GetChannelMemberPermissionsApi(
     channelId: ID,
     memberId: ID
-) : GetTencentApi<TencentChannelPermissionsInfo> {
+) : GetTencentApi<TencentChannelPermissionsInfo>() {
 
     // GET /channels/{channel_id}/members/{user_id}/permissions
     private val path = listOf("channels", channelId.toString(), "members", memberId.toString(), "permissions")

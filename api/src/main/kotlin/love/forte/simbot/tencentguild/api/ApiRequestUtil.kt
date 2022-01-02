@@ -3,66 +3,58 @@
 package love.forte.simbot.tencentguild.api
 
 import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.utils.io.*
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.StringFormat
-import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonBuilder
 import love.forte.simbot.Api4J
 import love.forte.simbot.LoggerFactory
-import love.forte.simbot.tencentguild.ErrInfo
 import love.forte.simbot.tencentguild.InternalSrTcgApi
-import love.forte.simbot.tencentguild.err
 import java.util.function.Consumer
 
 internal val logger = LoggerFactory.getLogger("love.forte.simbot.tencentguild.api.request")
 
-@JvmSynthetic
-public suspend fun TencentApi<*>.requestForResponse(
-    client: HttpClient,
-    server: Url,
-    token: String,
-): HttpResponse {
-    val api = this
-
-    return client.request {
-        method = api.method
-
-        headers {
-            this[HttpHeaders.Authorization] = token
-        }
-
-        url {
-            // route builder
-            val routeBuilder = RouteInfoBuilder { name, value ->
-                parameters.append(name, value.toString())
-            }
-
-            api.route(routeBuilder)
-            api.body?.also { b -> body = b }
-
-            protocol = server.protocol
-            host = server.host
-            path(routeBuilder.apiPath)
-            routeBuilder.contentType?.let {
-                headers {
-                    this[HttpHeaders.ContentType] = it.toString()
-                }
-            }
-            // val contentType = routeBuilder.contentType
-            // if (contentType != null) {
-            //     contentType(contentType)
-            // }
-        }
-
-    }
-}
+// @JvmSynthetic
+// public suspend fun TencentApi<*>.requestForResponse(
+//     client: HttpClient,
+//     server: Url,
+//     token: String,
+// ): HttpResponse {
+//     val api = this
+//
+//     return client.request {
+//         method = api.method
+//
+//         headers {
+//             this[HttpHeaders.Authorization] = token
+//         }
+//
+//         url {
+//             // route builder
+//             val routeBuilder = RouteInfoBuilder { name, value ->
+//                 parameters.append(name, value.toString())
+//             }
+//
+//             api.route(routeBuilder)
+//             api.body?.also { b -> body = b }
+//
+//             protocol = server.protocol
+//             host = server.host
+//             path(routeBuilder.apiPath)
+//             routeBuilder.contentType?.let {
+//                 headers {
+//                     this[HttpHeaders.ContentType] = it.toString()
+//                 }
+//             }
+//             // val contentType = routeBuilder.contentType
+//             // if (contentType != null) {
+//             //     contentType(contentType)
+//             // }
+//         }
+//
+//     }
+// }
 
 /**
  *
@@ -76,62 +68,13 @@ public suspend fun TencentApi<*>.requestForResponse(
  * @throws love.forte.simbot.tencentguild.TencentApiException 如果响应码不在 200..300 范围内。
  */
 @JvmSynthetic
-public suspend inline fun <reified R> TencentApi<R>.request(
+public suspend fun <R> TencentApi<R>.request(
     client: HttpClient,
     server: Url,
     token: String,
-    decoder: StringFormat? = null
+    decoder: StringFormat = defaultJson
 ): R {
-    val api = this
-    val resp = requestForResponse(client, server, token)
-
-    // check status
-    checkStatus(resp) { resp.status }
-
-    if (decoder == null) {
-        return resp.receive()
-    }
-
-    return api.decodeFromHttpResponse(decoder, resp)
-}
-
-@PublishedApi
-internal suspend inline fun checkStatus(resp: HttpResponse, status: () -> HttpStatusCode) {
-    val s = status()
-    if (!s.isSuccess()) {
-        val info = resp.receive<ErrInfo>()
-        // throw err
-        info.err { s }
-    }
-}
-
-
-@PublishedApi
-@OptIn(ExperimentalSerializationApi::class, InternalSrTcgApi::class)
-internal suspend inline fun <reified R> TencentApi<R>.decodeFromHttpResponse(
-    decoder: StringFormat,
-    response: HttpResponse
-): R {
-    val resultKind = resultDeserializer.descriptor.kind
-    if (resultKind == StructureKind.OBJECT) {
-        val objInstance = R::class.objectInstance
-        if (objInstance != null) return objInstance
-    }
-
-    return decodeFromHttpResponseViaString(decoder, response)
-}
-
-@InternalSrTcgApi
-@JvmSynthetic
-public suspend fun <R> TencentApi<R>.decodeFromHttpResponseViaString(
-    decoder: StringFormat,
-    response: HttpResponse
-): R {
-    val remainingText = response.content.readRemaining().readText()
-
-    logger.trace("resp: {}", remainingText)
-
-    return decoder.decodeFromString(resultDeserializer, remainingText)
+    return this.doRequest(client, server, token, decoder)
 }
 
 
@@ -146,16 +89,13 @@ public fun <R> doRequest(
     client: HttpClient,
     server: String,
     token: String,
-    decoder: StringFormat = Json
+    decoder: StringFormat = defaultJson
 ): R = runBlocking {
-    val resp = api.requestForResponse(client, Url(server), token)
-
-    checkStatus(resp) { resp.status }
-
-    // decode
-    api.decodeFromHttpResponseViaString(decoder, resp)
+    api.request(client, Url(server), token, decoder)
 }
 
+@OptIn(Api4J::class)
+private val defaultJson = newJson()
 
 @Api4J
 public fun newHttpClient(): HttpClient = HttpClient()

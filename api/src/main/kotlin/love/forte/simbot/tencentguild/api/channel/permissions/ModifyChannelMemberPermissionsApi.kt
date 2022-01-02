@@ -19,7 +19,7 @@ public class ModifyChannelMemberPermissionsApi(
     channelId: ID, memberId: ID,
     add: Permissions? = null,
     remove: Permissions? = null
-) : TencentApi<TencentChannelPermissionsInfo> {
+) : TencentApi<TencentChannelPermissionsInfo>() {
     @Api4J
     public constructor(channelId: ID, memberId: ID, add: Long, remove: Long): this(channelId, memberId, Permissions(add), Permissions(remove))
 

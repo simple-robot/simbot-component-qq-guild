@@ -18,7 +18,7 @@ public class ModifyGuildRoleApi private constructor(
     guildId: ID,
     roleId: ID,
     private val _body: Body
-) : TencentApi<GuildRoleModified> {
+) : TencentApi<GuildRoleModified>() {
     public constructor(
         guildId: ID,
         roleId: ID,

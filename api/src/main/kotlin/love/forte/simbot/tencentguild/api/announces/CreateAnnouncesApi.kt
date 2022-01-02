@@ -21,7 +21,7 @@ import love.forte.simbot.tencentguild.api.TencentApi
 public class CreateAnnouncesApi(
     channelId: ID,
     messageId: ID
-) : TencentApi<TencentAnnounces> {
+) : TencentApi<TencentAnnounces>() {
 
     // POST /channels/{channel_id}/announces
     private val path = listOf("channels", channelId.toString(), "announces")

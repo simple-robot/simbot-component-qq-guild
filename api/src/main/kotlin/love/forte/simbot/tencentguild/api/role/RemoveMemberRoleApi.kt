@@ -14,7 +14,7 @@ import love.forte.simbot.tencentguild.api.TencentApiWithoutResult
 public class RemoveMemberRoleApi(
     channelId: ID, guildId: ID,
     userId: ID, roleId: ID,
-) : TencentApiWithoutResult {
+) : TencentApiWithoutResult() {
 
     private val _body = Body(channelId.toString())
 

@@ -48,7 +48,10 @@ public inline fun ErrInfo.err(codeBlock: () -> HttpStatusCode): Nothing {
     throw TencentApiException(statusInfo)
 }
 
-
+/**
+ * 如果返回值不是成功的响应码，[ErrInfo] 则为统一的错误码响应格式。
+ *
+ */
 @Suppress("MemberVisibilityCanBePrivate")
 @Serializable
 public data class ErrInfo(val code: Int, val message: String)

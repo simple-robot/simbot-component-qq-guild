@@ -10,7 +10,7 @@ import love.forte.simbot.tencentguild.api.TencentApi
 /**
  * 获取指定Guild
  */
-public class GetGuildApi(guildId: ID) : TencentApi<TencentGuildInfo> {
+public class GetGuildApi(guildId: ID) : TencentApi<TencentGuildInfo>() {
     private val path = listOf("guilds", guildId.toString())
 
     override val resultDeserializer: DeserializationStrategy<out TencentGuildInfo>

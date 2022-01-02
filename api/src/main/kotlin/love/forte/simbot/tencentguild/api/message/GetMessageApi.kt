@@ -12,7 +12,7 @@ import love.forte.simbot.tencentguild.api.RouteInfoBuilder
  *
  * @author ForteScarlet
  */
-public class GetMessageApi(channelId: ID, messageId: ID) : GetTencentApi<TencentMessage> {
+public class GetMessageApi(channelId: ID, messageId: ID) : GetTencentApi<TencentMessage>() {
     // GET /channels/{channel_id}/messages/{message_id}
     private val path = listOf("channels", channelId.toString(), "messages", messageId.toString())
 

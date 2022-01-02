@@ -15,7 +15,7 @@ import love.forte.simbot.tencentguild.api.TencentApiWithoutResult
 public class AddMemberRoleApi(
     channelId: ID, guildId: ID,
     userId: ID, roleId: ID,
-) : TencentApiWithoutResult {
+) : TencentApiWithoutResult() {
     private val _body = Body(channelId.toString())
 
     // PUT /guilds/{guild_id}/members/{user_id}/roles/{role_id}

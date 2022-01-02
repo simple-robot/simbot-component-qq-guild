@@ -27,7 +27,7 @@ public class GetBotGuildListApi(
      * 每次拉取多少条数据	最大不超过100，默认100
      */
     private val limit: Int = 100
-) : TencentApi<List<TencentGuildInfo>> {
+) : TencentApi<List<TencentGuildInfo>>() {
 
     override val resultDeserializer: DeserializationStrategy<out List<TencentGuildInfo>>
         get() = serializer
