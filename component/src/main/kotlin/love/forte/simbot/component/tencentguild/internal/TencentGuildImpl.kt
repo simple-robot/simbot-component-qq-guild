@@ -8,6 +8,7 @@ import kotlinx.coroutines.runBlocking
 import love.forte.simbot.Api4J
 import love.forte.simbot.ID
 import love.forte.simbot.Limiter
+import love.forte.simbot.action.NotSupportActionException
 import love.forte.simbot.component.tencentguild.TencentGuild
 import love.forte.simbot.component.tencentguild.TencentMember
 import love.forte.simbot.component.tencentguild.TencentRole
@@ -21,6 +22,7 @@ import love.forte.simbot.tencentguild.api.role.GetGuildRoleListApi
 import love.forte.simbot.tencentguild.request
 import java.util.stream.Stream
 import kotlin.streams.asStream
+import kotlin.time.Duration
 
 /**
  *
@@ -67,7 +69,8 @@ internal class TencentGuildImpl(
         }.asStream()
     }
 
-    override suspend fun mute(): Boolean = false // not support
+    override suspend fun mute(duration: Duration): Boolean = throw NotSupportActionException("mute not support") // false // not support
+    override suspend fun unmute(): Boolean = throw NotSupportActionException("unmute not support")
     override suspend fun previous(): Organization? = null
 
     @Api4J

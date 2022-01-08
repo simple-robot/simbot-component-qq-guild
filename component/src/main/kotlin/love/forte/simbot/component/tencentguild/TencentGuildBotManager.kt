@@ -45,7 +45,7 @@ public abstract class TencentGuildBotManager : BotManager<TencentGuildBot>() {
      */
     @OptIn(ExperimentalSerializationApi::class)
     override fun register(verifyInfo: BotVerifyInfo): TencentGuildBot {
-        val serializer = PropertiesConfiguration.serializer()
+        val serializer = TencentBotViaBotFileConfiguration.serializer()
 
         val configuration = verifyInfo.tryResolveVerifyInfo(
             ::VerifyFailureException,
@@ -76,7 +76,7 @@ public abstract class TencentGuildBotManager : BotManager<TencentGuildBot>() {
 
                 CProp.decodeFromStringMap(serializer, stringMap)
             },
-        ).getOrThrow()
+            ).getOrThrow()
 
         if (configuration.component == null) {
             throw NoSuchComponentException("Component is not found in [${verifyInfo.infoName}]")
@@ -142,20 +142,27 @@ public class TencentGuildBotManagerConfiguration(public var eventProcessor: Even
 
 }
 
+// 只有在注册时候会使用到, 不保留为属性。
+
 @OptIn(ExperimentalSerializationApi::class)
-private val CProp = Properties(SerializersModule { })
-private val CYaml: com.charleskorn.kaml.Yaml? by lazy {
+private val CProp get() = Properties(SerializersModule { })
+private val CYaml get() = CYamlFunction?.invoke()
+private val CYamlFunction: (() -> com.charleskorn.kaml.Yaml)? by lazy {
     try {
-        com.charleskorn.kaml.Yaml(configuration = YamlConfiguration(
-            strictMode = false
-        ))
+        return@lazy {
+            com.charleskorn.kaml.Yaml(
+                configuration = YamlConfiguration(
+                    strictMode = false
+                )
+            )
+        }
     } catch (e: NoClassDefFoundError) {
         LoggerFactory.getLogger(TencentGuildBotManager::class)
             .error("[com.charleskorn.kaml.Yaml] not in your classpath. If you want to support for yaml, add 'com.charleskorn.kaml:kaml:\$version' into your classpath.")
-        null
+        return@lazy null
     }
 }
-private val CJson = Json {
+private val CJson get() = Json {
     isLenient = true
     ignoreUnknownKeys = true
 }
@@ -166,7 +173,7 @@ private val CJson = Json {
  */
 @Suppress("MemberVisibilityCanBePrivate")
 @Serializable
-internal class PropertiesConfiguration(
+internal class TencentBotViaBotFileConfiguration(
     val component: String? = null,
 
     val appId: String,
