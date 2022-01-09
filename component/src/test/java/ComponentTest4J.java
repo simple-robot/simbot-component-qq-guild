@@ -1,6 +1,6 @@
 import kotlin.Unit;
 import love.forte.simbot.Identifies;
-import love.forte.simbot.action.MessageReplySupport;
+import love.forte.simbot.action.ReplySupport;
 import love.forte.simbot.component.tencentguild.TencentGuildBotManager;
 import love.forte.simbot.component.tencentguild.TencentGuildBotManagerConfiguration;
 import love.forte.simbot.core.event.CoreListenerManager;
@@ -55,14 +55,14 @@ public class ComponentTest4J {
                     group.sendBlocking(Text.getText("hello").plus(" World"));
 
                     // 如果可以直接回复消息，回复
-                    if (event instanceof MessageReplySupport) {
+                    if (event instanceof ReplySupport) {
                         // 构建消息（链）
                         Message message = Messages.getMessages(
                                 Text.getText("你好"),
                                 new At(Identifies.ID(123456)),
                                 new At(event.getAuthor().getId()) // at发消息的人
                         );
-                        ((MessageReplySupport) event).replyBlocking(message);
+                        ((ReplySupport) event).replyBlocking(message);
                     }
 
 
