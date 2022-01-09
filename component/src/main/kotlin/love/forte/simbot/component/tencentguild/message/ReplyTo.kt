@@ -1,5 +1,6 @@
 package love.forte.simbot.component.tencentguild.message
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.Component
 import love.forte.simbot.ID
@@ -14,6 +15,7 @@ import kotlin.reflect.KClass
  *
  * @author ForteScarlet
  */
+@SerialName("tcg.replyTo")
 @Serializable
 public data class ReplyTo(@Serializable(ID.AsCharSequenceIDSerializer::class) val id: ID) : Message.Element<ReplyTo> {
     override val key: Message.Key<ReplyTo>

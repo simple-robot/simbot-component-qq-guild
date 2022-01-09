@@ -1,5 +1,6 @@
 package love.forte.simbot.component.tencentguild.message
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import love.forte.simbot.Component
@@ -21,6 +22,7 @@ import kotlin.reflect.KClass
  *
  * @author ForteScarlet
  */
+@SerialName("tcg.attachment")
 @Serializable
 public data class AttachmentMessage(override val url: String) : RemoteResource<AttachmentMessage> {
     @Transient

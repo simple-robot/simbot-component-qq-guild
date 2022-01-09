@@ -13,7 +13,7 @@ import love.forte.simbot.message.Messages
 import kotlin.reflect.KClass
 
 
-@SerialName("tcg.cl.mt") // tencentguild.channel.mention
+@SerialName("tcg.mentionChannel") // tencentguild.channel.mention
 @Serializable
 public data class MentionChannel(
     @Serializable(ID.AsCharSequenceIDSerializer::class)

@@ -19,7 +19,7 @@ import kotlin.reflect.KClass
  *
  * 需要注意在直接使用 [byArk] 构建实例的时候，属性拷贝为浅拷贝。
  */
-@SerialName("tc.ark")
+@SerialName("tcg.ark")
 @Serializable
 public data class Ark internal constructor(
     @SerialName("template_id")
