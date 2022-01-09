@@ -15,6 +15,7 @@ package love.forte.simbot.component.tencentguild.internal
 import kotlinx.coroutines.CompletionHandler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import love.forte.simbot.BotAlreadyRegisteredException
 import love.forte.simbot.Component
 import love.forte.simbot.ID
 import love.forte.simbot.LoggerFactory
@@ -24,6 +25,7 @@ import love.forte.simbot.component.tencentguild.TencentGuildBotManager
 import love.forte.simbot.component.tencentguild.TencentGuildBotManagerConfiguration
 import love.forte.simbot.tencentguild.TencentBotConfiguration
 import love.forte.simbot.tencentguild.tencentBot
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
@@ -68,7 +70,7 @@ internal class TencentGuildBotManagerImpl(
         return !completableJob.isCompleted
     }
 
-    private var botMap = mutableMapOf<String, TencentGuildBotImpl>()
+    private var botMap = ConcurrentHashMap<String, TencentGuildBotImpl>()
 
     override val component: Component
         get() = ComponentTencentGuild.component
@@ -117,17 +119,17 @@ internal class TencentGuildBotManagerImpl(
             }
             // check botInfo
             logger.info("Registered bot info: {}", sourceBot.botInfo)
-            val guildBot = TencentGuildBotImpl(sourceBot, this, eventProcessor)
-            botMap.compute(appId) { key, old ->
-                if (old != null) throw IllegalStateException("Bot appId '$key' already registered.")
-                guildBot.apply {
+            return botMap.compute(appId) { key, old ->
+                if (old != null) throw BotAlreadyRegisteredException(key)
+
+                TencentGuildBotImpl(sourceBot, this, eventProcessor).apply {
                     coroutineContext[Job]!!.invokeOnCompletion {
                         // remove self on completion
                         botMap.remove(key)
                     }
                 }
-            }
-            return guildBot
+            }!!
+            // return guildBot
         }
     }
 }
