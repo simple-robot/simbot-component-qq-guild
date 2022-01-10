@@ -52,13 +52,13 @@ public class ComponentTest4J {
                     final Group group = event.getGroup();
 
                     // 发送消息
-                    group.sendBlocking(Text.getText("hello").plus(" World"));
+                    group.sendBlocking(Text.of("hello").plus(" World"));
 
                     // 如果可以直接回复消息，回复
                     if (event instanceof ReplySupport) {
                         // 构建消息（链）
                         Message message = Messages.getMessages(
-                                Text.getText("你好"),
+                                Text.of("你好"),
                                 new At(Identifies.ID(123456)),
                                 new At(event.getAuthor().getId()) // at发消息的人
                         );

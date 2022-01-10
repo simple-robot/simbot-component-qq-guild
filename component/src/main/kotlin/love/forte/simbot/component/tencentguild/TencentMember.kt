@@ -12,6 +12,7 @@ import love.forte.simbot.definition.MemberInfo
 import love.forte.simbot.definition.UserStatus
 import love.forte.simbot.tencentguild.TencentMemberInfo
 import love.forte.simbot.tencentguild.TencentUserInfo
+import kotlin.time.Duration
 
 /**
  *
@@ -28,7 +29,7 @@ public interface TencentMember : Member, MemberInfo, TencentMemberInfo {
     override val id: ID
     override val status: UserStatus
     override val username: String
-    override suspend fun mute(): Boolean
+    override suspend fun mute(duration: Duration): Boolean
     override suspend fun roles(): Flow<TencentRole>
 
     @Api4J

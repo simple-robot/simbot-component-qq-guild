@@ -9,7 +9,9 @@ import love.forte.simbot.component.tencentguild.TencentMember
 import love.forte.simbot.component.tencentguild.TencentRole
 import love.forte.simbot.definition.UserStatus
 import love.forte.simbot.tencentguild.TencentMemberInfo
+import java.util.concurrent.TimeUnit
 import kotlin.streams.toList
+import kotlin.time.Duration
 
 /**
  *
@@ -50,7 +52,14 @@ internal class TencentMemberImpl @OptIn(Api4J::class) constructor(
             }
         }.build()
 
-    override suspend fun mute(): Boolean = false
+    override suspend fun mute(duration: Duration): Boolean = false
+    override suspend fun unmute(): Boolean = false
+
+    @Api4J
+    override fun muteBlocking(time: Long, unit: TimeUnit): Boolean = false
+
+    @Api4J
+    override fun unmuteBlocking(): Boolean = false
 
     override suspend fun roles(): Flow<TencentRole> {
         val roleIds = info.roleIds.mapTo(mutableSetOf()) { it.toString() }

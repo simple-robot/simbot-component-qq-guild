@@ -37,7 +37,7 @@ import love.forte.simbot.tencentguild.internal.TencentUserInfoImpl
  * @author ForteScarlet
  */
 public class MessageSendApi(channelId: ID, override val body: TencentMessageForSending) :
-    TencentApi<TencentMessage> {
+    TencentApi<TencentMessage>() {
     @JvmOverloads
     public constructor(channelId: ID, content: String, msgId: ID? = null) : this(
         channelId,
