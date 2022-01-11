@@ -61,7 +61,7 @@ public abstract class TencentGuildBot : Bot, TencentBot {
     abstract override suspend fun guilds(grouping: Grouping, limiter: Limiter): Flow<TencentGuild>
 
 
-    override suspend fun uploadImage(resource: Resource): Image {
+    override suspend fun uploadImage(resource: Resource): Image<*> {
         // TODO fake remote image.
         throw NotSupportActionException("upload Image")
     }
