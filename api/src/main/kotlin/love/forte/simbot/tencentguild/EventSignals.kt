@@ -37,37 +37,41 @@ public sealed class EventSignals<out D : Any>(
 ) {
     public companion object {
         public inline val allIntents: Intents
-            get() =
-                intents.values.reduce { acc, intents -> acc + intents }
-
-        public val intents: Map<String, Intents> = mapOf(
-            "GUILDS" to Guilds.intents,
-            "GUILD_MEMBERS" to GuildMembers.intents,
-            "DIRECT_MESSAGE" to DirectMessage.intents,
-            "AUDIO_ACTION" to AudioAction.intents,
-            "AT_MESSAGES" to AtMessages.intents,
-        )
+            get() = intents.values.reduce { acc, intents -> acc + intents }
 
         @JvmStatic
-        public val events: Map<String, EventSignals<*>> = mapOf(
-            "READY" to Other.ReadyEvent,
-            "RESUMED" to Other.Resumed,
-            "GUILD_CREATE" to Guilds.GuildCreate,
-            "GUILD_UPDATE" to Guilds.GuildUpdate,
-            "GUILD_DELETE" to Guilds.GuildDelete,
-            "CHANNEL_CREATE" to Guilds.ChannelCreate,
-            "CHANNEL_UPDATE" to Guilds.ChannelUpdate,
-            "CHANNEL_DELETE" to Guilds.ChannelDelete,
-            "GUILD_MEMBER_ADD" to GuildMembers.GuildMemberAdd,
-            "GUILD_MEMBER_UPDATE" to GuildMembers.GuildMemberUpdate,
-            "GUILD_MEMBER_REMOVE" to GuildMembers.GuildMemberRemove,
-            "DIRECT_MESSAGE_CREATE" to DirectMessage.DirectMessageCreate,
-            "AUDIO_START" to AudioAction.AudioStart,
-            "AUDIO_FINISH" to AudioAction.AudioFinish,
-            "AUDIO_ON_MIC" to AudioAction.AudioOnMic,
-            "AUDIO_OFF_MIC" to AudioAction.AudioOffMic,
-            "AT_MESSAGE_CREATE" to AtMessages.AtMessageCreate,
-        )
+        public val intents: Map<String, Intents> by lazy {
+            mapOf(
+                "GUILDS" to Guilds.intents,
+                "GUILD_MEMBERS" to GuildMembers.intents,
+                "DIRECT_MESSAGE" to DirectMessage.intents,
+                "AUDIO_ACTION" to AudioAction.intents,
+                "AT_MESSAGES" to AtMessages.intents,
+            )
+        }
+
+        @JvmStatic
+        public val events: Map<String, EventSignals<*>> by lazy {
+            mapOf(
+                "READY" to Other.ReadyEvent,
+                "RESUMED" to Other.Resumed,
+                "GUILD_CREATE" to Guilds.GuildCreate,
+                "GUILD_UPDATE" to Guilds.GuildUpdate,
+                "GUILD_DELETE" to Guilds.GuildDelete,
+                "CHANNEL_CREATE" to Guilds.ChannelCreate,
+                "CHANNEL_UPDATE" to Guilds.ChannelUpdate,
+                "CHANNEL_DELETE" to Guilds.ChannelDelete,
+                "GUILD_MEMBER_ADD" to GuildMembers.GuildMemberAdd,
+                "GUILD_MEMBER_UPDATE" to GuildMembers.GuildMemberUpdate,
+                "GUILD_MEMBER_REMOVE" to GuildMembers.GuildMemberRemove,
+                "DIRECT_MESSAGE_CREATE" to DirectMessage.DirectMessageCreate,
+                "AUDIO_START" to AudioAction.AudioStart,
+                "AUDIO_FINISH" to AudioAction.AudioFinish,
+                "AUDIO_ON_MIC" to AudioAction.AudioOnMic,
+                "AUDIO_OFF_MIC" to AudioAction.AudioOffMic,
+                "AT_MESSAGE_CREATE" to AtMessages.AtMessageCreate,
+            )
+        }
     }
 
     /*

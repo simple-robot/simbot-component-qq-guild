@@ -60,7 +60,7 @@ public abstract class TcgChannelAtMessageEvent : TcgEvent<TencentMessage>(), Cha
     override val key: Key get() = Key
 
     public companion object Key : BaseEventKey<TcgChannelAtMessageEvent>(
-        "sr.tcg.at_msg",
+        "tcg.at_msg",
         setOf(ChannelMessageEvent.Key)
     ) {
         override fun safeCast(value: Any): TcgChannelAtMessageEvent? = doSafeCast(value)

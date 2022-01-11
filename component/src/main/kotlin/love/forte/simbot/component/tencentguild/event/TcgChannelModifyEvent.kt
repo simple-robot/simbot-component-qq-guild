@@ -46,7 +46,7 @@ public sealed class TcgChannelModifyEvent<F, T> : TcgEvent<TencentChannelInfo>()
     override val visibleScope: Event.VisibleScope get() = Event.VisibleScope.INTERNAL
 
     public companion object Key :
-        BaseEventKey<TcgChannelModifyEvent<*, *>>("sr.tcg.channel_modify", setOf(ChangedEvent, ChannelEvent)) {
+        BaseEventKey<TcgChannelModifyEvent<*, *>>("tcg.channel_modify", setOf(ChangedEvent, ChannelEvent)) {
         override fun safeCast(value: Any): TcgChannelModifyEvent<*, *>? = doSafeCast(value)
     }
 
@@ -59,7 +59,7 @@ public sealed class TcgChannelModifyEvent<F, T> : TcgEvent<TencentChannelInfo>()
         override val key: Event.Key<out Create> get() = Key
 
 
-        public companion object Key : BaseEventKey<Create>("sr.tcg.channel_create", setOf(TcgChannelModifyEvent)) {
+        public companion object Key : BaseEventKey<Create>("tcg.channel_create", setOf(TcgChannelModifyEvent)) {
             override fun safeCast(value: Any): Create? = doSafeCast(value)
         }
     }
@@ -73,7 +73,7 @@ public sealed class TcgChannelModifyEvent<F, T> : TcgEvent<TencentChannelInfo>()
         override val before: Any? get() = null
         override val key: Event.Key<out Update> get() = Key
 
-        public companion object Key : BaseEventKey<Update>("sr.tcg.channel_update", setOf(TcgChannelModifyEvent)) {
+        public companion object Key : BaseEventKey<Update>("tcg.channel_update", setOf(TcgChannelModifyEvent)) {
             override fun safeCast(value: Any): Update? = doSafeCast(value)
         }
     }
@@ -85,7 +85,7 @@ public sealed class TcgChannelModifyEvent<F, T> : TcgEvent<TencentChannelInfo>()
         override val after: Any? get() = null
         override val key: Event.Key<out Delete> get() = Key
 
-        public companion object Key : BaseEventKey<Delete>("sr.tcg.channel_delete", setOf(TcgChannelModifyEvent)) {
+        public companion object Key : BaseEventKey<Delete>("tcg.channel_delete", setOf(TcgChannelModifyEvent)) {
             override fun safeCast(value: Any): Delete? = doSafeCast(value)
         }
     }

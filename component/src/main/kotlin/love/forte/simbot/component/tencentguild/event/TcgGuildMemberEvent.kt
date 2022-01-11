@@ -58,7 +58,7 @@ public sealed class TcgGuildMemberEvent<T : Any> : TcgEvent<T>(), GuildEvent, Me
         get() = runBlocking { organization() }
 
     public companion object Key : BaseEventKey<TcgGuildMemberEvent<*>>(
-        "sr.tcg.guild_member", setOf(
+        "tcg.guild_member", setOf(
             MemberEvent, GuildEvent
         )
     ) {
@@ -86,7 +86,7 @@ public sealed class TcgGuildMemberEvent<T : Any> : TcgEvent<T>(), GuildEvent, Me
         override val before: TencentMemberInfo? get() = null
 
         public companion object Key : BaseEventKey<Increase>(
-            "sr.tcg.guild_member_increase", setOf(
+            "tcg.guild_member_increase", setOf(
                 TcgGuildMemberEvent, MemberIncreaseEvent
             )
         ) {
@@ -129,7 +129,7 @@ public sealed class TcgGuildMemberEvent<T : Any> : TcgEvent<T>(), GuildEvent, Me
         override val before: TencentMemberInfo get() = target
 
         public companion object Key : BaseEventKey<Decrease>(
-            "sr.tcg.guild_member_decrease", setOf(
+            "tcg.guild_member_decrease", setOf(
                 TcgGuildMemberEvent, MemberDecreaseEvent
             )
         ) {

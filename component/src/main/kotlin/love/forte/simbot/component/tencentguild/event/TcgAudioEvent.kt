@@ -53,7 +53,7 @@ public sealed class TcgAudioEvent : TcgEvent<TencentAudioAction>(),
 
 
     public companion object Key : BaseEventKey<TcgAudioEvent>(
-        "sr.tcg.audio", setOf(ChannelEvent)
+        "tcg.audio", setOf(ChannelEvent)
     ) {
         override fun safeCast(value: Any): TcgAudioEvent? = doSafeCast(value)
     }
@@ -69,7 +69,7 @@ public sealed class TcgAudioEvent : TcgEvent<TencentAudioAction>(),
             get() = Key
 
         public companion object Key : BaseEventKey<Start>(
-            "sr.tcg.audio.start", setOf(TcgAudioEvent)
+            "tcg.audio.start", setOf(TcgAudioEvent)
         ) {
             override fun safeCast(value: Any): Start? = doSafeCast(value)
         }
@@ -86,7 +86,7 @@ public sealed class TcgAudioEvent : TcgEvent<TencentAudioAction>(),
             get() = Key
 
         public companion object Key : BaseEventKey<Finish>(
-            "sr.tcg.audio.finish", setOf(TcgAudioEvent)
+            "tcg.audio.finish", setOf(TcgAudioEvent)
         ) {
             override fun safeCast(value: Any): Finish? = doSafeCast(value)
         }
@@ -103,7 +103,7 @@ public sealed class TcgAudioEvent : TcgEvent<TencentAudioAction>(),
             get() = Key
 
         public companion object Key : BaseEventKey<OnMic>(
-            "sr.tcg.audio.on_mic", setOf(TcgAudioEvent)
+            "tcg.audio.on_mic", setOf(TcgAudioEvent)
         ) {
             override fun safeCast(value: Any): OnMic? = doSafeCast(value)
         }
@@ -120,7 +120,7 @@ public sealed class TcgAudioEvent : TcgEvent<TencentAudioAction>(),
             get() = Key
 
         public companion object Key : BaseEventKey<OffMic>(
-            "sr.tcg.audio.off_mic", setOf(TcgAudioEvent)
+            "tcg.audio.off_mic", setOf(TcgAudioEvent)
         ) {
             override fun safeCast(value: Any): OffMic? = doSafeCast(value)
         }

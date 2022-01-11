@@ -55,7 +55,7 @@ public sealed class TcgGuildModifyEvent<F, T> : TcgEvent<TencentGuildInfo>(), Ch
 
 
     public companion object Key :
-        BaseEventKey<TcgGuildModifyEvent<*, *>>("sr.tcg.guild_modify", setOf(ChangedEvent, GuildEvent)) {
+        BaseEventKey<TcgGuildModifyEvent<*, *>>("tcg.guild_modify", setOf(ChangedEvent, GuildEvent)) {
         override fun safeCast(value: Any): TcgGuildModifyEvent<*, *>? = doSafeCast(value)
     }
 
@@ -81,7 +81,7 @@ public sealed class TcgGuildModifyEvent<F, T> : TcgEvent<TencentGuildInfo>(), Ch
         override val key: Event.Key<out Create> get() = Key
 
 
-        public companion object Key : BaseEventKey<Create>("sr.tcg.guild_create", setOf(TcgGuildModifyEvent)) {
+        public companion object Key : BaseEventKey<Create>("tcg.guild_create", setOf(TcgGuildModifyEvent)) {
             override fun safeCast(value: Any): Create? = doSafeCast(value)
         }
     }
@@ -109,7 +109,7 @@ public sealed class TcgGuildModifyEvent<F, T> : TcgEvent<TencentGuildInfo>(), Ch
 
         override val key: Event.Key<out Update> get() = Key
 
-        public companion object Key : BaseEventKey<Update>("sr.tcg.guild_update", setOf(TcgGuildModifyEvent)) {
+        public companion object Key : BaseEventKey<Update>("tcg.guild_update", setOf(TcgGuildModifyEvent)) {
             override fun safeCast(value: Any): Update? = doSafeCast(value)
         }
     }
@@ -139,7 +139,7 @@ public sealed class TcgGuildModifyEvent<F, T> : TcgEvent<TencentGuildInfo>(), Ch
 
         override val key: Event.Key<out Delete> get() = Key
 
-        public companion object Key : BaseEventKey<Delete>("sr.tcg.guild_delete", setOf(TcgGuildModifyEvent)) {
+        public companion object Key : BaseEventKey<Delete>("tcg.guild_delete", setOf(TcgGuildModifyEvent)) {
             override fun safeCast(value: Any): Delete? = doSafeCast(value)
         }
     }
