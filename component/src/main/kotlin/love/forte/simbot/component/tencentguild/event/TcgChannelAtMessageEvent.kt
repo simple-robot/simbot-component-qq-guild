@@ -1,5 +1,6 @@
 package love.forte.simbot.component.tencentguild.event
 
+import kotlinx.coroutines.runBlocking
 import love.forte.simbot.Api4J
 import love.forte.simbot.Timestamp
 import love.forte.simbot.action.MessageReplyReceipt
@@ -30,33 +31,46 @@ import love.forte.simbot.tencentguild.TencentMessage
 public abstract class TcgChannelAtMessageEvent : TcgEvent<TencentMessage>(), ChannelMessageEvent, ReplySupport {
     abstract override val sourceEventEntity: TencentMessage
     override val eventSignal: EventSignals<TencentMessage> get() = EventSignals.AtMessages.AtMessageCreate
-    abstract override val author: TencentMember
-    abstract override val source: TencentChannel
+    abstract override suspend fun author(): TencentMember
+    abstract override suspend fun source(): TencentChannel
+    abstract override suspend fun channel(): TencentChannel
     abstract override val timestamp: Timestamp
     abstract override val visibleScope: Event.VisibleScope
     abstract override val bot: TencentGuildBot
     abstract override val messageContent: ReceivedMessageContent
     abstract override val metadata: Event.Metadata
-    abstract override suspend fun channel(): TencentChannel
+
+    //// impl
+
+    override suspend fun organization(): TencentChannel = channel()
+
+    @Api4J
+    override val author: TencentMember
+        get() = runBlocking { author() }
+
+    @Api4J
+    override val channel: TencentChannel
+        get() = runBlocking { channel() }
+
+    @Api4J
+    override val source: TencentChannel
+        get() = runBlocking { source() }
 
     @Api4J
     override val organization: TencentChannel
-        get() = source
+        get() = runBlocking { organization() }
 
-    @JvmSynthetic
-    override suspend fun organization(): TencentChannel = channel()
 
     /**
      * Tcg支持消息回复。
      */
-    @JvmSynthetic
     abstract override suspend fun reply(message: Message): MessageReplyReceipt
 
     /**
      * Tcg暂不支持撤回他人消息。
      */
-    @JvmSynthetic
     override suspend fun delete(): Boolean = false // not support, maybe.
+
     override val key: Key get() = Key
 
     public companion object Key : BaseEventKey<TcgChannelAtMessageEvent>(

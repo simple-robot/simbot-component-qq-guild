@@ -1,6 +1,6 @@
 package love.forte.simbot.component.tencentguild.internal
 
-import love.forte.simbot.ExperimentalSrApi
+import love.forte.simbot.ExperimentalSimbotApi
 import love.forte.simbot.ID
 import love.forte.simbot.component.tencentguild.message.ArkParser
 import love.forte.simbot.component.tencentguild.message.AttachmentParser
@@ -51,7 +51,7 @@ public fun interface ReceivingMessageParser : (TencentMessage, Messages) -> Mess
  * 将一个 [Message.Element] 拼接到 [TencentMessageForSendingBuilder] 中，或者将一个 [TencentMessage] 转化为 [Message].
  */
 public object MessageParsers {
-    @ExperimentalSrApi
+    @ExperimentalSimbotApi
     public val sendingParsers: Queue<SendingMessageParser> = ConcurrentLinkedQueue<SendingMessageParser>().apply {
         add(ContentParser)
         add(MentionParser)
@@ -60,23 +60,23 @@ public object MessageParsers {
         add(ReplyToParser)
     }
 
-    @ExperimentalSrApi
+    @ExperimentalSimbotApi
     public val receivingParsers: Queue<ReceivingMessageParser> = ConcurrentLinkedQueue<ReceivingMessageParser>().apply {
         add(TencentMessageParser)
     }
 
 
-    @ExperimentalSrApi
+    @ExperimentalSimbotApi
     public fun addParser(parser: SendingMessageParser) {
         sendingParsers.add(parser)
     }
 
-    @ExperimentalSrApi
+    @ExperimentalSimbotApi
     public fun addParser(parser: ReceivingMessageParser) {
         receivingParsers.add(parser)
     }
 
-    @OptIn(ExperimentalSrApi::class)
+    @OptIn(ExperimentalSimbotApi::class)
     @JvmOverloads
     public fun parse(
         message: Message,
@@ -102,7 +102,7 @@ public object MessageParsers {
     }
 
 
-    @OptIn(ExperimentalSrApi::class)
+    @OptIn(ExperimentalSimbotApi::class)
     @JvmOverloads
     public fun parse(
         message: TencentMessage,

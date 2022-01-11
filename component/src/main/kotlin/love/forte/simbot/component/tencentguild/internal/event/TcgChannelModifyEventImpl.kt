@@ -2,7 +2,6 @@ package love.forte.simbot.component.tencentguild.internal.event
 
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.async
-import love.forte.simbot.Api4J
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.component.tencentguild.TencentChannel
@@ -19,7 +18,6 @@ import love.forte.simbot.tencentguild.request
 
 
 internal class TcgChannelCreate
-@OptIn(Api4J::class)
 constructor(
     override val sourceEventEntity: TencentChannelInfo,
     override val bot: TencentGuildBotImpl,
@@ -32,10 +30,8 @@ constructor(
     override val eventSignal: EventSignals.Guilds.ChannelCreate
         get() = EventSignals.Guilds.ChannelCreate
 
-    override suspend fun channel(): TencentChannel = channel
-
-    @OptIn(Api4J::class)
-    override val source: TencentGuild by lazy { channel.guild }
+    override suspend fun after(): TencentChannel = after
+    override suspend fun source(): TencentGuild = channel.guild()
 
     internal object Parser : BaseSignalToEvent<TencentChannelInfo>() {
         override val key: Event.Key<out Create> get() = Create
@@ -56,7 +52,6 @@ constructor(
 
 
 internal class TcgChannelUpdate
-@OptIn(Api4J::class)
 constructor(
     override val sourceEventEntity: TencentChannelInfo,
     override val bot: TencentGuildBotImpl,
@@ -69,11 +64,8 @@ constructor(
     override val eventSignal: EventSignals.Guilds.ChannelUpdate
         get() = EventSignals.Guilds.ChannelUpdate
 
-    override suspend fun channel(): TencentChannel = channel
-
-    @OptIn(Api4J::class)
-    override val source: TencentGuild by lazy { channel.guild }
-
+    override suspend fun source(): TencentGuild = channel.guild()
+    override suspend fun after(): TencentChannel = after
 
     internal object Parser : BaseSignalToEvent<TencentChannelInfo>() {
         override val key: Event.Key<out Update> get() = Update
@@ -95,7 +87,6 @@ constructor(
 
 
 internal class TcgChannelDelete
-@OptIn(Api4J::class)
 constructor(
     override val sourceEventEntity: TencentChannelInfo,
     override val bot: TencentGuildBotImpl,
@@ -108,11 +99,8 @@ constructor(
     override val eventSignal: EventSignals.Guilds.ChannelDelete
         get() = EventSignals.Guilds.ChannelDelete
 
-    override suspend fun channel(): TencentChannel = channel
-
-    @OptIn(Api4J::class)
-    override val source: TencentGuild by lazy { channel.guild }
-
+    override suspend fun before(): TencentChannel = before
+    override suspend fun source(): TencentGuild = channel.guild()
 
     internal object Parser : BaseSignalToEvent<TencentChannelInfo>() {
         override val key: Event.Key<out Delete> get() = Delete

@@ -3,12 +3,12 @@ package love.forte.simbot.component.tencentguild.internal.event
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.action.MessageReplyReceipt
+import love.forte.simbot.component.tencentguild.TencentMember
 import love.forte.simbot.component.tencentguild.event.TcgChannelAtMessageEvent
 import love.forte.simbot.component.tencentguild.internal.*
 import love.forte.simbot.event.Event
@@ -42,6 +42,8 @@ internal class TcgChannelAtMessageEventImpl(
         TencentGuildImpl(bot = bot, guildInfo)
     }
 
+    override suspend fun author(): TencentMember = _author.await()
+
     private val _author: Deferred<TencentMemberImpl> = bot.async(start = CoroutineStart.LAZY) {
         TencentMemberImpl(
             bot = bot,
@@ -49,8 +51,6 @@ internal class TcgChannelAtMessageEventImpl(
             guild = _fromGuild.await()
         )
     }
-
-    override val author: TencentMemberImpl by lazy { runBlocking { _author.await() } }
 
     private var _sourceChannel: Deferred<TencentChannelImpl> = bot.async(start = CoroutineStart.LAZY) {
         TencentChannelImpl(
@@ -60,8 +60,8 @@ internal class TcgChannelAtMessageEventImpl(
         )
     }
 
+    override suspend fun source(): TencentChannelImpl = _sourceChannel.await()
     override suspend fun channel(): TencentChannelImpl = _sourceChannel.await()
-    override val source: TencentChannelImpl by lazy { runBlocking { _sourceChannel.await() } }
 
     override val timestamp: Timestamp
         get() = sourceEventEntity.timestamp

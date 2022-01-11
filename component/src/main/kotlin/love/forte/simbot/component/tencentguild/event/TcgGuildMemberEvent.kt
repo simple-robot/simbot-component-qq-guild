@@ -25,21 +25,18 @@ public sealed class TcgGuildMemberEvent<T : Any> : TcgEvent<T>(), GuildEvent, Me
     abstract override val timestamp: Timestamp
     abstract override val visibleScope: Event.VisibleScope
 
-    @JvmSynthetic
     abstract override suspend fun guild(): TencentGuild
-
-    @JvmSynthetic
     abstract override suspend fun member(): TencentMember
-
-    @JvmSynthetic
-    override suspend fun user(): TencentMember = member()
-
-    @JvmSynthetic
-    override suspend fun organization(): TencentGuild = guild()
 
     abstract override val bot: TencentGuildBot
     abstract override val sourceEventEntity: T
     abstract override val eventSignal: EventSignals<T>
+
+    //// impl
+
+    override suspend fun user(): TencentMember = member()
+    override suspend fun organization(): TencentGuild = guild()
+
 
     @Api4J
     override val guild: TencentGuild
@@ -72,18 +69,22 @@ public sealed class TcgGuildMemberEvent<T : Any> : TcgEvent<T>(), GuildEvent, Me
      * - 新用户加入频道
      */
     public abstract class Increase : TcgGuildMemberEvent<TencentMemberInfo>(), MemberIncreaseEvent {
+        abstract override suspend fun source(): TencentGuild
+        abstract override val target: TencentMemberInfo
+
         override val eventSignal: EventSignals<TencentMemberInfo>
             get() = EventSignals.GuildMembers.GuildMemberAdd
 
         override val key: Event.Key<Increase> get() = Key
 
-        abstract override val source: TencentGuild
-        abstract override val target: TencentMemberInfo
+        override val source: TencentGuild get() = runBlocking { source() }
 
         @Api4J
-        override val organization: TencentGuild get() = source
+        override val organization: TencentGuild
+            get() = source
         override val after: TencentMemberInfo get() = target
         override val before: TencentMemberInfo? get() = null
+        override suspend fun target(): TencentMemberInfo = target
 
         public companion object Key : BaseEventKey<Increase>(
             "tcg.guild_member_increase", setOf(
@@ -115,18 +116,21 @@ public sealed class TcgGuildMemberEvent<T : Any> : TcgEvent<T>(), GuildEvent, Me
      *
      */
     public abstract class Decrease : TcgGuildMemberEvent<TencentMemberInfo>(), MemberDecreaseEvent {
+        abstract override suspend fun source(): TencentGuild
+        abstract override val target: TencentMemberInfo
+
         override val eventSignal: EventSignals<TencentMemberInfo>
             get() = EventSignals.GuildMembers.GuildMemberRemove
 
         override val key: Event.Key<Decrease> get() = Key
 
-        abstract override val source: TencentGuild
-        abstract override val target: TencentMemberInfo
 
         @Api4J
         override val organization: TencentGuild get() = source
+        override val source: TencentGuild get() = runBlocking { source() }
         override val after: TencentMemberInfo? get() = null
         override val before: TencentMemberInfo get() = target
+        override suspend fun target(): TencentMemberInfo = target
 
         public companion object Key : BaseEventKey<Decrease>(
             "tcg.guild_member_decrease", setOf(

@@ -1,5 +1,6 @@
 package love.forte.simbot.component.tencentguild.event
 
+import kotlinx.coroutines.runBlocking
 import love.forte.simbot.Api4J
 import love.forte.simbot.Timestamp
 import love.forte.simbot.component.tencentguild.TencentGuild
@@ -26,25 +27,27 @@ public sealed class TcgGuildModifyEvent<F, T> : TcgEvent<TencentGuildInfo>(), Ch
     GuildEvent {
     abstract override val sourceEventEntity: TencentGuildInfo
     abstract override val eventSignal: EventSignals.Guilds<TencentGuildInfo>
-    abstract override val after: T
-    abstract override val before: F
+    abstract override suspend fun source(): TencentGuildBot
+    abstract override suspend fun after(): T
+    abstract override suspend fun before(): F
+    abstract override suspend fun guild(): TencentGuild
 
     abstract override val changedTime: Timestamp
     abstract override val source: TencentGuildBot
     abstract override val key: Event.Key<out TcgGuildModifyEvent<*, *>>
     abstract override val metadata: Event.Metadata
 
-    @JvmSynthetic
-    abstract override suspend fun guild(): TencentGuild
+    //// impl
+
 
     @Api4J
-    abstract override val guild: TencentGuild
+    override val guild: TencentGuild
+        get() = runBlocking { guild() }
 
     @Api4J
     override val organization: TencentGuild
         get() = guild
 
-    @JvmSynthetic
     override suspend fun organization(): TencentGuild = guild()
     override val bot: TencentGuildBot get() = source
 
@@ -65,18 +68,21 @@ public sealed class TcgGuildModifyEvent<F, T> : TcgEvent<TencentGuildInfo>(), Ch
      * - 机器人被加入到某个频道的时候
      */
     public abstract class Create : TcgGuildModifyEvent<Any?, TencentGuild>() {
-        override val before: Any? get() = null
+        abstract override val source: TencentGuildBot
         abstract override val after: TencentGuild
+
+        override suspend fun source(): TencentGuildBot = source
+        override suspend fun after(): TencentGuild = after
+        override suspend fun before(): Any? = null
         override val eventSignal: EventSignals.Guilds<TencentGuildInfo>
             get() = EventSignals.Guilds.GuildCreate
 
 
-        @OptIn(Api4J::class)
+        override suspend fun guild(): TencentGuild = after()
+
+        @Api4J
         override val guild: TencentGuild
             get() = after
-
-        @JvmSynthetic
-        override suspend fun guild(): TencentGuild = guild
 
         override val key: Event.Key<out Create> get() = Key
 
@@ -95,17 +101,20 @@ public sealed class TcgGuildModifyEvent<F, T> : TcgEvent<TencentGuildInfo>(), Ch
      * [after] 字段内容为变更后的字段内容
      */
     public abstract class Update : TcgGuildModifyEvent<Any?, TencentGuild>() {
-        override val before: Any? get() = null
+        abstract override val source: TencentGuildBot
         abstract override val after: TencentGuild
+
+        override suspend fun after(): TencentGuild = after
+        override suspend fun source(): TencentGuildBot = source
+        override suspend fun before(): Any? = null
         override val eventSignal: EventSignals.Guilds<TencentGuildInfo>
             get() = EventSignals.Guilds.GuildUpdate
 
-        @OptIn(Api4J::class)
+        @Api4J
         override val guild: TencentGuild
             get() = after
 
-        @JvmSynthetic
-        override suspend fun guild(): TencentGuild = guild
+        override suspend fun guild(): TencentGuild = after()
 
         override val key: Event.Key<out Update> get() = Key
 
@@ -125,17 +134,20 @@ public sealed class TcgGuildModifyEvent<F, T> : TcgEvent<TencentGuildInfo>(), Ch
      *
      */
     public abstract class Delete : TcgGuildModifyEvent<TencentGuild, Any?>() {
+        abstract override val source: TencentGuildBot
         abstract override val before: TencentGuild
-        override val after: Any? get() = null
+
+        override suspend fun before(): TencentGuild = before
+        override suspend fun source(): TencentGuildBot = source
+        override suspend fun after(): Any? = null
         override val eventSignal: EventSignals.Guilds<TencentGuildInfo>
             get() = EventSignals.Guilds.GuildUpdate
 
-        @OptIn(Api4J::class)
+        @Api4J
         override val guild: TencentGuild
             get() = before
 
-        @JvmSynthetic
-        override suspend fun guild(): TencentGuild = guild
+        override suspend fun guild(): TencentGuild = before()
 
         override val key: Event.Key<out Delete> get() = Key
 

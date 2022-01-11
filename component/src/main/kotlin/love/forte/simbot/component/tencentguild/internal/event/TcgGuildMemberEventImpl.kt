@@ -1,7 +1,6 @@
 package love.forte.simbot.component.tencentguild.internal.event
 
 import kotlinx.coroutines.async
-import love.forte.simbot.Api4J
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.action.ActionType
@@ -27,7 +26,7 @@ private class TcgGuildMemberEventMetadata(type: Int, botId: ID, memberId: ID, ti
  *
  * @see TcgGuildMemberEvent.Increase
  */
-internal class TcgGuildMemberIncrease @OptIn(Api4J::class) constructor(
+internal class TcgGuildMemberIncrease constructor(
     override val bot: TencentGuildBotImpl,
     override val sourceEventEntity: TencentMemberInfo,
     override val target: TencentMemberImpl,
@@ -45,17 +44,13 @@ internal class TcgGuildMemberIncrease @OptIn(Api4J::class) constructor(
         get() = ActionType.PROACTIVE
 
 
-    @OptIn(Api4J::class)
-    override val source: TencentGuildImpl
-        get() = target.organization
-
+    override suspend fun source(): TencentGuild = target.organization()
 
     override val metadata: Event.Metadata = TcgGuildMemberEventMetadata(0, bot.id, target.id, timestamp)
 
     override val visibleScope: Event.VisibleScope get() = Event.VisibleScope.INTERNAL
 
     override suspend fun guild(): TencentGuild = target.organization()
-
     override suspend fun member(): TencentMember = target
 
 
@@ -81,7 +76,7 @@ internal class TcgGuildMemberIncrease @OptIn(Api4J::class) constructor(
  *
  * @see TcgGuildMemberEvent.Decrease
  */
-internal class TcgGuildMemberDecrease @OptIn(Api4J::class) constructor(
+internal class TcgGuildMemberDecrease constructor(
     override val bot: TencentGuildBotImpl,
     override val sourceEventEntity: TencentMemberInfo,
     override val target: TencentMemberImpl,
@@ -98,10 +93,7 @@ internal class TcgGuildMemberDecrease @OptIn(Api4J::class) constructor(
     override val actionType: ActionType
         get() = ActionType.PROACTIVE
 
-
-    @OptIn(Api4J::class)
-    override val source: TencentGuildImpl
-        get() = target.organization
+    override suspend fun source(): TencentGuild = target.organization()
 
 
     override val metadata: Event.Metadata = TcgGuildMemberEventMetadata(2, bot.id, target.id, timestamp)

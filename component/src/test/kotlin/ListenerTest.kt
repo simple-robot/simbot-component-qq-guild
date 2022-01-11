@@ -20,7 +20,7 @@ class ListenerTest {
 
 val listener = coreListener(eventKey = TcgChannelAtMessageEvent) { context: EventProcessingContext, event: TcgChannelAtMessageEvent ->
     // 此消息事件的子频道
-    val channel: TencentChannel = event.source
+    val channel: TencentChannel = event.source()
 
     // 子频道的外部频道
     val guild: TencentGuild = channel.guild()
