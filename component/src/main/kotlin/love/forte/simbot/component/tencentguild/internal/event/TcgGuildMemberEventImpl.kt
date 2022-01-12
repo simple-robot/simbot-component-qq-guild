@@ -1,6 +1,5 @@
 package love.forte.simbot.component.tencentguild.internal.event
 
-import kotlinx.coroutines.async
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.action.ActionType
@@ -15,6 +14,7 @@ import love.forte.simbot.tencentguild.EventSignals
 import love.forte.simbot.tencentguild.TencentMemberInfo
 import love.forte.simbot.tencentguild.api.guild.GetGuildApi
 import love.forte.simbot.tencentguild.request
+import love.forte.simbot.utils.lazyValue
 
 
 private class TcgGuildMemberEventMetadata(type: Int, botId: ID, memberId: ID, timestamp: Timestamp) : Event.Metadata {
@@ -65,7 +65,7 @@ internal class TcgGuildMemberIncrease constructor(
             val guildId = data.guildId!!
             val member = TencentMemberImpl(
                 bot, data,
-                bot.async { TencentGuildImpl(bot, GetGuildApi(guildId).request(bot)) }
+                bot.lazyValue { TencentGuildImpl(bot, GetGuildApi(guildId).request(bot)) }
             )
             return TcgGuildMemberIncrease(bot, data, member)
         }
@@ -116,7 +116,7 @@ internal class TcgGuildMemberDecrease constructor(
             val guildId = data.guildId!!
             val member = TencentMemberImpl(
                 bot, data,
-                bot.async { TencentGuildImpl(bot, GetGuildApi(guildId).request(bot)) }
+                bot.lazyValue { TencentGuildImpl(bot, GetGuildApi(guildId).request(bot)) }
             )
             return TcgGuildMemberDecrease(bot, data, member)
         }

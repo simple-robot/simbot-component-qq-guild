@@ -1,6 +1,5 @@
 package love.forte.simbot.component.tencentguild.internal
 
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.runBlocking
@@ -17,7 +16,7 @@ import kotlin.time.Duration
  *
  * @author ForteScarlet
  */
-internal class TencentMemberImpl @OptIn(Api4J::class) constructor(
+internal class TencentMemberImpl internal constructor(
     override val bot: TencentGuildBotImpl,
     private val info: TencentMemberInfo,
     private val guild: suspend () -> TencentGuildImpl
@@ -28,12 +27,6 @@ internal class TencentMemberImpl @OptIn(Api4J::class) constructor(
         info: TencentMemberInfo,
         guild: TencentGuildImpl
     ) : this(bot, info, { guild })
-
-    internal constructor(
-        bot: TencentGuildBotImpl,
-        info: TencentMemberInfo,
-        guild: Deferred<TencentGuildImpl>
-    ) : this(bot, info, { guild.await() })
 
     override suspend fun organization(): TencentGuildImpl = guild()
 

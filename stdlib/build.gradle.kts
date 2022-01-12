@@ -24,6 +24,12 @@ dependencies {
     testImplementation(V.Log4j.Core.notation)
     testImplementation(V.Log4j.Slf4jImpl.notation)
 }
+repositories {
+    maven {
+        url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap")
+        name = "ktor-eap"
+    }
+}
 
 tasks.getByName<Test>("test") {
     useJUnitPlatform()

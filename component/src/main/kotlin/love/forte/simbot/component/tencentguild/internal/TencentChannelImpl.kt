@@ -1,6 +1,5 @@
 package love.forte.simbot.component.tencentguild.internal
 
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.runBlocking
 import love.forte.simbot.Api4J
@@ -23,7 +22,7 @@ import kotlin.time.Duration
  *
  * @author ForteScarlet
  */
-internal class TencentChannelImpl private constructor(
+internal class TencentChannelImpl internal constructor(
     override val bot: TencentGuildBotImpl,
     private val info: TencentChannelInfo,
     private val from: suspend () -> TencentGuildImpl
@@ -34,12 +33,6 @@ internal class TencentChannelImpl private constructor(
         info: TencentChannelInfo,
         from: TencentGuildImpl
     ) : this(bot, info, { from })
-
-    internal constructor(
-        bot: TencentGuildBotImpl,
-        info: TencentChannelInfo,
-        deferred: Deferred<TencentGuildImpl>
-    ) : this(bot, info, { deferred.await() })
 
     override suspend fun send(message: Message): MessageReceipt {
         val messageForSend = MessageParsers.parse(message)

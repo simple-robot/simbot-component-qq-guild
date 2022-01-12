@@ -1,6 +1,5 @@
 package love.forte.simbot.tencentguild
 
-import io.ktor.http.cio.websocket.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json

@@ -1,8 +1,5 @@
 package love.forte.simbot.component.tencentguild.internal.event
 
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.ID
@@ -19,6 +16,8 @@ import love.forte.simbot.tencentguild.api.channel.GetChannelApi
 import love.forte.simbot.tencentguild.api.guild.GetGuildApi
 import love.forte.simbot.tencentguild.api.message.MessageSendApi
 import love.forte.simbot.tencentguild.request
+import love.forte.simbot.utils.LazyValue
+import love.forte.simbot.utils.lazyValue
 
 /**
  *
@@ -37,14 +36,14 @@ internal class TcgChannelAtMessageEventImpl(
         return MessageSendApi(cid, messageForSend).request(bot).asReplyReceipt()
     }
 
-    private val _fromGuild: Deferred<TencentGuildImpl> = bot.async(start = CoroutineStart.LAZY) {
+    private val _fromGuild: LazyValue<TencentGuildImpl> = bot.lazyValue {
         val guildInfo = GetGuildApi(sourceEventEntity.guildId).request(bot)
         TencentGuildImpl(bot = bot, guildInfo)
     }
 
     override suspend fun author(): TencentMember = _author.await()
 
-    private val _author: Deferred<TencentMemberImpl> = bot.async(start = CoroutineStart.LAZY) {
+    private val _author: LazyValue<TencentMemberImpl> = bot.lazyValue {
         TencentMemberImpl(
             bot = bot,
             info = sourceEventEntity.member,
@@ -52,7 +51,7 @@ internal class TcgChannelAtMessageEventImpl(
         )
     }
 
-    private var _sourceChannel: Deferred<TencentChannelImpl> = bot.async(start = CoroutineStart.LAZY) {
+    private var _sourceChannel: LazyValue<TencentChannelImpl> = bot.lazyValue {
         TencentChannelImpl(
             bot = bot,
             info = GetChannelApi(sourceEventEntity.channelId).request(bot),

@@ -1,7 +1,5 @@
 package love.forte.simbot.component.tencentguild.internal.event
 
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.async
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.component.tencentguild.TencentChannel
@@ -15,6 +13,7 @@ import love.forte.simbot.tencentguild.EventSignals
 import love.forte.simbot.tencentguild.TencentChannelInfo
 import love.forte.simbot.tencentguild.api.guild.GetGuildApi
 import love.forte.simbot.tencentguild.request
+import love.forte.simbot.utils.lazyValue
 
 
 internal class TcgChannelCreate
@@ -42,7 +41,7 @@ constructor(
             return TcgChannelCreate(
                 data,
                 bot,
-                TencentChannelImpl(bot, data, bot.async(start = CoroutineStart.LAZY) {
+                TencentChannelImpl(bot, data, bot.lazyValue {
                     TencentGuildImpl(bot, GetGuildApi(guildId).request(bot))
                 })
             )
@@ -77,7 +76,7 @@ constructor(
             return TcgChannelUpdate(
                 data,
                 bot,
-                TencentChannelImpl(bot, data, bot.async(start = CoroutineStart.LAZY) {
+                TencentChannelImpl(bot, data, bot.lazyValue {
                     TencentGuildImpl(bot, GetGuildApi(guildId).request(bot))
                 })
             )
@@ -112,7 +111,7 @@ constructor(
             return TcgChannelDelete(
                 data,
                 bot,
-                TencentChannelImpl(bot, data, bot.async(start = CoroutineStart.LAZY) {
+                TencentChannelImpl(bot, data, bot.lazyValue {
                     TencentGuildImpl(bot, GetGuildApi(guildId).request(bot))
                 })
             )

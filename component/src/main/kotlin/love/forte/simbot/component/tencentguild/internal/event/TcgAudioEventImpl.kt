@@ -1,8 +1,5 @@
 package love.forte.simbot.component.tencentguild.internal.event
 
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.component.tencentguild.TencentGuild
@@ -16,24 +13,26 @@ import love.forte.simbot.tencentguild.TencentAudioAction
 import love.forte.simbot.tencentguild.api.channel.GetChannelApi
 import love.forte.simbot.tencentguild.api.guild.GetGuildApi
 import love.forte.simbot.tencentguild.request
+import love.forte.simbot.utils.LazyValue
+import love.forte.simbot.utils.lazyValue
 
 
-private fun TencentGuildBotImpl.guildDeferred(
+private fun TencentGuildBotImpl.lazyGuild(
     action: TencentAudioAction
-): Deferred<TencentGuildImpl> = async(start = CoroutineStart.LAZY) {
+): LazyValue<TencentGuildImpl> = lazyValue {
     TencentGuildImpl(
-        this@guildDeferred, GetGuildApi(action.guildId).request(this@guildDeferred)
+        this@lazyGuild, GetGuildApi(action.guildId).request(this@lazyGuild)
     )
 }
 
-private fun TencentGuildBotImpl.channelDeferred(
-    guildDeferred: Deferred<TencentGuildImpl>,
+private fun TencentGuildBotImpl.lazyChannel(
+    guildValue: suspend () -> TencentGuildImpl,
     action: TencentAudioAction
-): Deferred<TencentChannelImpl> = async(start = CoroutineStart.LAZY) {
+): LazyValue<TencentChannelImpl> = lazyValue {
     TencentChannelImpl(
-        this@channelDeferred,
-        GetChannelApi(action.channelId).request(this@channelDeferred),
-        guildDeferred
+        this@lazyChannel,
+        GetChannelApi(action.channelId).request(this@lazyChannel),
+        guildValue
     )
 }
 
@@ -53,12 +52,12 @@ internal class TcgAudioStart(
     override val bot: TencentGuildBotImpl,
     override val sourceEventEntity: TencentAudioAction
 ) : TcgAudioEvent.Start() {
-    private val guildDeferred: Deferred<TencentGuildImpl> = bot.guildDeferred(sourceEventEntity)
-    private val channelDeferred: Deferred<TencentChannelImpl> = bot.channelDeferred(guildDeferred, sourceEventEntity)
+    private val lazyGuild: LazyValue<TencentGuildImpl> = bot.lazyGuild(sourceEventEntity)
+    private val lazyChannel: LazyValue<TencentChannelImpl> = bot.lazyChannel(lazyGuild, sourceEventEntity)
 
-    override suspend fun channel(): TencentChannelImpl = channelDeferred.await()
-    override suspend fun guild(): TencentGuild = guildDeferred.await()
-    override suspend fun organization(): TencentGuildImpl = guildDeferred.await()
+    override suspend fun channel(): TencentChannelImpl = lazyChannel.await()
+    override suspend fun guild(): TencentGuild = lazyGuild.await()
+    override suspend fun organization(): TencentGuildImpl = lazyGuild.await()
 
     override val timestamp: Timestamp
         get() = Timestamp.now()
@@ -89,12 +88,12 @@ internal class TcgAudioFinish(
     override val bot: TencentGuildBotImpl,
     override val sourceEventEntity: TencentAudioAction
 ) : TcgAudioEvent.Finish() {
-    private val guildDeferred: Deferred<TencentGuildImpl> = bot.guildDeferred(sourceEventEntity)
-    private val channelDeferred: Deferred<TencentChannelImpl> = bot.channelDeferred(guildDeferred, sourceEventEntity)
+    private val lazyGuild: LazyValue<TencentGuildImpl> = bot.lazyGuild(sourceEventEntity)
+    private val lazyChannel: LazyValue<TencentChannelImpl> = bot.lazyChannel(lazyGuild, sourceEventEntity)
 
-    override suspend fun channel(): TencentChannelImpl = channelDeferred.await()
-    override suspend fun guild(): TencentGuild = guildDeferred.await()
-    override suspend fun organization(): TencentGuildImpl = guildDeferred.await()
+    override suspend fun channel(): TencentChannelImpl = lazyChannel.await()
+    override suspend fun guild(): TencentGuild = lazyGuild.await()
+    override suspend fun organization(): TencentGuildImpl = lazyGuild.await()
 
     override val timestamp: Timestamp
         get() = Timestamp.now()
@@ -124,12 +123,12 @@ internal class TcgAudioOnMic(
     override val bot: TencentGuildBotImpl,
     override val sourceEventEntity: TencentAudioAction
 ) : TcgAudioEvent.OnMic() {
-    private val guildDeferred: Deferred<TencentGuildImpl> = bot.guildDeferred(sourceEventEntity)
-    private val channelDeferred: Deferred<TencentChannelImpl> = bot.channelDeferred(guildDeferred, sourceEventEntity)
+    private val lazyGuild: LazyValue<TencentGuildImpl> = bot.lazyGuild(sourceEventEntity)
+    private val lazyChannel: LazyValue<TencentChannelImpl> = bot.lazyChannel(lazyGuild, sourceEventEntity)
 
-    override suspend fun channel(): TencentChannelImpl = channelDeferred.await()
-    override suspend fun guild(): TencentGuild = guildDeferred.await()
-    override suspend fun organization(): TencentGuildImpl = guildDeferred.await()
+    override suspend fun channel(): TencentChannelImpl = lazyChannel.await()
+    override suspend fun guild(): TencentGuild = lazyGuild.await()
+    override suspend fun organization(): TencentGuildImpl = lazyGuild.await()
 
     override val timestamp: Timestamp
         get() = Timestamp.now()
@@ -159,12 +158,12 @@ internal class TcgAudioOffMic(
     override val bot: TencentGuildBotImpl,
     override val sourceEventEntity: TencentAudioAction
 ) : TcgAudioEvent.OffMic() {
-    private val guildDeferred: Deferred<TencentGuildImpl> = bot.guildDeferred(sourceEventEntity)
-    private val channelDeferred: Deferred<TencentChannelImpl> = bot.channelDeferred(guildDeferred, sourceEventEntity)
+    private val lazyGuild: LazyValue<TencentGuildImpl> = bot.lazyGuild(sourceEventEntity)
+    private val lazyChannel: LazyValue<TencentChannelImpl> = bot.lazyChannel(lazyGuild, sourceEventEntity)
 
-    override suspend fun channel(): TencentChannelImpl = channelDeferred.await()
-    override suspend fun guild(): TencentGuild = guildDeferred.await()
-    override suspend fun organization(): TencentGuildImpl = guildDeferred.await()
+    override suspend fun channel(): TencentChannelImpl = lazyChannel.await()
+    override suspend fun guild(): TencentGuild = lazyGuild.await()
+    override suspend fun organization(): TencentGuildImpl = lazyGuild.await()
 
     override val timestamp: Timestamp
         get() = Timestamp.now()

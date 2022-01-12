@@ -154,7 +154,7 @@ internal class TencentBotImpl(
 
     internal inner class ClientImpl(
         override val shard: Shard,
-        val sessionData: EventSignals.Other.ReadyEvent.Data,
+        private val sessionData: EventSignals.Other.ReadyEvent.Data,
         private var heartbeatJob: Job,
         private var processingJob: Job,
         private val _seq: AtomicLong,
