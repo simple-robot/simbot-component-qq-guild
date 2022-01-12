@@ -7,6 +7,8 @@ import io.ktor.http.*
 import io.ktor.http.cio.websocket.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -65,7 +67,8 @@ internal class TencentBotImpl(
     private val url: Url get() = configuration.serverUrl
     private val decoder: Json get() = configuration.decoder
 
-    private val processorQueue: ConcurrentLinkedQueue<suspend Signal.Dispatch.(Json, () -> Any) -> Unit> = ConcurrentLinkedQueue()
+    private val processorQueue: ConcurrentLinkedQueue<suspend Signal.Dispatch.(Json, () -> Any) -> Unit> =
+        ConcurrentLinkedQueue()
 
     init {
         val parentJob = SupervisorJob(configuration.parentJob)
@@ -78,9 +81,13 @@ internal class TencentBotImpl(
         processorQueue.add(processor)
     }
 
-    override suspend fun start(): Boolean {
-        if (::clients.isInitialized) return false
+    private val startLock = Mutex()
 
+    override suspend fun start(): Boolean = startLock.withLock {
+        for (client in clients) {
+            logger.debug("Restarting, close client {}", client)
+            client.cancel()
+        }
 
         val requestToken = ticket.botToken
         val shardIterFactory = configuration.shardIterFactory
@@ -150,7 +157,7 @@ internal class TencentBotImpl(
 
     override val totalShared: Int = configuration.totalShard
 
-    override lateinit var clients: List<ClientImpl>
+    override var clients: List<ClientImpl> = emptyList()
 
     internal inner class ClientImpl(
         override val shard: Shard,
@@ -169,9 +176,23 @@ internal class TencentBotImpl(
         private val _resuming = AtomicBoolean(false)
         override val isResuming: Boolean get() = _resuming.get()
 
-        private var resumeJob = launch {
+        private var resumeJob = session.launch {
             val closed = session.closeReason.await()
             resume(closed)
+        }
+
+        suspend fun cancel(reason: Throwable? = null) {
+            val cancel = reason?.let { CancellationException(it.localizedMessage, it) }
+            val sessionJob = session.coroutineContext[Job]
+            sessionJob?.cancel(cancel)
+            resumeJob.cancel(cancel)
+            heartbeatJob.cancel(cancel)
+
+            sessionJob?.join()
+            heartbeatJob.join()
+            processingJob.join()
+
+
         }
 
         override fun toString(): String {
@@ -189,7 +210,11 @@ internal class TencentBotImpl(
             }
 
             val code = closeReason.code
-            if (!checkResumeCode(code)) return
+            if (!checkResumeCode(code)) {
+                logger.debug("Not resume code: {}, close.", code)
+                launch { start() }
+                return
+            }
 
             while (!_resuming.compareAndSet(false, true)) {
                 logger.info("In resuming now, delay 100ms")
@@ -199,7 +224,10 @@ internal class TencentBotImpl(
             logger.info("Resume. reason: $closeReason")
 
             try {
-
+                val oldSession = this.session
+                val oldSessionJob = oldSession.coroutineContext[Job]
+                oldSessionJob?.cancel()
+                oldSessionJob?.join()
                 heartbeatJob.cancel()
                 processingJob.cancel()
                 heartbeatJob.join()
@@ -218,7 +246,7 @@ internal class TencentBotImpl(
                 this.heartbeatJob = heartbeatJob
                 val processingJob = processEvent(resumeSession)
                 this.processingJob = processingJob
-                this.resumeJob = this@TencentBotImpl.launch {
+                this.resumeJob = session.launch {
                     val closed = session.closeReason.await()
                     resume(closed)
                 }
@@ -337,7 +365,8 @@ internal class TencentBotImpl(
         val logger = sessionInfo.logger
         val seq = sessionInfo.seq
 
-        return sessionInfo.session.incoming.receiveAsFlow().mapNotNull {
+        val session = sessionInfo.session
+        return session.incoming.receiveAsFlow().mapNotNull {
             when (it) {
 
                 is Frame.Text -> {
@@ -391,7 +420,7 @@ internal class TencentBotImpl(
 
                 val lazy = lazy { decoder.decodeFromJsonElement(signal.decoder, dispatch.data) }
                 val lazyDecoded = lazy::value
-                launch {
+                session.launch {
                     processorQueue.forEach { p ->
                         try {
                             p(dispatch, decoder, lazyDecoded)
@@ -404,7 +433,7 @@ internal class TencentBotImpl(
 
             // 留下最大的值。
             seq.updateAndGet { prev -> max(prev, nowSeq) }
-        }.launchIn(this@TencentBotImpl)
+        }.launchIn(session)
     }
 
 
