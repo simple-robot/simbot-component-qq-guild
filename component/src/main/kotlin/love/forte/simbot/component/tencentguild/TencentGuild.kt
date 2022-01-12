@@ -37,6 +37,6 @@ public interface TencentGuild : Guild {
 
     override suspend fun roles(groupingId: ID?, limiter: Limiter): Flow<TencentRole>
     @Api4J
-    override fun getRoles(groupingId: ID?, limiter: Limiter): Stream<TencentRole>
+    override fun getRoles(groupingId: ID?, limiter: Limiter): Stream<out TencentRole>
 
 }

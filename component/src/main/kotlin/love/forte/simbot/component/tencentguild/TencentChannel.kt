@@ -43,7 +43,7 @@ public interface TencentChannel : Channel, TencentChannelInfo {
     }
 
     @Api4J
-    override fun getRoles(groupingId: ID?, limiter: Limiter): Stream<TencentRole>
+    override fun getRoles(groupingId: ID?, limiter: Limiter): Stream<out TencentRole>
 
     override suspend fun mute(duration: Duration): Boolean
 

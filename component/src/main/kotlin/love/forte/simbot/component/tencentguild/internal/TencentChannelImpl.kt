@@ -53,7 +53,7 @@ internal class TencentChannelImpl internal constructor(
         get() = guild.owner
 
     @Api4J
-    override fun getRoles(groupingId: ID?, limiter: Limiter): Stream<TencentRole> = guild.getRoles(groupingId, limiter)
+    override fun getRoles(groupingId: ID?, limiter: Limiter): Stream<out TencentRole> = guild.getRoles(groupingId, limiter)
 
     override suspend fun mute(duration: Duration): Boolean = false
 

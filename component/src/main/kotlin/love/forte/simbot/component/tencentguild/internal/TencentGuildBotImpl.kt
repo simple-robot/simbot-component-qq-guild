@@ -13,15 +13,18 @@
 package love.forte.simbot.component.tencentguild.internal
 
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import love.forte.simbot.*
+import love.forte.simbot.component.tencentguild.TencentGuild
 import love.forte.simbot.component.tencentguild.TencentGuildBot
 import love.forte.simbot.component.tencentguild.TencentGuildBotManager
 import love.forte.simbot.component.tencentguild.internal.event.eventSignalParsers
 import love.forte.simbot.definition.Friend
 import love.forte.simbot.definition.Group
-import love.forte.simbot.definition.Guild
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.event.pushIfProcessable
 import love.forte.simbot.tencentguild.EventSignals
@@ -57,26 +60,26 @@ internal class TencentGuildBotImpl(
             100
         }
 
-        return getGuilds(limiter.offset, batch, limiter.limit).map { info ->
+        return getGuilds(batch).map { info ->
             TencentGuildImpl(bot = this, guildInfo = info)
-        }
+        }.withLimiter(limiter)
     }
 
     @Api4J
-    override fun getGuilds(grouping: Grouping, limiter: Limiter): Stream<out Guild> {
+    override fun getGuilds(grouping: Grouping, limiter: Limiter): Stream<out TencentGuild> {
         val batch = if (limiter.batchSize > 0) {
             if (limiter.batchSize > 100) 100 else limiter.batchSize
         } else {
             100
         }
 
-        return getGuildSequence(limiter.offset, batch, limiter.limit).map { info ->
+        return getGuildSequence(batch).map { info ->
             TencentGuildImpl(bot = this, guildInfo = info)
-        }.asStream()
+        }.asStream().withLimiter(limiter)
     }
 
 
-    private fun getGuilds(skip: Int, batch: Int, limit: Int): Flow<TencentGuildInfo> {
+    private fun getGuilds(batch: Int): Flow<TencentGuildInfo> {
         return flow {
             var lastId: ID? = null
 
@@ -90,20 +93,10 @@ internal class TencentGuildBotImpl(
                     emit(tencentGuildInfo)
                 }
             }
-        }.let {
-            var f = it
-            if (skip > 0) {
-                f = f.drop(skip)
-            }
-            if (limit > 0) {
-                f = f.take(limit)
-            }
-
-            f
         }
     }
 
-    private fun getGuildSequence(skip: Int, batch: Int, limit: Int): Sequence<TencentGuildInfo> {
+    private fun getGuildSequence(batch: Int): Sequence<TencentGuildInfo> {
         return sequence {
             var lastId: ID? = null
             while (true) {
@@ -116,16 +109,6 @@ internal class TencentGuildBotImpl(
 
                 yieldAll(list)
             }
-        }.let {
-            var f = it
-            if (skip > 0) {
-                f = f.drop(skip)
-            }
-            if (limit > 0) {
-                f = f.take(limit)
-            }
-
-            f
         }
 
     }

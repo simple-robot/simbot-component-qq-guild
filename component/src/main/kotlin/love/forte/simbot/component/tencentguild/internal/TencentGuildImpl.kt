@@ -1,9 +1,6 @@
 package love.forte.simbot.component.tencentguild.internal
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.runBlocking
 import love.forte.simbot.Api4J
 import love.forte.simbot.ID
@@ -20,6 +17,7 @@ import love.forte.simbot.tencentguild.api.channel.GetGuildChannelListApi
 import love.forte.simbot.tencentguild.api.member.GetMemberApi
 import love.forte.simbot.tencentguild.api.role.GetGuildRoleListApi
 import love.forte.simbot.tencentguild.request
+import love.forte.simbot.withLimiter
 import java.util.stream.Stream
 import kotlin.streams.asStream
 import kotlin.time.Duration
@@ -34,31 +32,38 @@ internal class TencentGuildImpl(
 ) : TencentGuild, TencentGuildInfo by guildInfo {
 
     @Api4J
-    override fun getRoles(groupingId: ID?, limiter: Limiter): Stream<TencentRole> {
+    override fun getRoles(groupingId: ID?, limiter: Limiter): Stream<out TencentRole> {
+        @Suppress("UNCHECKED_CAST")
         return getRoleSequence(guildInfo.id).map { info ->
             TencentRoleImpl(bot, info)
-        }.asStream()
+        }.asStream().withLimiter(limiter)
     }
 
 
     override suspend fun roles(groupingId: ID?, limiter: Limiter): Flow<TencentRoleImpl> {
         return getRoleFlow(guildInfo.id).map { info ->
             TencentRoleImpl(bot, info)
+        }.withLimiter(limiter)
+    }
+
+    private suspend fun getRoleFlow(guildId: ID): Flow<TencentRoleInfo> = flow {
+        GetGuildRoleListApi(guildId).request(bot).roles.forEach {
+            emit(it)
         }
     }
 
-    private suspend fun getRoleFlow(guildId: ID): Flow<TencentRoleInfo> =
-        GetGuildRoleListApi(guildId).request(bot).roles.asFlow()
-
-    private fun getRoleSequence(guildId: ID): Sequence<TencentRoleInfo> = runBlocking {
-        GetGuildRoleListApi(guildId).request(bot).roles.asSequence()
+    private fun getRoleSequence(guildId: ID): Sequence<TencentRoleInfo> = sequence {
+        val roles = runBlocking {
+            GetGuildRoleListApi(guildId).request(bot).roles
+        }
+        yieldAll(roles)
     }
 
 
     override suspend fun children(groupingId: ID?, limiter: Limiter): Flow<TencentChannelImpl> {
         return getChildrenFlow(guildInfo.id).map { info ->
             TencentChannelImpl(bot, info, this)
-        }
+        }.withLimiter(limiter)
     }
 
 
@@ -66,10 +71,12 @@ internal class TencentGuildImpl(
     override fun getChildren(groupingId: ID?, limiter: Limiter): Stream<TencentChannelImpl> {
         return getChildrenSequence(guildInfo.id).map { info ->
             TencentChannelImpl(bot, info, this)
-        }.asStream()
+        }.asStream().withLimiter(limiter)
     }
 
-    override suspend fun mute(duration: Duration): Boolean = throw NotSupportActionException("mute not support") // false // not support
+    override suspend fun mute(duration: Duration): Boolean =
+        throw NotSupportActionException("mute not support") // false // not support
+
     override suspend fun unmute(): Boolean = throw NotSupportActionException("unmute not support")
     override suspend fun previous(): Organization? = null
 
