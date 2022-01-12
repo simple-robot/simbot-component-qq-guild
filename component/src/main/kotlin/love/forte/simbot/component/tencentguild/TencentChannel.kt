@@ -8,6 +8,7 @@ import love.forte.simbot.definition.Member
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageReceipt
 import love.forte.simbot.tencentguild.TencentChannelInfo
+import java.util.concurrent.TimeUnit
 import java.util.stream.Stream
 import kotlin.time.Duration
 
@@ -45,7 +46,19 @@ public interface TencentChannel : Channel, TencentChannelInfo {
     @Api4J
     override fun getRoles(groupingId: ID?, limiter: Limiter): Stream<out TencentRole>
 
-    override suspend fun mute(duration: Duration): Boolean
+    @Deprecated("子频道不支持禁言", ReplaceWith("false"))
+    override suspend fun mute(duration: Duration): Boolean = false
+
+    @OptIn(Api4J::class)
+    @Deprecated("子频道不支持禁言", ReplaceWith("false"))
+    override fun muteBlocking(time: Long, unit: TimeUnit): Boolean = false
+
+    @Deprecated("子频道不支持禁言", ReplaceWith("false"))
+    override suspend fun unmute(): Boolean = false
+
+    @OptIn(Api4J::class)
+    @Deprecated("子频道不支持禁言", ReplaceWith("false"))
+    override fun unmuteBlocking(): Boolean = false
 
     override suspend fun previous(): TencentGuild?
 

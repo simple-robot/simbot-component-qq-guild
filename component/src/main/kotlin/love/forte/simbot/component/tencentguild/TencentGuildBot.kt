@@ -13,6 +13,7 @@
 package love.forte.simbot.component.tencentguild
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.isActive
 import love.forte.simbot.*
 import love.forte.simbot.action.NotSupportActionException
@@ -23,6 +24,7 @@ import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.message.Image
 import love.forte.simbot.resources.Resource
 import love.forte.simbot.tencentguild.TencentBot
+import java.util.stream.Stream
 
 /**
  * 一个tencent频道BOT的接口实例。
@@ -51,15 +53,7 @@ public abstract class TencentGuildBot : Bot, TencentBot {
 
     override val status: UserStatus get() = BotStatus
 
-    @JvmSynthetic
-    abstract override suspend fun friends(grouping: Grouping, limiter: Limiter): Flow<Friend>
-
-    @JvmSynthetic
-    abstract override suspend fun groups(grouping: Grouping, limiter: Limiter): Flow<Group>
-
-    @JvmSynthetic
     abstract override suspend fun guilds(grouping: Grouping, limiter: Limiter): Flow<TencentGuild>
-
 
     override suspend fun uploadImage(resource: Resource): Image<*> {
         // TODO fake remote image.
@@ -80,6 +74,28 @@ public abstract class TencentGuildBot : Bot, TencentBot {
         return super<TencentBot>.startBlocking()
     }
 
+
+    @Deprecated("频道不支持群相关API", ReplaceWith("emptyFlow()", "kotlinx.coroutines.flow.emptyFlow"))
+    override suspend fun groups(grouping: Grouping, limiter: Limiter): Flow<Group> {
+        return emptyFlow()
+    }
+
+    @OptIn(Api4J::class)
+    @Deprecated("频道不支持群相关API", ReplaceWith("Stream.empty()", "java.util.stream.Stream"))
+    override fun getGroups(grouping: Grouping, limiter: Limiter): Stream<out Group> {
+        return Stream.empty()
+    }
+
+    @Deprecated("频道不支持好友相关API", ReplaceWith("emptyFlow()", "kotlinx.coroutines.flow.emptyFlow"))
+    override suspend fun friends(grouping: Grouping, limiter: Limiter): Flow<Friend> {
+        return emptyFlow()
+    }
+
+    @OptIn(Api4J::class)
+    @Deprecated("频道不支持群相关API", ReplaceWith("Stream.empty()", "java.util.stream.Stream"))
+    override fun getFriends(grouping: Grouping, limiter: Limiter): Stream<out Friend> {
+        return Stream.empty()
+    }
 
 }
 

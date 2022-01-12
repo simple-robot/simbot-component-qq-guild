@@ -8,9 +8,7 @@ import love.forte.simbot.component.tencentguild.TencentMember
 import love.forte.simbot.component.tencentguild.TencentRole
 import love.forte.simbot.definition.UserStatus
 import love.forte.simbot.tencentguild.TencentMemberInfo
-import java.util.concurrent.TimeUnit
 import kotlin.streams.toList
-import kotlin.time.Duration
 
 /**
  *
@@ -35,24 +33,13 @@ internal class TencentMemberImpl internal constructor(
         get() = runBlocking { organization() }
 
     override val status: UserStatus =
-        if (info.id == bot.id) bot.status
-        else UserStatus.builder().also {
-            if (info.user.isBot) {
-                it.bot()
-                it.fakeUser()
-            } else {
-                it.normal()
-            }
-        }.build()
+        if (info.id == bot.id) {
+            bot.status
+        } else {
+            if (info.user.isBot) botStatus else normalStatus
+        }
 
-    override suspend fun mute(duration: Duration): Boolean = false
-    override suspend fun unmute(): Boolean = false
 
-    @Api4J
-    override fun muteBlocking(time: Long, unit: TimeUnit): Boolean = false
-
-    @Api4J
-    override fun unmuteBlocking(): Boolean = false
 
     override suspend fun roles(): Flow<TencentRole> {
         val roleIds = info.roleIds.mapTo(mutableSetOf()) { it.toString() }
@@ -67,3 +54,6 @@ internal class TencentMemberImpl internal constructor(
         }
 
 }
+
+private val botStatus = UserStatus.builder().bot().fakeUser().build()
+private val normalStatus = UserStatus.builder().normal().build()

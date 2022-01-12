@@ -17,6 +17,8 @@ import love.forte.simbot.tencentguild.api.channel.GetGuildChannelListApi
 import love.forte.simbot.tencentguild.api.member.GetMemberApi
 import love.forte.simbot.tencentguild.api.role.GetGuildRoleListApi
 import love.forte.simbot.tencentguild.request
+import love.forte.simbot.utils.LazyValue
+import love.forte.simbot.utils.lazyValue
 import love.forte.simbot.withLimiter
 import java.util.stream.Stream
 import kotlin.streams.asStream
@@ -71,7 +73,7 @@ internal class TencentGuildImpl(
     override fun getChildren(groupingId: ID?, limiter: Limiter): Stream<TencentChannelImpl> {
         return getChildrenSequence(guildInfo.id).map { info ->
             TencentChannelImpl(bot, info, this)
-        }.asStream().withLimiter(limiter)
+        }.withLimiter(limiter).asStream()
     }
 
     override suspend fun mute(duration: Duration): Boolean =
@@ -83,18 +85,12 @@ internal class TencentGuildImpl(
     @Api4J
     override fun getPrevious(): Organization? = null
 
-    private lateinit var _owner: TencentMemberImpl
-
-    override suspend fun owner(): TencentMemberImpl {
-        // 暂时不管线程安全问题
-        if (::_owner.isInitialized) return _owner
+    private var _owner: LazyValue<TencentMemberImpl> = lazyValue {
         val member = GetMemberApi(guildInfo.id, guildInfo.ownerId).request(bot)
-        return TencentMemberImpl(bot, member, this).also {
-            if (!::_owner.isInitialized) {
-                _owner = it
-            }
-        }
+        TencentMemberImpl(bot, member, this)
     }
+
+    override suspend fun owner(): TencentMemberImpl = _owner()
 
     @Api4J
     override val owner: TencentMemberImpl

@@ -14,9 +14,7 @@ import love.forte.simbot.message.MessageReceipt
 import love.forte.simbot.tencentguild.TencentChannelInfo
 import love.forte.simbot.tencentguild.api.message.MessageSendApi
 import love.forte.simbot.tencentguild.request
-import java.util.concurrent.TimeUnit
 import java.util.stream.Stream
-import kotlin.time.Duration
 
 /**
  *
@@ -54,16 +52,6 @@ internal class TencentChannelImpl internal constructor(
 
     @Api4J
     override fun getRoles(groupingId: ID?, limiter: Limiter): Stream<out TencentRole> = guild.getRoles(groupingId, limiter)
-
-    override suspend fun mute(duration: Duration): Boolean = false
-
-    @Api4J
-    override fun muteBlocking(time: Long, unit: TimeUnit): Boolean = false
-
-    override suspend fun unmute(): Boolean = false
-
-    @Api4J
-    override fun unmuteBlocking(): Boolean = false
 
     override suspend fun previous(): TencentGuild = guild()
 

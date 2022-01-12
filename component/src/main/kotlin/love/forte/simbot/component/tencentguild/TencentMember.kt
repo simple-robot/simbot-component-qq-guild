@@ -12,6 +12,7 @@ import love.forte.simbot.definition.MemberInfo
 import love.forte.simbot.definition.UserStatus
 import love.forte.simbot.tencentguild.TencentMemberInfo
 import love.forte.simbot.tencentguild.TencentUserInfo
+import java.util.concurrent.TimeUnit
 import kotlin.time.Duration
 
 /**
@@ -29,14 +30,29 @@ public interface TencentMember : Member, MemberInfo, TencentMemberInfo {
     override val id: ID
     override val status: UserStatus
     override val username: String
-    override suspend fun mute(duration: Duration): Boolean
     override suspend fun roles(): Flow<TencentRole>
 
-    @Api4J
-    override val organization: TencentGuild get() = runBlocking { organization() }
+    @Deprecated("子频道不支持禁言", ReplaceWith("false"))
+    override suspend fun mute(duration: Duration): Boolean = false
+
+    @Deprecated("子频道不支持禁言", ReplaceWith("false"))
+    override suspend fun unmute(): Boolean = false
+
+    @Deprecated("子频道不支持禁言", ReplaceWith("false"))
+    @OptIn(Api4J::class)
+    override fun muteBlocking(time: Long, unit: TimeUnit): Boolean = false
+
+    @OptIn(Api4J::class)
+    @Deprecated("子频道不支持禁言", ReplaceWith("false"))
+    override fun unmuteBlocking(): Boolean = false
 
     @Api4J
-    override val roles: List<TencentRole> get() = runBlocking { roles().toList() }
+    override val organization: TencentGuild
+        get() = runBlocking { organization() }
+
+    @Api4J
+    override val roles: List<TencentRole>
+        get() = runBlocking { roles().toList() }
 
     override suspend fun organization(): TencentGuild
 }

@@ -14,8 +14,6 @@ package love.forte.simbot.component.tencentguild.internal
 
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import love.forte.simbot.*
@@ -23,8 +21,6 @@ import love.forte.simbot.component.tencentguild.TencentGuild
 import love.forte.simbot.component.tencentguild.TencentGuildBot
 import love.forte.simbot.component.tencentguild.TencentGuildBotManager
 import love.forte.simbot.component.tencentguild.internal.event.eventSignalParsers
-import love.forte.simbot.definition.Friend
-import love.forte.simbot.definition.Group
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.event.pushIfProcessable
 import love.forte.simbot.tencentguild.EventSignals
@@ -54,33 +50,23 @@ internal class TencentGuildBotImpl(
      * grouping是无效的.
      */
     override suspend fun guilds(grouping: Grouping, limiter: Limiter): Flow<TencentGuildImpl> {
-        val batch = if (limiter.batchSize > 0) {
-            if (limiter.batchSize > 100) 100 else limiter.batchSize
-        } else {
-            100
-        }
-
-        return getGuilds(batch).map { info ->
+        return getGuildFlow(limiter).map { info ->
             TencentGuildImpl(bot = this, guildInfo = info)
-        }.withLimiter(limiter)
+        }
     }
 
     @Api4J
     override fun getGuilds(grouping: Grouping, limiter: Limiter): Stream<out TencentGuild> {
-        val batch = if (limiter.batchSize > 0) {
-            if (limiter.batchSize > 100) 100 else limiter.batchSize
-        } else {
-            100
-        }
 
-        return getGuildSequence(batch).map { info ->
+        return getGuildSequence(limiter).map { info ->
             TencentGuildImpl(bot = this, guildInfo = info)
-        }.asStream().withLimiter(limiter)
+        }.asStream()
     }
 
 
-    private fun getGuilds(batch: Int): Flow<TencentGuildInfo> {
-        return flow {
+    private fun getGuildFlow(limiter: Limiter): Flow<TencentGuildInfo> {
+        return limiter.toFlow { batchSize ->
+            val batch = if (batchSize in 1 .. 100) batchSize else 100
             var lastId: ID? = null
 
             while (true) {
@@ -96,8 +82,9 @@ internal class TencentGuildBotImpl(
         }
     }
 
-    private fun getGuildSequence(batch: Int): Sequence<TencentGuildInfo> {
-        return sequence {
+    private fun getGuildSequence(limiter: Limiter): Sequence<TencentGuildInfo> {
+        return limiter.toSequence { batchSize ->
+            val batch = if (batchSize in 1 .. 100) batchSize else 100
             var lastId: ID? = null
             while (true) {
                 val list = runBlocking {
@@ -110,7 +97,6 @@ internal class TencentGuildBotImpl(
                 yieldAll(list)
             }
         }
-
     }
 
     override suspend fun start(): Boolean = sourceBot.start().also {
@@ -174,22 +160,5 @@ internal class TencentGuildBotImpl(
         get() = job.isCancelled
 
 
-    override suspend fun groups(grouping: Grouping, limiter: Limiter): Flow<Group> {
-        return emptyFlow()
-    }
-
-    @Api4J
-    override fun getGroups(grouping: Grouping, limiter: Limiter): Stream<out Group> {
-        return Stream.empty()
-    }
-
-    override suspend fun friends(grouping: Grouping, limiter: Limiter): Flow<Friend> {
-        return emptyFlow()
-    }
-
-    @Api4J
-    override fun getFriends(grouping: Grouping, limiter: Limiter): Stream<out Friend> {
-        return Stream.empty()
-    }
 
 }
