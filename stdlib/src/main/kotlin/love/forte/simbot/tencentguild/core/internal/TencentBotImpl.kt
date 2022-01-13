@@ -176,7 +176,7 @@ internal class TencentBotImpl(
         private val _resuming = AtomicBoolean(false)
         override val isResuming: Boolean get() = _resuming.get()
 
-        private var resumeJob = session.launch {
+        private var resumeJob = launch {
             val closed = session.closeReason.await()
             resume(closed)
         }
@@ -211,7 +211,7 @@ internal class TencentBotImpl(
 
             val code = closeReason.code
             if (!checkResumeCode(code)) {
-                logger.debug("Not resume code: {}, close.", code)
+                logger.debug("Not resume code: {}, close and restart.", code)
                 launch { start() }
                 return
             }
@@ -224,10 +224,6 @@ internal class TencentBotImpl(
             logger.info("Resume. reason: $closeReason")
 
             try {
-                val oldSession = this.session
-                val oldSessionJob = oldSession.coroutineContext[Job]
-                oldSessionJob?.cancel()
-                oldSessionJob?.join()
                 heartbeatJob.cancel()
                 processingJob.cancel()
                 heartbeatJob.join()
@@ -246,7 +242,7 @@ internal class TencentBotImpl(
                 this.heartbeatJob = heartbeatJob
                 val processingJob = processEvent(resumeSession)
                 this.processingJob = processingJob
-                this.resumeJob = session.launch {
+                this.resumeJob = launch {
                     val closed = session.closeReason.await()
                     resume(closed)
                 }
@@ -365,8 +361,7 @@ internal class TencentBotImpl(
         val logger = sessionInfo.logger
         val seq = sessionInfo.seq
 
-        val session = sessionInfo.session
-        return session.incoming.receiveAsFlow().mapNotNull {
+        return sessionInfo.session.incoming.receiveAsFlow().mapNotNull {
             when (it) {
 
                 is Frame.Text -> {
@@ -387,23 +382,23 @@ internal class TencentBotImpl(
                     logger.debug("Frame.Binary: {}", it)
                     null
                 }
-                is Frame.Close -> {
-                    // closed. 不需要处理，大概
-                    logger.trace("Frame.Close: {}", it)
-                    null
-                }
-                is Frame.Ping -> {
-                    // nothing
-                    logger.trace("Frame.Ping: {}", it)
-                    null
-                }
-                is Frame.Pong -> {
-                    // nothing
-                    logger.trace("Frame.Pong: {}", it)
-                    null
-                }
+                // is Frame.Close -> {
+                //     // closed. 不需要处理，大概
+                //     logger.trace("Frame.Close: {}", it)
+                //     null
+                // }
+                // is Frame.Ping -> {
+                //     // nothing
+                //     logger.trace("Frame.Ping: {}", it)
+                //     null
+                // }
+                // is Frame.Pong -> {
+                //     // nothing
+                //     logger.trace("Frame.Pong: {}", it)
+                //     null
+                // }
                 else -> {
-                    logger.trace("Unknown frame: {}", it)
+                    logger.trace("Other frame: {}", it)
                     null
                 }
             }
@@ -420,11 +415,11 @@ internal class TencentBotImpl(
 
                 val lazy = lazy { decoder.decodeFromJsonElement(signal.decoder, dispatch.data) }
                 val lazyDecoded = lazy::value
-                session.launch {
+                launch {
                     processorQueue.forEach { p ->
                         try {
                             p(dispatch, decoder, lazyDecoded)
-                        } catch (e: Exception) {
+                        } catch (e: Throwable) {
                             e.process(logger) { "Processing" }
                         }
                     }
@@ -433,7 +428,10 @@ internal class TencentBotImpl(
 
             // 留下最大的值。
             seq.updateAndGet { prev -> max(prev, nowSeq) }
-        }.launchIn(session)
+        }
+            .onCompletion { cause -> logger.debug("Session flow completion. cause: {}", cause) }
+            .catch { cause -> logger.error("Session flow on catch: ${cause.localizedMessage}", cause) }
+            .launchIn(this)
     }
 
 
