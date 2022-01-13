@@ -6,6 +6,7 @@ import love.forte.simbot.Timestamp
 import love.forte.simbot.component.tencentguild.TencentGuild
 import love.forte.simbot.component.tencentguild.TencentGuildBot
 import love.forte.simbot.component.tencentguild.TencentMember
+import love.forte.simbot.definition.MemberInfo
 import love.forte.simbot.event.*
 import love.forte.simbot.message.doSafeCast
 import love.forte.simbot.tencentguild.EventSignals
@@ -70,21 +71,27 @@ public sealed class TcgGuildMemberEvent<T : Any> : TcgEvent<T>(), GuildEvent, Me
      */
     public abstract class Increase : TcgGuildMemberEvent<TencentMemberInfo>(), MemberIncreaseEvent {
         abstract override suspend fun source(): TencentGuild
-        abstract override val target: TencentMemberInfo
+        abstract override val target: TencentMember
 
         override val eventSignal: EventSignals<TencentMemberInfo>
             get() = EventSignals.GuildMembers.GuildMemberAdd
 
         override val key: Event.Key<Increase> get() = Key
 
+        override suspend fun operator(): MemberInfo = target
+
+        @OptIn(Api4J::class)
+        override val operator: MemberInfo?
+            get() = target
+
         override val source: TencentGuild get() = runBlocking { source() }
 
         @Api4J
         override val organization: TencentGuild
             get() = source
-        override val after: TencentMemberInfo get() = target
-        override val before: TencentMemberInfo? get() = null
-        override suspend fun target(): TencentMemberInfo = target
+        override val after: TencentMember get() = target
+        override val before: TencentMember? get() = null
+        override suspend fun target(): TencentMember = target
 
         public companion object Key : BaseEventKey<Increase>(
             "tcg.guild_member_increase", setOf(
@@ -117,20 +124,27 @@ public sealed class TcgGuildMemberEvent<T : Any> : TcgEvent<T>(), GuildEvent, Me
      */
     public abstract class Decrease : TcgGuildMemberEvent<TencentMemberInfo>(), MemberDecreaseEvent {
         abstract override suspend fun source(): TencentGuild
-        abstract override val target: TencentMemberInfo
+        abstract override val target: TencentMember
 
         override val eventSignal: EventSignals<TencentMemberInfo>
             get() = EventSignals.GuildMembers.GuildMemberRemove
 
         override val key: Event.Key<Decrease> get() = Key
 
+        override suspend fun operator(): MemberInfo = target
+
+        @OptIn(Api4J::class)
+        override val operator: MemberInfo?
+            get() = target
+
 
         @Api4J
-        override val organization: TencentGuild get() = source
+        override val organization: TencentGuild
+            get() = source
         override val source: TencentGuild get() = runBlocking { source() }
-        override val after: TencentMemberInfo? get() = null
-        override val before: TencentMemberInfo get() = target
-        override suspend fun target(): TencentMemberInfo = target
+        override val after: TencentMember? get() = null
+        override val before: TencentMember get() = target
+        override suspend fun target(): TencentMember = target
 
         public companion object Key : BaseEventKey<Decrease>(
             "tcg.guild_member_decrease", setOf(
