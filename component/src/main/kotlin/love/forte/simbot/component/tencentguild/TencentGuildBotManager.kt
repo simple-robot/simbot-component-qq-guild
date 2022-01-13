@@ -149,6 +149,7 @@ private val CProp get() = Properties(SerializersModule { })
 private val CYaml get() = CYamlFunction?.invoke()
 private val CYamlFunction: (() -> com.charleskorn.kaml.Yaml)? by lazy {
     try {
+        Class.forName("com.charleskorn.kaml.Yaml")
         return@lazy {
             com.charleskorn.kaml.Yaml(
                 configuration = YamlConfiguration(
@@ -156,7 +157,7 @@ private val CYamlFunction: (() -> com.charleskorn.kaml.Yaml)? by lazy {
                 )
             )
         }
-    } catch (e: NoClassDefFoundError) {
+    } catch (e: ClassNotFoundException) {
         LoggerFactory.getLogger(TencentGuildBotManager::class)
             .error("[com.charleskorn.kaml.Yaml] not in your classpath. If you want to support for yaml, add 'com.charleskorn.kaml:kaml:\$version' into your classpath.")
         return@lazy null
