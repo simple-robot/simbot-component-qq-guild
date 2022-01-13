@@ -10,6 +10,7 @@ import love.forte.simbot.component.tencentguild.event.TcgChannelAtMessageEvent
 import love.forte.simbot.component.tencentguild.internal.*
 import love.forte.simbot.event.Event
 import love.forte.simbot.message.Message
+import love.forte.simbot.message.MessageReceipt
 import love.forte.simbot.tencentguild.EventSignals
 import love.forte.simbot.tencentguild.TencentMessage
 import love.forte.simbot.tencentguild.api.channel.GetChannelApi
@@ -35,6 +36,8 @@ internal class TcgChannelAtMessageEventImpl(
         val cid = sourceEventEntity.channelId
         return MessageSendApi(cid, messageForSend).request(bot).asReplyReceipt()
     }
+
+    override suspend fun send(message: Message): MessageReceipt = reply(message)
 
     private val _fromGuild: LazyValue<TencentGuildImpl> = bot.lazyValue {
         val guildInfo = GetGuildApi(sourceEventEntity.guildId).request(bot)

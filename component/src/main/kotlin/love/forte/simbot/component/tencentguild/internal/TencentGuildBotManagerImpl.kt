@@ -25,6 +25,7 @@ import love.forte.simbot.component.tencentguild.TencentGuildBotManager
 import love.forte.simbot.component.tencentguild.TencentGuildBotManagerConfiguration
 import love.forte.simbot.tencentguild.TencentBotConfiguration
 import love.forte.simbot.tencentguild.tencentBot
+import org.slf4j.Logger
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
@@ -38,8 +39,11 @@ internal class TencentGuildBotManagerImpl(
     override val configuration: TencentGuildBotManagerConfiguration
 ) : TencentGuildBotManager() {
     companion object {
-        private val logger = LoggerFactory.getLogger(TencentGuildBotManagerImpl::class)
+        private val LOGGER = LoggerFactory.getLogger(TencentGuildBotManagerImpl::class)
     }
+
+    override val logger: Logger
+        get() = LOGGER
 
     private val completableJob = Job()
 
@@ -102,6 +106,10 @@ internal class TencentGuildBotManagerImpl(
 
             return botMap[id.toString()]
         }
+    }
+
+    override fun all(): Sequence<TencentGuildBot> {
+        return botMap.values.asSequence()
     }
 
 

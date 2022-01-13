@@ -15,10 +15,7 @@ package love.forte.simbot.component.tencentguild
 import io.ktor.http.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.decodeFromStream
-import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.*
 import love.forte.simbot.*
 import love.forte.simbot.component.tencentguild.internal.TencentGuildBotManagerImpl
 import love.forte.simbot.event.EventProcessor
@@ -26,6 +23,7 @@ import love.forte.simbot.tencentguild.EventSignals
 import love.forte.simbot.tencentguild.Intents
 import love.forte.simbot.tencentguild.TencentBotConfiguration
 import love.forte.simbot.tencentguild.TencentGuildApi
+import org.slf4j.Logger
 
 
 /**
@@ -38,6 +36,8 @@ import love.forte.simbot.tencentguild.TencentGuildApi
  */
 public abstract class TencentGuildBotManager : BotManager<TencentGuildBot>() {
 
+    protected abstract val logger: Logger
+
     /**
      * 注册一个Bot的信息，并使用默认配置。
      */
@@ -46,10 +46,18 @@ public abstract class TencentGuildBotManager : BotManager<TencentGuildBot>() {
         val serializer = TencentBotViaBotFileConfiguration.serializer()
 
         val jsonElement = verifyInfo.inputStream().use { inp -> CJson.decodeFromStream(JsonElement.serializer(), inp) }
-        val component = jsonElement.jsonObject["component"]?.toString()
+        val component = jsonElement.jsonObject["component"]?.jsonPrimitive?.content
             ?: throw NoSuchComponentException("Component is not found in [${verifyInfo.infoName}]")
 
+        logger.debug("[{}] json element load: {}", verifyInfo.infoName, jsonElement)
+
         if (component != ComponentTencentGuild.COMPONENT_ID.toString()) {
+            logger.debug(
+                "[{}] mismatch: [{}] != [{}]",
+                verifyInfo.infoName,
+                component,
+                ComponentTencentGuild.COMPONENT_ID
+            )
             throw ComponentMismatchException("[$component] != [${ComponentTencentGuild.COMPONENT_ID}]")
         }
         val configuration = CJson.decodeFromJsonElement(serializer, jsonElement)

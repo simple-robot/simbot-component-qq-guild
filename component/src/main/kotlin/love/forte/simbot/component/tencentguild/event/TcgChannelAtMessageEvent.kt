@@ -5,6 +5,7 @@ import love.forte.simbot.Api4J
 import love.forte.simbot.Timestamp
 import love.forte.simbot.action.MessageReplyReceipt
 import love.forte.simbot.action.ReplySupport
+import love.forte.simbot.action.SendSupport
 import love.forte.simbot.component.tencentguild.TencentChannel
 import love.forte.simbot.component.tencentguild.TencentGuildBot
 import love.forte.simbot.component.tencentguild.TencentMember
@@ -28,7 +29,7 @@ import love.forte.simbot.tencentguild.TencentMessage
  *
  * @author ForteScarlet
  */
-public abstract class TcgChannelAtMessageEvent : TcgEvent<TencentMessage>(), ChannelMessageEvent, ReplySupport {
+public abstract class TcgChannelAtMessageEvent : TcgEvent<TencentMessage>(), ChannelMessageEvent, ReplySupport, SendSupport {
     abstract override val sourceEventEntity: TencentMessage
     override val eventSignal: EventSignals<TencentMessage> get() = EventSignals.AtMessages.AtMessageCreate
     abstract override suspend fun author(): TencentMember
