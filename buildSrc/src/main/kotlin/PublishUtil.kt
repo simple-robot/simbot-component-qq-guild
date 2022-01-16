@@ -38,7 +38,7 @@ inline fun Project.configurePublishing(artifactId: String) {
             register("mavenJava", MavenPublication::class) {
                 from(components["java"])
 
-                groupId = rootProject.group.toString()
+                groupId = project.group.toString()
                 setArtifactId(artifactId)
                 version = project.version.toString()
 
@@ -52,7 +52,7 @@ inline fun Project.configurePublishing(artifactId: String) {
         repositories {
             mavenLocal()
             maven {
-                if (version.toString().endsWith("SNAPSHOTS", true)) {
+                if (version.toString().contains("SNAPSHOTS", true)) {
                     // snapshot
                     name = Sonatype.`snapshot-oss`.NAME
                     url = uri(Sonatype.`snapshot-oss`.URL)
@@ -61,9 +61,11 @@ inline fun Project.configurePublishing(artifactId: String) {
                     url = uri(Sonatype.oss.URL)
                 }
 
-                val username0 = local().getProperty("sonatype.username")
-                    ?: throw NullPointerException("snapshots-sonatype-username")
-                val password0 = local().getProperty("sonatype.password")
+                val username0 = extra.get("sonatype.username")?.toString() ?: run {
+                    println("[WARN] Cannot found sonatype.username from extra for $artifactId")
+                    return@maven
+                }
+                val password0 = extra.get("sonatype.password")?.toString()
                     ?: throw NullPointerException("snapshots-sonatype-password")
 
                 credentials {
@@ -114,7 +116,7 @@ fun Project.configurePublishingLocal(artifactId: String) {
 
 
 fun MavenPublication.setupPom(project: Project) {
-    val vcs = "https://github.com/ForteScarlet/simpler-robot"
+    val vcs = "https://github.com/simple-robot/simbot-component-tencent-guild"
     pom {
         scm {
             url.set(vcs)
@@ -130,7 +132,7 @@ fun MavenPublication.setupPom(project: Project) {
         licenses {
             license {
                 name.set("The Apache License, Version 2.0")
-                url.set("https://github.com/ForteScarlet/simpler-robot/blob/master/LICENSE")
+                url.set("https://github.com/simple-robot/simbot-component-tencent-guild/blob/main/LICENSE")
             }
         }
 
