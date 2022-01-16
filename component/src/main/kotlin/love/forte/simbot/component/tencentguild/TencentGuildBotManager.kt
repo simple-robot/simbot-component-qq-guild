@@ -126,7 +126,7 @@ public class TencentGuildBotManagerConfiguration(public var eventProcessor: Even
 
 // 只有在注册时候会使用到, 不保留为属性。
 
-@OptIn(ExperimentalSerializationApi::class)
+//@OptIn(ExperimentalSerializationApi::class)
 // private val CProp get() = Properties(SerializersModule { })
 // private val CYaml get() = CYamlFunction?.invoke()
 // private val CYamlFunction: (() -> com.charleskorn.kaml.Yaml)? by lazy {
