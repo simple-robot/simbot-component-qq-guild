@@ -71,8 +71,9 @@ internal class TencentBotImpl(
         ConcurrentLinkedQueue()
 
     init {
-        val parentJob = SupervisorJob(configuration.parentJob)
-        coroutineContext = configuration.coroutineContext + parentJob + CoroutineName("TencentBot.${ticket.appId}")
+        val parentJob = configuration.coroutineContext[Job]
+        val job = SupervisorJob(parentJob)
+        coroutineContext = configuration.coroutineContext + job + CoroutineName("TencentBot.${ticket.appId}")
     }
 
     private val parentJob: Job get() = coroutineContext[Job]!!

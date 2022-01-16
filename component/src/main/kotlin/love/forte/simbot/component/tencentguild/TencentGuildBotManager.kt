@@ -24,6 +24,8 @@ import love.forte.simbot.tencentguild.Intents
 import love.forte.simbot.tencentguild.TencentBotConfiguration
 import love.forte.simbot.tencentguild.TencentGuildApi
 import org.slf4j.Logger
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 
 /**
@@ -114,6 +116,11 @@ public class TencentGuildBotManagerConfiguration(public var eventProcessor: Even
      */
     public var botConfigure: TencentBotConfiguration.(appId: String, appKey: String, token: String) -> Unit =
         { _, _, _ -> }
+
+    /**
+     * 如果其中存在 [kotlinx.coroutines.Job], 则会被作为parentJob使用。
+     */
+    public var parentCoroutineContext: CoroutineContext = EmptyCoroutineContext
 
 }
 

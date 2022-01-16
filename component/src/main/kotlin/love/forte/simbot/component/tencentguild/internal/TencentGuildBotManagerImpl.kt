@@ -12,9 +12,7 @@
 
 package love.forte.simbot.component.tencentguild.internal
 
-import kotlinx.coroutines.CompletionHandler
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.*
 import love.forte.simbot.BotAlreadyRegisteredException
 import love.forte.simbot.Component
 import love.forte.simbot.ID
@@ -30,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
+import kotlin.coroutines.CoroutineContext
 
 /**
  *
@@ -42,10 +41,19 @@ internal class TencentGuildBotManagerImpl(
         private val LOGGER = LoggerFactory.getLogger(TencentGuildBotManagerImpl::class)
     }
 
+    private val completableJob: CompletableJob
+    override val coroutineContext: CoroutineContext
+
+    init {
+        val parentContext = configuration.parentCoroutineContext
+        val parentJob = parentContext[Job]
+        completableJob = SupervisorJob(parentJob)
+        coroutineContext = parentContext.minusKey(Job) + completableJob
+    }
+
     override val logger: Logger
         get() = LOGGER
 
-    private val completableJob = Job()
 
     // private val isCanceled = AtomicBoolean(false)
 
@@ -124,6 +132,9 @@ internal class TencentGuildBotManagerImpl(
             val sourceBot = tencentBot(appId, appKey, token) {
                 configure(appId, appKey, token)
                 block()
+                if (coroutineContext[Job] == null) {
+                    coroutineContext += completableJob
+                }
             }
             // check botInfo
             logger.info("Registered bot info: {}", sourceBot.botInfo)

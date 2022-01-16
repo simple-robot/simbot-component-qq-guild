@@ -6,7 +6,6 @@ import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.features.websocket.*
 import io.ktor.http.*
-import kotlinx.coroutines.Job
 import kotlinx.serialization.json.Json
 import love.forte.simbot.ExceptionProcessor
 import love.forte.simbot.tencentguild.core.internal.TencentBotImpl
@@ -38,12 +37,9 @@ public fun tencentBot(
 public class TencentBotConfiguration {
 
     /**
-     * parent job.
-     */
-    public var parentJob: Job? = null
-
-    /**
      * Context.
+     *
+     * 如果存在Job，则会被作为parentJob。
      */
     public var coroutineContext: CoroutineContext = EmptyCoroutineContext
 
