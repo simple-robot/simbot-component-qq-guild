@@ -11,6 +11,8 @@ plugins {
 group = P.TencentGuild.GROUP
 version = P.TencentGuild.VERSION
 
+println("=== Current version: $version ===")
+
 repositories {
     mavenLocal()
     mavenCentral()
