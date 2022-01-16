@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-    api(project(P.TencentGuild.apiCorePath))
+    api(project(P.TencentGuild.apiStdlibPath))
     api(V.Simbot.Core.notation)
     api(V.Ktor.Client.Jvm.Core.notation)
     api(V.Ktor.Client.Jvm.CIO.notation)
