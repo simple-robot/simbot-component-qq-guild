@@ -1,15 +1,15 @@
 package love.forte.simbot.component.tencentguild.internal
 
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.future.asCompletableFuture
 import kotlinx.coroutines.runBlocking
 import love.forte.simbot.Api4J
 import love.forte.simbot.ID
 import love.forte.simbot.Limiter
 import love.forte.simbot.action.NotSupportActionException
 import love.forte.simbot.component.tencentguild.TencentGuild
-import love.forte.simbot.component.tencentguild.TencentMember
 import love.forte.simbot.component.tencentguild.TencentRole
-import love.forte.simbot.definition.Organization
 import love.forte.simbot.tencentguild.TencentChannelInfo
 import love.forte.simbot.tencentguild.TencentGuildInfo
 import love.forte.simbot.tencentguild.TencentRoleInfo
@@ -61,6 +61,11 @@ internal class TencentGuildImpl(
         yieldAll(roles)
     }
 
+    override val currentChannel: Int by lazy {
+        bot.async { getChildrenFlow(guildInfo.id).count() }
+            .asCompletableFuture().join()
+    }
+
 
     override suspend fun children(groupingId: ID?, limiter: Limiter): Flow<TencentChannelImpl> {
         return getChildrenFlow(guildInfo.id).map { info ->
@@ -79,11 +84,6 @@ internal class TencentGuildImpl(
     override suspend fun mute(duration: Duration): Boolean =
         throw NotSupportActionException("mute not support") // false // not support
 
-    override suspend fun unmute(): Boolean = throw NotSupportActionException("unmute not support")
-    override suspend fun previous(): Organization? = null
-
-    @Api4J
-    override fun getPrevious(): Organization? = null
 
     private var _owner: LazyValue<TencentMemberImpl> = lazyValue {
         val member = GetMemberApi(guildInfo.id, guildInfo.ownerId).request(bot)
@@ -102,16 +102,5 @@ internal class TencentGuildImpl(
 
     private fun getChildrenSequence(guildId: ID): Sequence<TencentChannelInfo> =
         runBlocking { GetGuildChannelListApi(guildId = guildId).request(bot).asSequence() }
-
-
-    @Api4J
-    override fun getMembers(groupingId: ID?, limiter: Limiter): Stream<out TencentMember> {
-        return Stream.empty()
-    }
-
-    override suspend fun members(groupingId: ID?, limiter: Limiter): Flow<TencentMember> {
-        return emptyFlow()
-    }
-
 
 }

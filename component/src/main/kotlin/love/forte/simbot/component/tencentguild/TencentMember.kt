@@ -1,7 +1,6 @@
 package love.forte.simbot.component.tencentguild
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import love.forte.simbot.Api4J
 import love.forte.simbot.Bot
@@ -13,6 +12,7 @@ import love.forte.simbot.definition.UserStatus
 import love.forte.simbot.tencentguild.TencentMemberInfo
 import love.forte.simbot.tencentguild.TencentUserInfo
 import java.util.concurrent.TimeUnit
+import java.util.stream.Stream
 import kotlin.time.Duration
 
 /**
@@ -31,6 +31,13 @@ public interface TencentMember : Member, MemberInfo, TencentMemberInfo {
     override val status: UserStatus
     override val username: String
     override suspend fun roles(): Flow<TencentRole>
+    @Api4J
+    override val roles: Stream<out TencentRole>
+    override suspend fun organization(): TencentGuild
+
+    //// Impl
+
+
 
     @Deprecated("子频道不支持禁言", ReplaceWith("false"))
     override suspend fun mute(duration: Duration): Boolean = false
@@ -50,9 +57,5 @@ public interface TencentMember : Member, MemberInfo, TencentMemberInfo {
     override val organization: TencentGuild
         get() = runBlocking { organization() }
 
-    @Api4J
-    override val roles: List<TencentRole>
-        get() = runBlocking { roles().toList() }
 
-    override suspend fun organization(): TencentGuild
 }
