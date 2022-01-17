@@ -8,7 +8,7 @@ import love.forte.simbot.component.tencentguild.TencentMember
 import love.forte.simbot.component.tencentguild.TencentRole
 import love.forte.simbot.definition.UserStatus
 import love.forte.simbot.tencentguild.TencentMemberInfo
-import kotlin.streams.toList
+import java.util.stream.Stream
 
 /**
  *
@@ -40,18 +40,18 @@ internal class TencentMemberImpl internal constructor(
         }
 
 
-
     override suspend fun roles(): Flow<TencentRole> {
         val roleIds = info.roleIds.mapTo(mutableSetOf()) { it.toString() }
         return guild().roles().filter { it.id.toString() in roleIds }
     }
 
     @Api4J
-    override val roles: List<TencentRole>
+    override val roles: Stream<out TencentRole>
         get() {
             val roleIds = info.roleIds.mapTo(mutableSetOf()) { it.toString() }
-            return runBlocking { guild() }.getRoles().filter { it.id.toString() in roleIds }.toList()
+            return runBlocking { guild() }.getRoles().filter { it.id.toString() in roleIds }
         }
+
 
 }
 

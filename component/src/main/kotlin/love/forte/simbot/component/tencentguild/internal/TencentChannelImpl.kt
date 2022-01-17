@@ -2,7 +2,6 @@ package love.forte.simbot.component.tencentguild.internal
 
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.runBlocking
 import love.forte.simbot.Api4J
 import love.forte.simbot.ID
 import love.forte.simbot.Limiter
@@ -10,7 +9,6 @@ import love.forte.simbot.component.tencentguild.TencentChannel
 import love.forte.simbot.component.tencentguild.TencentGuild
 import love.forte.simbot.component.tencentguild.TencentRole
 import love.forte.simbot.component.tencentguild.event.TcgChannelAtMessageEvent
-import love.forte.simbot.definition.Organization
 import love.forte.simbot.event.EventProcessingContext
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageReceipt
@@ -50,24 +48,17 @@ internal class TencentChannelImpl internal constructor(
 
     override suspend fun guild(): TencentGuildImpl = from()
 
-    @Api4J
-    override val guild: TencentGuildImpl
-        get() = runBlocking { from() }
-
     override suspend fun owner(): TencentMemberImpl = guild().owner()
-
-    @Api4J
-    override val owner: TencentMemberImpl
-        get() = guild.owner
 
     @Api4J
     override fun getRoles(groupingId: ID?, limiter: Limiter): Stream<out TencentRole> =
         guild.getRoles(groupingId, limiter)
 
-    override suspend fun previous(): TencentGuild = guild()
+    override suspend fun previous(): TencentGuildImpl = guild()
 
     @Api4J
-    override fun getPrevious(): Organization = guild
+    override val previous: TencentGuild
+        get() = guild
 
     override suspend fun roles(groupingId: ID?, limiter: Limiter): Flow<TencentRole> =
         guild().roles(groupingId, limiter)
