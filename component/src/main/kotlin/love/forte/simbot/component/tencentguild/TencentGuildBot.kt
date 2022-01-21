@@ -53,8 +53,12 @@ public abstract class TencentGuildBot : Bot, TencentBot {
 
     override val status: UserStatus get() = BotStatus
 
+    @JvmSynthetic
     abstract override suspend fun guilds(grouping: Grouping, limiter: Limiter): Flow<TencentGuild>
 
+    //// Impl
+
+    @JvmSynthetic
     override suspend fun uploadImage(resource: Resource): Image<*> {
         // TODO fake remote image.
         throw NotSupportActionException("upload Image")
@@ -76,6 +80,7 @@ public abstract class TencentGuildBot : Bot, TencentBot {
 
 
     @Deprecated("频道不支持群相关API", ReplaceWith("emptyFlow()", "kotlinx.coroutines.flow.emptyFlow"))
+    @JvmSynthetic
     override suspend fun groups(grouping: Grouping, limiter: Limiter): Flow<Group> {
         return emptyFlow()
     }
@@ -87,6 +92,7 @@ public abstract class TencentGuildBot : Bot, TencentBot {
     }
 
     @Deprecated("频道不支持好友相关API", ReplaceWith("emptyFlow()", "kotlinx.coroutines.flow.emptyFlow"))
+    @JvmSynthetic
     override suspend fun friends(grouping: Grouping, limiter: Limiter): Flow<Friend> {
         return emptyFlow()
     }
@@ -97,6 +103,30 @@ public abstract class TencentGuildBot : Bot, TencentBot {
         return Stream.empty()
     }
 
+    @Api4J
+    abstract override fun getGuilds(grouping: Grouping, limiter: Limiter): Stream<out TencentGuild>
+
+    @Api4J
+    abstract override fun getGuild(id: ID): TencentGuild?
+    abstract override suspend fun guild(id: ID): TencentGuild?
+
+    @JvmSynthetic
+    override suspend fun friend(id: ID): Friend? = null
+
+    @Api4J
+    override fun getFriend(id: ID): Friend? = null
+
+    @Api4J
+    override fun getFriends(): Stream<out Friend> = Stream.empty()
+
+    @Api4J
+    override fun getFriends(limiter: Limiter): Stream<out Friend> = Stream.empty()
+
+    @JvmSynthetic
+    override suspend fun group(id: ID): Group? = null
+
+    @OptIn(Api4J::class)
+    override fun getGroup(id: ID): Group? = null
 }
 
 

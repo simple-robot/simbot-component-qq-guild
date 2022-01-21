@@ -28,14 +28,12 @@ internal class TencentChannelImpl internal constructor(
 ) : TencentChannel, TencentChannelInfo by info {
 
     internal constructor(
-        bot: TencentGuildBotImpl,
-        info: TencentChannelInfo,
-        from: TencentGuildImpl
+        bot: TencentGuildBotImpl, info: TencentChannelInfo, from: TencentGuildImpl
     ) : this(bot, info, { from })
 
     override suspend fun send(message: Message): MessageReceipt {
-        val currentEvent = currentCoroutineContext()[EventProcessingContext]?.event
-            ?.takeIf { it is TcgChannelAtMessageEvent } as? TcgChannelAtMessageEvent
+        val currentEvent =
+            currentCoroutineContext()[EventProcessingContext]?.event?.takeIf { it is TcgChannelAtMessageEvent } as? TcgChannelAtMessageEvent
 
         val msgId = currentEvent?.sourceEventEntity?.id
 
@@ -47,7 +45,6 @@ internal class TencentChannelImpl internal constructor(
 
 
     override suspend fun guild(): TencentGuildImpl = from()
-
     override suspend fun owner(): TencentMemberImpl = guild().owner()
 
     @Api4J

@@ -17,7 +17,7 @@ import java.util.stream.Stream
 internal class TencentMemberImpl internal constructor(
     override val bot: TencentGuildBotImpl,
     private val info: TencentMemberInfo,
-    private val guild: suspend () -> TencentGuildImpl
+    private val guildFactory: suspend () -> TencentGuildImpl
 ) : TencentMember, TencentMemberInfo by info {
 
     internal constructor(
@@ -25,6 +25,8 @@ internal class TencentMemberImpl internal constructor(
         info: TencentMemberInfo,
         guild: TencentGuildImpl
     ) : this(bot, info, { guild })
+
+    override suspend fun guild(): TencentGuildImpl = guildFactory()
 
     override suspend fun organization(): TencentGuildImpl = guild()
 

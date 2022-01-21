@@ -23,11 +23,10 @@ import love.forte.simbot.component.tencentguild.TencentGuildBotManager
 import love.forte.simbot.component.tencentguild.internal.event.eventSignalParsers
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.event.pushIfProcessable
-import love.forte.simbot.tencentguild.EventSignals
-import love.forte.simbot.tencentguild.TencentBot
-import love.forte.simbot.tencentguild.TencentGuildInfo
+import love.forte.simbot.tencentguild.*
 import love.forte.simbot.tencentguild.api.guild.GetBotGuildListApi
-import love.forte.simbot.tencentguild.request
+import love.forte.simbot.tencentguild.api.guild.GetGuildApi
+import love.forte.simbot.utils.runInBlocking
 import java.util.stream.Stream
 import kotlin.streams.asStream
 
@@ -98,6 +97,22 @@ internal class TencentGuildBotImpl(
             }
         }
     }
+
+    override suspend fun guild(id: ID): TencentGuild? {
+        return try {
+            val guild = GetGuildApi(id).request(sourceBot)
+            TencentGuildImpl(this, guild)
+        } catch (apiException: TencentApiException) {
+            if (apiException.value == 404) {
+                null
+            } else {
+                throw apiException
+            }
+        }
+    }
+
+    @Api4J
+    override fun getGuild(id: ID): TencentGuild? = runInBlocking { guild(id) }
 
     override suspend fun start(): Boolean = sourceBot.start().also {
         if (!it) return@also

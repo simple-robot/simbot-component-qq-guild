@@ -11,6 +11,8 @@ import love.forte.simbot.tencentguild.api.request
 
 /**
  * 直接通过bot进行请求。
+ *
+ * @throws love.forte.simbot.tencentguild.TencentApiException 如果返回状态码不在 200..300之间。
  */
 @JvmSynthetic
 public suspend fun <R> TencentApi<R>.request(bot: TencentBot): R {

@@ -7,6 +7,7 @@ import love.forte.simbot.definition.Channel
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageReceipt
 import love.forte.simbot.tencentguild.TencentChannelInfo
+import love.forte.simbot.utils.runInBlocking
 import java.util.concurrent.TimeUnit
 import java.util.stream.Stream
 import kotlin.time.Duration
@@ -43,11 +44,11 @@ public interface TencentChannel : Channel, TencentChannelInfo {
     override suspend fun owner(): TencentMember
 
 
+
     @Api4J
     override fun getRoles(groupingId: ID?, limiter: Limiter): Stream<out TencentRole>
 
     override suspend fun previous(): TencentGuild
-
 
     override suspend fun roles(groupingId: ID?, limiter: Limiter): Flow<TencentRole>
 
@@ -55,10 +56,13 @@ public interface TencentChannel : Channel, TencentChannelInfo {
     //// Impl
 
     @Api4J
-    override val guild: TencentGuild get() = runBlocking { guild() }
+    override val guild: TencentGuild
+        get() = runBlocking { guild() }
 
     @Api4J
-    override val owner: TencentMember get() = runBlocking { owner() }
+    override val owner: TencentMember
+        get() = runBlocking { owner() }
+
 
     /**
      * 子频道目前无法直接获取成员列表。将会直接返回 [previous] 的成员列表。
@@ -66,6 +70,12 @@ public interface TencentChannel : Channel, TencentChannelInfo {
     override suspend fun members(groupingId: ID?, limiter: Limiter): Flow<TencentMember> {
         return previous().members(groupingId, limiter)
     }
+
+    override suspend fun member(id: ID): TencentMember? {
+        return previous().member(id)
+    }
+
+
 
     @Deprecated("子频道不支持禁言", ReplaceWith("false"))
     override suspend fun mute(duration: Duration): Boolean = false
@@ -85,33 +95,27 @@ public interface TencentChannel : Channel, TencentChannelInfo {
      * 子频道目前无法直接获取成员列表。将会直接返回 [previous] 的成员列表。
      */
     @Api4J
-    override fun getMembers(groupingId: ID?, limiter: Limiter): Stream<out TencentMember> {
-        return previous.getMembers(groupingId, limiter)
-    }
+    override fun getMembers(groupingId: ID?, limiter: Limiter): Stream<out TencentMember> =
+        previous.getMembers(groupingId, limiter)
 
     /**
      * 子频道目前无法直接获取成员列表。将会直接返回 [previous] 的成员列表。
      */
     @Api4J
-    override fun getMembers(): Stream<out TencentMember> {
-        return previous.getMembers()
-    }
+    override fun getMembers(): Stream<out TencentMember> = previous.getMembers()
 
     /**
      * 子频道目前无法直接获取成员列表。将会直接返回 [previous] 的成员列表。
      */
     @Api4J
-    override fun getMembers(groupingId: ID?): Stream<out TencentMember> {
-        return previous.getMembers(groupingId)
-    }
+    override fun getMembers(groupingId: ID?): Stream<out TencentMember> = previous.getMembers(groupingId)
 
     /**
      * 子频道目前无法直接获取成员列表。将会直接返回 [previous] 的成员列表。
      */
     @Api4J
-    override fun getMembers(limiter: Limiter): Stream<out TencentMember> {
-        return previous.getMembers(limiter)
-    }
+    override fun getMembers(limiter: Limiter): Stream<out TencentMember> = previous.getMembers(limiter)
 
 
+    override fun getMember(id: ID): TencentMember? = runInBlocking { member(id) }
 }

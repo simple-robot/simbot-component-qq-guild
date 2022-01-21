@@ -5,47 +5,33 @@ import io.ktor.http.cio.websocket.*
 import kotlinx.serialization.Serializable
 
 
+@Suppress("MemberVisibilityCanBePrivate")
 public class TencentApiException : IllegalStateException {
-    @Suppress("MemberVisibilityCanBePrivate")
     public val info: ErrInfo?
+    public val value: Int
+    public val description: String
 
-    public constructor() : super() {
+    public constructor(value: Int, description: String) : super("$value: $description") {
         this.info = null
+        this.value = value
+        this.description = description
     }
 
-    public constructor(message: String?) : super(message) {
-        this.info = null
-    }
-
-    public constructor(message: String?, cause: Throwable?) : super(message, cause) {
-        this.info = null
-    }
-
-    public constructor(cause: Throwable?) : super(cause) {
-        this.info = null
-    }
-
-    public constructor(info: ErrInfo) : super() {
+    public constructor(
+        info: ErrInfo,
+        value: Int,
+        description: String
+    ) : super("$value: $description; response info: $info") {
         this.info = info
+        this.value = value
+        this.description = description
     }
 
-    public constructor(info: ErrInfo, message: String?) : super(message) {
-        this.info = info
-    }
-
-    public constructor(info: ErrInfo, message: String?, cause: Throwable?) : super(message, cause) {
-        this.info = info
-    }
-
-    public constructor(info: ErrInfo, cause: Throwable?) : super(cause) {
-        this.info = info
-    }
 }
 
 public inline fun ErrInfo.err(codeBlock: () -> HttpStatusCode): Nothing {
     val code = codeBlock()
-    val statusInfo = "${code.value}: ${code.description} ; response info: $this"
-    throw TencentApiException(statusInfo)
+    throw TencentApiException(this, code.value, code.description)
 }
 
 /**
@@ -60,20 +46,28 @@ public data class ErrInfo(val code: Int, val message: String)
 @Suppress("NOTHING_TO_INLINE")
 public inline fun CloseReason?.err(e: Throwable? = null): Nothing {
     if (this == null) {
-        throw TencentApiException("No reason")
+        if (e != null) {
+            throw TencentApiException(-1, "No reason").initCause(e)
+        } else {
+            throw TencentApiException(-1, "No reason")
+        }
     }
     val known = knownReason
+    val message = message
     if (known != null) {
         if (e != null) {
-            throw TencentApiException("${known.name}(${known.code}): $message", e)
+            throw TencentApiException(
+                known.code.toInt(),
+                "${known.name}: $message"
+            ).initCause(e)
         } else {
-            throw TencentApiException("${known.name}(${known.code}): $message")
+            throw TencentApiException(known.code.toInt(), "${known.name}: $message")
         }
     } else {
         if (e != null) {
-            throw TencentApiException("$code: $message", e)
+            throw TencentApiException(code.toInt(), message).initCause(e)
         } else {
-            throw TencentApiException("$code: $message")
+            throw TencentApiException(code.toInt(), message)
         }
     }
 }

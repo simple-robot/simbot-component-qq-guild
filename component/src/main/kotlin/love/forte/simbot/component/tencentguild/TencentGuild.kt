@@ -6,7 +6,9 @@ import kotlinx.coroutines.runBlocking
 import love.forte.simbot.*
 import love.forte.simbot.action.NotSupportActionException
 import love.forte.simbot.definition.Guild
+import love.forte.simbot.definition.GuildMember
 import love.forte.simbot.definition.Organization
+import love.forte.simbot.utils.runInBlocking
 import java.util.stream.Stream
 
 /**
@@ -44,6 +46,11 @@ public interface TencentGuild : Guild {
     override suspend fun members(groupingId: ID?, limiter: Limiter): Flow<TencentMember> = emptyFlow()
 
     /**
+     * 频道无法获取成员列表
+     */
+    override suspend fun member(id: ID): TencentMember? = null
+
+    /**
      * 频道无法获取成员列表。
      */
     @OptIn(Api4J::class)
@@ -68,6 +75,7 @@ public interface TencentGuild : Guild {
 
     override suspend fun unmute(): Boolean = throw NotSupportActionException("unmute not support")
     override suspend fun previous(): Organization? = null
+    override fun getMember(id: ID): GuildMember? = runInBlocking { member(id) }
 
     @OptIn(Api4J::class)
     override val previous: Organization?
