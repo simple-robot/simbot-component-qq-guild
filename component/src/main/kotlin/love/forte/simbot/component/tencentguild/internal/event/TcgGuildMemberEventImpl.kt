@@ -9,11 +9,11 @@ import love.forte.simbot.component.tencentguild.event.TcgGuildMemberEvent
 import love.forte.simbot.component.tencentguild.internal.TencentGuildBotImpl
 import love.forte.simbot.component.tencentguild.internal.TencentGuildImpl
 import love.forte.simbot.component.tencentguild.internal.TencentMemberImpl
+import love.forte.simbot.component.tencentguild.util.request
 import love.forte.simbot.event.Event
 import love.forte.simbot.tencentguild.EventSignals
 import love.forte.simbot.tencentguild.TencentMemberInfo
 import love.forte.simbot.tencentguild.api.guild.GetGuildApi
-import love.forte.simbot.tencentguild.request
 import love.forte.simbot.utils.lazyValue
 
 

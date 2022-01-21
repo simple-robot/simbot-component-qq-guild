@@ -8,6 +8,7 @@ import love.forte.simbot.action.MessageReplyReceipt
 import love.forte.simbot.component.tencentguild.TencentMember
 import love.forte.simbot.component.tencentguild.event.TcgChannelAtMessageEvent
 import love.forte.simbot.component.tencentguild.internal.*
+import love.forte.simbot.component.tencentguild.util.request
 import love.forte.simbot.event.Event
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageReceipt
@@ -16,7 +17,6 @@ import love.forte.simbot.tencentguild.TencentMessage
 import love.forte.simbot.tencentguild.api.channel.GetChannelApi
 import love.forte.simbot.tencentguild.api.guild.GetGuildApi
 import love.forte.simbot.tencentguild.api.message.MessageSendApi
-import love.forte.simbot.tencentguild.request
 import love.forte.simbot.utils.LazyValue
 import love.forte.simbot.utils.lazyValue
 

@@ -10,13 +10,13 @@ import love.forte.simbot.Limiter
 import love.forte.simbot.action.NotSupportActionException
 import love.forte.simbot.component.tencentguild.TencentGuild
 import love.forte.simbot.component.tencentguild.TencentRole
+import love.forte.simbot.component.tencentguild.util.request
 import love.forte.simbot.tencentguild.TencentChannelInfo
 import love.forte.simbot.tencentguild.TencentGuildInfo
 import love.forte.simbot.tencentguild.TencentRoleInfo
 import love.forte.simbot.tencentguild.api.channel.GetGuildChannelListApi
 import love.forte.simbot.tencentguild.api.member.GetMemberApi
 import love.forte.simbot.tencentguild.api.role.GetGuildRoleListApi
-import love.forte.simbot.tencentguild.request
 import love.forte.simbot.utils.LazyValue
 import love.forte.simbot.utils.lazyValue
 import love.forte.simbot.withLimiter

@@ -9,12 +9,12 @@ import love.forte.simbot.component.tencentguild.TencentChannel
 import love.forte.simbot.component.tencentguild.TencentGuild
 import love.forte.simbot.component.tencentguild.TencentRole
 import love.forte.simbot.component.tencentguild.event.TcgChannelAtMessageEvent
+import love.forte.simbot.component.tencentguild.util.request
 import love.forte.simbot.event.EventProcessingContext
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageReceipt
 import love.forte.simbot.tencentguild.TencentChannelInfo
 import love.forte.simbot.tencentguild.api.message.MessageSendApi
-import love.forte.simbot.tencentguild.request
 import java.util.stream.Stream
 
 /**
