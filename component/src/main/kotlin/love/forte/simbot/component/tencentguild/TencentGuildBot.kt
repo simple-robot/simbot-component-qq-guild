@@ -30,7 +30,7 @@ import java.util.stream.Stream
  * 一个tencent频道BOT的接口实例。
  * @author ForteScarlet
  */
-public abstract class TencentGuildBot : Bot, TencentBot {
+public abstract class TencentGuildBot : Bot {
 
     public abstract val sourceBot: TencentBot
 
@@ -38,10 +38,10 @@ public abstract class TencentGuildBot : Bot, TencentBot {
         get() = sourceBot.ticket.appId.ID
 
     override val username: String
-        get() = botInfo.username
+        get() = sourceBot.botInfo.username
 
     override val avatar: String
-        get() = botInfo.avatar
+        get() = sourceBot.botInfo.avatar
 
     abstract override val manager: TencentGuildBotManager
 
@@ -70,12 +70,12 @@ public abstract class TencentGuildBot : Bot, TencentBot {
 
     @Api4J
     override fun cancelBlocking(reason: Throwable?): Boolean {
-        return super<TencentBot>.cancelBlocking(reason)
+        return sourceBot.cancelBlocking(reason)
     }
 
     @Api4J
     override fun startBlocking(): Boolean {
-        return super<TencentBot>.startBlocking()
+        return sourceBot.startBlocking()
     }
 
 

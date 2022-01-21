@@ -28,6 +28,7 @@ import love.forte.simbot.tencentguild.api.guild.GetBotGuildListApi
 import love.forte.simbot.tencentguild.api.guild.GetGuildApi
 import love.forte.simbot.utils.runInBlocking
 import java.util.stream.Stream
+import kotlin.coroutines.CoroutineContext
 import kotlin.streams.asStream
 
 /**
@@ -38,9 +39,13 @@ internal class TencentGuildBotImpl(
     override val sourceBot: TencentBot,
     override val manager: TencentGuildBotManager,
     override val eventProcessor: EventProcessor,
-) : TencentGuildBot(), TencentBot by sourceBot {
+) : TencentGuildBot() {
 
-    private val job get() = sourceBot.coroutineContext[Job]!!
+    override val coroutineContext: CoroutineContext
+        get() = sourceBot.coroutineContext
+
+    private val job
+        get() = sourceBot.coroutineContext[Job]!!
 
     override val logger =
         LoggerFactory.getLogger("love.forte.simbot.component.tencentguild.bot.${sourceBot.ticket.appKey}")
@@ -65,7 +70,7 @@ internal class TencentGuildBotImpl(
 
     private fun getGuildFlow(limiter: Limiter): Flow<TencentGuildInfo> {
         return limiter.toFlow { batchSize ->
-            val batch = if (batchSize in 1 .. 100) batchSize else 100
+            val batch = if (batchSize in 1..100) batchSize else 100
             var lastId: ID? = null
 
             while (true) {
@@ -83,7 +88,7 @@ internal class TencentGuildBotImpl(
 
     private fun getGuildSequence(limiter: Limiter): Sequence<TencentGuildInfo> {
         return limiter.toSequence { batchSize ->
-            val batch = if (batchSize in 1 .. 100) batchSize else 100
+            val batch = if (batchSize in 1..100) batchSize else 100
             var lastId: ID? = null
             while (true) {
                 val list = runBlocking {
@@ -150,15 +155,6 @@ internal class TencentGuildBotImpl(
         sourceBot.join()
     }
 
-    @Api4J
-    override fun joinBlocking() {
-        super<TencentGuildBot>.joinBlocking()
-    }
-
-    @Api4J
-    override fun startBlocking(): Boolean {
-        return super<TencentGuildBot>.startBlocking()
-    }
 
     override suspend fun cancel(reason: Throwable?): Boolean = sourceBot.cancel(reason)
 
@@ -173,7 +169,6 @@ internal class TencentGuildBotImpl(
 
     override val isCancelled: Boolean
         get() = job.isCancelled
-
 
 
 }
