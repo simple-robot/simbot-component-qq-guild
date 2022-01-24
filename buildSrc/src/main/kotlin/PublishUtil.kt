@@ -136,6 +136,10 @@ fun MavenPublication.setupPom(project: Project) {
 
         licenses {
             license {
+                name.set("GNU GENERAL PUBLIC LICENSE, Version 3")
+                url.set("https://www.gnu.org/licenses/gpl-3.0-standalone.html")
+            }
+            license {
                 name.set("GNU LESSER GENERAL PUBLIC LICENSE, Version 3")
                 url.set("https://www.gnu.org/licenses/lgpl-3.0-standalone.html")
             }
