@@ -91,7 +91,7 @@ public suspend fun <R> TencentApi<R>.request(
     token: String,
     decoder: StringFormat = defaultJson
 ): R {
-    return this.doRequest(client, server, token, decoder)
+    return doRequest(client, server, token, decoder)
 }
 
 
