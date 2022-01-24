@@ -97,7 +97,9 @@ public interface TencentEmoji {
     }
 }
 
-public fun TencentEmoji(id: ID, type: TencentEmoji.Type = TencentEmoji.Type.SYSTEM): TencentEmoji = TencentEmojiImpl(id.toCharSequenceID(), type)
+public fun TencentEmoji(id: ID, type: TencentEmoji.Type = TencentEmoji.Type.SYSTEM): TencentEmoji =
+    TencentEmojiImpl(id.toCharSequenceID(), type)
+
 public fun TencentEmoji(id: ID, type: Int): TencentEmoji = TencentEmojiImpl(id.toCharSequenceID(), type)
 
 public fun emojiType(type: Int): TencentEmoji.Type = when (type) {

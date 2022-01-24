@@ -32,7 +32,9 @@ import love.forte.simbot.message.Message
  * https://bot.q.qq.com/wiki/develop/api/openapi/guild/model.html
  */
 public object ComponentTencentGuild {
-    @JvmField public val COMPONENT_ID: CharSequenceID = "simbot.tencentguild".ID
+    @JvmField
+    public val COMPONENT_ID: CharSequenceID = "simbot.tencentguild".ID
+
     @Suppress("ObjectPropertyName")
     internal lateinit var _component: Component
     public val component: Component get() = if (::_component.isInitialized) _component else Components[COMPONENT_ID]

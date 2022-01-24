@@ -78,10 +78,13 @@ public interface TencentRoleInfo {
     ) {
         /** 全体成员身份组 */
         ALL_MEMBER(1),
+
         /** 管理员身份组 */
         ADMIN(2),
+
         /** 群主/创建者身份组 */
         OWNER(4),
+
         /** 子频道管理员身份组 */
         CHANNEL_ADMIN(5);
     }

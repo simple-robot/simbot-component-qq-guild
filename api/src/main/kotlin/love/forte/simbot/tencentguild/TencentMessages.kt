@@ -209,7 +209,6 @@ public interface TencentMessage {
     }
 
 
-
     public companion object {
         internal val serializer: KSerializer<out TencentMessage> = TencentMessageImpl.serializer()
         //internal val sendSerializer: KSerializer<out TencentMessage> = TencentMessageImplSerializer(TencentMessageImpl.serializer())

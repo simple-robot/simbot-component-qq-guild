@@ -25,7 +25,6 @@ import love.forte.simbot.tencentguild.api.TencentApi
 import love.forte.simbot.tencentguild.api.request
 
 
-
 /**
  * 直接通过bot进行请求。
  *

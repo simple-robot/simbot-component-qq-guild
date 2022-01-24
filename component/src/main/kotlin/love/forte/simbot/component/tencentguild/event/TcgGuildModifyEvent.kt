@@ -44,9 +44,17 @@ public sealed class TcgGuildModifyEvent<F, T> : TcgEvent<TencentGuildInfo>(), Ch
     GuildEvent {
     abstract override val sourceEventEntity: TencentGuildInfo
     abstract override val eventSignal: EventSignals.Guilds<TencentGuildInfo>
+
+    @JvmSynthetic
     abstract override suspend fun source(): TencentGuildBot
+
+    @JvmSynthetic
     abstract override suspend fun after(): T
+
+    @JvmSynthetic
     abstract override suspend fun before(): F
+
+    @JvmSynthetic
     abstract override suspend fun guild(): TencentGuild
 
     abstract override val changedTime: Timestamp
@@ -65,6 +73,7 @@ public sealed class TcgGuildModifyEvent<F, T> : TcgEvent<TencentGuildInfo>(), Ch
     override val organization: TencentGuild
         get() = guild
 
+    @JvmSynthetic
     override suspend fun organization(): TencentGuild = guild()
     override val bot: TencentGuildBot get() = source
 
@@ -88,13 +97,19 @@ public sealed class TcgGuildModifyEvent<F, T> : TcgEvent<TencentGuildInfo>(), Ch
         abstract override val source: TencentGuildBot
         abstract override val after: TencentGuild
 
+        @JvmSynthetic
         override suspend fun source(): TencentGuildBot = source
+
+        @JvmSynthetic
         override suspend fun after(): TencentGuild = after
+
+        @JvmSynthetic
         override suspend fun before(): Any? = null
         override val eventSignal: EventSignals.Guilds<TencentGuildInfo>
             get() = EventSignals.Guilds.GuildCreate
 
 
+        @JvmSynthetic
         override suspend fun guild(): TencentGuild = after()
 
         @Api4J
@@ -121,8 +136,13 @@ public sealed class TcgGuildModifyEvent<F, T> : TcgEvent<TencentGuildInfo>(), Ch
         abstract override val source: TencentGuildBot
         abstract override val after: TencentGuild
 
+        @JvmSynthetic
         override suspend fun after(): TencentGuild = after
+
+        @JvmSynthetic
         override suspend fun source(): TencentGuildBot = source
+
+        @JvmSynthetic
         override suspend fun before(): Any? = null
         override val eventSignal: EventSignals.Guilds<TencentGuildInfo>
             get() = EventSignals.Guilds.GuildUpdate
@@ -131,6 +151,7 @@ public sealed class TcgGuildModifyEvent<F, T> : TcgEvent<TencentGuildInfo>(), Ch
         override val guild: TencentGuild
             get() = after
 
+        @JvmSynthetic
         override suspend fun guild(): TencentGuild = after()
 
         override val key: Event.Key<out Update> get() = Key
@@ -154,8 +175,13 @@ public sealed class TcgGuildModifyEvent<F, T> : TcgEvent<TencentGuildInfo>(), Ch
         abstract override val source: TencentGuildBot
         abstract override val before: TencentGuild
 
+        @JvmSynthetic
         override suspend fun before(): TencentGuild = before
+
+        @JvmSynthetic
         override suspend fun source(): TencentGuildBot = source
+
+        @JvmSynthetic
         override suspend fun after(): Any? = null
         override val eventSignal: EventSignals.Guilds<TencentGuildInfo>
             get() = EventSignals.Guilds.GuildUpdate
@@ -164,6 +190,7 @@ public sealed class TcgGuildModifyEvent<F, T> : TcgEvent<TencentGuildInfo>(), Ch
         override val guild: TencentGuild
             get() = before
 
+        @JvmSynthetic
         override suspend fun guild(): TencentGuild = before()
 
         override val key: Event.Key<out Delete> get() = Key

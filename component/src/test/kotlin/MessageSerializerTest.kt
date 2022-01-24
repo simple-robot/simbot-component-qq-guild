@@ -37,13 +37,15 @@ class MessageSerializerTest {
     init {
         Components
     }
+
     val module = Messages.serializersModule
 
-    val json get() = Json {
-        isLenient = true
-        ignoreUnknownKeys = true
-        serializersModule += module
-    }
+    val json
+        get() = Json {
+            isLenient = true
+            ignoreUnknownKeys = true
+            serializersModule += module
+        }
 
     val yaml = Yaml(module)
 

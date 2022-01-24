@@ -34,30 +34,30 @@ class ListenerTest {
 }
 
 
+val listener =
+    coreListener(eventKey = TcgChannelAtMessageEvent) { context: EventProcessingContext, event: TcgChannelAtMessageEvent ->
+        // 此消息事件的子频道
+        val channel: TencentChannel = event.source()
 
-val listener = coreListener(eventKey = TcgChannelAtMessageEvent) { context: EventProcessingContext, event: TcgChannelAtMessageEvent ->
-    // 此消息事件的子频道
-    val channel: TencentChannel = event.source()
+        // 子频道的外部频道
+        val guild: TencentGuild = channel.guild()
 
-    // 子频道的外部频道
-    val guild: TencentGuild = channel.guild()
+        // 这个频道的所有子频道
+        val children: Flow<TencentChannel> = guild.children()
 
-    // 这个频道的所有子频道
-    val children: Flow<TencentChannel> = guild.children()
+        children.collect {
+            println("Channel: ${it.name}")
+        }
 
-    children.collect {
-        println("Channel: ${it.name}")
+        // 发送消息,
+        // 目前支持:
+        // Text
+        // At
+        // Ark(tencent guild 专属)
+        // AttachmentMessage(tencent guild 专属)
+
+        // 消息：@事件发送者 你好啊
+        channel.send(At(event.id) + Text { "你好啊！" })
+
+        null // 事件返回值，爱是啥是啥
     }
-
-    // 发送消息,
-    // 目前支持:
-    // Text
-    // At
-    // Ark(tencent guild 专属)
-    // AttachmentMessage(tencent guild 专属)
-
-    // 消息：@事件发送者 你好啊
-    channel.send(At(event.id) + Text { "你好啊！" })
-
-    null // 事件返回值，爱是啥是啥
-}

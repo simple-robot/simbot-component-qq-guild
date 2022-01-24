@@ -22,7 +22,10 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 
-public sealed class GatewayApis<R : GatewayInfo>(protected val path: List<String>, override val resultDeserializer: DeserializationStrategy<out R>) : GetTencentApi<R>() {
+public sealed class GatewayApis<R : GatewayInfo>(
+    protected val path: List<String>,
+    override val resultDeserializer: DeserializationStrategy<out R>
+) : GetTencentApi<R>() {
 
     override fun route(builder: RouteInfoBuilder) {
         builder.apiPath = path
@@ -31,7 +34,6 @@ public sealed class GatewayApis<R : GatewayInfo>(protected val path: List<String
     public object Normal : GatewayApis<Gateway>(listOf("gateway"), Gateway.serializer())
     public object Shared : GatewayApis<GatewayWithShard>(listOf("gateway", "bot"), GatewayWithShard.serializer())
 }
-
 
 
 /**

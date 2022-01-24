@@ -98,11 +98,6 @@ public class ComponentTest4J {
         });
 
 
-
-
-
-
-
         GroupMessageEvent event = null; // 假如你有一个事件。实际上这里并不能是null
 
         // 异步的进行事件处理。Java中更推荐这种推送方式

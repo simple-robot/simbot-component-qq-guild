@@ -73,7 +73,8 @@ public interface TencentChannelInfo : ChannelInfo {
 
 
     @Deprecated("子频道没有创建时间信息", ReplaceWith("Timestamp.NotSupport", "love.forte.simbot.Timestamp"))
-    override val createTime: Timestamp get() = Timestamp.NotSupport
+    override val createTime: Timestamp
+        get() = Timestamp.NotSupport
 
     @Deprecated("子频道没有人数信息", ReplaceWith("-1"))
     override val currentMember: Int

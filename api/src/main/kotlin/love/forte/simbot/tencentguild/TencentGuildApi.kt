@@ -38,11 +38,13 @@ import java.time.format.DateTimeFormatter
 public object TencentGuildApi {
     @Suppress("MemberVisibilityCanBePrivate")
     public const val URL_STRING: String = "https://api.sgroup.qq.com"
+
     @JvmField
     public val URL: Url = Url(URL_STRING)
 
     @Suppress("MemberVisibilityCanBePrivate")
     public const val SANDBOX_URL_STRING: String = "https://sandbox.api.sgroup.qq.com"
+
     @JvmField
     public val SANDBOX_URL: Url = Url(SANDBOX_URL_STRING)
 
@@ -67,7 +69,6 @@ public object TencentGuildApi {
 
     }
 }
-
 
 
 public object TimestampISO8601Serializer : KSerializer<Timestamp> {

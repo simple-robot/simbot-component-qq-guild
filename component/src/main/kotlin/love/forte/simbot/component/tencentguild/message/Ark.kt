@@ -59,10 +59,11 @@ public data class Ark internal constructor(
             get() = Ark::class
 
         @JvmStatic
-        public fun byArk(ark: TencentMessage.Ark) : Ark = Ark(ark.templateId, ark.kv.toList())
+        public fun byArk(ark: TencentMessage.Ark): Ark = Ark(ark.templateId, ark.kv.toList())
 
         @JvmStatic
-        public fun create(templateId: ID, kv: List<TencentMessage.Ark.Kv> = emptyList()) : Ark = Ark(templateId, kv.toList())
+        public fun create(templateId: ID, kv: List<TencentMessage.Ark.Kv> = emptyList()): Ark =
+            Ark(templateId, kv.toList())
     }
 
 }
@@ -73,7 +74,6 @@ public fun TencentMessage.Ark.toMessage(): Ark = Ark(templateId, kv)
 public fun Ark.toArk(): TencentMessage.Ark = buildArk(templateId) {
     kvs = this@toArk.kvs.toMutableList()
 }
-
 
 
 internal object ArkParser : SendingMessageParser {

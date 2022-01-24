@@ -77,6 +77,7 @@ public abstract class TencentApi<out R> {
      * @throws love.forte.simbot.tencentguild.TencentApiException 请求过程中出现了错误。
      * @see ErrInfo
      */
+    @JvmSynthetic
     public open suspend fun doRequest(
         client: HttpClient,
         server: Url,

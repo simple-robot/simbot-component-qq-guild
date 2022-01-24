@@ -39,9 +39,16 @@ import love.forte.simbot.tencentguild.TencentChannelInfo
 public sealed class TcgChannelModifyEvent<F, T> : TcgEvent<TencentChannelInfo>(), ChangedEvent<TencentGuild, F, T>,
     ChannelEvent {
     abstract override val sourceEventEntity: TencentChannelInfo
+
+    @JvmSynthetic
     abstract override suspend fun after(): T
+
+    @JvmSynthetic
     abstract override suspend fun before(): F
+
+    @JvmSynthetic
     abstract override suspend fun source(): TencentGuild
+
     @OptIn(Api4J::class)
     abstract override val channel: TencentChannel
 
@@ -56,8 +63,10 @@ public sealed class TcgChannelModifyEvent<F, T> : TcgEvent<TencentChannelInfo>()
 
     //// impl
 
+    @JvmSynthetic
     override suspend fun channel(): TencentChannel = channel
 
+    @JvmSynthetic
     override suspend fun organization(): TencentChannel = channel()
 
     @Api4J
@@ -76,6 +85,7 @@ public sealed class TcgChannelModifyEvent<F, T> : TcgEvent<TencentChannelInfo>()
      * 子频道被创建
      */
     public abstract class Create : TcgChannelModifyEvent<Any?, TencentChannel>() {
+        @JvmSynthetic
         override suspend fun before(): Any? = null
         override val before: Any? get() = null
 
@@ -93,6 +103,7 @@ public sealed class TcgChannelModifyEvent<F, T> : TcgEvent<TencentChannelInfo>()
      * 无法得知变更前 ([before]) 的信息。
      */
     public abstract class Update : TcgChannelModifyEvent<Any?, TencentChannel>() {
+        @JvmSynthetic
         override suspend fun before(): Any? = null
         override val before: Any? get() = null
         override val key: Event.Key<out Update> get() = Key
@@ -106,6 +117,7 @@ public sealed class TcgChannelModifyEvent<F, T> : TcgEvent<TencentChannelInfo>()
      * 子频道被删除
      */
     public abstract class Delete : TcgChannelModifyEvent<TencentChannel, Any?>() {
+        @JvmSynthetic
         override suspend fun after(): Any? = null
         override val after: Any? get() = null
 

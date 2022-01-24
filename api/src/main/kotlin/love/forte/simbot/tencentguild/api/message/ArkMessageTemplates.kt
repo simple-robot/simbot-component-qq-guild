@@ -99,6 +99,7 @@ public sealed class ArkMessageTemplates {
         private companion object {
             val ID = 24.ID
         }
+
         override val ark: TencentMessage.Ark = buildArk(ID) {
             kv("#DESC#", desc)
             kv("#PROMPT#", prompt)
@@ -132,6 +133,7 @@ public sealed class ArkMessageTemplates {
         private companion object {
             val ID = 37.ID
         }
+
         override val ark: TencentMessage.Ark = buildArk(ID) {
             kv("#PROMPT#", prompt)
             kv("#METATITLE#", metaTitle)
@@ -140,7 +142,6 @@ public sealed class ArkMessageTemplates {
             kv("#METAURL#", metaUrl)
         }
     }
-
 
 
 }

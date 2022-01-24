@@ -30,6 +30,7 @@ import love.forte.simbot.toCharSequenceID
  * @author ForteScarlet
  */
 @Serializable
-internal data class TencentEmojiImpl(override val id: CharSequenceID, override val type: TencentEmoji.Type) : TencentEmoji {
-    constructor(id: ID, type: Int): this(id.toCharSequenceID(), emojiType(type))
+internal data class TencentEmojiImpl(override val id: CharSequenceID, override val type: TencentEmoji.Type) :
+    TencentEmoji {
+    constructor(id: ID, type: Int) : this(id.toCharSequenceID(), emojiType(type))
 }

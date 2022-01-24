@@ -31,7 +31,6 @@ class JobTest {
         val pJob = Job()
 
 
-
         val j1 = Job(pJob)
         val j2 = Job(pJob)
 
@@ -67,8 +66,6 @@ class JobTest {
 
         pJob.cancelAndJoin()
         println("canceled")
-
-
 
 
     }

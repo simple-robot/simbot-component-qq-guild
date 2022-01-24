@@ -36,6 +36,7 @@ import kotlin.time.Duration
  * @author ForteScarlet
  */
 public interface TencentChannel : Channel, TencentChannelInfo {
+    @JvmSynthetic
     override suspend fun send(message: Message): MessageReceipt
 
     override val bot: Bot
@@ -56,17 +57,20 @@ public interface TencentChannel : Channel, TencentChannelInfo {
     @Api4J
     override val previous: TencentGuild
 
+    @JvmSynthetic
     override suspend fun guild(): TencentGuild
 
+    @JvmSynthetic
     override suspend fun owner(): TencentMember
-
 
 
     @Api4J
     override fun getRoles(groupingId: ID?, limiter: Limiter): Stream<out TencentRole>
 
+    @JvmSynthetic
     override suspend fun previous(): TencentGuild
 
+    @JvmSynthetic
     override suspend fun roles(groupingId: ID?, limiter: Limiter): Flow<TencentRole>
 
 
@@ -84,17 +88,19 @@ public interface TencentChannel : Channel, TencentChannelInfo {
     /**
      * 子频道目前无法直接获取成员列表。将会直接返回 [previous] 的成员列表。
      */
+    @JvmSynthetic
     override suspend fun members(groupingId: ID?, limiter: Limiter): Flow<TencentMember> {
         return previous().members(groupingId, limiter)
     }
 
+    @JvmSynthetic
     override suspend fun member(id: ID): TencentMember? {
         return previous().member(id)
     }
 
 
-
     @Deprecated("子频道不支持禁言", ReplaceWith("false"))
+    @JvmSynthetic
     override suspend fun mute(duration: Duration): Boolean = false
 
     @OptIn(Api4J::class)
@@ -102,6 +108,7 @@ public interface TencentChannel : Channel, TencentChannelInfo {
     override fun muteBlocking(time: Long, unit: TimeUnit): Boolean = false
 
     @Deprecated("子频道不支持禁言", ReplaceWith("false"))
+    @JvmSynthetic
     override suspend fun unmute(): Boolean = false
 
     @OptIn(Api4J::class)

@@ -46,11 +46,18 @@ import love.forte.simbot.tencentguild.TencentMessage
  *
  * @author ForteScarlet
  */
-public abstract class TcgChannelAtMessageEvent : TcgEvent<TencentMessage>(), ChannelMessageEvent, ReplySupport, SendSupport {
+public abstract class TcgChannelAtMessageEvent : TcgEvent<TencentMessage>(), ChannelMessageEvent, ReplySupport,
+    SendSupport {
     abstract override val sourceEventEntity: TencentMessage
     override val eventSignal: EventSignals<TencentMessage> get() = EventSignals.AtMessages.AtMessageCreate
+
+    @JvmSynthetic
     abstract override suspend fun author(): TencentMember
+
+    @JvmSynthetic
     abstract override suspend fun source(): TencentChannel
+
+    @JvmSynthetic
     abstract override suspend fun channel(): TencentChannel
     abstract override val timestamp: Timestamp
     abstract override val visibleScope: Event.VisibleScope
@@ -60,6 +67,7 @@ public abstract class TcgChannelAtMessageEvent : TcgEvent<TencentMessage>(), Cha
 
     //// impl
 
+    @JvmSynthetic
     override suspend fun organization(): TencentChannel = channel()
 
     @Api4J
@@ -82,11 +90,13 @@ public abstract class TcgChannelAtMessageEvent : TcgEvent<TencentMessage>(), Cha
     /**
      * Tcg支持消息回复。
      */
+    @JvmSynthetic
     abstract override suspend fun reply(message: Message): MessageReplyReceipt
 
     /**
      * Tcg暂不支持撤回他人消息。
      */
+    @JvmSynthetic
     override suspend fun delete(): Boolean = false // not support, maybe.
 
     override val key: Key get() = Key

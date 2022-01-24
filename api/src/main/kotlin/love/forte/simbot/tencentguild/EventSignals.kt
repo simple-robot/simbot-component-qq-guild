@@ -118,7 +118,8 @@ public sealed class EventSignals<out D : Any>(
       - AT_MESSAGE_CREATE     // 当收到@机器人的消息时
      */
 
-    public sealed class Other<D : Any>(t: String, decoder: DeserializationStrategy<out D>) : EventSignals<D>(t, decoder) {
+    public sealed class Other<D : Any>(t: String, decoder: DeserializationStrategy<out D>) :
+        EventSignals<D>(t, decoder) {
         /**
          * 鉴权后的ready
          */
@@ -143,7 +144,8 @@ public sealed class EventSignals<out D : Any>(
 
     }
 
-    public sealed class Guilds<D : Any>(t: String, decoder: DeserializationStrategy<out D>) : EventSignals<D>(t, decoder) {
+    public sealed class Guilds<D : Any>(t: String, decoder: DeserializationStrategy<out D>) :
+        EventSignals<D>(t, decoder) {
         /** 当机器人加入新guild时 */
         public object GuildCreate : Guilds<TencentGuildInfo>("GUILD_CREATE", TencentGuildInfo.serializer)
 

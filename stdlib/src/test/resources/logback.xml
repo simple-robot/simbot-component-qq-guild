@@ -25,6 +25,6 @@
     </appender>
 
     <root level="DEBUG">
-        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="CONSOLE"/>
     </root>
 </configuration>

@@ -73,7 +73,7 @@ public interface TencentBot : CoroutineScope {
      * process for java
      */
     @Api4J
-    public fun <R: Any> process(eventType: EventSignals<R>, processor: (R) -> Unit) {
+    public fun <R : Any> process(eventType: EventSignals<R>, processor: (R) -> Unit) {
         processor { _, decoded ->
             if (type == eventType.type) {
                 // val eventData: R = decoder.decodeFromJsonElement(eventType.decoder, data)

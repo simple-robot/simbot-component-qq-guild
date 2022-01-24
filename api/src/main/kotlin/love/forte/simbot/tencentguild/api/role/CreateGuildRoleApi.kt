@@ -80,12 +80,11 @@ public class CreateGuildRoleApi internal constructor(
 public interface GuildRoleCreated {
     public val roleId: CharSequenceID
     public val role: TencentRoleInfo
+
     public companion object {
         public val serializer: KSerializer<out GuildRoleCreated> = GuildRoleCreatedImpl.serializer()
     }
 }
-
-
 
 
 @Serializable

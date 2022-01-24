@@ -48,10 +48,17 @@ public interface TencentMember : GuildMember, MemberInfo, TencentMemberInfo {
     override val id: ID
     override val status: UserStatus
     override val username: String
+
+    @JvmSynthetic
     override suspend fun roles(): Flow<TencentRole>
+
     @Api4J
     override val roles: Stream<out TencentRole>
+
+    @JvmSynthetic
     override suspend fun organization(): TencentGuild
+
+    @JvmSynthetic
     override suspend fun guild(): TencentGuild
     //// Impl
 
@@ -60,9 +67,11 @@ public interface TencentMember : GuildMember, MemberInfo, TencentMemberInfo {
         get() = runInBlocking { guild() }
 
     @Deprecated("子频道不支持禁言", ReplaceWith("false"))
+    @JvmSynthetic
     override suspend fun mute(duration: Duration): Boolean = false
 
     @Deprecated("子频道不支持禁言", ReplaceWith("false"))
+    @JvmSynthetic
     override suspend fun unmute(): Boolean = false
 
     @Deprecated("子频道不支持禁言", ReplaceWith("false"))

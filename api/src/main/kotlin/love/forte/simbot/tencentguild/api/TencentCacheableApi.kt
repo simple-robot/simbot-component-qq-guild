@@ -49,7 +49,6 @@ public sealed class TencentCacheableApi<R> : TencentApi<R>() {
 }
 
 
-
 // Type
 // Kind
 // Mode

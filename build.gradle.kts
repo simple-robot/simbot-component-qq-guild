@@ -39,7 +39,7 @@ repositories {
 subprojects {
     group = P.TencentGuild.GROUP
     version = P.TencentGuild.VERSION
-    
+
     apply(plugin = "maven-publish")
     apply(plugin = "java")
     apply(plugin = "signing")
@@ -51,6 +51,11 @@ subprojects {
 
     configurePublishing(name)
 
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+        kotlinOptions {
+            freeCompilerArgs = freeCompilerArgs + listOf("-Xjvm-default=all")
+        }
+    }
     println("[publishing-configure] - [$name] configured.")
     // set gpg file path to root
     val secretKeyRingFileKey = "signing.secretKeyRingFile"
@@ -72,8 +77,6 @@ subprojects {
 tasks.withType<JavaCompile>() {
     options.encoding = "UTF-8"
 }
-
-
 
 
 val credentialsUsername: String = local().getProperty("credentials.username")!!

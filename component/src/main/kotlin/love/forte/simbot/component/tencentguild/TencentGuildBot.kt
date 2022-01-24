@@ -113,6 +113,8 @@ public abstract class TencentGuildBot : Bot {
 
     @Api4J
     abstract override fun getGuild(id: ID): TencentGuild?
+
+    @JvmSynthetic
     abstract override suspend fun guild(id: ID): TencentGuild?
 
     @JvmSynthetic

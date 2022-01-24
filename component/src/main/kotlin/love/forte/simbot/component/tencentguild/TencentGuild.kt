@@ -43,13 +43,17 @@ public interface TencentGuild : Guild {
     override val name: String
     override val ownerId: ID
 
+    @JvmSynthetic
     override suspend fun children(groupingId: ID?, limiter: Limiter): Flow<TencentChannel>
+
+    @JvmSynthetic
     override suspend fun children(groupingId: ID?): Flow<TencentChannel> = children(groupingId, Limiter)
 
     @Api4J
     override fun getChildren(groupingId: ID?, limiter: Limiter): Stream<out TencentChannel>
 
 
+    @JvmSynthetic
     override suspend fun owner(): TencentMember
 
     @Api4J
@@ -60,11 +64,13 @@ public interface TencentGuild : Guild {
     /**
      * 频道无法获取成员列表。
      */
+    @JvmSynthetic
     override suspend fun members(groupingId: ID?, limiter: Limiter): Flow<TencentMember> = emptyFlow()
 
     /**
      * 频道无法获取成员列表
      */
+    @JvmSynthetic
     override suspend fun member(id: ID): TencentMember? = null
 
     /**
@@ -83,6 +89,7 @@ public interface TencentGuild : Guild {
     override fun getMembers(limiter: Limiter): Stream<out TencentMember> = Stream.empty()
 
 
+    @JvmSynthetic
     override suspend fun roles(groupingId: ID?, limiter: Limiter): Flow<TencentRole>
 
     @Api4J
@@ -90,7 +97,10 @@ public interface TencentGuild : Guild {
 
     //// Impls
 
+    @JvmSynthetic
     override suspend fun unmute(): Boolean = throw NotSupportActionException("unmute not support")
+
+    @JvmSynthetic
     override suspend fun previous(): Organization? = null
     override fun getMember(id: ID): GuildMember? = runInBlocking { member(id) }
 

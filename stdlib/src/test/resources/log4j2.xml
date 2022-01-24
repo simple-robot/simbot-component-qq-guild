@@ -25,7 +25,8 @@
     <appenders>
         <!--console :控制台输出的配置-->
         <console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{%-5level} [%t] %highlight{%c{1.}.%M(%L)}: %msg%n" />
+            <PatternLayout
+                    pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{%-5level} [%t] %highlight{%c{1.}.%M(%L)}: %msg%n"/>
         </console>
     </appenders>
     <!--然后定义logger，只有定义了logger并引入的appender，appender才会生效-->

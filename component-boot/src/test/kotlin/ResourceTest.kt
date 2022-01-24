@@ -51,7 +51,7 @@ fun main() {
             }
             .collectSequence(true)
             /* Packages and file facades are not yet supported in Kotlin reflection. Meanwhile please use Java reflection to inspect this class: class ResourceGetTestKt */
-            .filter { k -> runCatching { k.visibility == KVisibility.PUBLIC }.getOrDefault(false)  }
+            .filter { k -> runCatching { k.visibility == KVisibility.PUBLIC }.getOrDefault(false) }
             .toList()
     }
 }

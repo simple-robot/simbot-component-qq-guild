@@ -48,10 +48,12 @@ public interface TencentChannelPermissionsInfo : Permission {
     public val permissions: Permissions
 
     @Api4J
-    public val permissionsValue: Long get() = permissions.value
+    public val permissionsValue: Long
+        get() = permissions.value
 
     public companion object {
-        internal val serializer: KSerializer<out TencentChannelPermissionsInfo> = TencentChannelPermissionsInfoImpl.serializer()
+        internal val serializer: KSerializer<out TencentChannelPermissionsInfo> =
+            TencentChannelPermissionsInfoImpl.serializer()
     }
 }
 
@@ -66,13 +68,14 @@ public value class Permissions(public val value: Long) {
 
     public val isChannelManageable: Boolean get() = (value and CHANNEL_MANAGEABLE) != 0L
 
-    public val status: PermissionStatus get() = PermissionStatus.builder().also {
-        if (value != 0L) {
-            it.admin()
-            it.organizationAdmin()
-            it.channelAdmin()
-        }
-    }.build()
+    public val status: PermissionStatus
+        get() = PermissionStatus.builder().also {
+            if (value != 0L) {
+                it.admin()
+                it.organizationAdmin()
+                it.channelAdmin()
+            }
+        }.build()
 
     public operator fun plus(other: Permissions): Permissions = Permissions(value or other.value)
     public operator fun plus(other: Long): Permissions = Permissions(value or other)

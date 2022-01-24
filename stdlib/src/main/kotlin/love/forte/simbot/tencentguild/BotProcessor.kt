@@ -32,7 +32,10 @@ public inline fun TencentBot.processor(
 }
 
 
-public inline fun <reified R : Any> TencentBot.processor(eventType: EventSignals<R>, crossinline block: suspend (R) -> Unit) {
+public inline fun <reified R : Any> TencentBot.processor(
+    eventType: EventSignals<R>,
+    crossinline block: suspend (R) -> Unit
+) {
     processor { _, decoded ->
         if (type == eventType.type) {
             // val eventData: R = decoder.decodeFromJsonElement(eventType.decoder, data)

@@ -30,7 +30,7 @@ import love.forte.simbot.message.Text
  *
  * @author ForteScarlet
  */
-public abstract class TencentReceiveMessageContent: ReceivedMessageContent() {
+public abstract class TencentReceiveMessageContent : ReceivedMessageContent() {
     /**
      * metadata
      */

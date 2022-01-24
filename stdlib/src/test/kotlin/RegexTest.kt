@@ -33,7 +33,7 @@ class RegexTest {
 
         regex.findAll(text).forEach {
             if (it.range.first != lastTextIndex) {
-                println("text:  '${text.substring(lastTextIndex until  it.range.first)}'")
+                println("text:  '${text.substring(lastTextIndex until it.range.first)}'")
 
             }
             lastTextIndex = it.range.last + 1
@@ -42,7 +42,6 @@ class RegexTest {
         if (lastTextIndex != text.length) {
             println("text:  '${text.substring(lastTextIndex)}'")
         }
-
 
 
     }

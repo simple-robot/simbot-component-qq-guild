@@ -18,16 +18,12 @@
 
 # 建设中。。
 
-
 基于 [simple-robot](https://github.com/ForteScarlet/simpler-robot) 3.x版本API的 `simple-robot` 组件。
-
-
-
-
 
 ## 事件支持
 
 目前，组件对core下事件的支持：
+
 - TcgGuildModifyEvent -> 频道服务器相关事件
     - TcgGuildModifyEvent.Create -> 频道服务器 - 进入
     - TcgGuildModifyEvent.Update -> 频道服务器 - 更新
@@ -41,14 +37,14 @@
     - TcgChannelModifyEvent.Delete -> 子频道 - 删除
 - TcgChannelAtMessageEvent -> 被At消息事件
 
-
 当然，这不影响你直接使用 `tencent-guild-core` 中定义的事件，但是你无法使用下述的诸如调度器、拦截器等内容。
 
-
-
 ## 使用
+
 ### Maven
+
 版本参考：*见头部图标*
+
 ```xml
 <dependency>
     <groupId>love.forte.simbot.component</groupId>
@@ -69,11 +65,13 @@ implementation "love.forte.simbot.component:simbot-component-tencent-guild-core:
 implementation("love.forte.simbot.component:simbot-component-tencent-guild-core:$version")
 ```
 
-
-
 ## 示例
+
 ### 事件调度管理器
-首先，根据 `simple-robot`, 你需要一个 `EventListenerManager` 来作为针对一系列事件的 **调度入口**, 而 `simple-robot-core` 为我们提供了一个`coreEventManager`:
+
+首先，根据 `simple-robot`, 你需要一个 `EventListenerManager` 来作为针对一系列事件的 **调度入口**, 而 `simple-robot-core`
+为我们提供了一个`coreEventManager`:
+
 ```kotlin
 // 最简配置
 val eventManager = coreListenerManager {
@@ -82,6 +80,7 @@ val eventManager = coreListenerManager {
 ```
 
 上面的示例提到了拦截器，如果要配置拦截器可以这样：
+
 ```kotlin
 val eventManager = coreListenerManager {
     // 配置拦截器
@@ -108,9 +107,10 @@ val eventManager = coreListenerManager {
 
 有关拦截器的概述，可以参考 `simple-robot 3.x` 文档：[定义概述 - 拦截器](https://www.yuque.com/simpler-robot/simpler-robot-doc/gg762t)
 
-
 ### 注册事件
+
 向 `EventListener` 中注册事件是通过注册 `EventListener` 实例完成的，你可以构建一个最基础简单的监听器：
+
 ```kotlin
 val listener = coreListener<ChannelMessageEvent> { context: EventListenerProcessingContext, event ->
     // do 
@@ -121,9 +121,9 @@ val listener2 = coreListener(eventKey = ChannelEvent) { context: EventListenerPr
 }
 ```
 
-可以看到，通过 `coreListener` 的 `eventKey` 指定一个监听的事件类型，此处以 `ChannelMessageEvent` 为例。
-此事件类型是由 `simple-robot-api` 进行定义的规范事件，
+可以看到，通过 `coreListener` 的 `eventKey` 指定一个监听的事件类型，此处以 `ChannelMessageEvent` 为例。 此事件类型是由 `simple-robot-api` 进行定义的规范事件，
 当然，对于当前库来讲，你也可以监听一个QQ频道专属的事件，例如：
+
 ```kotlin
 val listener = coreListener<TcgChannelAtMessageEvent> { context: EventListenerProcessingContext, event ->
     // do
@@ -134,6 +134,7 @@ val listener = coreListener<TcgChannelAtMessageEvent> { context: EventListenerPr
 这个事件继承自 `ChannelMessageEvent`, 因此使用上面提到的标准事件类型也可以监听到。
 
 至于这个事件的使用：
+
 ```kotlin
 val listener = coreListener<TcgChannelAtMessageEvent> { context: EventListenerProcessingContext, event ->
     // 一次事件流程的上下文
@@ -179,11 +180,13 @@ val listener = coreListener<TcgChannelAtMessageEvent> { context: EventListenerPr
 ```
 
 注册到bot管理器：
+
 ```kotlin
 listenerManager.register(listener)
 ```
 
 当然，你也可以直接用以下方式注册，而不需要提前创建Listener实例：
+
 ```kotlin
 listenerManager.listen(eventKey = ChannelMessageEvent) { context, event ->
     
@@ -193,11 +196,11 @@ listenerManager.listen(eventKey = ChannelMessageEvent) { context, event ->
 }
 ```
 
-
-
 ### BOT管理器
-事件调度管理器结束后，便需要一个Bot管理器。根据 `simple-robot` 规范，所有的Bot应全部产出自其专属的 `BotManager` 并由其进行统一管理。
-在 `component-tencent-guild`, 提供了一个此模块下专属的bot管理器：
+
+事件调度管理器结束后，便需要一个Bot管理器。根据 `simple-robot` 规范，所有的Bot应全部产出自其专属的 `BotManager` 并由其进行统一管理。 在 `component-tencent-guild`,
+提供了一个此模块下专属的bot管理器：
+
 ```kotlin
 // 注意！botManager 必须配置一个事件管理器，也就是一开始创建的东西。
 val botManager = tencentGuildBotManager(listenerManager) {
@@ -211,6 +214,7 @@ val botManager = tencentGuildBotManager(listenerManager) {
 ```
 
 然后，我们注册一个BOT。 这里我们直接使用 `tencentGuildBotManager` 提供的专属注册方法：
+
 ```kotlin
 val bot: TencentGuildBot = botManager.register(appId, appKey, token) {
     // 这里也可以进行单独配置。 
@@ -219,6 +223,7 @@ val bot: TencentGuildBot = botManager.register(appId, appKey, token) {
 ```
 
 到这里，可以启动bot了:
+
 ```kotlin
 bot.start()
 
@@ -233,8 +238,8 @@ bot.guilds().collect { println("Guild: ${it.name}") }
 bot.join() // 直到关闭
 ```
 
-
 ### 最简示例：
+
 ```kotlin
 val listenerManager = coreListenerManager {
     // 配置

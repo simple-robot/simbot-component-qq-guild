@@ -35,7 +35,9 @@ core模块是针对bot事件监听的简易实现，是一个半 **底层** 库�
 - 测试了一周以上的挂机。
 
 ### Maven
+
 版本参考：*见头部图标*
+
 ```xml
 
 <dependency>
@@ -141,33 +143,33 @@ suspend fun main() {
 ### Java
 
 ```java
-TencentBot bot = TencentBotFactory.newBot("appId", "appKey", "token", c -> {
+TencentBot bot=TencentBotFactory.newBot("appId","appKey","token",c->{
         // Listen AT_MESSAGES
-        c.intentsForShardFactoryAsInt(shard -> EventSignals.AtMessages.getIntentsValue());
+        c.intentsForShardFactoryAsInt(shard->EventSignals.AtMessages.getIntentsValue());
 
         // config.. 
-        
+
         return Unit.INSTANCE;
-})
+        })
 
 // 事件处理
-bot.process(EventSignals.AtMessages.AtMessageCreate.INSTANCE, (tencentMessage) -> {
-    
-    System.out.println(tencentMessage.getContent());
-    
-    // 构建API
-    final MessageSendApi sendApi = new MessageSendApi(tencentMessage.getChannelId(), "Hi", tencentMessage.getId());
-    
-    // 发送消息
-    final TencentMessage result = BotRequestUtil.doRequest(bot, sendApi);
-    
-    System.out.println(result);
-    
-    return Unit.INSTANCE;
-});
+        bot.process(EventSignals.AtMessages.AtMessageCreate.INSTANCE,(tencentMessage)->{
 
-bot.startBlocking()
-bot.joinBlocking()
+        System.out.println(tencentMessage.getContent());
+
+// 构建API
+final MessageSendApi sendApi=new MessageSendApi(tencentMessage.getChannelId(),"Hi",tencentMessage.getId());
+
+// 发送消息
+final TencentMessage result=BotRequestUtil.doRequest(bot,sendApi);
+
+        System.out.println(result);
+
+        return Unit.INSTANCE;
+        });
+
+        bot.startBlocking()
+        bot.joinBlocking()
 
 ```
 

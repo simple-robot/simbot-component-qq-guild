@@ -51,7 +51,7 @@ internal object TencentMessageParser : ReceivingMessageParser {
         if (tencentMessage.mentionEveryone) {
             messageList.add(AtAll)
         }
-        
+
         tencentMessage.mentions.takeIf { it.isNotEmpty() }?.also {
             messageList.addAll(it.map { u -> At(u.id) })
         }

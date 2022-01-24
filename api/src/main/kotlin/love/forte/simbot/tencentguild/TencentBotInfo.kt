@@ -34,6 +34,7 @@ public interface TencentBotInfo : TencentUserInfo, BotInfo {
     override val isBot: Boolean
     override val unionOpenid: String?
     override val unionUserAccount: String?
+
     public companion object {
         internal val serializer: KSerializer<out TencentBotInfo> = TencentBotInfoImpl.serializer()
     }

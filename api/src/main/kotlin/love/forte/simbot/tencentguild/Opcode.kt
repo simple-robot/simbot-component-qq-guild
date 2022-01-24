@@ -37,25 +37,32 @@ public sealed class Opcode(public val code: Int) {
 
     // 0
     public object Dispatch : Opcode(0), ReceiveAble
+
     // 1
     public object Heartbeat : Opcode(1), ReceiveAble, SendAble
+
     // 2
     public object Identify : Opcode(2), SendAble
+
     // 6
     public object Resume : Opcode(6), SendAble
+
     // 7
     public object Reconnect : Opcode(7), ReceiveAble
+
     // 9
     public object InvalidSession : Opcode(9), ReceiveAble
+
     // 10
     public object Hello : Opcode(10), ReceiveAble
+
     // 11
     public object HeartbeatACK : Opcode(11), ReceiveAble
 
 
     public object SerializerByCode : KSerializer<Opcode> {
         override fun deserialize(decoder: Decoder): Opcode {
-            return when(val code = decoder.decodeInt()) {
+            return when (val code = decoder.decodeInt()) {
                 Dispatch.code -> Dispatch
                 Heartbeat.code -> Heartbeat
                 Identify.code -> Identify
@@ -67,6 +74,7 @@ public sealed class Opcode(public val code: Int) {
                 else -> throw NoSuchElementException("opcode: $code")
             }
         }
+
         override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("opcode", PrimitiveKind.INT)
         override fun serialize(encoder: Encoder, value: Opcode) {
             encoder.encodeInt(value.code)

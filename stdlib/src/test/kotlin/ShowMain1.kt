@@ -37,7 +37,7 @@ suspend fun main() {
         val jsonElement: JsonElement = dispatch.data
         if (dispatch.type == "AT_MESSAGE_CREATE") {
             val message: TencentMessage = decoded() as TencentMessage
-                // decoder.decodeFromJsonElement(EventSignals.AtMessages.AtMessageCreate.decoder, jsonElement)
+            // decoder.decodeFromJsonElement(EventSignals.AtMessages.AtMessageCreate.decoder, jsonElement)
 
             println(message)
         }
@@ -48,7 +48,7 @@ suspend fun main() {
     bot.processor("AT_MESSAGE_CREATE") { decoder, decoded ->
         val dispatch: Signal.Dispatch = this
         val message: TencentMessage = decoded() as TencentMessage
-            // decoder.decodeFromJsonElement(EventSignals.AtMessages.AtMessageCreate.decoder, dispatch.data)
+        // decoder.decodeFromJsonElement(EventSignals.AtMessages.AtMessageCreate.decoder, dispatch.data)
 
         println(message)
     }
@@ -57,7 +57,7 @@ suspend fun main() {
     bot.processor(EventSignals.AtMessages.AtMessageCreate.type) { decoder, decoded ->
         val dispatch: Signal.Dispatch = this
         val message: TencentMessage = decoded() as TencentMessage
-            // decoder.decodeFromJsonElement(EventSignals.AtMessages.AtMessageCreate.decoder, dispatch.data)
+        // decoder.decodeFromJsonElement(EventSignals.AtMessages.AtMessageCreate.decoder, dispatch.data)
 
         println(message)
     }

@@ -18,30 +18,30 @@
 
 # 建设中。。
 
-
 基于 [simple-robot](https://github.com/ForteScarlet/simpler-robot) 3.x版本API的 `simbot` 组件的boot支持。
-
 
 `component-boot-xxx` 相关组件用于与 `simboot-core` 配合使用，实现模块化开发、多组件快速协同等功能。
 
-
-
 ## 使用
+
 ### Maven
+
 simbot.tcg-guild版本参考：*见头部图标*
 
 simboot核心版本参考：![](https://img.shields.io/maven-central/v/love.forte.simbot.boot/simboot-core)
+
 ```xml
+
 <dependency>
     <groupId>love.forte.simbot.component</groupId>
     <artifactId>simbot-component-tencent-guild-boot</artifactId>
     <version>${simbot.tcg-guild.version}</version>
 </dependency>
-<!-- simbot boot核心 -->
+        <!-- simbot boot核心 -->
 <dependency>
-    <groupId>love.forte.simbot.boot</groupId>
-    <artifactId>simboot-core</artifactId>
-    <version>${simbot.version}</version>
+<groupId>love.forte.simbot.boot</groupId>
+<artifactId>simboot-core</artifactId>
+<version>${simbot.version}</version>
 </dependency>
 ```
 
@@ -59,10 +59,10 @@ implementation("love.forte.simbot.component:simbot-component-tencent-guild-boot:
 implementation("love.forte.simbot.boot:simboot-core:$simbotVersion")
 ```
 
-
 ## 示例
 
 ### 启动类
+
 首先，你需要写一个启动类
 
 ```kotlin
@@ -78,6 +78,7 @@ suspend fun main(args: Array<String>) {
 ```
 
 ### 监听函数 - 基础用法
+
 在上述启动入口所在包（或子包）中定义任意类，并编写监听函数，比如：
 
 ```kotlin
@@ -99,6 +100,7 @@ suspend fun ChannelMessageEvent.myListener2() {
 ```
 
 ### 监听函数 - 持续会话
+
 有时候，你可能会有需要进行连续对话的情况：
 
 > 注意，下述逻辑经过简化，仅供参考

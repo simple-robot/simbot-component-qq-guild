@@ -30,6 +30,8 @@ import love.forte.simbot.tencentguild.TencentRoleInfo
 public interface TencentRole : Role, TencentRoleInfo {
     override val id: ID
     override val name: String
+
+    @JvmSynthetic
     override suspend fun permissions(): Flow<Permission>
     override val color: Int
     override val isHoist: Boolean

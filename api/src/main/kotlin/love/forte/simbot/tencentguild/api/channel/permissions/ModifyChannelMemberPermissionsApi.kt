@@ -38,7 +38,12 @@ public class ModifyChannelMemberPermissionsApi(
     remove: Permissions? = null
 ) : TencentApi<TencentChannelPermissionsInfo>() {
     @Api4J
-    public constructor(channelId: ID, memberId: ID, add: Long, remove: Long): this(channelId, memberId, Permissions(add), Permissions(remove))
+    public constructor(channelId: ID, memberId: ID, add: Long, remove: Long) : this(
+        channelId,
+        memberId,
+        Permissions(add),
+        Permissions(remove)
+    )
 
     // GET /channels/{channel_id}/members/{user_id}/permissions
     private val path = listOf("channels", channelId.toString(), "members", memberId.toString(), "permissions")

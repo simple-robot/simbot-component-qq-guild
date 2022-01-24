@@ -35,15 +35,17 @@ class RangeSerializerTest {
     @Test
     fun test() {
 
-        val id = Signal.Identify(Signal.Identify.Data(
-            token = "token",
-            intents = Intents(153) + Intents(224) + Intents(810),
-            shard = Shard(0..4),
-            properties = Signal.Identify.Data.Prop(
-                os = "windows",
-                browser = "chrome",
-                device = "abc"
-        ))
+        val id = Signal.Identify(
+            Signal.Identify.Data(
+                token = "token",
+                intents = Intents(153) + Intents(224) + Intents(810),
+                shard = Shard(0..4),
+                properties = Signal.Identify.Data.Prop(
+                    os = "windows",
+                    browser = "chrome",
+                    device = "abc"
+                )
+            )
         )
 
         println(id)
