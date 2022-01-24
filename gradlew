@@ -1,19 +1,15 @@
 #!/usr/bin/env sh
 
 #
-# Copyright 2015 the original author or authors.
+#  Copyright (c) 2022-2022 ForteScarlet <ForteScarlet@163.com>
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+#  根据 GNU LESSER GENERAL PUBLIC LICENSE 3 获得许可；
+#  除非遵守许可，否则您不得使用此文件。
+#  您可以在以下网址获取许可证副本：
 #
-#      https://www.apache.org/licenses/LICENSE-2.0
+#       https://www.gnu.org/licenses/lgpl-3.0-standalone.html
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+#   有关许可证下的权限和限制的具体语言，请参见许可证。
 #
 
 ##############################################################################
