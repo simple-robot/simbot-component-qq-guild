@@ -12,6 +12,15 @@
 <a href="https://www.yuque.com/simpler-robot/simpler-robot-doc" target="_blank">
   <img alt="doc" src="https://img.shields.io/badge/doc-yuque-brightgreen" /></a>
 <hr />
+   <img alt="stars" src="https://img.shields.io/github/stars/simple-robot/simbot-component-tencent-guild" />
+   <img alt="forks" src="https://img.shields.io/github/forks/simple-robot/simbot-component-tencent-guild" />
+   <img alt="watchers" src="https://img.shields.io/github/watchers/simple-robot/simbot-component-tencent-guild" />
+   <img alt="repo size" src="https://img.shields.io/github/repo-size/simple-robot/simbot-component-tencent-guild" />
+   <img alt="lines" src="https://img.shields.io/tokei/lines/github/simple-robot/simbot-component-tencent-guild" />
+   <img alt="issues" src="https://img.shields.io/github/issues-closed/simple-robot/simbot-component-tencent-guild?color=green" />
+   <img alt="last commit" src="https://img.shields.io/github/last-commit/simple-robot/simbot-component-tencent-guild" />
+   <a href="./COPYING"><img alt="copying" src="https://img.shields.io/github/license/simple-robot/simbot-component-tencent-guild" /></a>
+
 </div>
 api模块是对官方提供的所有 api 的 **底层** 级别封装，不提供较为高级的应用层面封装，是一个单纯的底层api库。
 

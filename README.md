@@ -5,6 +5,21 @@
 <h2>
     ~ simple-robot for tencent-guild ~ 
 </h2>
+<a href="https://github.com/simple-robot/simbot-component-tencent-guild/releases/latest"><img alt="release" src="https://img.shields.io/github/v/release/simple-robot/simbot-component-tencent-guild" /></a>
+<a href="https://repo1.maven.org/maven2/love/forte/simbot/component/simbot-component-tencent-guild-api/" target="_blank">
+  <img alt="release" src="https://img.shields.io/maven-central/v/love.forte.simbot.component/simbot-component-tencent-guild-api" /></a>
+<a href="https://www.yuque.com/simpler-robot/simpler-robot-doc" target="_blank">
+  <img alt="doc" src="https://img.shields.io/badge/doc-yuque-brightgreen" /></a>
+   <hr>
+   <img alt="stars" src="https://img.shields.io/github/stars/simple-robot/simbot-component-tencent-guild" />
+   <img alt="forks" src="https://img.shields.io/github/forks/simple-robot/simbot-component-tencent-guild" />
+   <img alt="watchers" src="https://img.shields.io/github/watchers/simple-robot/simbot-component-tencent-guild" />
+   <img alt="repo size" src="https://img.shields.io/github/repo-size/simple-robot/simbot-component-tencent-guild" />
+   <img alt="lines" src="https://img.shields.io/tokei/lines/github/simple-robot/simbot-component-tencent-guild" />
+   <img alt="issues" src="https://img.shields.io/github/issues-closed/simple-robot/simbot-component-tencent-guild?color=green" />
+   <img alt="last commit" src="https://img.shields.io/github/last-commit/simple-robot/simbot-component-tencent-guild" />
+   <a href="./COPYING"><img alt="copying" src="https://img.shields.io/github/license/simple-robot/simbot-component-tencent-guild" /></a>
+
 </div>
 
 这是 [simbot3](https://github.com/ForteScarlet/simpler-robot)
