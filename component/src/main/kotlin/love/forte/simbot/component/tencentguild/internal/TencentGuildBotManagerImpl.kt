@@ -26,6 +26,9 @@ import love.forte.simbot.component.tencentguild.ComponentTencentGuild
 import love.forte.simbot.component.tencentguild.TencentGuildBot
 import love.forte.simbot.component.tencentguild.TencentGuildBotManager
 import love.forte.simbot.component.tencentguild.TencentGuildBotManagerConfiguration
+import love.forte.simbot.component.tencentguild.event.TcgBotRegisteredEvent
+import love.forte.simbot.component.tencentguild.internal.event.TcgBotRegisteredEventImpl
+import love.forte.simbot.event.pushIfProcessable
 import love.forte.simbot.tencentguild.TencentBotConfiguration
 import love.forte.simbot.tencentguild.tencentBot
 import org.slf4j.Logger
@@ -152,7 +155,13 @@ internal class TencentGuildBotManagerImpl(
                         botMap.remove(key)
                     }
                 }
-            }!!
+            }!!.also { bot ->
+                bot.launch {
+                    eventProcessor.pushIfProcessable(TcgBotRegisteredEvent) {
+                        TcgBotRegisteredEventImpl(bot)
+                    }
+                }
+            }
             // return guildBot
         }
     }

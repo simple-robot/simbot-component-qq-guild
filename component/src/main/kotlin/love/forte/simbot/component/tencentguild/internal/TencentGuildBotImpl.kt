@@ -25,6 +25,8 @@ import love.forte.simbot.*
 import love.forte.simbot.component.tencentguild.TencentGuild
 import love.forte.simbot.component.tencentguild.TencentGuildBot
 import love.forte.simbot.component.tencentguild.TencentGuildBotManager
+import love.forte.simbot.component.tencentguild.event.TcgBotStartedEvent
+import love.forte.simbot.component.tencentguild.internal.event.TcgBotStartedEventImpl
 import love.forte.simbot.component.tencentguild.internal.event.eventSignalParsers
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.event.pushIfProcessable
@@ -125,7 +127,15 @@ internal class TencentGuildBotImpl(
     override fun getGuild(id: ID): TencentGuild? = runInBlocking { guild(id) }
 
     override suspend fun start(): Boolean = sourceBot.start().also {
-        if (!it) return@also
+        suspend fun pushEvent() {
+            eventProcessor.pushIfProcessable(TcgBotStartedEvent) {
+                TcgBotStartedEventImpl(this)
+            }
+        }
+        if (!it) {
+            pushEvent()
+            return@also
+        }
 
         //activeStatus.compareAndSet(0, 1)
         // process event.
@@ -153,6 +163,7 @@ internal class TencentGuildBotImpl(
                 }
             }
         }
+        pushEvent()
     }
 
 
