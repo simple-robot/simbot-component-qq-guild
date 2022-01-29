@@ -7,13 +7,13 @@
 </h2>
 </div>
 
-这是 [simply-robot](https://github.com/ForteScarlet/simpler-robot/tree/dev-v3.0.0-preview) (**注意，是dev-v3.0.0-preview分支**)
+这是 [simbot3](https://github.com/ForteScarlet/simpler-robot)
 下的子项目， 本库提供对 [腾讯频道机器人](https://bot.q.qq.com/wiki/develop/api/) 中`API`内容的完整实现以及事件相关的信令实现， 以及BOT对于事件的监听与交互。
 本库中的api响应数据会一定程度实现 `simple-robot` 的`v3.x`api模块接口。 (下文 `simple-robot` 简称 `simbot` )
 
 <br>
 
-> 了解simple-robot 3.x: [simple-robot文档](https://www.yuque.com/simpler-robot/simpler-robot-doc/mudleb)
+> 了解simbot3: [simple-robot文档](https://www.yuque.com/simpler-robot/simpler-robot-doc/mudleb)
 
 <br>
 
@@ -27,9 +27,9 @@
 
 ## 前言
 
-目前无论是当前仓库还是 `simbot v3.x` 都处于紧张的早中期建设阶段，在正式版发布之前必然存在很多不可预知的问题，并且开发进度无法清晰预估，毕竟一天一共就24个小时，而我们团队的精力并非无限。
+目前无论是当前仓库还是 `simbot3` 都处于紧张的早中期建设阶段，在正式版发布之前必然存在很多不可预知的问题，并且开发进度无法清晰预估，毕竟一天一共就24个小时，而我们团队的精力并非无限。
 
-如果你想要协助我们对当前仓库或者 [simple-robot 3.x](https://github.com/ForteScarlet/simpler-robot/tree/dev-v3.0.0-preview)
+如果你想要协助我们对当前仓库或者 [simbot3](https://github.com/ForteScarlet/simpler-robot/tree/v3-dev)
 的建设，欢迎通过issue提出宝贵意见或者通过pr参与到建设当中，十分感谢。
 
 ## 模块简介
