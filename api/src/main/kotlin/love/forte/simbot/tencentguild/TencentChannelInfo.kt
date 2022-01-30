@@ -32,7 +32,7 @@ public interface TencentChannelInfo : ChannelInfo {
     /**
      * 子频道id
      */
-    public val id: ID
+    override val id: ID
 
     /**
      * 频道id

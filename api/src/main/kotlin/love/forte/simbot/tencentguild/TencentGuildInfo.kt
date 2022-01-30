@@ -34,7 +34,7 @@ public interface TencentGuildInfo : GuildInfo {
     /**
      * 频道ID
      */
-    public val id: ID
+    override val id: ID
 
     /**
      * 频道名称

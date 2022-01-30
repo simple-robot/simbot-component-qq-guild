@@ -23,7 +23,6 @@ import kotlinx.serialization.modules.plus
 import love.forte.simbot.tencentguild.TencentGuildApi
 import love.forte.simbot.tencentguild.TencentMemberInfo
 import love.forte.simbot.tencentguild.api.role.GuildRoleList
-import kotlin.test.Test
 
 /**
  *
@@ -38,7 +37,7 @@ class TencentSerializerTest {
         isLenient = true
     }
 
-    @Test
+    //@Test
     fun serializer1() {
         val memberJsonStr = """
             {
@@ -60,7 +59,7 @@ class TencentSerializerTest {
         println(member::class)
     }
 
-    @Test
+    //@Test
     fun serializer2() {
         val rolesJsonStr = """
             {
