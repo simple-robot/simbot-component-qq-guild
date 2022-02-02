@@ -66,7 +66,12 @@ public abstract class TencentGuildBot : Bot {
     @JvmSynthetic
     override suspend fun uploadImage(resource: Resource): Image<*> {
         // TODO fake remote image.
-        throw NotSupportActionException("upload Image")
+        throw NotSupportActionException("uploadImage(Resource)")
+    }
+
+    override suspend fun resolveImage(id: ID): Image<*> {
+        // TODO fake remote image.
+        throw NotSupportActionException("resolveImage(ID)")
     }
 
 
