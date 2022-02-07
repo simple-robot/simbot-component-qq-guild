@@ -37,6 +37,7 @@ sealed class P : SimbotProject() {
         private const val CURRENT_VERSION = "0.6"
         const val GROUP = "${Simbot.GROUP}.component"
         const val VERSION = "${Simbot.VERSION}-$CURRENT_VERSION"
+        // v3.0.0.preview.2.0-0.6
 
         const val apiPath = ":simbot-component-tencent-guild-api"
         const val apiStdlibPath = ":simbot-component-tencent-guild-stdlib"
