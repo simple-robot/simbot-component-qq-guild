@@ -40,6 +40,31 @@ public object ComponentTencentGuild {
     public val component: Component get() = if (::_component.isInitialized) _component else Components[COMPONENT_ID]
 }
 
+//region botManager 扩展
+/**
+ * 从 [OriginBotManager] 中过滤取出所有 [TencentGuildBotManager] 实例.
+ */
+@Suppress("NOTHING_TO_INLINE")
+public inline fun tencentGuildBotManagers(): List<TencentGuildBotManager> =
+    OriginBotManager.filterIsInstance<TencentGuildBotManager>()
+
+/**
+ * 从中过滤取出所有 [TencentGuildBotManager] 实例.
+ */
+@Suppress("NOTHING_TO_INLINE")
+public inline fun Iterable<BotManager<*>>.tencentGuildBotManagers(): List<TencentGuildBotManager> =
+    filterIsInstance<TencentGuildBotManager>()
+
+/**
+ * 从序列中过滤出 [TencentGuildBotManager] 实例.
+ */
+@Suppress("NOTHING_TO_INLINE")
+public inline fun Sequence<BotManager<*>>.tencentGuildBotManagers(): Sequence<TencentGuildBotManager> =
+    filterIsInstance<TencentGuildBotManager>()
+
+
+//endregion
+
 
 @AutoService(ComponentInformationRegistrar::class)
 public class TencentGuildComponentInformationRegistrar : ComponentInformationRegistrar {
