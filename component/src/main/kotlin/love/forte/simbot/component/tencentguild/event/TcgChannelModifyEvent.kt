@@ -56,7 +56,6 @@ public sealed class TcgChannelModifyEvent<F, T> : TcgEvent<TencentChannelInfo>()
     abstract override val changedTime: Timestamp
     abstract override val bot: TencentGuildBot
     abstract override val key: Event.Key<out TcgChannelModifyEvent<*, *>>
-    abstract override val metadata: Event.Metadata
     abstract override val timestamp: Timestamp
 
     abstract override val eventSignal: EventSignals.Guilds<TencentChannelInfo>

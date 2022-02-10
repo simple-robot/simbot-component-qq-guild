@@ -39,7 +39,6 @@ import love.forte.simbot.tencentguild.TencentMemberInfo
  */
 public sealed class TcgGuildMemberEvent<T : Any> : TcgEvent<T>(), GuildEvent, MemberEvent {
     abstract override val key: Event.Key<out TcgGuildMemberEvent<*>>
-    abstract override val metadata: Event.Metadata
     abstract override val timestamp: Timestamp
     abstract override val visibleScope: Event.VisibleScope
 

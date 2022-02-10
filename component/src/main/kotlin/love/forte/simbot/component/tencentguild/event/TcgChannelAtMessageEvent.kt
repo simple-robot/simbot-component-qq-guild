@@ -63,7 +63,6 @@ public abstract class TcgChannelAtMessageEvent : TcgEvent<TencentMessage>(), Cha
     abstract override val visibleScope: Event.VisibleScope
     abstract override val bot: TencentGuildBot
     abstract override val messageContent: ReceivedMessageContent
-    abstract override val metadata: Event.Metadata
 
     //// impl
 

@@ -22,7 +22,6 @@ import love.forte.simbot.Timestamp
 import love.forte.simbot.component.tencentguild.event.TcgGuildModifyEvent
 import love.forte.simbot.component.tencentguild.internal.TencentGuildBotImpl
 import love.forte.simbot.component.tencentguild.internal.TencentGuildImpl
-import love.forte.simbot.event.Event
 import love.forte.simbot.tencentguild.EventSignals
 import love.forte.simbot.tencentguild.TencentGuildInfo
 
@@ -35,7 +34,7 @@ internal class TcgGuildCreate(
     override val changedTime: Timestamp = Timestamp.now()
     override val timestamp: Timestamp get() = changedTime
     override val bot: TencentGuildBotImpl get() = source
-    override val metadata: Event.Metadata = TcgGuildModifyMetadata(0, source.id, after.id, timestamp)
+    override val id: ID = tcgGuildModifyId(0, source.id, after.id, timestamp)
 
     internal object Parser : BaseSignalToEvent<TencentGuildInfo>() {
         override val key = Create
@@ -57,7 +56,7 @@ internal class TcgGuildUpdate(
     override val changedTime: Timestamp = Timestamp.now()
     override val timestamp: Timestamp get() = changedTime
     override val bot: TencentGuildBotImpl get() = source
-    override val metadata: Event.Metadata = TcgGuildModifyMetadata(1, source.id, after.id, timestamp)
+    override val id: ID = tcgGuildModifyId(1, source.id, after.id, timestamp)
 
     internal object Parser : BaseSignalToEvent<TencentGuildInfo>() {
         override val key = Update
@@ -79,7 +78,7 @@ internal class TcgGuildDelete(
     override val changedTime: Timestamp = Timestamp.now()
     override val timestamp: Timestamp get() = changedTime
     override val bot: TencentGuildBotImpl get() = source
-    override val metadata: Event.Metadata = TcgGuildModifyMetadata(2, source.id, before.id, timestamp)
+    override val id: ID = tcgGuildModifyId(2, source.id, before.id, timestamp)
 
     internal object Parser : BaseSignalToEvent<TencentGuildInfo>() {
         override val key = Delete
@@ -93,6 +92,5 @@ internal class TcgGuildDelete(
 }
 
 
-private class TcgGuildModifyMetadata(t: Int, sourceBot: ID, sourceGuild: ID, timestamp: Timestamp) : Event.Metadata {
-    override val id: ID = "$t$sourceBot.${timestamp.second}.$sourceGuild".ID
-}
+private fun tcgGuildModifyId(t: Int, sourceBot: ID, sourceGuild: ID, timestamp: Timestamp): ID =
+    "$t$sourceBot.${timestamp.second}.$sourceGuild".ID

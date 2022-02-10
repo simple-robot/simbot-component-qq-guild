@@ -19,6 +19,7 @@ package love.forte.simbot.component.tencentguild.event
 
 import kotlinx.coroutines.runBlocking
 import love.forte.simbot.Api4J
+import love.forte.simbot.ID
 import love.forte.simbot.component.tencentguild.TencentChannel
 import love.forte.simbot.component.tencentguild.TencentGuild
 import love.forte.simbot.component.tencentguild.TencentGuildBot
@@ -41,13 +42,14 @@ import love.forte.simbot.tencentguild.TencentAudioAction
  */
 public sealed class TcgAudioEvent : TcgEvent<TencentAudioAction>(),
     ChannelEvent, GuildEvent {
+    abstract override val id: ID
+
     @JvmSynthetic
     abstract override suspend fun channel(): TencentChannel
 
     @JvmSynthetic
     abstract override suspend fun guild(): TencentGuild
     abstract override val key: Event.Key<out TcgAudioEvent>
-    abstract override val metadata: Event.Metadata
     abstract override val bot: TencentGuildBot
 
     @JvmSynthetic

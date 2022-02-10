@@ -42,7 +42,7 @@ constructor(
     override val after: TencentChannelImpl get() = channel
     override val changedTime: Timestamp = Timestamp.now()
     override val timestamp: Timestamp get() = changedTime
-    override val metadata: Event.Metadata = TcgChannelModifyMetadata(0, bot.id, channel.id, changedTime)
+    override val id: ID = tcgChannelModifyId(0, bot.id, channel.id, changedTime)
     override val eventSignal: EventSignals.Guilds.ChannelCreate
         get() = EventSignals.Guilds.ChannelCreate
 
@@ -76,7 +76,7 @@ constructor(
     override val after: TencentChannelImpl get() = channel
     override val changedTime: Timestamp = Timestamp.now()
     override val timestamp: Timestamp get() = changedTime
-    override val metadata: Event.Metadata = TcgChannelModifyMetadata(1, bot.id, channel.id, changedTime)
+    override val id: ID = tcgChannelModifyId(1, bot.id, channel.id, changedTime)
     override val eventSignal: EventSignals.Guilds.ChannelUpdate
         get() = EventSignals.Guilds.ChannelUpdate
 
@@ -111,7 +111,7 @@ constructor(
     override val before: TencentChannel get() = channel
     override val changedTime: Timestamp = Timestamp.now()
     override val timestamp: Timestamp get() = changedTime
-    override val metadata: Event.Metadata = TcgChannelModifyMetadata(2, bot.id, channel.id, changedTime)
+    override val id: ID = tcgChannelModifyId(2, bot.id, channel.id, changedTime)
     override val eventSignal: EventSignals.Guilds.ChannelDelete
         get() = EventSignals.Guilds.ChannelDelete
 
@@ -136,8 +136,5 @@ constructor(
     }
 }
 
-
-private class TcgChannelModifyMetadata(t: Int, sourceBot: ID, sourceChannel: ID, timestamp: Timestamp) :
-    Event.Metadata {
-    override val id: ID = "$t$sourceBot.${timestamp.second}.$sourceChannel".ID
-}
+private fun tcgChannelModifyId(t: Int, sourceBot: ID, sourceChannel: ID, timestamp: Timestamp): ID =
+    "$t$sourceBot.${timestamp.second}.$sourceChannel".ID

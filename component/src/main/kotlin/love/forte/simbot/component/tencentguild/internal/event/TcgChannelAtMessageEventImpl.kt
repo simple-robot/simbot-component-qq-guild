@@ -17,8 +17,6 @@
 
 package love.forte.simbot.component.tencentguild.internal.event
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.action.MessageReplyReceipt
@@ -45,8 +43,7 @@ internal class TcgChannelAtMessageEventImpl(
     override val sourceEventEntity: TencentMessage,
     override val bot: TencentGuildBotImpl
 ) : TcgChannelAtMessageEvent() {
-
-
+    override val id: ID = sourceEventEntity.id
     override suspend fun reply(message: Message): MessageReplyReceipt {
         val messageForSend = MessageParsers.parse(message)
         messageForSend.msgId = sourceEventEntity.id
@@ -93,13 +90,6 @@ internal class TcgChannelAtMessageEventImpl(
     override val messageContent: TencentReceiveMessageContentImpl by lazy(LazyThreadSafetyMode.NONE) {
         TencentReceiveMessageContentImpl(sourceEventEntity)
     }
-
-    /** AT_MESSAGES 的事件meta的id就是消息的ID。 */
-    override val metadata: Metadata = Metadata(sourceEventEntity.id)
-
-    @SerialName("tcg.e.meta")
-    @Serializable
-    data class Metadata(override val id: ID) : Event.Metadata
 
 
     internal object Parser : BaseSignalToEvent<TencentMessage>() {
