@@ -34,9 +34,8 @@ import love.forte.simbot.tencentguild.api.guild.GetGuildApi
 import love.forte.simbot.utils.lazyValue
 
 
-private class TcgGuildMemberEventMetadata(type: Int, botId: ID, memberId: ID, timestamp: Timestamp) : Event.Metadata {
-    override val id: ID = "$type$botId.$memberId.${timestamp.second}".ID
-}
+private fun tcgGuildMemberEventId(type: Int, botId: ID, memberId: ID, timestamp: Timestamp): ID =
+    "$type$botId.$memberId.${timestamp.second}".ID
 
 
 /**
@@ -63,7 +62,7 @@ internal class TcgGuildMemberIncrease constructor(
 
     override suspend fun source(): TencentGuild = target.organization()
 
-    override val metadata: Event.Metadata = TcgGuildMemberEventMetadata(0, bot.id, target.id, timestamp)
+    override val id: ID = tcgGuildMemberEventId(0, bot.id, target.id, timestamp)
 
     override val visibleScope: Event.VisibleScope get() = Event.VisibleScope.INTERNAL
 
@@ -113,7 +112,7 @@ internal class TcgGuildMemberDecrease constructor(
     override suspend fun source(): TencentGuild = target.organization()
 
 
-    override val metadata: Event.Metadata = TcgGuildMemberEventMetadata(2, bot.id, target.id, timestamp)
+    override val id: ID = tcgGuildMemberEventId(2, bot.id, target.id, timestamp)
 
     override val visibleScope: Event.VisibleScope get() = Event.VisibleScope.INTERNAL
 

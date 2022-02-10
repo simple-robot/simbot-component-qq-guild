@@ -60,7 +60,6 @@ public sealed class TcgGuildModifyEvent<F, T> : TcgEvent<TencentGuildInfo>(), Ch
     abstract override val changedTime: Timestamp
     abstract override val source: TencentGuildBot
     abstract override val key: Event.Key<out TcgGuildModifyEvent<*, *>>
-    abstract override val metadata: Event.Metadata
 
     //// impl
 

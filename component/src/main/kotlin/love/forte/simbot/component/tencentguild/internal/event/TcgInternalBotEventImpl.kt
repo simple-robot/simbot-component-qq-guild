@@ -22,16 +22,15 @@ import love.forte.simbot.Timestamp
 import love.forte.simbot.component.tencentguild.event.TcgBotRegisteredEvent
 import love.forte.simbot.component.tencentguild.event.TcgBotStartedEvent
 import love.forte.simbot.component.tencentguild.internal.TencentGuildBotImpl
-import love.forte.simbot.event.Event
+import love.forte.simbot.randomID
 
-private data class TcgInternalBotEventMetadata(override val id: ID) : Event.Metadata
 
 internal class TcgBotRegisteredEventImpl(override val bot: TencentGuildBotImpl) : TcgBotRegisteredEvent() {
     override val timestamp: Timestamp = Timestamp.now()
-    override val metadata: Event.Metadata = TcgInternalBotEventMetadata(timestamp.millisecond.ID)
+    override val id: ID = randomID()
 }
 
 internal class TcgBotStartedEventImpl(override val bot: TencentGuildBotImpl) : TcgBotStartedEvent() {
     override val timestamp: Timestamp = Timestamp.now()
-    override val metadata: Event.Metadata = TcgInternalBotEventMetadata(timestamp.millisecond.ID)
+    override val id: ID = randomID()
 }
