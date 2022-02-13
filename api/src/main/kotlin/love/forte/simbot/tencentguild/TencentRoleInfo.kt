@@ -73,9 +73,7 @@ public interface TencentRoleInfo {
         )
     }
 
-    public enum class DefaultRole(
-        public val code: Int
-    ) {
+    public enum class DefaultRole(public val code: Int) {
         /** 全体成员身份组 */
         ALL_MEMBER(1),
 
