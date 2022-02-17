@@ -32,6 +32,9 @@ internal class TencentRoleImpl(
 
     override val isAdmin: Boolean = isDefault && id.toString() != TencentRoleInfo.DefaultRole.ALL_MEMBER.code.toString()
 
-    override val isOwner: Boolean = id.toString() == TencentRoleInfo.DefaultRole.OWNER.code.toString()
+
+    override val isOwner: Boolean = info.id.toString() == TencentRoleInfo.DefaultRole.OWNER.code.toString()
+    companion object {
+    }
 
 }

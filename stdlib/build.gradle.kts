@@ -27,7 +27,7 @@ println(path)
 
 dependencies {
     // api(project(":tencent-guild-api"))
-    api(project(P.TencentGuild.apiPath))
+    api(project(P.ComponentTencentGuild.apiPath))
     api(V.Ktor.Client.Websockets.notation)
 
     // api(V.Kotlin.Reflect.notation)

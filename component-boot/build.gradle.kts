@@ -32,7 +32,7 @@ repositories {
 }
 
 dependencies {
-    api(project(P.TencentGuild.componentPath))
+    api(project(P.ComponentTencentGuild.componentPath))
     api(V.Simbot.BootApi.notation)
     testImplementation(V.Simbot.BootCore.notation)
     // api("love.forte.simbot.boot:simboot-api:3.0.0.preview.0.5")

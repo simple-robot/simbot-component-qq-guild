@@ -48,7 +48,7 @@ sealed class V(group: String?, id: String, version: String?) : Dep(group, id, ve
 
     sealed class Simbot(group: String = P.Simbot.GROUP, id: String, version: String = VERSION) : V(group, id, version) {
         companion object {
-            const val VERSION = P.Simbot.VERSION
+            val VERSION = P.Simbot.VERSION
         }
 
         object Api : Simbot(id = "simbot-api")

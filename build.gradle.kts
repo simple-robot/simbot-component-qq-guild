@@ -25,20 +25,23 @@ plugins {
     id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
 }
 
-group = P.TencentGuild.GROUP
-version = P.TencentGuild.VERSION
+group = P.ComponentTencentGuild.GROUP
+version = P.ComponentTencentGuild.VERSION
 
 println("=== Current version: $version ===")
 
 repositories {
     mavenLocal()
     mavenCentral()
+    if (P.ComponentTencentGuild.isSnapshot) {
+        maven(Sonatype.`snapshot-oss`.URL)
+    }
 }
 
 
 subprojects {
-    group = P.TencentGuild.GROUP
-    version = P.TencentGuild.VERSION
+    group = P.ComponentTencentGuild.GROUP
+    version = P.ComponentTencentGuild.VERSION
 
     apply(plugin = "maven-publish")
     apply(plugin = "java")
@@ -79,18 +82,30 @@ tasks.withType<JavaCompile>() {
 }
 
 
-val credentialsUsername: String = local().getProperty("credentials.username")!!
-val credentialsPassword: String = local().getProperty("credentials.password")!!
+val sonatypeUsername: String? = extra["sonatype.username"]?.toString()
+val sonatypePassword: String? = extra["sonatype.password"]?.toString()
 
+if (sonatypeUsername != null && sonatypePassword != null) {
+    nexusPublishing {
+        packageGroup.set(P.ComponentTencentGuild.GROUP)
 
-nexusPublishing {
-    packageGroup.set(P.Simbot.GROUP)
+        useStaging.set(
+            project.provider { !project.version.toString().endsWith("SNAPSHOT", ignoreCase = true) }
+        )
 
-    repositories {
-        sonatype {
-            username.set(credentialsUsername)
-            password.set(credentialsPassword)
+        transitionCheckOptions {
+            maxRetries.set(20)
+            delayBetween.set(java.time.Duration.ofSeconds(5))
         }
 
+        repositories {
+            sonatype {
+                snapshotRepositoryUrl.set(uri(Sonatype.`snapshot-oss`.URL))
+                username.set(sonatypeUsername)
+                password.set(sonatypePassword)
+            }
+
+        }
     }
 }
+
