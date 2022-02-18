@@ -69,11 +69,11 @@ inline fun Project.configurePublishing(artifactId: String) {
                 println("Publish repository url:  $url")
 
 
-                val username0 = extra.get("sonatype.username")?.toString() ?: run {
+                val username0 = getProp("sonatype.username")?.toString() ?: run {
                     println("[WARN] Cannot found sonatype.username from extra for $artifactId")
                     return@maven
                 }
-                val password0 = extra.get("sonatype.password")?.toString()
+                val password0 = getProp("sonatype.password")?.toString()
                     ?: throw NullPointerException("snapshots-sonatype-password")
 
                 credentials {

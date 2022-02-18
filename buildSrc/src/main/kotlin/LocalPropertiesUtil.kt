@@ -16,6 +16,7 @@
  */
 
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.extra
 import java.io.File
 import java.util.*
 
@@ -42,3 +43,5 @@ fun Project.local(): Properties {
     prop = properties
     return prop
 }
+
+fun Project.getProp(key: String): Any? = if (extra.has(key)) extra.get(key) else null

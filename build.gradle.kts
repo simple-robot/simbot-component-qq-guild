@@ -16,9 +16,9 @@
  */
 
 plugins {
-    kotlin("jvm") version "1.6.0" apply false
-    kotlin("plugin.serialization") version "1.6.0" apply false
-    id("org.jetbrains.dokka") version "1.5.30" apply false
+    kotlin("jvm") version "1.6.10" apply false
+    kotlin("plugin.serialization") version "1.6.10" apply false
+    id("org.jetbrains.dokka")
     `maven-publish`
     signing
     // see https://github.com/gradle-nexus/publish-plugin
@@ -31,7 +31,7 @@ version = P.ComponentTencentGuild.VERSION
 println("=== Current version: $version ===")
 
 repositories {
-    mavenLocal()
+    // mavenLocal()
     mavenCentral()
     if (P.ComponentTencentGuild.isSnapshot) {
         maven(Sonatype.`snapshot-oss`.URL)
@@ -82,8 +82,8 @@ tasks.withType<JavaCompile>() {
 }
 
 
-val sonatypeUsername: String? = extra["sonatype.username"]?.toString()
-val sonatypePassword: String? = extra["sonatype.password"]?.toString()
+val sonatypeUsername: String? = getProp("sonatype.username")?.toString()
+val sonatypePassword: String? = getProp("sonatype.password")?.toString()
 
 if (sonatypeUsername != null && sonatypePassword != null) {
     nexusPublishing {
@@ -109,3 +109,16 @@ if (sonatypeUsername != null && sonatypePassword != null) {
     }
 }
 
+
+// config dokka
+
+fun org.jetbrains.dokka.gradle.AbstractDokkaTask.configOutput(format: String) {
+    outputDirectory.set(rootProject.file("dokka/$format/"))
+}
+
+tasks.dokkaHtmlMultiModule.configure {
+    configOutput("html")
+}
+tasks.dokkaGfmMultiModule.configure {
+    configOutput("gfm")
+}
