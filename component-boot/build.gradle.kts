@@ -19,6 +19,7 @@ plugins {
     `java-library`
     kotlin("jvm")
     kotlin("plugin.serialization")
+    id("org.jetbrains.dokka")
 }
 
 

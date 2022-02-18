@@ -20,6 +20,7 @@ plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
     kotlin("kapt")
+    id("org.jetbrains.dokka")
 }
 
 
