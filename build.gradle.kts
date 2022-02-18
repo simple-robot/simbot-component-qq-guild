@@ -122,7 +122,7 @@ if (sonatypeUsername != null && sonatypePassword != null) {
 // config dokka
 
 fun org.jetbrains.dokka.gradle.AbstractDokkaTask.configOutput(format: String) {
-    outputDirectory.set(rootProject.file("dokka/$format/"))
+    outputDirectory.set(rootProject.file("dokka/$format/v$version"))
 }
 
 tasks.dokkaHtmlMultiModule.configure {
@@ -130,4 +130,25 @@ tasks.dokkaHtmlMultiModule.configure {
 }
 tasks.dokkaGfmMultiModule.configure {
     configOutput("gfm")
+}
+
+tasks.register("dokkaHtmlMultiModuleAndPost") {
+    group = JavaBasePlugin.DOCUMENTATION_GROUP
+    dependsOn("dokkaHtmlMultiModule")
+    doLast {
+        val outDir = rootProject.file("dokka/html")
+        val indexFile = File(outDir, "index.html")
+        indexFile.createNewFile()
+        indexFile.writeText("""
+            <html xmlns="http://www.w3.org/1999/xhtml">
+            <head>
+                <meta http-equiv="refresh" content="0;URL='v$version'" />
+            </head>
+            <body>
+            </body>
+            </html>
+        """.trimIndent())
+
+        // TODO readme
+    }
 }
