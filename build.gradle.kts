@@ -33,8 +33,11 @@ println("=== Current version: $version ===")
 repositories {
     // mavenLocal()
     mavenCentral()
-    if (P.ComponentTencentGuild.isSnapshot) {
-        maven(Sonatype.`snapshot-oss`.URL)
+    maven {
+        url = uri(Sonatype.`snapshot-oss`.URL)
+        mavenContent {
+            snapshotsOnly()
+        }
     }
 }
 
@@ -49,6 +52,12 @@ subprojects {
     repositories {
         mavenLocal()
         mavenCentral()
+        maven {
+            url = uri(Sonatype.`snapshot-oss`.URL)
+            mavenContent {
+                snapshotsOnly()
+            }
+        }
     }
     println(name)
 
