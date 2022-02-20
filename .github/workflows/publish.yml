@@ -1,11 +1,11 @@
 name: Publish
-on: push
-  # push:
-  #   branches:
-  #     - main
-  #   paths:
-  #     - '**src/main/kotlin/**.kt'
-  #     - '**src/main/java/**.java'
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**src/main/kotlin/**.kt'
+      - '**src/main/java/**.java'
 
 jobs:
   publish-snapshot:
