@@ -84,10 +84,9 @@ subprojects {
         println("[publishing-configure] - [$name] configured.")
         // set gpg file path to root
         val secretKeyRingFileKey = "signing.secretKeyRingFile"
-        // val secretKeyRingFile = local().getProperty(secretKeyRingFileKey) ?: throw kotlin.NullPointerException(secretKeyRingFileKey)
-        // val secretRingFile = File(project.rootDir, "ForteScarlet.gpg")
-        // extra[secretKeyRingFileKey] = secretRingFile
-        // setProperty(secretKeyRingFileKey, secretRingFile)
+        val secretRingFile = File(project.rootDir, extra[secretKeyRingFileKey]!!.toString())
+        extra[secretKeyRingFileKey] = secretRingFile
+        setProperty(secretKeyRingFileKey, secretRingFile)
 
         signing {
             sign(publishing.publications)
