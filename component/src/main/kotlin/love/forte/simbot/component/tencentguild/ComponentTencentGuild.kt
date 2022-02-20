@@ -33,7 +33,6 @@ import love.forte.simbot.message.Message
  *
  * 其内部的 [component] 会在当前组件被加载后初始化。
  *
- *
  * @author ForteScarlet
  */
 public object ComponentTencentGuild {

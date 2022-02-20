@@ -59,9 +59,8 @@ subprojects {
     group = P.ComponentTencentGuild.GROUP
     version = P.ComponentTencentGuild.VERSION
 
-    apply(plugin = "maven-publish")
     apply(plugin = "java")
-    apply(plugin = "signing")
+
     repositories {
         mavenCentral()
         maven {
@@ -71,7 +70,6 @@ subprojects {
             }
         }
     }
-    println(name)
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
         kotlinOptions {
@@ -80,6 +78,8 @@ subprojects {
     }
 
     if (isPublishConfigurable) {
+        apply(plugin = "maven-publish")
+        apply(plugin = "signing")
         configurePublishing(name)
         println("[publishing-configure] - [$name] configured.")
         // set gpg file path to root
