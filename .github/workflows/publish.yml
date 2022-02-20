@@ -1,17 +1,21 @@
 name: Publish
-on:
-  push:
-    branches:
-      - main
-    paths:
-      - '**src/main/kotlin/**.kt'
-      - '**src/main/java/**.java'
+on: push
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - '**src/main/kotlin/**.kt'
+  #     - '**src/main/java/**.java'
 
 jobs:
   publish-snapshot:
     name: Publish snapshot
     runs-on: ubuntu-latest
     steps:
+      # 检出仓库代码
+      - name: Check out repo
+        uses: actions/checkout@v2
+
       # setup Java
       - name: Setup java
         uses: actions/setup-java@v2
@@ -19,10 +23,6 @@ jobs:
           distribution: 'temurin'
           java-version: 11
           cache: 'gradle'
-
-      # 检出仓库代码
-      - name: Check out repo
-        uses: actions/checkout@v2
 
       # the gpg
       - name: Decode gpg file
