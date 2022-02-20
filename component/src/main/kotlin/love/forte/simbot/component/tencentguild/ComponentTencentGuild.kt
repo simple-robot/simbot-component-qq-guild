@@ -21,6 +21,7 @@ import com.google.auto.service.AutoService
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import love.forte.simbot.*
+import love.forte.simbot.component.tencentguild.ComponentTencentGuild.component
 import love.forte.simbot.component.tencentguild.message.Ark
 import love.forte.simbot.component.tencentguild.message.AttachmentMessage
 import love.forte.simbot.component.tencentguild.message.MentionChannel
@@ -28,8 +29,10 @@ import love.forte.simbot.component.tencentguild.message.ReplyTo
 import love.forte.simbot.message.Message
 
 /**
+ * 腾讯频道实现simbot相关组件的基本组件信息，可以用来获取组件ID以及组件实例（实例化之后）。
  *
- * https://bot.q.qq.com/wiki/develop/api/openapi/guild/model.html
+ * 其内部的 [component] 会在当前组件被加载后初始化。
+ *
  */
 public object ComponentTencentGuild {
     @JvmField
@@ -37,6 +40,8 @@ public object ComponentTencentGuild {
 
     @Suppress("ObjectPropertyName")
     internal lateinit var _component: Component
+
+    @JvmStatic
     public val component: Component get() = if (::_component.isInitialized) _component else Components[COMPONENT_ID]
 }
 
@@ -65,7 +70,9 @@ public inline fun Sequence<BotManager<*>>.tencentGuildBotManagers(): Sequence<Te
 
 //endregion
 
-
+/**
+ * 用于注册腾讯频道组件的Service interface.
+ */
 @AutoService(ComponentInformationRegistrar::class)
 public class TencentGuildComponentInformationRegistrar : ComponentInformationRegistrar {
     override fun informations(): ComponentInformationRegistrar.Result {
@@ -75,7 +82,7 @@ public class TencentGuildComponentInformationRegistrar : ComponentInformationReg
 }
 
 
-public class TencentGuildComponentInformation : ComponentInformation {
+private class TencentGuildComponentInformation : ComponentInformation {
     override val id: ID
         get() = ComponentTencentGuild.COMPONENT_ID
     override val name: String
