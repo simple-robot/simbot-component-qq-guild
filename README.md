@@ -47,6 +47,11 @@
 如果你想要协助我们对当前仓库或者 [simbot3](https://github.com/ForteScarlet/simpler-robot/tree/v3-dev)
 的建设，欢迎通过issue提出宝贵意见或者通过pr参与到建设当中，十分感谢。
 
+## 文档
+你可以参考 [语雀说明文档](https://www.yuque.com/simpler-robot) 的 `simbot3` 部分，或者查看simbot3-腾讯频道组件的 [API Doc](https://simple-robot-library.github.io/simbot3-component-tencent-guild-apiDoc/) .
+
+
+
 ## 模块简介
 
 ## Api
