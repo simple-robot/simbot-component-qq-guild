@@ -33,14 +33,22 @@ import love.forte.simbot.message.Message
  *
  * 其内部的 [component] 会在当前组件被加载后初始化。
  *
+ * @author ForteScarlet
  */
 public object ComponentTencentGuild {
+
+    /**
+     * 腾讯频道组件的ID标识。
+     */
     @JvmField
     public val COMPONENT_ID: CharSequenceID = "simbot.tencentguild".ID
 
     @Suppress("ObjectPropertyName")
     internal lateinit var _component: Component
 
+    /**
+     * 腾讯频道组件的 [组件][Component] 对象实例。会在被simbot加载后初始化。
+     */
     @JvmStatic
     public val component: Component get() = if (::_component.isInitialized) _component else Components[COMPONENT_ID]
 }
