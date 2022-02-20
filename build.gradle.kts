@@ -31,7 +31,6 @@ version = P.ComponentTencentGuild.VERSION
 println("=== Current version: $version ===")
 
 repositories {
-    // mavenLocal()
     mavenCentral()
     maven {
         url = uri(Sonatype.`snapshot-oss`.URL)
@@ -41,6 +40,14 @@ repositories {
     }
 }
 
+val isSnapshotOnly = System.getProperty("snapshotOnly") != null
+val isReleaseOnly = System.getProperty("releaseOnly") != null
+
+val isPublishConfigurable = when {
+    isSnapshotOnly -> P.Simbot.SNAPSHOT
+    isReleaseOnly -> !P.Simbot.SNAPSHOT
+    else -> true
+}
 
 subprojects {
     group = P.ComponentTencentGuild.GROUP
