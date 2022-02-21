@@ -44,6 +44,7 @@ public object ComponentTencentGuild {
     @JvmField
     public val COMPONENT_ID: CharSequenceID = "simbot.tencentguild".ID
 
+
     @Suppress("ObjectPropertyName")
     internal lateinit var _component: Component
 
