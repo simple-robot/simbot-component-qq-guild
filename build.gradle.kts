@@ -94,6 +94,10 @@ subprojects {
     }
 
 
+    configurations.all {
+        // check for updates every build
+        resolutionStrategy.cacheChangingModulesFor(0, "seconds")
+    }
 }
 
 tasks.withType<JavaCompile>() {

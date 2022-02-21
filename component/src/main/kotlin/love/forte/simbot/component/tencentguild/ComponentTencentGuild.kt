@@ -40,6 +40,7 @@ public object ComponentTencentGuild {
 
     /**
      * 腾讯频道组件的ID标识。
+     *
      */
     @JvmField
     public val COMPONENT_ID: CharSequenceID = "simbot.tencentguild".ID
