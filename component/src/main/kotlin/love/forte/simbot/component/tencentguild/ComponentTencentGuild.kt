@@ -28,6 +28,7 @@ import love.forte.simbot.component.tencentguild.message.MentionChannel
 import love.forte.simbot.component.tencentguild.message.ReplyTo
 import love.forte.simbot.message.Message
 
+
 /**
  * 腾讯频道实现simbot相关组件的基本组件信息，可以用来获取组件ID以及组件实例（实例化之后）。
  *
