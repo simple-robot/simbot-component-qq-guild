@@ -175,3 +175,8 @@ idea {
         isDownloadSources = true
     }
 }
+
+configurations.all {
+    // check for updates every build
+    resolutionStrategy.cacheChangingModulesFor(0, "seconds")
+}
