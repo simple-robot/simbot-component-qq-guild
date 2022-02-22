@@ -28,7 +28,7 @@ abstract class SimbotProject {
 @Suppress("unused")
 sealed class P : SimbotProject() {
     object Simbot {
-        const val SNAPSHOT = true
+        const val SNAPSHOT = false
         const val GROUP = "love.forte.simbot"
         const val BOOT_GROUP = "love.forte.simbot.boot"
         const val REAL_VERSION = "3.0.0.preview.3.0"
