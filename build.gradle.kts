@@ -84,7 +84,7 @@ subprojects {
         println("[publishing-configure] - [$name] configured.")
         // set gpg file path to root
         val secretKeyRingFileKey = "signing.secretKeyRingFile"
-        val secretRingFile = File(project.rootDir, extra[secretKeyRingFileKey]!!.toString())
+        val secretRingFile = File(project.rootDir, getProp(secretKeyRingFileKey)?.toString() ?: "ForteScarlet.gpg")
         extra[secretKeyRingFileKey] = secretRingFile
         setProperty(secretKeyRingFileKey, secretRingFile)
 
