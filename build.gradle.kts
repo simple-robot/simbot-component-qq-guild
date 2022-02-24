@@ -32,6 +32,7 @@ version = P.ComponentTencentGuild.VERSION
 println("=== Current version: $version ===")
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven {
         url = uri(Sonatype.`snapshot-oss`.URL)
@@ -62,6 +63,7 @@ subprojects {
     apply(plugin = "java")
 
     repositories {
+        mavenLocal()
         mavenCentral()
         maven {
             url = uri(Sonatype.`snapshot-oss`.URL)

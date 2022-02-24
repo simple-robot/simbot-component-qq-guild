@@ -28,10 +28,10 @@ abstract class SimbotProject {
 @Suppress("unused")
 sealed class P : SimbotProject() {
     object Simbot {
-        const val SNAPSHOT = false
+        val SNAPSHOT = System.getProperty("isSnapshot")?.equals("true", true) ?: false
         const val GROUP = "love.forte.simbot"
         const val BOOT_GROUP = "love.forte.simbot.boot"
-        const val REAL_VERSION = "3.0.0.preview.3.0"
+        const val REAL_VERSION = "3.0.0.preview.4.0"
         val VERSION = if (SNAPSHOT) "$REAL_VERSION-SNAPSHOT" else REAL_VERSION
     }
 

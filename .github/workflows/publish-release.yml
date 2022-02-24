@@ -31,7 +31,7 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           gradle-version: 7.4
-          arguments: clean build test publishToSonatype closeAndReleaseStagingRepository -DreleaseOnly -Psigning.secretKeyRingFile=ForteScarlet.gpg -Psigning.keyId=${{ secrets.SIGN_KEY_ID }} -Psigning.password=${{ secrets.SIGN_PASS }} -Psonatype.username=${{ secrets.OSS_USERNAME }} -Psonatype.password=${{ secrets.OSS_PASSWORD }}
+          arguments: clean build test publishToSonatype closeAndReleaseStagingRepository -DreleaseOnly -DisSnapshot=false -Psigning.secretKeyRingFile=ForteScarlet.gpg -Psigning.keyId=${{ secrets.SIGN_KEY_ID }} -Psigning.password=${{ secrets.SIGN_PASS }} -Psonatype.username=${{ secrets.OSS_USERNAME }} -Psonatype.password=${{ secrets.OSS_PASSWORD }}
 
   create-release:
     name: Create release
@@ -50,6 +50,7 @@ jobs:
         with:
           body_path: .changelog/${{ github.ref_name }}.md
           generate_release_notes: true
+          prerelease: ${{ contains(github.ref_name, 'preview') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'alpha') }}
           draft: true
 
 
