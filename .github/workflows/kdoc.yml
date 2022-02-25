@@ -17,7 +17,7 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
       # setup Java
-      - name: Setup java8
+      - name: Setup java
         uses: actions/setup-java@v2
         with:
           distribution: 'temurin'
@@ -26,15 +26,16 @@ jobs:
 
       - name: Create gradle.properties
         run: |
-          echo "org.gradle.daemon=false" > gradle.properties
-          echo "org.gradle.jvmargs=-Xmx4G -Xms2G -XX:MaxMetaspaceSize=512m -Dfile.encoding=UT-8" >> gradle.properties
+          echo "org.gradle.workers.max=16" > gradle.properties
+          echo "org.gradle.parallel=true" >> gradle.properties
+          echo "org.gradle.jvmargs=-Xmx8G -Xms4G -XX:MaxMetaspaceSize=1G -Dfile.encoding=UTF-8" >> gradle.properties
 
       # setup Gradle
       - name: Gradle generate documentation
         uses: gradle/gradle-build-action@v2
         with:
           gradle-version: 7.3.3
-          arguments: clean build dokkaHtmlMultiModuleAndPost
+          arguments: clean build dokkaHtmlMultiModuleAndPost -DisSnapshot=false
 
       - name: Push to doc repository
         uses: peaceiris/actions-gh-pages@v3
