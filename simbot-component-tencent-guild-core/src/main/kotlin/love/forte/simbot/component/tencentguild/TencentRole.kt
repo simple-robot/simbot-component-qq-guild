@@ -14,21 +14,22 @@
  *
  *
  */
-pluginManagement {
-    plugins {
-        id("org.jetbrains.dokka") version "1.6.10"
-    }
+
+package love.forte.simbot.component.tencentguild
+
+import love.forte.simbot.*
+import love.forte.simbot.definition.*
+import love.forte.simbot.tencentguild.*
+
+/**
+ * 腾讯频道中所使用的角色类型。
+ * @author ForteScarlet
+ */
+public interface TencentRole : Role, TencentRoleInfo {
+    override val id: ID
+    override val name: String
+    override val color: Int
+    override val isHoist: Boolean
+    override val number: Int
+    override val memberLimit: Int
 }
-
-rootProject.name = "tencent-guild"
-
-include(":simbot-component-tencent-guild-api")
-include(":simbot-component-tencent-guild-stdlib")
-include(":simbot-component-tencent-guild-core")
-include(":simbot-component-tencent-guild-boot")
-
-// includeAndSaveFilePath(":api", "simbot-component-tencent-guild-api")
-// includeAndSaveFilePath(":stdlib", "simbot-component-tencent-guild-stdlib")
-// includeAndSaveFilePath(":component", "simbot-component-tencent-guild-core")
-// includeAndSaveFilePath(":component-boot", "simbot-component-tencent-guild-boot")
-

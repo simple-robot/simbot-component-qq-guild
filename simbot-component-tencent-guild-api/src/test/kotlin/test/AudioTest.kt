@@ -14,21 +14,38 @@
  *
  *
  */
-pluginManagement {
-    plugins {
-        id("org.jetbrains.dokka") version "1.6.10"
+
+package test
+
+import kotlinx.serialization.json.*
+import love.forte.simbot.tencentguild.*
+import kotlin.test.*
+
+
+/**
+ *
+ * @author ForteScarlet
+ */
+class AudioTest {
+
+    @Test
+    fun test1() {
+
+        val audioControl = TencentAudioControl(
+            audioUrl = "url",
+            text = "text",
+            status = TencentAudioControl.Status.START,
+        )
+
+        println(audioControl)
+
+        val jsonStr = Json.encodeToString(TencentAudioControl.serializer(), audioControl)
+        println(jsonStr)
+
+        val audio = Json.decodeFromString(TencentAudioControl.serializer(), jsonStr)
+
+        println(audio == audioControl)
+
     }
+
 }
-
-rootProject.name = "tencent-guild"
-
-include(":simbot-component-tencent-guild-api")
-include(":simbot-component-tencent-guild-stdlib")
-include(":simbot-component-tencent-guild-core")
-include(":simbot-component-tencent-guild-boot")
-
-// includeAndSaveFilePath(":api", "simbot-component-tencent-guild-api")
-// includeAndSaveFilePath(":stdlib", "simbot-component-tencent-guild-stdlib")
-// includeAndSaveFilePath(":component", "simbot-component-tencent-guild-core")
-// includeAndSaveFilePath(":component-boot", "simbot-component-tencent-guild-boot")
-

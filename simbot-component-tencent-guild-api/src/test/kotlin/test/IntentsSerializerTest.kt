@@ -14,21 +14,35 @@
  *
  *
  */
-pluginManagement {
-    plugins {
-        id("org.jetbrains.dokka") version "1.6.10"
+
+package test
+
+import kotlinx.serialization.*
+import kotlinx.serialization.json.*
+import love.forte.simbot.tencentguild.*
+import kotlin.test.*
+
+
+/**
+ *
+ * @author ForteScarlet
+ */
+class IntentsSerializerTest {
+
+    @Test
+    fun test() {
+        val i1 = EventSignals.Guilds.intents
+        val i2 = EventSignals.AudioAction.intents
+
+        println(i1 + i2)
+
+        val j = Json.encodeToString(B.serializer(), B(i1 + i2))
+
+        println(j)
+
     }
+
 }
 
-rootProject.name = "tencent-guild"
-
-include(":simbot-component-tencent-guild-api")
-include(":simbot-component-tencent-guild-stdlib")
-include(":simbot-component-tencent-guild-core")
-include(":simbot-component-tencent-guild-boot")
-
-// includeAndSaveFilePath(":api", "simbot-component-tencent-guild-api")
-// includeAndSaveFilePath(":stdlib", "simbot-component-tencent-guild-stdlib")
-// includeAndSaveFilePath(":component", "simbot-component-tencent-guild-core")
-// includeAndSaveFilePath(":component-boot", "simbot-component-tencent-guild-boot")
-
+@Serializable
+private data class B(val intents: Intents)

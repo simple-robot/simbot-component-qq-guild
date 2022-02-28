@@ -14,21 +14,20 @@
  *
  *
  */
-pluginManagement {
-    plugins {
-        id("org.jetbrains.dokka") version "1.6.10"
-    }
+
+package love.forte.simbot.component.tencentguild.internal.event
+
+import love.forte.simbot.*
+import love.forte.simbot.component.tencentguild.event.*
+import love.forte.simbot.component.tencentguild.internal.*
+
+
+internal class TcgBotRegisteredEventImpl(override val bot: TencentGuildBotImpl) : TcgBotRegisteredEvent() {
+    override val timestamp: Timestamp = Timestamp.now()
+    override val id: ID = randomID()
 }
 
-rootProject.name = "tencent-guild"
-
-include(":simbot-component-tencent-guild-api")
-include(":simbot-component-tencent-guild-stdlib")
-include(":simbot-component-tencent-guild-core")
-include(":simbot-component-tencent-guild-boot")
-
-// includeAndSaveFilePath(":api", "simbot-component-tencent-guild-api")
-// includeAndSaveFilePath(":stdlib", "simbot-component-tencent-guild-stdlib")
-// includeAndSaveFilePath(":component", "simbot-component-tencent-guild-core")
-// includeAndSaveFilePath(":component-boot", "simbot-component-tencent-guild-boot")
-
+internal class TcgBotStartedEventImpl(override val bot: TencentGuildBotImpl) : TcgBotStartedEvent() {
+    override val timestamp: Timestamp = Timestamp.now()
+    override val id: ID = randomID()
+}

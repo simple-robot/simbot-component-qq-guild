@@ -14,21 +14,30 @@
  *
  *
  */
-pluginManagement {
-    plugins {
-        id("org.jetbrains.dokka") version "1.6.10"
-    }
-}
 
-rootProject.name = "tencent-guild"
+package love.forte.simbot.tencentguild.internal
 
-include(":simbot-component-tencent-guild-api")
-include(":simbot-component-tencent-guild-stdlib")
-include(":simbot-component-tencent-guild-core")
-include(":simbot-component-tencent-guild-boot")
+import kotlinx.serialization.*
+import love.forte.simbot.*
+import love.forte.simbot.tencentguild.*
 
-// includeAndSaveFilePath(":api", "simbot-component-tencent-guild-api")
-// includeAndSaveFilePath(":stdlib", "simbot-component-tencent-guild-stdlib")
-// includeAndSaveFilePath(":component", "simbot-component-tencent-guild-core")
-// includeAndSaveFilePath(":component-boot", "simbot-component-tencent-guild-boot")
 
+@Serializable
+internal data class TencentChannelInfoImpl(
+    override val id: CharSequenceID,
+    @SerialName("guild_id")
+    override val guildId: CharSequenceID,
+
+    override val name: String,
+    @SerialName("type")
+    override val channelTypeValue: Int,
+    @SerialName("sub_type")
+    override val channelSubTypeValue: Int,
+
+    override val position: Int,
+    @SerialName("parent_id")
+    override val parentId: String,
+
+    @SerialName("owner_id")
+    override val ownerId: CharSequenceID,
+) : TencentChannelInfo

@@ -14,21 +14,40 @@
  *
  *
  */
-pluginManagement {
-    plugins {
-        id("org.jetbrains.dokka") version "1.6.10"
+
+import kotlinx.coroutines.*
+import love.forte.simbot.tencentguild.*
+import java.util.concurrent.*
+import java.util.concurrent.atomic.*
+import kotlin.concurrent.*
+
+/**
+ *
+ * @author ForteScarlet
+ */
+class BotTest {
+
+
+    fun test() = runBlocking {
+
+        // 直接构建一个BOT
+        val bot = tencentBot(
+            "appid",
+            appKey = "key",
+            token = "token",
+        ) {
+            // 总分片数量
+            totalShard = 4
+            val threadN = AtomicInteger(0)
+            coroutineContext += Executors.newFixedThreadPool(4) {
+                thread(start = false, isDaemon = true, name = "Test-thread-${threadN.getAndIncrement()}") { it.run() }
+            }.asCoroutineDispatcher()
+
+        }
+
+        bot.start()
+        bot.join()
+
     }
+
 }
-
-rootProject.name = "tencent-guild"
-
-include(":simbot-component-tencent-guild-api")
-include(":simbot-component-tencent-guild-stdlib")
-include(":simbot-component-tencent-guild-core")
-include(":simbot-component-tencent-guild-boot")
-
-// includeAndSaveFilePath(":api", "simbot-component-tencent-guild-api")
-// includeAndSaveFilePath(":stdlib", "simbot-component-tencent-guild-stdlib")
-// includeAndSaveFilePath(":component", "simbot-component-tencent-guild-core")
-// includeAndSaveFilePath(":component-boot", "simbot-component-tencent-guild-boot")
-

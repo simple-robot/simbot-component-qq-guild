@@ -14,21 +14,28 @@
  *
  *
  */
-pluginManagement {
-    plugins {
-        id("org.jetbrains.dokka") version "1.6.10"
+
+package love.forte.simboot.component.tencentguild
+
+import love.forte.di.annotation.*
+import love.forte.simboot.factory.*
+import love.forte.simbot.*
+import love.forte.simbot.component.tencentguild.*
+import love.forte.simbot.event.*
+import javax.inject.*
+
+
+/**
+ *
+ * @author ForteScarlet
+ */
+@Named("tencentGuildBotRegistrarFactory")
+public class TencentGuildBotRegistrarFactory @Depend(required = false) constructor(
+    @Depend(required = false) private val configure: TencentGuildBotManagerConfigure? = null
+) : BotRegistrarFactory {
+    override fun invoke(processor: EventProcessor): BotRegistrar {
+        return tencentGuildBotManager(processor) {
+            configure?.config(this)
+        }
     }
 }
-
-rootProject.name = "tencent-guild"
-
-include(":simbot-component-tencent-guild-api")
-include(":simbot-component-tencent-guild-stdlib")
-include(":simbot-component-tencent-guild-core")
-include(":simbot-component-tencent-guild-boot")
-
-// includeAndSaveFilePath(":api", "simbot-component-tencent-guild-api")
-// includeAndSaveFilePath(":stdlib", "simbot-component-tencent-guild-stdlib")
-// includeAndSaveFilePath(":component", "simbot-component-tencent-guild-core")
-// includeAndSaveFilePath(":component-boot", "simbot-component-tencent-guild-boot")
-

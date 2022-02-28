@@ -14,21 +14,33 @@
  *
  *
  */
-pluginManagement {
-    plugins {
-        id("org.jetbrains.dokka") version "1.6.10"
-    }
+
+package love.forte.simbot.component.tencentguild.event
+
+import love.forte.simbot.component.tencentguild.*
+import love.forte.simbot.definition.*
+import love.forte.simbot.tencentguild.*
+
+/**
+ *
+ * 腾讯频道bot的事件总类。
+ *
+ * @param T 此类型代表其真正事件所得到的结果。
+ *
+ * @author ForteScarlet
+ */
+public abstract class TcgEvent<T : Any> : BotContainer {
+    abstract override val bot: TencentGuildBot
+
+
+    /**
+     * 真正的原始事件所得到的事件实体。
+     */
+    public abstract val sourceEventEntity: T
+
+    /**
+     * 这个事件所对应的 [EventSignals] 类型。
+     */
+    public abstract val eventSignal: EventSignals<T>
+
 }
-
-rootProject.name = "tencent-guild"
-
-include(":simbot-component-tencent-guild-api")
-include(":simbot-component-tencent-guild-stdlib")
-include(":simbot-component-tencent-guild-core")
-include(":simbot-component-tencent-guild-boot")
-
-// includeAndSaveFilePath(":api", "simbot-component-tencent-guild-api")
-// includeAndSaveFilePath(":stdlib", "simbot-component-tencent-guild-stdlib")
-// includeAndSaveFilePath(":component", "simbot-component-tencent-guild-core")
-// includeAndSaveFilePath(":component-boot", "simbot-component-tencent-guild-boot")
-

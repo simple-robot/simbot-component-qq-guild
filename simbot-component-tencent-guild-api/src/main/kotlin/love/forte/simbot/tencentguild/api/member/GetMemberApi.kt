@@ -14,21 +14,30 @@
  *
  *
  */
-pluginManagement {
-    plugins {
-        id("org.jetbrains.dokka") version "1.6.10"
+
+package love.forte.simbot.tencentguild.api.member
+
+import kotlinx.serialization.*
+import love.forte.simbot.*
+import love.forte.simbot.tencentguild.*
+import love.forte.simbot.tencentguild.api.*
+
+
+/**
+ * [获取某个成员信息](https://bot.q.qq.com/wiki/develop/api/openapi/member/get_member.html)
+ *
+ */
+public class GetMemberApi(
+    guildId: ID,
+    userId: ID
+) : GetTencentApi<TencentMemberInfo>() {
+    // GET /guilds/{guild_id}/members/{user_id}
+    private val path = listOf("guilds", guildId.toString(), "members", userId.toString())
+
+    override val resultDeserializer: DeserializationStrategy<out TencentMemberInfo>
+        get() = TencentMemberInfo.serializer
+
+    override fun route(builder: RouteInfoBuilder) {
+        builder.apiPath = path
     }
 }
-
-rootProject.name = "tencent-guild"
-
-include(":simbot-component-tencent-guild-api")
-include(":simbot-component-tencent-guild-stdlib")
-include(":simbot-component-tencent-guild-core")
-include(":simbot-component-tencent-guild-boot")
-
-// includeAndSaveFilePath(":api", "simbot-component-tencent-guild-api")
-// includeAndSaveFilePath(":stdlib", "simbot-component-tencent-guild-stdlib")
-// includeAndSaveFilePath(":component", "simbot-component-tencent-guild-core")
-// includeAndSaveFilePath(":component-boot", "simbot-component-tencent-guild-boot")
-

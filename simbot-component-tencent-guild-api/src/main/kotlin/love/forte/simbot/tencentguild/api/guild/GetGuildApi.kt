@@ -14,21 +14,31 @@
  *
  *
  */
-pluginManagement {
-    plugins {
-        id("org.jetbrains.dokka") version "1.6.10"
+
+package love.forte.simbot.tencentguild.api.guild
+
+import io.ktor.http.*
+import kotlinx.serialization.*
+import love.forte.simbot.*
+import love.forte.simbot.tencentguild.*
+import love.forte.simbot.tencentguild.api.*
+
+/**
+ * 获取指定Guild
+ */
+public class GetGuildApi(guildId: ID) : TencentApi<TencentGuildInfo>() {
+    private val path = listOf("guilds", guildId.toString())
+
+    override val resultDeserializer: DeserializationStrategy<out TencentGuildInfo>
+        get() = TencentGuildInfo.serializer
+
+    override val method: HttpMethod
+        get() = HttpMethod.Get
+
+    override fun route(builder: RouteInfoBuilder) {
+        builder.apiPath = path
     }
+
+    override val body: Any? get() = null
+
 }
-
-rootProject.name = "tencent-guild"
-
-include(":simbot-component-tencent-guild-api")
-include(":simbot-component-tencent-guild-stdlib")
-include(":simbot-component-tencent-guild-core")
-include(":simbot-component-tencent-guild-boot")
-
-// includeAndSaveFilePath(":api", "simbot-component-tencent-guild-api")
-// includeAndSaveFilePath(":stdlib", "simbot-component-tencent-guild-stdlib")
-// includeAndSaveFilePath(":component", "simbot-component-tencent-guild-core")
-// includeAndSaveFilePath(":component-boot", "simbot-component-tencent-guild-boot")
-

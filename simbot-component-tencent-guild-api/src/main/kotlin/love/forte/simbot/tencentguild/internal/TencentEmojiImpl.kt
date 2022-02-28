@@ -14,21 +14,20 @@
  *
  *
  */
-pluginManagement {
-    plugins {
-        id("org.jetbrains.dokka") version "1.6.10"
-    }
+
+package love.forte.simbot.tencentguild.internal
+
+import kotlinx.serialization.*
+import love.forte.simbot.*
+import love.forte.simbot.tencentguild.*
+
+
+/**
+ *
+ * @author ForteScarlet
+ */
+@Serializable
+internal data class TencentEmojiImpl(override val id: CharSequenceID, override val type: TencentEmoji.Type) :
+    TencentEmoji {
+    constructor(id: ID, type: Int) : this(id.toCharSequenceID(), emojiType(type))
 }
-
-rootProject.name = "tencent-guild"
-
-include(":simbot-component-tencent-guild-api")
-include(":simbot-component-tencent-guild-stdlib")
-include(":simbot-component-tencent-guild-core")
-include(":simbot-component-tencent-guild-boot")
-
-// includeAndSaveFilePath(":api", "simbot-component-tencent-guild-api")
-// includeAndSaveFilePath(":stdlib", "simbot-component-tencent-guild-stdlib")
-// includeAndSaveFilePath(":component", "simbot-component-tencent-guild-core")
-// includeAndSaveFilePath(":component-boot", "simbot-component-tencent-guild-boot")
-

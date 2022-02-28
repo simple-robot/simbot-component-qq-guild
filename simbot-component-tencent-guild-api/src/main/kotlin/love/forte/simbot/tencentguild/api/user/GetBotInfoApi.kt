@@ -14,21 +14,24 @@
  *
  *
  */
-pluginManagement {
-    plugins {
-        id("org.jetbrains.dokka") version "1.6.10"
+
+package love.forte.simbot.tencentguild.api.user
+
+import kotlinx.serialization.*
+import love.forte.simbot.tencentguild.*
+import love.forte.simbot.tencentguild.api.*
+
+
+/**
+ *
+ * [获取当前用户信息](https://bot.q.qq.com/wiki/develop/api/openapi/user/me.html)
+ * @author ForteScarlet
+ */
+public object GetBotInfoApi : GetTencentApi<TencentBotInfo>() {
+    // GET /users/@me
+    private val path = listOf("users", "@me")
+    override val resultDeserializer: DeserializationStrategy<out TencentBotInfo> = TencentBotInfo.serializer
+    override fun route(builder: RouteInfoBuilder) {
+        builder.apiPath = path
     }
 }
-
-rootProject.name = "tencent-guild"
-
-include(":simbot-component-tencent-guild-api")
-include(":simbot-component-tencent-guild-stdlib")
-include(":simbot-component-tencent-guild-core")
-include(":simbot-component-tencent-guild-boot")
-
-// includeAndSaveFilePath(":api", "simbot-component-tencent-guild-api")
-// includeAndSaveFilePath(":stdlib", "simbot-component-tencent-guild-stdlib")
-// includeAndSaveFilePath(":component", "simbot-component-tencent-guild-core")
-// includeAndSaveFilePath(":component-boot", "simbot-component-tencent-guild-boot")
-

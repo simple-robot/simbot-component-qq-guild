@@ -14,21 +14,24 @@
  *
  *
  */
-pluginManagement {
-    plugins {
-        id("org.jetbrains.dokka") version "1.6.10"
-    }
-}
 
-rootProject.name = "tencent-guild"
+package love.forte.simbot.tencentguild.internal
 
-include(":simbot-component-tencent-guild-api")
-include(":simbot-component-tencent-guild-stdlib")
-include(":simbot-component-tencent-guild-core")
-include(":simbot-component-tencent-guild-boot")
+import kotlinx.serialization.*
+import love.forte.simbot.*
+import love.forte.simbot.tencentguild.*
 
-// includeAndSaveFilePath(":api", "simbot-component-tencent-guild-api")
-// includeAndSaveFilePath(":stdlib", "simbot-component-tencent-guild-stdlib")
-// includeAndSaveFilePath(":component", "simbot-component-tencent-guild-core")
-// includeAndSaveFilePath(":component-boot", "simbot-component-tencent-guild-boot")
 
+/**
+ *
+ * @author ForteScarlet
+ */
+@Serializable
+internal class TencentAnnouncesImpl(
+    @SerialName("guild_id")
+    override val guildId: CharSequenceID,
+    @SerialName("channel_id")
+    override val channelId: CharSequenceID,
+    @SerialName("message_id")
+    override val messageId: CharSequenceID
+) : TencentAnnounces

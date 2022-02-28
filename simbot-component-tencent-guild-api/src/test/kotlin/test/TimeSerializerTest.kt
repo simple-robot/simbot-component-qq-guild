@@ -14,21 +14,37 @@
  *
  *
  */
-pluginManagement {
-    plugins {
-        id("org.jetbrains.dokka") version "1.6.10"
+
+package test
+
+import kotlinx.serialization.*
+import kotlinx.serialization.json.*
+import love.forte.simbot.*
+import love.forte.simbot.tencentguild.*
+import java.time.*
+import kotlin.test.*
+
+
+/**
+ *
+ * @author ForteScarlet
+ */
+class TimeSerializerTest {
+
+    @Test
+    fun test() {
+        val j1 = Json.encodeToString(A.serializer(), A(Instant.now().toTimestamp()))
+        val j2 = Json.encodeToString(A.serializer(), A(Timestamp.NotSupport))
+
+        println(j1)
+        println(j2)
+
+        println(Json.decodeFromString(A.serializer(), j1))
+        println(Json.decodeFromString(A.serializer(), j2))
+
     }
+
 }
 
-rootProject.name = "tencent-guild"
-
-include(":simbot-component-tencent-guild-api")
-include(":simbot-component-tencent-guild-stdlib")
-include(":simbot-component-tencent-guild-core")
-include(":simbot-component-tencent-guild-boot")
-
-// includeAndSaveFilePath(":api", "simbot-component-tencent-guild-api")
-// includeAndSaveFilePath(":stdlib", "simbot-component-tencent-guild-stdlib")
-// includeAndSaveFilePath(":component", "simbot-component-tencent-guild-core")
-// includeAndSaveFilePath(":component-boot", "simbot-component-tencent-guild-boot")
-
+@Serializable
+data class A(@Serializable(TimestampISO8601Serializer::class) val timestamp: Timestamp)

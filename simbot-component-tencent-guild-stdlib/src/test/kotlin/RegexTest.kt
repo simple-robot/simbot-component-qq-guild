@@ -14,21 +14,36 @@
  *
  *
  */
-pluginManagement {
-    plugins {
-        id("org.jetbrains.dokka") version "1.6.10"
+
+import kotlin.test.*
+
+/**
+ *
+ * @author ForteScarlet
+ */
+class RegexTest {
+
+    @Test
+    fun test() {
+        val regex = Regex("<@!(?<uid>\\d+)>|<#!(?<cid>\\d+)>")
+
+        val text = "<@!15568778634248196340> aaa <@!123123123123><#!666666666> abcd"
+
+        var lastTextIndex = 0
+
+        regex.findAll(text).forEach {
+            if (it.range.first != lastTextIndex) {
+                println("text:  '${text.substring(lastTextIndex until it.range.first)}'")
+
+            }
+            lastTextIndex = it.range.last + 1
+            println("regex: '${it.value}'")
+        }
+        if (lastTextIndex != text.length) {
+            println("text:  '${text.substring(lastTextIndex)}'")
+        }
+
+
     }
+
 }
-
-rootProject.name = "tencent-guild"
-
-include(":simbot-component-tencent-guild-api")
-include(":simbot-component-tencent-guild-stdlib")
-include(":simbot-component-tencent-guild-core")
-include(":simbot-component-tencent-guild-boot")
-
-// includeAndSaveFilePath(":api", "simbot-component-tencent-guild-api")
-// includeAndSaveFilePath(":stdlib", "simbot-component-tencent-guild-stdlib")
-// includeAndSaveFilePath(":component", "simbot-component-tencent-guild-core")
-// includeAndSaveFilePath(":component-boot", "simbot-component-tencent-guild-boot")
-

@@ -14,21 +14,34 @@
  *
  *
  */
-pluginManagement {
-    plugins {
-        id("org.jetbrains.dokka") version "1.6.10"
-    }
+
+@file:JvmName("BotRequestUtil")
+
+package love.forte.simbot.tencentguild
+
+import kotlinx.coroutines.*
+import love.forte.simbot.*
+import love.forte.simbot.tencentguild.api.*
+
+
+/**
+ * 直接通过bot进行请求。
+ *
+ * @throws love.forte.simbot.tencentguild.TencentApiException 如果返回状态码不在 200..300之间。
+ */
+@JvmSynthetic
+public suspend fun <R> TencentApi<R>.request(bot: TencentBot): R {
+    return request(
+        client = bot.configuration.httpClient,
+        server = bot.configuration.serverUrl,
+        token = bot.ticket.botToken,
+        decoder = bot.configuration.decoder,
+    )
 }
 
-rootProject.name = "tencent-guild"
 
-include(":simbot-component-tencent-guild-api")
-include(":simbot-component-tencent-guild-stdlib")
-include(":simbot-component-tencent-guild-core")
-include(":simbot-component-tencent-guild-boot")
-
-// includeAndSaveFilePath(":api", "simbot-component-tencent-guild-api")
-// includeAndSaveFilePath(":stdlib", "simbot-component-tencent-guild-stdlib")
-// includeAndSaveFilePath(":component", "simbot-component-tencent-guild-core")
-// includeAndSaveFilePath(":component-boot", "simbot-component-tencent-guild-boot")
-
+@OptIn(InternalSrTcgApi::class)
+@Api4J
+public fun <R> doRequest(bot: TencentBot, api: TencentApi<R>): R = runBlocking {
+    api.request(bot)
+}

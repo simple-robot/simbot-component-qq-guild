@@ -14,21 +14,32 @@
  *
  *
  */
-pluginManagement {
-    plugins {
-        id("org.jetbrains.dokka") version "1.6.10"
-    }
+
+package love.forte.simbot.tencentguild.internal
+
+import kotlinx.serialization.*
+import love.forte.simbot.*
+import love.forte.simbot.tencentguild.*
+
+/**
+ * [身份组](https://bot.q.qq.com/wiki/develop/api/openapi/guild/role_model.html)
+ */
+@Serializable
+internal data class TencentRoleInfoImpl(
+    override val id: CharSequenceID,
+    override val name: String,
+    override val color: Int,
+    /** 0-否, 1-是 */
+    @SerialName("hoist")
+    val hoistValue: Int,
+    override val number: Int,
+    @SerialName("member_limit")
+    override val memberLimit: Int
+) : TencentRoleInfo {
+
+    override val isHoist: Boolean get() = hoistValue == 1
+
 }
 
-rootProject.name = "tencent-guild"
-
-include(":simbot-component-tencent-guild-api")
-include(":simbot-component-tencent-guild-stdlib")
-include(":simbot-component-tencent-guild-core")
-include(":simbot-component-tencent-guild-boot")
-
-// includeAndSaveFilePath(":api", "simbot-component-tencent-guild-api")
-// includeAndSaveFilePath(":stdlib", "simbot-component-tencent-guild-stdlib")
-// includeAndSaveFilePath(":component", "simbot-component-tencent-guild-core")
-// includeAndSaveFilePath(":component-boot", "simbot-component-tencent-guild-boot")
+//
 

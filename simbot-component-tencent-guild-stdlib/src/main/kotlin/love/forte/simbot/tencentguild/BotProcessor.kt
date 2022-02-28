@@ -14,21 +14,33 @@
  *
  *
  */
-pluginManagement {
-    plugins {
-        id("org.jetbrains.dokka") version "1.6.10"
+
+package love.forte.simbot.tencentguild
+
+import kotlinx.serialization.json.*
+
+
+public inline fun TencentBot.processor(
+    typeName: String,
+    crossinline block: suspend Signal.Dispatch.(decoder: Json, decoded: () -> Any) -> Unit
+) {
+    processor { decoder, decoded ->
+        if (this.type == typeName) {
+            this.block(decoder, decoded)
+        }
     }
 }
 
-rootProject.name = "tencent-guild"
 
-include(":simbot-component-tencent-guild-api")
-include(":simbot-component-tencent-guild-stdlib")
-include(":simbot-component-tencent-guild-core")
-include(":simbot-component-tencent-guild-boot")
+public inline fun <reified R : Any> TencentBot.processor(
+    eventType: EventSignals<R>,
+    crossinline block: suspend (R) -> Unit
+) {
+    processor { _, decoded ->
+        if (type == eventType.type) {
+            // val eventData: R = decoder.decodeFromJsonElement(eventType.decoder, data)
+            block(decoded() as R)
+        }
+    }
 
-// includeAndSaveFilePath(":api", "simbot-component-tencent-guild-api")
-// includeAndSaveFilePath(":stdlib", "simbot-component-tencent-guild-stdlib")
-// includeAndSaveFilePath(":component", "simbot-component-tencent-guild-core")
-// includeAndSaveFilePath(":component-boot", "simbot-component-tencent-guild-boot")
-
+}

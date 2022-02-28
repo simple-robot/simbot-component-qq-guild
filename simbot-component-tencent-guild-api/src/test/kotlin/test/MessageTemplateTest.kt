@@ -14,21 +14,32 @@
  *
  *
  */
-pluginManagement {
-    plugins {
-        id("org.jetbrains.dokka") version "1.6.10"
+
+package test
+
+import kotlinx.serialization.json.*
+import love.forte.simbot.tencentguild.*
+import love.forte.simbot.tencentguild.api.message.*
+import kotlin.test.*
+
+/**
+ *
+ * @author ForteScarlet
+ */
+class MessageTemplateTest {
+
+    @Test
+    fun test() {
+        val t23 = ArkMessageTemplates.TextLinkList(
+            desc = "desc",
+            prompt = "prompt",
+            list = listOf(
+                ArkMessageTemplates.TextLinkList.Desc("DESC"),
+                ArkMessageTemplates.TextLinkList.Desc("DESC", "https://sss")
+            )
+        )
+        println(Json { prettyPrint = true }.encodeToString(TencentMessage.Ark.serializer(), t23.ark))
+
+
     }
 }
-
-rootProject.name = "tencent-guild"
-
-include(":simbot-component-tencent-guild-api")
-include(":simbot-component-tencent-guild-stdlib")
-include(":simbot-component-tencent-guild-core")
-include(":simbot-component-tencent-guild-boot")
-
-// includeAndSaveFilePath(":api", "simbot-component-tencent-guild-api")
-// includeAndSaveFilePath(":stdlib", "simbot-component-tencent-guild-stdlib")
-// includeAndSaveFilePath(":component", "simbot-component-tencent-guild-core")
-// includeAndSaveFilePath(":component-boot", "simbot-component-tencent-guild-boot")
-

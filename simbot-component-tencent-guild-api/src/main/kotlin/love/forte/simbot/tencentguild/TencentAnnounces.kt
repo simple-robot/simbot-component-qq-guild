@@ -14,21 +14,38 @@
  *
  *
  */
-pluginManagement {
-    plugins {
-        id("org.jetbrains.dokka") version "1.6.10"
+
+package love.forte.simbot.tencentguild
+
+import kotlinx.serialization.*
+import love.forte.simbot.*
+import love.forte.simbot.tencentguild.internal.*
+
+
+/**
+ *
+ * [公告对象(Announces)](https://bot.q.qq.com/wiki/develop/api/openapi/announces/model.html#announces)
+ *
+ * @author ForteScarlet
+ */
+public interface TencentAnnounces {
+    /**
+     * 	频道 id
+     */
+    public val guildId: ID
+
+
+    /**
+     * 	子频道 id
+     */
+    public val channelId: ID
+
+    /**
+     * 	消息 id
+     */
+    public val messageId: ID
+
+    public companion object {
+        internal val serializer: KSerializer<out TencentAnnouncesImpl> = TencentAnnouncesImpl.serializer()
     }
 }
-
-rootProject.name = "tencent-guild"
-
-include(":simbot-component-tencent-guild-api")
-include(":simbot-component-tencent-guild-stdlib")
-include(":simbot-component-tencent-guild-core")
-include(":simbot-component-tencent-guild-boot")
-
-// includeAndSaveFilePath(":api", "simbot-component-tencent-guild-api")
-// includeAndSaveFilePath(":stdlib", "simbot-component-tencent-guild-stdlib")
-// includeAndSaveFilePath(":component", "simbot-component-tencent-guild-core")
-// includeAndSaveFilePath(":component-boot", "simbot-component-tencent-guild-boot")
-

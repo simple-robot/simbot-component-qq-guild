@@ -14,21 +14,26 @@
  *
  *
  */
-pluginManagement {
-    plugins {
-        id("org.jetbrains.dokka") version "1.6.10"
-    }
-}
 
-rootProject.name = "tencent-guild"
+package love.forte.simbot.tencentguild.internal
 
-include(":simbot-component-tencent-guild-api")
-include(":simbot-component-tencent-guild-stdlib")
-include(":simbot-component-tencent-guild-core")
-include(":simbot-component-tencent-guild-boot")
+import kotlinx.serialization.*
+import love.forte.simbot.*
+import love.forte.simbot.tencentguild.*
 
-// includeAndSaveFilePath(":api", "simbot-component-tencent-guild-api")
-// includeAndSaveFilePath(":stdlib", "simbot-component-tencent-guild-stdlib")
-// includeAndSaveFilePath(":component", "simbot-component-tencent-guild-core")
-// includeAndSaveFilePath(":component-boot", "simbot-component-tencent-guild-boot")
-
+/**
+ * [User](https://bot.q.qq.com/wiki/develop/api/openapi/user/model.html)
+ *
+ */
+@Serializable
+internal data class TencentUserInfoImpl(
+    override val id: CharSequenceID,
+    override val username: String,
+    override val avatar: String,
+    @SerialName("bot")
+    override val isBot: Boolean,
+    @SerialName("union_openid")
+    override val unionOpenid: String? = null,
+    @SerialName("union_user_account")
+    override val unionUserAccount: String? = null
+) : TencentUserInfo
