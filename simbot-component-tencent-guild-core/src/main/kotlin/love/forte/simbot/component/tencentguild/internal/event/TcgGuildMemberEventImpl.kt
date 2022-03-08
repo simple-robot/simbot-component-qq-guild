@@ -76,7 +76,7 @@ internal class TcgGuildMemberIncrease constructor(
             val guildId = data.guildId!!
             val member = TencentMemberImpl(
                 bot, data,
-                bot.lazyValue { TencentGuildImpl(bot, GetGuildApi(guildId).request(bot)) }
+                bot.lazyValue { TencentGuildImpl(bot, GetGuildApi(guildId).requestBy(bot)) }
             )
             return TcgGuildMemberIncrease(bot, data, member)
         }
@@ -127,7 +127,7 @@ internal class TcgGuildMemberDecrease constructor(
             val guildId = data.guildId!!
             val member = TencentMemberImpl(
                 bot, data,
-                bot.lazyValue { TencentGuildImpl(bot, GetGuildApi(guildId).request(bot)) }
+                bot.lazyValue { TencentGuildImpl(bot, GetGuildApi(guildId).requestBy(bot)) }
             )
             return TcgGuildMemberDecrease(bot, data, member)
         }

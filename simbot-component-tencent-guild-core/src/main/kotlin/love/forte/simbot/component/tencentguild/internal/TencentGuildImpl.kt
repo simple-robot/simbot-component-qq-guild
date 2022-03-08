@@ -58,14 +58,14 @@ internal class TencentGuildImpl(
     }
 
     private suspend fun getRoleFlow(guildId: ID): Flow<TencentRoleInfo> = flow {
-        GetGuildRoleListApi(guildId).request(bot).roles.forEach {
+        GetGuildRoleListApi(guildId).requestBy(bot).roles.forEach {
             emit(it)
         }
     }
 
     private fun getRoleSequence(guildId: ID): Sequence<TencentRoleInfo> = sequence {
         val roles = runBlocking {
-            GetGuildRoleListApi(guildId).request(bot).roles
+            GetGuildRoleListApi(guildId).requestBy(bot).roles
         }
         yieldAll(roles)
     }
@@ -95,7 +95,7 @@ internal class TencentGuildImpl(
 
 
     private var _owner: LazyValue<TencentMemberImpl> = lazyValue {
-        val member = GetMemberApi(guildInfo.id, guildInfo.ownerId).request(bot)
+        val member = GetMemberApi(guildInfo.id, guildInfo.ownerId).requestBy(bot)
         TencentMemberImpl(bot, member, this)
     }
 
@@ -106,10 +106,10 @@ internal class TencentGuildImpl(
         get() = runBlocking { owner() }
 
     private suspend fun getChildrenFlow(guildId: ID): Flow<TencentChannelInfo> =
-        GetGuildChannelListApi(guildId = guildId).request(bot).asFlow()
+        GetGuildChannelListApi(guildId = guildId).requestBy(bot).asFlow()
 
 
     private fun getChildrenSequence(guildId: ID): Sequence<TencentChannelInfo> =
-        runBlocking { GetGuildChannelListApi(guildId = guildId).request(bot).asSequence() }
+        runBlocking { GetGuildChannelListApi(guildId = guildId).requestBy(bot).asSequence() }
 
 }

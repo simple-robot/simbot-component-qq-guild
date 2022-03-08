@@ -54,7 +54,7 @@ constructor(
                 data,
                 bot,
                 TencentChannelImpl(bot, data, bot.lazyValue {
-                    TencentGuildImpl(bot, GetGuildApi(guildId).request(bot))
+                    TencentGuildImpl(bot, GetGuildApi(guildId).requestBy(bot))
                 })
             )
         }
@@ -89,7 +89,7 @@ constructor(
                 data,
                 bot,
                 TencentChannelImpl(bot, data, bot.lazyValue {
-                    TencentGuildImpl(bot, GetGuildApi(guildId).request(bot))
+                    TencentGuildImpl(bot, GetGuildApi(guildId).requestBy(bot))
                 })
             )
         }
@@ -124,7 +124,7 @@ constructor(
                 data,
                 bot,
                 TencentChannelImpl(bot, data, bot.lazyValue {
-                    TencentGuildImpl(bot, GetGuildApi(guildId).request(bot))
+                    TencentGuildImpl(bot, GetGuildApi(guildId).requestBy(bot))
                 })
             )
         }

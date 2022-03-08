@@ -32,7 +32,7 @@ private fun TencentGuildBotImpl.lazyGuild(
     action: TencentAudioAction
 ): LazyValue<TencentGuildImpl> = lazyValue {
     TencentGuildImpl(
-        this@lazyGuild, GetGuildApi(action.guildId).request(sourceBot)
+        this@lazyGuild, GetGuildApi(action.guildId).requestBy(sourceBot)
     )
 }
 
@@ -42,7 +42,7 @@ private fun TencentGuildBotImpl.lazyChannel(
 ): LazyValue<TencentChannelImpl> = lazyValue {
     TencentChannelImpl(
         this@lazyChannel,
-        GetChannelApi(action.channelId).request(sourceBot),
+        GetChannelApi(action.channelId).requestBy(sourceBot),
         guildValue
     )
 }

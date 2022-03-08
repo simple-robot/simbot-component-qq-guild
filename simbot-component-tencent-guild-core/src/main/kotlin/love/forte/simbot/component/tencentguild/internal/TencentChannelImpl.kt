@@ -52,7 +52,7 @@ internal class TencentChannelImpl internal constructor(
         val messageForSend = MessageParsers.parse(message) {
             this.msgId = msgId
         }
-        return MessageSendApi(info.id, messageForSend).request(bot).asReceipt()
+        return MessageSendApi(info.id, messageForSend).requestBy(bot).asReceipt()
     }
 
 

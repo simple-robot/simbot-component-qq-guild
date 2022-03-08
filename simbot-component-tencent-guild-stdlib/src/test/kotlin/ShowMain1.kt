@@ -67,7 +67,7 @@ suspend fun main() {
 
         val api = MessageSendApi(channelId = message.channelId, content = "content", msgId = message.id)
         // 发送回复消息
-        val result = api.request(bot)
+        val result = api.requestBy(bot)
         println(result)
     }
 

@@ -97,7 +97,7 @@ suspend fun main() {
 
         val api = MessageSendApi(channelId = message.channelId, content = "我在！", msgId = message.id)
         // 发送回复消息
-        val result = api.request(bot) // 可以注意到，在core模块下，可以直接通过 Api.request(bot) 来提供bot进行api请求。
+        val result = api.requestBy(bot) // 可以注意到，在core模块下，可以直接通过 Api.requestBy(bot) 来提供bot进行api请求。
         println(result)
     }
 

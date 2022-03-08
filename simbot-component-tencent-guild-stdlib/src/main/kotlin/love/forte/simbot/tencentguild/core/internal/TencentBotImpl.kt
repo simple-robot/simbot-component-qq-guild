@@ -62,7 +62,7 @@ internal class TencentBotImpl(
     // verify bot with bot info api.
     override val botInfo: TencentBotInfo by lazy {
         runBlocking {
-            GetBotInfoApi.request(this@TencentBotImpl)
+            GetBotInfoApi.requestBy(this@TencentBotImpl)
         }
     }
 

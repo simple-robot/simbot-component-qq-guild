@@ -44,13 +44,13 @@ internal class TcgChannelAtMessageEventImpl(
         val messageForSend = MessageParsers.parse(message)
         messageForSend.msgId = sourceEventEntity.id
         val cid = sourceEventEntity.channelId
-        return MessageSendApi(cid, messageForSend).request(bot).asReplyReceipt()
+        return MessageSendApi(cid, messageForSend).requestBy(bot).asReplyReceipt()
     }
 
     override suspend fun send(message: Message): MessageReceipt = reply(message)
 
     private val _fromGuild: LazyValue<TencentGuildImpl> = bot.lazyValue {
-        val guildInfo = GetGuildApi(sourceEventEntity.guildId).request(bot)
+        val guildInfo = GetGuildApi(sourceEventEntity.guildId).requestBy(bot)
         TencentGuildImpl(bot = bot, guildInfo)
     }
 
@@ -67,7 +67,7 @@ internal class TcgChannelAtMessageEventImpl(
     private var _sourceChannel: LazyValue<TencentChannelImpl> = bot.lazyValue {
         TencentChannelImpl(
             bot = bot,
-            info = GetChannelApi(sourceEventEntity.channelId).request(bot),
+            info = GetChannelApi(sourceEventEntity.channelId).requestBy(bot),
             from = _fromGuild.await()
         )
     }

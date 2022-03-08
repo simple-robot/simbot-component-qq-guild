@@ -74,7 +74,7 @@ internal class TencentGuildBotImpl(
             var lastId: ID? = null
 
             while (true) {
-                val list = GetBotGuildListApi(after = lastId, limit = batch).request(sourceBot)
+                val list = GetBotGuildListApi(after = lastId, limit = batch).requestBy(sourceBot)
                 if (list.isEmpty()) break
 
                 lastId = list.lastOrNull()?.id
@@ -92,7 +92,7 @@ internal class TencentGuildBotImpl(
             var lastId: ID? = null
             while (true) {
                 val list = runBlocking {
-                    GetBotGuildListApi(after = lastId, limit = batch).request(sourceBot)
+                    GetBotGuildListApi(after = lastId, limit = batch).requestBy(sourceBot)
                 }
                 if (list.isEmpty()) break
 
@@ -105,7 +105,7 @@ internal class TencentGuildBotImpl(
 
     override suspend fun guild(id: ID): TencentGuild? {
         return try {
-            val guild = GetGuildApi(id).request(sourceBot)
+            val guild = GetGuildApi(id).requestBy(sourceBot)
             TencentGuildImpl(this, guild)
         } catch (apiException: TencentApiException) {
             if (apiException.value == 404) {
