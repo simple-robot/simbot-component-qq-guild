@@ -19,7 +19,7 @@
    <img alt="lines" src="https://img.shields.io/tokei/lines/github/simple-robot/simbot-component-tencent-guild" />
    <img alt="issues" src="https://img.shields.io/github/issues-closed/simple-robot/simbot-component-tencent-guild?color=green" />
    <img alt="last commit" src="https://img.shields.io/github/last-commit/simple-robot/simbot-component-tencent-guild" />
-   <a href="./COPYING"><img alt="copying" src="https://img.shields.io/github/license/simple-robot/simbot-component-tencent-guild" /></a>
+   <a href="../COPYING"><img alt="copying" src="https://img.shields.io/github/license/simple-robot/simbot-component-tencent-guild" /></a>
 
 </div>
 

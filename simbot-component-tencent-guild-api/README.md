@@ -19,7 +19,7 @@
    <img alt="lines" src="https://img.shields.io/tokei/lines/github/simple-robot/simbot-component-tencent-guild" />
    <img alt="issues" src="https://img.shields.io/github/issues-closed/simple-robot/simbot-component-tencent-guild?color=green" />
    <img alt="last commit" src="https://img.shields.io/github/last-commit/simple-robot/simbot-component-tencent-guild" />
-   <a href="./COPYING"><img alt="copying" src="https://img.shields.io/github/license/simple-robot/simbot-component-tencent-guild" /></a>
+   <a href="../COPYING"><img alt="copying" src="https://img.shields.io/github/license/simple-robot/simbot-component-tencent-guild" /></a>
 
 </div>
 api模块是对官方提供的所有 api 的 **底层** 级别封装，不提供较为高级的应用层面封装，是一个单纯的底层api库。
