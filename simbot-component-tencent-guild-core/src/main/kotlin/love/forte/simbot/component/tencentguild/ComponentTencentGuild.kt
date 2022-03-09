@@ -36,6 +36,9 @@ public class TencentGuildComponent : Component {
         get() = messageSerializersModule
 
 
+    /**
+     * 组件 [TencentGuildComponent] 的注册器。
+     */
     public companion object Registrar : ComponentRegistrar<TencentGuildComponent, TencentGuildComponentConfiguration> {
 
         @Suppress("MemberVisibilityCanBePrivate")
@@ -79,6 +82,15 @@ public class TencentGuildComponent : Component {
  * 用于 [TencentGuildComponent] 组件注册时的配置类信息。
  */
 public class TencentGuildComponentConfiguration
+
+/**
+ * [TencentGuildComponent] 的注册器工厂，用于支持组件的自动加载。
+ *
+ */
+public class TencentGuildComponentRegistrarFactory : ComponentRegistrarFactory<TencentGuildComponent, TencentGuildComponentConfiguration> {
+    override val registrar: ComponentRegistrar<TencentGuildComponent, TencentGuildComponentConfiguration>
+        get() = TencentGuildComponent
+}
 
 
 /**
