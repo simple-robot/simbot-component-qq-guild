@@ -55,6 +55,7 @@
 版本参考：*见头部图标*
 
 ```xml
+
 <dependency>
     <groupId>love.forte.simbot.component</groupId>
     <artifactId>simbot-component-tencent-guild-core</artifactId>
@@ -84,6 +85,8 @@ implementation("love.forte.simbot.component:simbot-component-tencent-guild-core:
 ```kotlin
 // 最简配置
 val eventManager = coreListenerManager {
+    // 启用腾讯频道组件
+    install(TencentGuildComponent)
     // 配置，例如拦截器
 }
 ```
@@ -92,6 +95,7 @@ val eventManager = coreListenerManager {
 
 ```kotlin
 val eventManager = coreListenerManager {
+
     // 配置拦截器
     interceptors {
         // 事件流程拦截器，
@@ -111,6 +115,17 @@ val eventManager = coreListenerManager {
                 }
         }
     }
+    
+    // 监听函数
+    listeners {
+        
+        listener {
+            // ...
+        }
+        
+        
+    }
+
 }
 ```
 
@@ -125,9 +140,10 @@ val listener = coreListener<ChannelMessageEvent> { context: EventListenerProcess
     // do 
 }
 // 或者
-val listener2 = coreListener(eventKey = ChannelEvent) { context: EventListenerProcessingContext, event: ChannelMessageEvent ->
-  // do 
-}
+val listener2 =
+    coreListener(eventKey = ChannelEvent) { context: EventListenerProcessingContext, event: ChannelMessageEvent ->
+        // do 
+    }
 ```
 
 可以看到，通过 `coreListener` 的 `eventKey` 指定一个监听的事件类型，此处以 `ChannelMessageEvent` 为例。 此事件类型是由 `simple-robot-api` 进行定义的规范事件，
@@ -172,17 +188,17 @@ val listener = coreListener<TcgChannelAtMessageEvent> { context: EventListenerPr
 
     // 🌟 消息：@事件发送者 你好啊
     // channel.send(At(event.id) + Text { "你好啊！" }) // err
-    
+
     // ⚠️ 注意！目前来看，频道bot不一定能够允许直接发送消息，因此目前有两种方案：
     // 1. tencent-guild 模块会提供一个特殊的Message用于拼接：ReplyTo(xxx.ID)
     // 比如：At(123.ID) + Text { "233" } + ReplyTo(xxx.ID)
     // 但是这种情况仅限于你知道message的ID是什么
-    
+
     // 2. event.reply
     event.replyIfSupport(At(event.id) + Text { "你好啊！" })
-    
+
     // 如果你监听的是 TcgChannelAtMessageEvent，那么可以直接使用 event.reply
-    event.reply(Text{ "HELLO!" })
+    event.reply(Text { "HELLO!" })
 
     null // 事件返回值，爱是啥是啥
 }
@@ -198,7 +214,7 @@ listenerManager.register(listener)
 
 ```kotlin
 listenerManager.listen(eventKey = ChannelMessageEvent) { context, event ->
-    
+
     // do something
 
     null // result
@@ -213,7 +229,7 @@ listenerManager.listen(eventKey = ChannelMessageEvent) { context, event ->
 ```kotlin
 // 注意！botManager 必须配置一个事件管理器，也就是一开始创建的东西。
 val botManager = tencentGuildBotManager(listenerManager) {
-    
+
     // 考虑到目前bot最常见的事件是 AT_MESSAGE, 这里统一配置所有bot的设置，让他们只监听 AT_MESSAGE。
     // botConfigure 是所有注册的bot的前置配置器。
     botConfigure = { appId, appKey, token ->
@@ -251,6 +267,7 @@ bot.join() // 直到关闭
 
 ```kotlin
 val listenerManager = coreListenerManager {
+    install(TencentGuildComponent)
     // 配置
 }
 
@@ -261,7 +278,7 @@ val botManager = tencentGuildBotManager(listenerManager) {
 // 事件监听
 listenerManager.listen<ChannelMessageEvent> { context, event ->
     // do
-    
+
     // result
     null
 }

@@ -19,12 +19,10 @@ package love.forte.simbot.component.tencentguild.message
 
 import kotlinx.serialization.*
 import love.forte.simbot.*
-import love.forte.simbot.component.tencentguild.*
 import love.forte.simbot.component.tencentguild.internal.*
 import love.forte.simbot.component.tencentguild.message.Ark.Key.byArk
 import love.forte.simbot.message.*
 import love.forte.simbot.tencentguild.*
-import kotlin.reflect.*
 
 /**
  * [TencentMessage.Ark] 对应的 [Message.Element].
@@ -48,10 +46,7 @@ public data class Ark internal constructor(
     public fun toRealArk(): TencentMessage.Ark = TencentMessage.Ark(templateId, kvs.toList())
 
     public companion object Key : Message.Key<Ark> {
-        override val component: Component
-            get() = ComponentTencentGuild.component
-        override val elementType: KClass<Ark>
-            get() = Ark::class
+        override fun safeCast(value: Any): Ark? = doSafeCast(value)
 
         @JvmStatic
         public fun byArk(ark: TencentMessage.Ark): Ark = Ark(ark.templateId, ark.kv.toList())

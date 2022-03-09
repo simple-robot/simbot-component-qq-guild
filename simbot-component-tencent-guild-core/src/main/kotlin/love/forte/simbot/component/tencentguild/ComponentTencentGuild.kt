@@ -17,39 +17,89 @@
 
 package love.forte.simbot.component.tencentguild
 
-import com.google.auto.service.*
 import kotlinx.serialization.modules.*
 import love.forte.simbot.*
-import love.forte.simbot.component.tencentguild.ComponentTencentGuild.component
 import love.forte.simbot.component.tencentguild.message.*
 import love.forte.simbot.message.*
 
 
 /**
- * 腾讯频道实现simbot相关组件的基本组件信息，可以用来获取组件ID以及组件实例（实例化之后）。
- *
- * 其内部的 [component] 会在当前组件被加载后初始化。
+ * 腾讯频道实现simbot相关组件的基本组件信息，可以用来获取组件ID、组件所用序列化器等等。
  *
  * @author ForteScarlet
  */
+public class TencentGuildComponent : Component {
+    override val id: ID
+        get() = componentID
+
+    override val componentSerializersModule: SerializersModule
+        get() = messageSerializersModule
+
+
+    public companion object Registrar : ComponentRegistrar<TencentGuildComponent, TencentGuildComponentConfiguration> {
+
+        @Suppress("MemberVisibilityCanBePrivate")
+        public const val ID_VALUE: String = "simbot.tencentguild"
+        public val componentID: CharSequenceID = ID_VALUE.ID
+
+        /**
+         * 作为注册器时的标识。
+         */
+        override val key: Attribute<TencentGuildComponent> = attribute(ID_VALUE)
+
+        /**
+         * 注册配置函数。
+         */
+        override fun register(block: TencentGuildComponentConfiguration.() -> Unit): TencentGuildComponent {
+            // nothing config now.
+
+            return TencentGuildComponent()
+        }
+
+        /**
+         * 腾讯频道组件所使用到的特殊消息类型序列化信息。
+         */
+        @JvmStatic
+        public val messageSerializersModule: SerializersModule = SerializersModule {
+            polymorphic(Message.Element::class) {
+                subclass(Ark::class, Ark.serializer())
+                subclass(MentionChannel::class, MentionChannel.serializer())
+                subclass(AttachmentMessage::class, AttachmentMessage.serializer())
+                subclass(ReplyTo::class, ReplyTo.serializer())
+            }
+        }
+
+
+    }
+
+}
+
+
+/**
+ * 用于 [TencentGuildComponent] 组件注册时的配置类信息。
+ */
+public class TencentGuildComponentConfiguration
+
+
+/**
+ * @see TencentGuildComponent
+ * @author ForteScarlet
+ */
+@Deprecated("Use 'TencentGuildComponent'")
 public object ComponentTencentGuild {
 
     /**
-     * 腾讯频道组件的ID标识。
-     *
      */
     @JvmField
-    public val COMPONENT_ID: CharSequenceID = "simbot.tencentguild".ID
+    @Deprecated("Use 'TencentGuildComponent'")
+    public val COMPONENT_ID: CharSequenceID = TencentGuildComponent.componentID
 
 
-    @Suppress("ObjectPropertyName")
-    internal lateinit var _component: Component
-
-    /**
-     * 腾讯频道组件的 [组件][Component] 对象实例。会在被simbot加载后初始化。
-     */
     @JvmStatic
-    public val component: Component get() = if (::_component.isInitialized) _component else Components[COMPONENT_ID]
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @Deprecated("Use 'TencentGuildComponent'")
+    public val component: Component
+        get() = throw UnsupportedOperationException("See 'TencentGuildComponent'")
 }
 
 //region botManager 扩展
@@ -77,42 +127,6 @@ public inline fun Sequence<BotManager<*>>.tencentGuildBotManagers(): Sequence<Te
 
 //endregion
 
-/**
- * 用于注册腾讯频道组件的Service interface.
- */
-@AutoService(ComponentInformationRegistrar::class)
-public class TencentGuildComponentInformationRegistrar : ComponentInformationRegistrar {
-    override fun informations(): ComponentInformationRegistrar.Result {
-        return ComponentInformationRegistrar.Result.ok(listOf(TencentGuildComponentInformation()))
-    }
-
-}
-
-
-private class TencentGuildComponentInformation : ComponentInformation {
-    override val id: ID
-        get() = ComponentTencentGuild.COMPONENT_ID
-    override val name: String
-        get() = ComponentTencentGuild.COMPONENT_ID.toString()
-
-    override val messageSerializersModule: SerializersModule = SerializersModule {
-        polymorphic(Message.Element::class) {
-            subclass(Ark::class, Ark.serializer())
-            subclass(MentionChannel::class, MentionChannel.serializer())
-            subclass(AttachmentMessage::class, AttachmentMessage.serializer())
-            subclass(ReplyTo::class, ReplyTo.serializer())
-        }
-    }
-
-    override fun configAttributes(attributes: MutableAttributeMap) {
-        // nothing now.
-    }
-
-    override fun setComponent(component: Component) {
-        ComponentTencentGuild._component = component
-    }
-
-}
 
 
 

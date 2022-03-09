@@ -31,13 +31,13 @@ sealed class P : SimbotProject() {
         val SNAPSHOT = System.getProperty("isSnapshot")?.equals("true", true) ?: false
         const val GROUP = "love.forte.simbot"
         const val BOOT_GROUP = "love.forte.simbot.boot"
-        const val REAL_VERSION = "3.0.0.preview.4.0"
+        const val REAL_VERSION = "3.0.0.preview.5.0"
         val VERSION = if (SNAPSHOT) "$REAL_VERSION-SNAPSHOT" else REAL_VERSION
     }
 
     object ComponentTencentGuild {
         val isSnapshot get() = Simbot.SNAPSHOT
-        private const val CURRENT_VERSION = "0.6"
+        private const val CURRENT_VERSION = "1.0"
         const val GROUP = "${Simbot.GROUP}.component"
         // v3.0.0.preview.3.0-0.6
         // v3.0.0.preview.3.0-0.6-SNAPSHOT

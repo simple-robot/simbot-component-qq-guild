@@ -20,6 +20,7 @@ package love.forte.simbot.tencentguild
 import kotlinx.coroutines.*
 import kotlinx.serialization.json.*
 import love.forte.simbot.*
+import love.forte.simbot.tencentguild.api.user.*
 import kotlin.coroutines.*
 
 
@@ -193,6 +194,14 @@ public interface TencentBot : CoroutineScope {
         public val isResuming: Boolean
 
     }
+
+
+    //// some self api
+    /**
+     * 通过 api [GetBotInfoApi] 得到bot自身信息。
+     */
+    public suspend fun me(): TencentBotInfo
+
 
 
 }

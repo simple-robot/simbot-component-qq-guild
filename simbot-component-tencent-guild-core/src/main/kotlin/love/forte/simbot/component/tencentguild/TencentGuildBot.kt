@@ -33,26 +33,59 @@ import java.util.stream.*
  * @author ForteScarlet
  */
 public abstract class TencentGuildBot : Bot {
+    /**
+     * 腾讯频道的 [组件][TencentGuildComponent] 对象实例。
+     */
+    abstract override val component: TencentGuildComponent
 
+    /**
+     * 在 stdlib 模块下的原始Bot类型。
+     */
     public abstract val sourceBot: TencentBot
 
     override val id: ID
         get() = sourceBot.ticket.appId.ID
 
+    /**
+     * 腾讯机器人有两个可能的唯一标识：作为bot的clientId以及在系统中作为用户的 user id.
+     *
+     * 需要注意的是，作为普通用户时的id必须在 [start] 之后才能被检测。在 [start] 之前，将会只通过 [id] 进行检测。
+     *
+     */
+    abstract override fun isMe(id: ID): Boolean
+
+    /**
+     * 启动当前bot, 并且初始化此bot的信息。 启动时会通过 [TencentBot.me] 查询当前bot的信息，并为 [isMe] 提供额外id的匹配支持。
+     *
+     */
+    abstract override suspend fun start(): Boolean
+
+    /**
+     * bot的用户名
+     */
     override val username: String
         get() = sourceBot.botInfo.username
 
+    /**
+     * bot的头像
+     */
     override val avatar: String
         get() = sourceBot.botInfo.avatar
 
+    /**
+     * bot所属的bot管理器
+     */
     abstract override val manager: TencentGuildBotManager
 
+    /**
+     * bot所属的事件处理器。
+     */
     abstract override val eventProcessor: EventProcessor
 
 
-    override val component: Component
-        get() = ComponentTencentGuild.component
-
+    /**
+     * bot的用户属性。
+     */
     override val status: UserStatus get() = BotStatus
 
     @JvmSynthetic

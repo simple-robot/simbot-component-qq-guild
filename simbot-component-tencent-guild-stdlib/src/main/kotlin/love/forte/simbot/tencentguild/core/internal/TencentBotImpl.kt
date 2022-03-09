@@ -499,6 +499,17 @@ internal class TencentBotImpl(
         return heartbeatJob
     }
 
+
+    //// self api
+
+    override suspend fun me(): TencentBotInfo  {
+        return GetBotInfoApi.requestBy(this)
+    }
+
+
+
+
+
 }
 
 

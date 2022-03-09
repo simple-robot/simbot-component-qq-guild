@@ -19,6 +19,7 @@ import com.charleskorn.kaml.*
 import kotlinx.serialization.json.*
 import kotlinx.serialization.modules.*
 import love.forte.simbot.*
+import love.forte.simbot.component.tencentguild.*
 import love.forte.simbot.component.tencentguild.message.*
 import love.forte.simbot.message.*
 import love.forte.simbot.tencentguild.*
@@ -29,22 +30,19 @@ import kotlin.test.*
  * @author ForteScarlet
  */
 class MessageSerializerTest {
-    init {
-        Components
-    }
 
-    val module = Messages.serializersModule
+    private val module = Messages.serializersModule + TencentGuildComponent.messageSerializersModule
 
-    val json
+    private val json
         get() = Json {
             isLenient = true
             ignoreUnknownKeys = true
             serializersModule += module
         }
 
-    val yaml = Yaml(module)
+    private val yaml = Yaml(module)
 
-    val messages = At(1.ID) + Text { "Forte" } + MentionChannel(555.ID) + buildArk(114514.ID) {
+    private val messages = At(1.ID) + Text { "Forte" } + MentionChannel(555.ID) + buildArk(114514.ID) {
         kvs {
             kv("Key", "value-145")
             kv("KK2") {

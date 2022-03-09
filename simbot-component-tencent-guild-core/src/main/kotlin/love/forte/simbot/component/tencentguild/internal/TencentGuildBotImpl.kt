@@ -39,6 +39,7 @@ internal class TencentGuildBotImpl(
     override val sourceBot: TencentBot,
     override val manager: TencentGuildBotManager,
     override val eventProcessor: EventProcessor,
+    override val component: TencentGuildComponent
 ) : TencentGuildBot() {
 
     override val coroutineContext: CoroutineContext
@@ -49,6 +50,14 @@ internal class TencentGuildBotImpl(
 
     override val logger =
         LoggerFactory.getLogger("love.forte.simbot.component.tencentguild.bot.${sourceBot.ticket.appKey}")
+
+    private lateinit var meId: ID
+
+    override fun isMe(id: ID): Boolean {
+        if (id == this.id) return true
+        if (::meId.isInitialized && meId == id) return true
+        return false
+    }
 
     /**
      * grouping是无效的.
@@ -119,7 +128,13 @@ internal class TencentGuildBotImpl(
     @Api4J
     override fun getGuild(id: ID): TencentGuild? = runInBlocking { guild(id) }
 
+    /**
+     * 启动当前bot。
+     */
     override suspend fun start(): Boolean = sourceBot.start().also {
+        // just set everytime.
+        meId = sourceBot.me().id
+        
         suspend fun pushEvent() {
             eventProcessor.pushIfProcessable(TcgBotStartedEvent) {
                 TcgBotStartedEventImpl(this)
@@ -166,6 +181,7 @@ internal class TencentGuildBotImpl(
 
 
     override suspend fun cancel(reason: Throwable?): Boolean = sourceBot.cancel(reason)
+
 
     @Api4J
     override fun cancelBlocking(reason: Throwable?): Boolean {

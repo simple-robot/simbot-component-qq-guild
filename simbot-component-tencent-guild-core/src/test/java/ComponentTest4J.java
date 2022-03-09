@@ -20,6 +20,7 @@ import love.forte.simbot.Identifies;
 import love.forte.simbot.action.ReplySupport;
 import love.forte.simbot.component.tencentguild.TencentGuildBotManager;
 import love.forte.simbot.component.tencentguild.TencentGuildBotManagerConfiguration;
+import love.forte.simbot.component.tencentguild.TencentGuildComponent;
 import love.forte.simbot.core.event.CoreListenerManager;
 import love.forte.simbot.core.event.CoreListenerManagerConfiguration;
 import love.forte.simbot.core.event.CoreListenerUtil;
@@ -45,6 +46,7 @@ public class ComponentTest4J {
         String token = "";
 
         final CoreListenerManagerConfiguration config = new CoreListenerManagerConfiguration();
+        config.install(TencentGuildComponent.Registrar, c -> null);
 
         final CoreListenerManager manager = CoreListenerManager.newInstance(config);
 
@@ -53,6 +55,7 @@ public class ComponentTest4J {
             c.intentsForShardFactoryAsInt((s) -> EventSignals.AtMessages.getIntentsValue());
             return Unit.INSTANCE;
         });
+
 
         final TencentGuildBotManager botManager = TencentGuildBotManager.newInstance(tcgConfig);
 
@@ -74,7 +77,7 @@ public class ComponentTest4J {
                     // 如果可以直接回复消息，回复
                     if (event instanceof ReplySupport) {
                         // 构建消息（链）
-                        Message message = Messages.getMessages(
+                        Message message = Messages.toMessages(
                                 Text.of("你好"),
                                 new At(Identifies.ID(123456)),
                                 new At(event.getAuthor().getId()) // at发消息的人

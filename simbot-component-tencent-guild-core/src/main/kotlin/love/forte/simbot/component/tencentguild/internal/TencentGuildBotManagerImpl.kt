@@ -61,6 +61,10 @@ internal class TencentGuildBotManagerImpl(
     private val lock = ReentrantReadWriteLock()
     private val eventProcessor = configuration.eventProcessor
 
+    override val component: TencentGuildComponent =
+        eventProcessor.getComponent(TencentGuildComponent.ID_VALUE) as? TencentGuildComponent
+            ?: throw ComponentMismatchException("The component['${TencentGuildComponent.ID_VALUE}'] cannot cast to [love.forte.simbot.component.tencentguild.TencentGuildComponent]")
+
     override val isActive: Boolean
         get() = completableJob.isActive
 
@@ -84,9 +88,6 @@ internal class TencentGuildBotManagerImpl(
     }
 
     private var botMap = ConcurrentHashMap<String, TencentGuildBotImpl>()
-
-    override val component: Component
-        get() = ComponentTencentGuild.component
 
 
     override suspend fun doCancel(reason: Throwable?): Boolean {
@@ -142,7 +143,7 @@ internal class TencentGuildBotManagerImpl(
             return botMap.compute(appId) { key, old ->
                 if (old != null) throw BotAlreadyRegisteredException(key)
 
-                TencentGuildBotImpl(sourceBot, this, eventProcessor).apply {
+                TencentGuildBotImpl(sourceBot, this, eventProcessor, component).apply {
                     coroutineContext[Job]!!.invokeOnCompletion {
                         // remove self on completion
                         botMap.remove(key)

@@ -19,11 +19,9 @@ package love.forte.simbot.component.tencentguild.message
 
 import kotlinx.serialization.*
 import love.forte.simbot.*
-import love.forte.simbot.component.tencentguild.*
 import love.forte.simbot.component.tencentguild.internal.*
 import love.forte.simbot.message.*
 import love.forte.simbot.tencentguild.*
-import kotlin.reflect.*
 
 
 /**
@@ -42,10 +40,7 @@ public data class AttachmentMessage(override val url: String) : RemoteResource<A
         get() = Key
 
     public companion object Key : Message.Key<AttachmentMessage> {
-        override val component: Component
-            get() = ComponentTencentGuild.component
-        override val elementType: KClass<AttachmentMessage>
-            get() = AttachmentMessage::class
+        override fun safeCast(value: Any): AttachmentMessage? = doSafeCast(value)
     }
 }
 

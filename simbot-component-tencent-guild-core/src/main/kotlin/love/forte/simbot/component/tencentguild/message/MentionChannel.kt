@@ -19,10 +19,8 @@ package love.forte.simbot.component.tencentguild.message
 
 import kotlinx.serialization.*
 import love.forte.simbot.*
-import love.forte.simbot.component.tencentguild.*
 import love.forte.simbot.component.tencentguild.internal.*
 import love.forte.simbot.message.*
-import kotlin.reflect.*
 
 
 @SerialName("tcg.mentionChannel") // tencentguild.channel.mention
@@ -35,10 +33,7 @@ public data class MentionChannel(
         get() = Key
 
     public companion object Key : Message.Key<MentionChannel> {
-        override val component: Component
-            get() = ComponentTencentGuild.component
-        override val elementType: KClass<MentionChannel>
-            get() = MentionChannel::class
+        override fun safeCast(value: Any): MentionChannel? = doSafeCast(value)
     }
 }
 

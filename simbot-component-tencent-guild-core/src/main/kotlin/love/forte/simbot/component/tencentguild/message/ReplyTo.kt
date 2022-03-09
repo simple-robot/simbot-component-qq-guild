@@ -19,12 +19,12 @@ package love.forte.simbot.component.tencentguild.message
 
 import kotlinx.serialization.*
 import love.forte.simbot.*
-import love.forte.simbot.component.tencentguild.*
 import love.forte.simbot.component.tencentguild.internal.*
 import love.forte.simbot.message.*
-import kotlin.reflect.*
 
 /**
+ *
+ * 腾讯频道机器人为公域时可能需要指定一个回复消息的目标，通过拼接 [ReplyTo] 到当前消息列表中来提供一个回复消息的目标信息。
  *
  * @author ForteScarlet
  */
@@ -35,12 +35,7 @@ public data class ReplyTo(@Serializable(ID.AsCharSequenceIDSerializer::class) va
         get() = Key
 
     public companion object Key : Message.Key<ReplyTo> {
-        override val component: Component
-            get() = ComponentTencentGuild.component
-
-        override val elementType: KClass<ReplyTo>
-            get() = ReplyTo::class
-
+        override fun safeCast(value: Any): ReplyTo? = doSafeCast(value)
     }
 
 }
