@@ -43,7 +43,7 @@ public interface TencentGuildBot : CoroutineScope {
     /**
      * Bot当前的配置信息。
      */
-    public val configuration: TencentBotConfiguration
+    public val configuration: TencentGuildBotConfiguration
 
     /**
      * Bot自己的信息。

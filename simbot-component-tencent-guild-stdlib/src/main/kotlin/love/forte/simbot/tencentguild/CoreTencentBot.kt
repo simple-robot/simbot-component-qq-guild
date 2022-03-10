@@ -15,7 +15,7 @@
  *
  */
 
-@file:JvmName("TencentBotFactory")
+@file:JvmName("TencentGuildBotFactory")
 
 package love.forte.simbot.tencentguild
 
@@ -31,14 +31,14 @@ import kotlin.coroutines.*
 
 @JvmName("newBot")
 @JvmOverloads
-public fun tencentBot(
+public fun tencentGuildBot(
     appId: String,
     appKey: String,
     token: String,
-    configBlock: TencentBotConfiguration.() -> Unit = {}
+    configBlock: TencentGuildBotConfiguration.() -> Unit = {}
 ): TencentGuildBot {
     val ticket = TicketImpl(appId, appKey, token)
-    val config = TencentBotConfiguration().also(configBlock)
+    val config = TencentGuildBotConfiguration().also(configBlock)
 
 
     return TencentGuildBotImpl(ticket, config)
@@ -50,7 +50,7 @@ public fun tencentBot(
  * 如果在配置bot之后对内容进行后续修改，可能会影响到当前bot的使用。
  */
 @Suppress("MemberVisibilityCanBePrivate")
-public class TencentBotConfiguration {
+public class TencentGuildBotConfiguration {
 
     /**
      * Context.

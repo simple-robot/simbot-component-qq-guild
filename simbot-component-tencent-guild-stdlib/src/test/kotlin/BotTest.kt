@@ -31,7 +31,7 @@ class BotTest {
     fun test() = runBlocking {
 
         // 直接构建一个BOT
-        val bot = tencentBot(
+        val bot = tencentGuildBot(
             "appid",
             appKey = "key",
             token = "token",

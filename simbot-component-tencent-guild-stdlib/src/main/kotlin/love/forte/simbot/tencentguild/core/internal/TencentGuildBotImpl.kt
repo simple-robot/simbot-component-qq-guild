@@ -56,7 +56,7 @@ internal fun checkResumeCode(code: Short): Boolean {
  */
 internal class TencentGuildBotImpl(
     override val ticket: TicketImpl,
-    override val configuration: TencentBotConfiguration
+    override val configuration: TencentGuildBotConfiguration
 ) : TencentGuildBot {
 
     // verify bot with bot info api.

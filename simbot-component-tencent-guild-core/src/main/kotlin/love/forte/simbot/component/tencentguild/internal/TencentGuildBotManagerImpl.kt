@@ -127,11 +127,11 @@ internal class TencentGuildBotManagerImpl(
         appId: String,
         appKey: String,
         token: String,
-        block: TencentBotConfiguration.() -> Unit
+        block: TencentGuildBotConfiguration.() -> Unit
     ): TencentGuildComponentBot {
         val configure = configuration.botConfigure
         lock.write {
-            val sourceBot = tencentBot(appId, appKey, token) {
+            val sourceBot = tencentGuildBot(appId, appKey, token) {
                 configure(appId, appKey, token)
                 block()
                 if (coroutineContext[Job] == null) {
