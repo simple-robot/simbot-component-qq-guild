@@ -51,7 +51,7 @@ public sealed interface TcgInternalBotEvent : Event {
  */
 public abstract class TcgBotRegisteredEvent : BotRegisteredEvent(), TcgInternalBotEvent {
 
-    abstract override val bot: TencentGuildBot
+    abstract override val bot: TencentGuildComponentBot
 
     ////
     override val key: InternalEvent.Key<TcgBotRegisteredEvent> get() = Key
@@ -65,15 +65,15 @@ public abstract class TcgBotRegisteredEvent : BotRegisteredEvent(), TcgInternalB
 
 
 /**
- * tcg组件中，每当 [TencentGuildBot.start] 被执行的时候会被推送的事件。
- * 当事件被推送的时候代表此bot实际上已经完成的 `start` 的逻辑，但是[TencentGuildBot.start]会直到事件处理流程完成后才会最终返回。
+ * tcg组件中，每当 [TencentGuildComponentBot.start] 被执行的时候会被推送的事件。
+ * 当事件被推送的时候代表此bot实际上已经完成的 `start` 的逻辑，但是[TencentGuildComponentBot.start]会直到事件处理流程完成后才会最终返回。
  *
  * @see BotStartedEvent
- * @see TencentGuildBot
- * @see TencentGuildBot.start
+ * @see TencentGuildComponentBot
+ * @see TencentGuildComponentBot.start
  */
 public abstract class TcgBotStartedEvent : BotStartedEvent(), TcgInternalBotEvent {
-    abstract override val bot: TencentGuildBot
+    abstract override val bot: TencentGuildComponentBot
 
     ////
     override val key: InternalEvent.Key<TcgBotStartedEvent> get() = Key

@@ -21,7 +21,7 @@ import love.forte.simbot.tencentguild.*
 import love.forte.simbot.tencentguild.api.message.*
 
 suspend fun main() {
-    val bot = tencentBot(
+    val bot = tencentGuildBot(
         appId = "app_id",
         appKey = "app_key",
         token = "token",

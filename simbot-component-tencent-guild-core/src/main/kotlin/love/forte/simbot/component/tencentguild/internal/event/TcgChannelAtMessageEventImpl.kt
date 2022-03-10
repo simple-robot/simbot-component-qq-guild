@@ -37,7 +37,7 @@ import love.forte.simbot.utils.*
  */
 internal class TcgChannelAtMessageEventImpl(
     override val sourceEventEntity: TencentMessage,
-    override val bot: TencentGuildBotImpl
+    override val bot: TencentGuildComponentBotImpl
 ) : TcgChannelAtMessageEvent() {
     override val id: ID = sourceEventEntity.id
     override suspend fun reply(message: Message): MessageReplyReceipt {
@@ -93,7 +93,7 @@ internal class TcgChannelAtMessageEventImpl(
         override val type: EventSignals<TencentMessage>
             get() = EventSignals.AtMessages.AtMessageCreate
 
-        override suspend fun doParser(data: TencentMessage, bot: TencentGuildBotImpl): Event {
+        override suspend fun doParser(data: TencentMessage, bot: TencentGuildComponentBotImpl): Event {
             return TcgChannelAtMessageEventImpl(data, bot)
         }
 

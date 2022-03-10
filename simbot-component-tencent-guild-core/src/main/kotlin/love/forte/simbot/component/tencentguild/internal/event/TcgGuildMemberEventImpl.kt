@@ -38,7 +38,7 @@ private fun tcgGuildMemberEventId(type: Int, botId: ID, memberId: ID, timestamp:
  * @see TcgGuildMemberEvent.Increase
  */
 internal class TcgGuildMemberIncrease constructor(
-    override val bot: TencentGuildBotImpl,
+    override val bot: TencentGuildComponentBotImpl,
     override val sourceEventEntity: TencentMemberInfo,
     override val target: TencentMemberImpl,
 ) : TcgGuildMemberEvent.Increase() {
@@ -72,7 +72,7 @@ internal class TcgGuildMemberIncrease constructor(
         override val key: Event.Key<*>
             get() = Increase
 
-        override suspend fun doParser(data: TencentMemberInfo, bot: TencentGuildBotImpl): TcgGuildMemberIncrease {
+        override suspend fun doParser(data: TencentMemberInfo, bot: TencentGuildComponentBotImpl): TcgGuildMemberIncrease {
             val guildId = data.guildId!!
             val member = TencentMemberImpl(
                 bot, data,
@@ -88,7 +88,7 @@ internal class TcgGuildMemberIncrease constructor(
  * @see TcgGuildMemberEvent.Decrease
  */
 internal class TcgGuildMemberDecrease constructor(
-    override val bot: TencentGuildBotImpl,
+    override val bot: TencentGuildComponentBotImpl,
     override val sourceEventEntity: TencentMemberInfo,
     override val target: TencentMemberImpl,
 ) : TcgGuildMemberEvent.Decrease() {
@@ -123,7 +123,7 @@ internal class TcgGuildMemberDecrease constructor(
         override val key: Event.Key<*>
             get() = Decrease
 
-        override suspend fun doParser(data: TencentMemberInfo, bot: TencentGuildBotImpl): TcgGuildMemberDecrease {
+        override suspend fun doParser(data: TencentMemberInfo, bot: TencentGuildComponentBotImpl): TcgGuildMemberDecrease {
             val guildId = data.guildId!!
             val member = TencentMemberImpl(
                 bot, data,

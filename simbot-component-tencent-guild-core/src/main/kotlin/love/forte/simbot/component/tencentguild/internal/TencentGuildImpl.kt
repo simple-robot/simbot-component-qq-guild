@@ -38,7 +38,7 @@ import kotlin.time.*
  * @author ForteScarlet
  */
 internal class TencentGuildImpl(
-    override val bot: TencentGuildBotImpl,
+    override val bot: TencentGuildComponentBotImpl,
     private val guildInfo: TencentGuildInfo
 ) : TencentGuild, TencentGuildInfo by guildInfo {
 

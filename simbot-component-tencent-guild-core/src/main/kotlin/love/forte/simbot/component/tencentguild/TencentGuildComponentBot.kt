@@ -32,7 +32,7 @@ import java.util.stream.*
  * 一个tencent频道BOT的接口实例。
  * @author ForteScarlet
  */
-public abstract class TencentGuildBot : Bot {
+public abstract class TencentGuildComponentBot : Bot {
     /**
      * 腾讯频道的 [组件][TencentGuildComponent] 对象实例。
      */
@@ -41,7 +41,7 @@ public abstract class TencentGuildBot : Bot {
     /**
      * 在 stdlib 模块下的原始Bot类型。
      */
-    public abstract val sourceBot: TencentBot
+    public abstract val sourceBot: TencentGuildBot
 
     override val id: ID
         get() = sourceBot.ticket.appId.ID
@@ -55,7 +55,7 @@ public abstract class TencentGuildBot : Bot {
     abstract override fun isMe(id: ID): Boolean
 
     /**
-     * 启动当前bot, 并且初始化此bot的信息。 启动时会通过 [TencentBot.me] 查询当前bot的信息，并为 [isMe] 提供额外id的匹配支持。
+     * 启动当前bot, 并且初始化此bot的信息。 启动时会通过 [TencentGuildBot.me] 查询当前bot的信息，并为 [isMe] 提供额外id的匹配支持。
      *
      */
     abstract override suspend fun start(): Boolean

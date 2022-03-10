@@ -44,7 +44,7 @@ public sealed class TcgGuildMemberEvent<T : Any> : TcgEvent<T>(), GuildEvent, Me
     @JvmSynthetic
     abstract override suspend fun member(): TencentMember
 
-    abstract override val bot: TencentGuildBot
+    abstract override val bot: TencentGuildComponentBot
     abstract override val sourceEventEntity: T
     abstract override val eventSignal: EventSignals<T>
 

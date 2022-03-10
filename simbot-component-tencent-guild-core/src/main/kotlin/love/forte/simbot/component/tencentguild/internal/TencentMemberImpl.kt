@@ -30,13 +30,13 @@ import java.util.stream.*
  * @author ForteScarlet
  */
 internal class TencentMemberImpl internal constructor(
-    override val bot: TencentGuildBotImpl,
+    override val bot: TencentGuildComponentBotImpl,
     private val info: TencentMemberInfo,
     private val guildFactory: suspend () -> TencentGuildImpl
 ) : TencentMember, TencentMemberInfo by info {
 
     internal constructor(
-        bot: TencentGuildBotImpl,
+        bot: TencentGuildComponentBotImpl,
         info: TencentMemberInfo,
         guild: TencentGuildImpl
     ) : this(bot, info, { guild })

@@ -27,7 +27,7 @@ import love.forte.simbot.tencentguild.*
 internal interface SignalToEvent {
     val key: Event.Key<*>
     suspend operator fun invoke(
-        bot: TencentGuildBotImpl,
+        bot: TencentGuildComponentBotImpl,
         decoder: Json,
         dispatch: Signal.Dispatch, decoded: () -> Any
     ): Event
@@ -36,7 +36,7 @@ internal interface SignalToEvent {
 internal abstract class BaseSignalToEvent<S : Any> : SignalToEvent {
     abstract val type: EventSignals<S>
     override suspend fun invoke(
-        bot: TencentGuildBotImpl, decoder: Json,
+        bot: TencentGuildComponentBotImpl, decoder: Json,
         dispatch: Signal.Dispatch, decoded: () -> Any
     ): Event {
         Simbot.check(dispatch.type == type.type) {
@@ -47,7 +47,7 @@ internal abstract class BaseSignalToEvent<S : Any> : SignalToEvent {
         return doParser(decoded() as S, bot)
     }
 
-    protected abstract suspend fun doParser(data: S, bot: TencentGuildBotImpl): Event
+    protected abstract suspend fun doParser(data: S, bot: TencentGuildComponentBotImpl): Event
 }
 
 internal val eventSignalParsers =

@@ -31,7 +31,7 @@ import love.forte.simbot.tencentguild.api.*
  */
 @JvmSynthetic
 @Deprecated("使用更符合语义的Api.requestBy(Bot) 或 Bot.request(Api)", ReplaceWith("requestBy(bot)"))
-public suspend inline fun <R> TencentApi<R>.request(bot: TencentGuildBot): R = requestBy(bot)
+public suspend inline fun <R> TencentApi<R>.request(bot: TencentGuildComponentBot): R = requestBy(bot)
 
 /**
  * 直接通过bot进行请求。
@@ -39,7 +39,7 @@ public suspend inline fun <R> TencentApi<R>.request(bot: TencentGuildBot): R = r
  * @throws love.forte.simbot.tencentguild.TencentApiException 如果返回状态码不在 200..300之间。
  */
 @JvmSynthetic
-public suspend inline fun <R> TencentApi<R>.requestBy(bot: TencentGuildBot): R {
+public suspend inline fun <R> TencentApi<R>.requestBy(bot: TencentGuildComponentBot): R {
     return requestBy(bot.sourceBot)
 }
 
@@ -49,6 +49,6 @@ public suspend inline fun <R> TencentApi<R>.requestBy(bot: TencentGuildBot): R {
  * @throws love.forte.simbot.tencentguild.TencentApiException 如果返回状态码不在 200..300之间。
  */
 @JvmSynthetic
-public suspend inline fun <R> TencentGuildBot.request(api: TencentApi<R>): R {
+public suspend inline fun <R> TencentGuildComponentBot.request(api: TencentApi<R>): R {
     return sourceBot.request(api)
 }

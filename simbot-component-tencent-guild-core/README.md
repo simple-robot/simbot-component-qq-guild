@@ -46,7 +46,7 @@
     - TcgChannelModifyEvent.Delete -> 子频道 - 删除
 - TcgChannelAtMessageEvent -> 被At消息事件
 
-当然，这不影响你直接使用 `tencent-guild-core` 中定义的事件，但是你无法使用下述的诸如调度器、拦截器等内容。
+当然，这不影响你直接使用 `tencent-guild-stdlib` 中定义的事件，但是你无法使用下述的诸如调度器、拦截器等内容。
 
 ## 使用
 
@@ -241,7 +241,7 @@ val botManager = tencentGuildBotManager(listenerManager) {
 然后，我们注册一个BOT。 这里我们直接使用 `tencentGuildBotManager` 提供的专属注册方法：
 
 ```kotlin
-val bot: TencentGuildBot = botManager.register(appId, appKey, token) {
+val bot: TencentGuildComponentBot = botManager.register(appId, appKey, token) {
     // 这里也可以进行单独配置。 
     intentsForShardFactory = { EventSignals.AtMessages.intents }
 }

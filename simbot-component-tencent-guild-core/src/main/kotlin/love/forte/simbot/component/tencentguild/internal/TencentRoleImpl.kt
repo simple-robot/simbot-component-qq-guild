@@ -26,7 +26,7 @@ import love.forte.simbot.tencentguild.*
  */
 internal class TencentRoleImpl(
     @Suppress("unused")
-    private val bot: TencentGuildBotImpl,
+    private val bot: TencentGuildComponentBotImpl,
     private val info: TencentRoleInfo
 ) : TencentRole, TencentRoleInfo by info {
 

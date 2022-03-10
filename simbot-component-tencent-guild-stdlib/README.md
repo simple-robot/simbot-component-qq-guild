@@ -75,7 +75,7 @@ implementation("love.forte.simbot.component:simbot-component-tencent-guild-stdli
 ```kotlin
 
 suspend fun main() {
-    val bot = tencentBot(appId = "app_id", appKey = "app_key", token = "token") {
+    val bot = tencentGuildBot(appId = "app_id", appKey = "app_key", token = "token") {
         serverUrl = TencentGuildApi.URL // or TencentGuildApi.SANDBOX_URL, 或者自定义
 
         // 假设监听 AT_MESSAGE 事件。
@@ -152,7 +152,7 @@ suspend fun main() {
 ### Java
 
 ```java
-TencentBot bot=TencentBotFactory.newBot("appId","appKey","token",c->{
+TencentGuildBot bot=TencentGuildBotFactory.newBot("appId","appKey","token",c->{
         // Listen AT_MESSAGES
         c.intentsForShardFactoryAsInt(shard->EventSignals.AtMessages.getIntentsValue());
 

@@ -28,7 +28,7 @@ import love.forte.simbot.tencentguild.api.guild.*
 import love.forte.simbot.utils.*
 
 
-private fun TencentGuildBotImpl.lazyGuild(
+private fun TencentGuildComponentBotImpl.lazyGuild(
     action: TencentAudioAction
 ): LazyValue<TencentGuildImpl> = lazyValue {
     TencentGuildImpl(
@@ -36,7 +36,7 @@ private fun TencentGuildBotImpl.lazyGuild(
     )
 }
 
-private fun TencentGuildBotImpl.lazyChannel(
+private fun TencentGuildComponentBotImpl.lazyChannel(
     guildValue: suspend () -> TencentGuildImpl,
     action: TencentAudioAction
 ): LazyValue<TencentChannelImpl> = lazyValue {
@@ -59,7 +59,7 @@ private fun tcgAudioEventId(
  *
  */
 internal class TcgAudioStart(
-    override val bot: TencentGuildBotImpl,
+    override val bot: TencentGuildComponentBotImpl,
     override val sourceEventEntity: TencentAudioAction
 ) : TcgAudioEvent.Start() {
     override val id: ID = tcgAudioEventId(0, sourceEventEntity.guildId, sourceEventEntity.channelId, timestamp)
@@ -83,7 +83,7 @@ internal class TcgAudioStart(
         override val key: Event.Key<*>
             get() = Start
 
-        override suspend fun doParser(data: TencentAudioAction, bot: TencentGuildBotImpl): Event {
+        override suspend fun doParser(data: TencentAudioAction, bot: TencentGuildComponentBotImpl): Event {
             return TcgAudioStart(bot, data)
         }
     }
@@ -93,7 +93,7 @@ internal class TcgAudioStart(
  *
  */
 internal class TcgAudioFinish(
-    override val bot: TencentGuildBotImpl,
+    override val bot: TencentGuildComponentBotImpl,
     override val sourceEventEntity: TencentAudioAction
 ) : TcgAudioEvent.Finish() {
     override val id: ID = tcgAudioEventId(1, sourceEventEntity.guildId, sourceEventEntity.channelId, timestamp)
@@ -117,7 +117,7 @@ internal class TcgAudioFinish(
         override val key: Event.Key<*>
             get() = Finish
 
-        override suspend fun doParser(data: TencentAudioAction, bot: TencentGuildBotImpl): Event {
+        override suspend fun doParser(data: TencentAudioAction, bot: TencentGuildComponentBotImpl): Event {
             return TcgAudioFinish(bot, data)
         }
     }
@@ -127,7 +127,7 @@ internal class TcgAudioFinish(
  *
  */
 internal class TcgAudioOnMic(
-    override val bot: TencentGuildBotImpl,
+    override val bot: TencentGuildComponentBotImpl,
     override val sourceEventEntity: TencentAudioAction
 ) : TcgAudioEvent.OnMic() {
     override val id: ID = tcgAudioEventId(2, sourceEventEntity.guildId, sourceEventEntity.channelId, timestamp)
@@ -151,7 +151,7 @@ internal class TcgAudioOnMic(
         override val key: Event.Key<*>
             get() = OnMic
 
-        override suspend fun doParser(data: TencentAudioAction, bot: TencentGuildBotImpl): Event {
+        override suspend fun doParser(data: TencentAudioAction, bot: TencentGuildComponentBotImpl): Event {
             return TcgAudioOnMic(bot, data)
         }
     }
@@ -161,7 +161,7 @@ internal class TcgAudioOnMic(
  *
  */
 internal class TcgAudioOffMic(
-    override val bot: TencentGuildBotImpl,
+    override val bot: TencentGuildComponentBotImpl,
     override val sourceEventEntity: TencentAudioAction
 ) : TcgAudioEvent.OffMic() {
     override val id: ID = tcgAudioEventId(3, sourceEventEntity.guildId, sourceEventEntity.channelId, timestamp)
@@ -185,7 +185,7 @@ internal class TcgAudioOffMic(
         override val key: Event.Key<*>
             get() = OffMic
 
-        override suspend fun doParser(data: TencentAudioAction, bot: TencentGuildBotImpl): Event {
+        override suspend fun doParser(data: TencentAudioAction, bot: TencentGuildComponentBotImpl): Event {
             return TcgAudioOffMic(bot, data)
         }
     }

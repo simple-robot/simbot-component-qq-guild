@@ -20,7 +20,7 @@ package love.forte.simbot.tencentguild
 import kotlinx.serialization.json.*
 
 
-public inline fun TencentBot.processor(
+public inline fun TencentGuildBot.processor(
     typeName: String,
     crossinline block: suspend Signal.Dispatch.(decoder: Json, decoded: () -> Any) -> Unit
 ) {
@@ -32,7 +32,7 @@ public inline fun TencentBot.processor(
 }
 
 
-public inline fun <reified R : Any> TencentBot.processor(
+public inline fun <reified R : Any> TencentGuildBot.processor(
     eventType: EventSignals<R>,
     crossinline block: suspend (R) -> Unit
 ) {

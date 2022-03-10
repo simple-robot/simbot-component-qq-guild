@@ -31,7 +31,7 @@ import love.forte.simbot.utils.*
 internal class TcgChannelCreate
 constructor(
     override val sourceEventEntity: TencentChannelInfo,
-    override val bot: TencentGuildBotImpl,
+    override val bot: TencentGuildComponentBotImpl,
     override val channel: TencentChannelImpl,
 ) : TcgChannelModifyEvent.Create() {
     override val after: TencentChannelImpl get() = channel
@@ -47,7 +47,7 @@ constructor(
     internal object Parser : BaseSignalToEvent<TencentChannelInfo>() {
         override val key: Event.Key<out Create> get() = Create
         override val type: EventSignals<TencentChannelInfo> = EventSignals.Guilds.ChannelCreate
-        override suspend fun doParser(data: TencentChannelInfo, bot: TencentGuildBotImpl): TcgChannelCreate {
+        override suspend fun doParser(data: TencentChannelInfo, bot: TencentGuildComponentBotImpl): TcgChannelCreate {
             val guildId = data.guildId
 
             return TcgChannelCreate(
@@ -65,7 +65,7 @@ constructor(
 internal class TcgChannelUpdate
 constructor(
     override val sourceEventEntity: TencentChannelInfo,
-    override val bot: TencentGuildBotImpl,
+    override val bot: TencentGuildComponentBotImpl,
     override val channel: TencentChannelImpl,
 ) : TcgChannelModifyEvent.Update() {
     override val after: TencentChannelImpl get() = channel
@@ -82,7 +82,7 @@ constructor(
         override val key: Event.Key<out Update> get() = Update
         override val type: EventSignals<TencentChannelInfo> = EventSignals.Guilds.ChannelUpdate
 
-        override suspend fun doParser(data: TencentChannelInfo, bot: TencentGuildBotImpl): TcgChannelUpdate {
+        override suspend fun doParser(data: TencentChannelInfo, bot: TencentGuildComponentBotImpl): TcgChannelUpdate {
             val guildId = data.guildId
 
             return TcgChannelUpdate(
@@ -100,7 +100,7 @@ constructor(
 internal class TcgChannelDelete
 constructor(
     override val sourceEventEntity: TencentChannelInfo,
-    override val bot: TencentGuildBotImpl,
+    override val bot: TencentGuildComponentBotImpl,
     override val channel: TencentChannelImpl,
 ) : TcgChannelModifyEvent.Delete() {
     override val before: TencentChannel get() = channel
@@ -117,7 +117,7 @@ constructor(
         override val key: Event.Key<out Delete> get() = Delete
         override val type: EventSignals<TencentChannelInfo> = EventSignals.Guilds.ChannelDelete
 
-        override suspend fun doParser(data: TencentChannelInfo, bot: TencentGuildBotImpl): TcgChannelDelete {
+        override suspend fun doParser(data: TencentChannelInfo, bot: TencentGuildComponentBotImpl): TcgChannelDelete {
             val guildId = data.guildId
 
             return TcgChannelDelete(

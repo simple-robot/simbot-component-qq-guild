@@ -35,12 +35,12 @@ import kotlin.streams.*
  *
  * @author ForteScarlet
  */
-internal class TencentGuildBotImpl(
-    override val sourceBot: TencentBot,
+internal class TencentGuildComponentBotImpl(
+    override val sourceBot: TencentGuildBot,
     override val manager: TencentGuildBotManager,
     override val eventProcessor: EventProcessor,
     override val component: TencentGuildComponent
-) : TencentGuildBot() {
+) : TencentGuildComponentBot() {
 
     override val coroutineContext: CoroutineContext
         get() = sourceBot.coroutineContext
@@ -162,7 +162,7 @@ internal class TencentGuildBotImpl(
                     )
                     eventProcessor.pushIfProcessable(parser.key) {
                         parser(
-                            bot = this@TencentGuildBotImpl,
+                            bot = this@TencentGuildComponentBotImpl,
                             decoder = json,
                             decoded = decoded,
                             dispatch = this

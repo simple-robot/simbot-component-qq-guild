@@ -31,7 +31,7 @@ import love.forte.simbot.tencentguild.api.*
  */
 @JvmSynthetic
 @Deprecated("使用更符合语义的Api.requestBy(Bot) 或 Bot.request(Api)", ReplaceWith("requestBy(bot)"))
-public suspend fun <R> TencentApi<R>.request(bot: TencentBot): R = requestBy(bot)
+public suspend fun <R> TencentApi<R>.request(bot: TencentGuildBot): R = requestBy(bot)
 
 
 /**
@@ -40,7 +40,7 @@ public suspend fun <R> TencentApi<R>.request(bot: TencentBot): R = requestBy(bot
  * @throws love.forte.simbot.tencentguild.TencentApiException 如果返回状态码不在 200..300之间。
  */
 @JvmSynthetic
-public suspend fun <R> TencentApi<R>.requestBy(bot: TencentBot): R {
+public suspend fun <R> TencentApi<R>.requestBy(bot: TencentGuildBot): R {
     return request(
         client = bot.configuration.httpClient,
         server = bot.configuration.serverUrl,
@@ -54,7 +54,7 @@ public suspend fun <R> TencentApi<R>.requestBy(bot: TencentBot): R {
  * @throws love.forte.simbot.tencentguild.TencentApiException 如果返回状态码不在 200..300之间。
  */
 @JvmSynthetic
-public suspend fun <R> TencentBot.request(api: TencentApi<R>): R = api.requestBy(this)
+public suspend fun <R> TencentGuildBot.request(api: TencentApi<R>): R = api.requestBy(this)
 
 
 /**
@@ -64,7 +64,7 @@ public suspend fun <R> TencentBot.request(api: TencentApi<R>): R = api.requestBy
  */
 @OptIn(InternalSrTcgApi::class)
 @Api4J
-public fun <R> doRequest(bot: TencentBot, api: TencentApi<R>): R = runBlocking {
+public fun <R> doRequest(bot: TencentGuildBot, api: TencentApi<R>): R = runBlocking {
     api.requestBy(bot)
 }
 

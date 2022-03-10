@@ -36,15 +36,17 @@ import kotlin.coroutines.*
  *
  * @author ForteScarlet
  */
-public abstract class TencentGuildBotManager : BotManager<TencentGuildBot>() {
+public abstract class TencentGuildBotManager : BotManager<TencentGuildComponentBot>() {
 
     protected abstract val logger: Logger
+
+    abstract override val component: TencentGuildComponent
 
     /**
      * 注册一个Bot的信息，并使用默认配置。
      */
     @OptIn(ExperimentalSerializationApi::class)
-    override fun register(verifyInfo: BotVerifyInfo): TencentGuildBot {
+    override fun register(verifyInfo: BotVerifyInfo): TencentGuildComponentBot {
         val serializer = TencentBotViaBotFileConfiguration.serializer()
 
         val jsonElement = verifyInfo.inputStream().use { inp -> CJson.decodeFromStream(JsonElement.serializer(), inp) }
@@ -53,14 +55,15 @@ public abstract class TencentGuildBotManager : BotManager<TencentGuildBot>() {
 
         logger.debug("[{}] json element load: {}", verifyInfo.infoName, jsonElement)
 
-        if (component != ComponentTencentGuild.COMPONENT_ID.toString()) {
+        this.component.id.literal
+        if (component != TencentGuildComponent.ID_VALUE) {
             logger.debug(
                 "[{}] mismatch: [{}] != [{}]",
                 verifyInfo.infoName,
                 component,
-                ComponentTencentGuild.COMPONENT_ID
+                TencentGuildComponent.ID_VALUE
             )
-            throw ComponentMismatchException("[$component] != [${ComponentTencentGuild.COMPONENT_ID}]")
+            throw ComponentMismatchException("[$component] != [${TencentGuildComponent.ID_VALUE}]")
         }
         val configuration = CJson.decodeFromJsonElement(serializer, jsonElement)
 
@@ -72,8 +75,8 @@ public abstract class TencentGuildBotManager : BotManager<TencentGuildBot>() {
         appId: String,
         appKey: String,
         token: String,
-        block: TencentBotConfiguration.() -> Unit = {}
-    ): TencentGuildBot
+        block: TencentGuildBotConfiguration.() -> Unit = {}
+    ): TencentGuildComponentBot
 
 
     public abstract val configuration: TencentGuildBotManagerConfiguration
@@ -114,7 +117,7 @@ public class TencentGuildBotManagerConfiguration(public var eventProcessor: Even
     /**
      * 从此处对所有bot的配置信息进行统一处理。
      */
-    public var botConfigure: TencentBotConfiguration.(appId: String, appKey: String, token: String) -> Unit =
+    public var botConfigure: TencentGuildBotConfiguration.(appId: String, appKey: String, token: String) -> Unit =
         { _, _, _ -> }
 
     /**
@@ -167,7 +170,7 @@ internal class TencentBotViaBotFileConfiguration(
 
     /**
      * 分片总数。
-     * @see [TencentBotConfiguration.totalShard]
+     * @see [TencentGuildBotConfiguration.totalShard]
      */
     val totalShard: Int? = null,
 
@@ -208,7 +211,7 @@ internal class TencentBotViaBotFileConfiguration(
         }
 
 
-    fun includeConfig(configuration: TencentBotConfiguration) {
+    fun includeConfig(configuration: TencentGuildBotConfiguration) {
         if (totalShard != null) {
             configuration.totalShard = totalShard
         }
