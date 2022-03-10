@@ -565,7 +565,7 @@ internal data class TicketImpl(
     override val botToken: String = "Bot $appId.$token"
 
     override fun toString(): String {
-        return "TicketImpl(appId=${appId.hide()}, appKey=${appKey.hide()}, token=${token.hide()})"
+        return "TicketImpl(appId=$appId, appKey=${appKey.hide()}, token=${token.hide()})"
     }
 }
 
