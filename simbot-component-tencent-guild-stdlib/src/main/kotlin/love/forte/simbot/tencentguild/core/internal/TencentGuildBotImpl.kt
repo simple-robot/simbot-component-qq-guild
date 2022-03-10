@@ -28,11 +28,11 @@ import kotlinx.coroutines.sync.*
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 import love.forte.simbot.*
-import love.forte.simbot.LoggerFactory
 import love.forte.simbot.tencentguild.*
 import love.forte.simbot.tencentguild.api.*
 import love.forte.simbot.tencentguild.api.user.*
 import org.slf4j.*
+import org.slf4j.LoggerFactory
 import java.util.concurrent.*
 import java.util.concurrent.atomic.*
 import kotlin.coroutines.*
@@ -51,18 +51,18 @@ internal fun checkResumeCode(code: Short): Boolean {
 
 
 /**
- * implementation for [TencentBot].
+ * implementation for [TencentGuildBot].
  * @author ForteScarlet
  */
-internal class TencentBotImpl(
+internal class TencentGuildBotImpl(
     override val ticket: TicketImpl,
     override val configuration: TencentBotConfiguration
-) : TencentBot {
+) : TencentGuildBot {
 
     // verify bot with bot info api.
     override val botInfo: TencentBotInfo by lazy {
         runBlocking {
-            GetBotInfoApi.requestBy(this@TencentBotImpl)
+            GetBotInfoApi.requestBy(this@TencentGuildBotImpl)
         }
     }
 
@@ -175,10 +175,10 @@ internal class TencentBotImpl(
         private val _seq: AtomicLong,
         private var session: DefaultClientWebSocketSession,
         private val logger: Logger
-    ) : TencentBot.Client {
+    ) : TencentGuildBot.Client {
         val nextDelay: Long = if (shard.total - shard.value == 1) 0 else 5000L // 5s
 
-        override val bot: TencentBot get() = this@TencentBotImpl
+        override val bot: TencentGuildBot get() = this@TencentGuildBotImpl
         override val seq: Long get() = _seq.get()
         override val isActive: Boolean get() = session.isActive
         private val _resuming = AtomicBoolean(false)
@@ -238,10 +238,10 @@ internal class TencentBotImpl(
                 processingJob.join()
 
                 val gatewayInfo = GatewayApis.Normal.request(
-                    this@TencentBotImpl.httpClient,
-                    server = this@TencentBotImpl.url,
-                    token = this@TencentBotImpl.ticket.botToken,
-                    decoder = this@TencentBotImpl.decoder,
+                    this@TencentGuildBotImpl.httpClient,
+                    server = this@TencentGuildBotImpl.url,
+                    token = this@TencentGuildBotImpl.ticket.botToken,
+                    decoder = this@TencentGuildBotImpl.decoder,
                 )
 
                 val resumeSession = resumeSession(gatewayInfo, sessionData, _seq, logger)
@@ -502,12 +502,9 @@ internal class TencentBotImpl(
 
     //// self api
 
-    override suspend fun me(): TencentBotInfo  {
+    override suspend fun me(): TencentBotInfo {
         return GetBotInfoApi.requestBy(this)
     }
-
-
-
 
 
 }
@@ -563,7 +560,17 @@ internal data class TicketImpl(
     @SerialName("app_key")
     override val appKey: String,
     override val token: String
-) : TencentBot.Ticket {
+) : TencentGuildBot.Ticket {
     @Transient
     override val botToken: String = "Bot $appId.$token"
+
+    override fun toString(): String {
+        return "TicketImpl(appId=${appId.hide()}, appKey=${appKey.hide()}, token=${token.hide()})"
+    }
+}
+
+private fun String.hide(size: Int = 3, hide: String = "********"): String {
+    return if (length <= size) hide
+    else "${substring(0, 3)}$hide${substring(lastIndex - 2, length)}"
+
 }

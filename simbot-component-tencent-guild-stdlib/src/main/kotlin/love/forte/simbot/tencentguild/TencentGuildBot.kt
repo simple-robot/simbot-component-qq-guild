@@ -26,13 +26,13 @@ import kotlin.coroutines.*
 
 /**
  *
- * 一个 [TencentBot] 标准接口，其只提供接口定义，而实现则在 `core` 模块中。
+ * 一个 [TencentGuildBot] 标准接口，其只提供接口定义，而实现则在 `core` 模块中。
  *
- * [TencentBot] 不考虑实现 simple-robot-api 中的 [love.forte.simbot.Bot] 接口，由对组件进行实现，此处的 [TencentBot] 仅定义对于一个频道机器人的最基本的信息。
+ * [TencentGuildBot] 不考虑实现 simple-robot-api 中的 [love.forte.simbot.Bot] 接口，由对组件进行实现，此处的 [TencentGuildBot] 仅定义对于一个频道机器人的最基本的信息。
  *
  * @author ForteScarlet
  */
-public interface TencentBot : CoroutineScope {
+public interface TencentGuildBot : CoroutineScope {
     override val coroutineContext: CoroutineContext
 
     /**
@@ -105,7 +105,7 @@ public interface TencentBot : CoroutineScope {
         /**
          * 拼接bot token
          */
-        public val botToken: String get() = "Bot $appId.$token"
+        public val botToken: String
     }
 
 
@@ -169,9 +169,9 @@ public interface TencentBot : CoroutineScope {
     public interface Client {
 
         /**
-         * 此连接所属的 [TencentBot]
+         * 此连接所属的 [TencentGuildBot]
          */
-        public val bot: TencentBot
+        public val bot: TencentGuildBot
 
         /**
          * 此连接对应的分片信息。

@@ -36,12 +36,12 @@ public fun tencentBot(
     appKey: String,
     token: String,
     configBlock: TencentBotConfiguration.() -> Unit = {}
-): TencentBot {
+): TencentGuildBot {
     val ticket = TicketImpl(appId, appKey, token)
     val config = TencentBotConfiguration().also(configBlock)
 
 
-    return TencentBotImpl(ticket, config)
+    return TencentGuildBotImpl(ticket, config)
 }
 
 

@@ -43,7 +43,7 @@ public sealed class TcgAudioEvent : TcgEvent<TencentAudioAction>(),
     @JvmSynthetic
     abstract override suspend fun guild(): TencentGuild
     abstract override val key: Event.Key<out TcgAudioEvent>
-    abstract override val bot: TencentGuildBot
+    abstract override val bot: TencentGuildComponentBot
 
     @JvmSynthetic
     abstract override suspend fun organization(): TencentGuild

@@ -51,7 +51,7 @@ public abstract class TcgChannelAtMessageEvent : TcgEvent<TencentMessage>(), Cha
     abstract override suspend fun channel(): TencentChannel
     abstract override val timestamp: Timestamp
     abstract override val visibleScope: Event.VisibleScope
-    abstract override val bot: TencentGuildBot
+    abstract override val bot: TencentGuildComponentBot
     abstract override val messageContent: ReceivedMessageContent
 
     //// impl

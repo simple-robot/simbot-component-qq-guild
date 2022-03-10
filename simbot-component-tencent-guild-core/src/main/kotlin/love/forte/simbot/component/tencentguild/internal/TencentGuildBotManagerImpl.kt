@@ -87,7 +87,7 @@ internal class TencentGuildBotManagerImpl(
         return !completableJob.isCompleted
     }
 
-    private var botMap = ConcurrentHashMap<String, TencentGuildBotImpl>()
+    private var botMap = ConcurrentHashMap<String, TencentGuildComponentBotImpl>()
 
 
     override suspend fun doCancel(reason: Throwable?): Boolean {
@@ -110,7 +110,7 @@ internal class TencentGuildBotManagerImpl(
         }
     }
 
-    override fun get(id: ID): TencentGuildBot? {
+    override fun get(id: ID): TencentGuildComponentBot? {
         lock.read {
             if (completableJob.isCancelled) throw IllegalStateException("This manager has already cancelled.")
 
@@ -118,7 +118,7 @@ internal class TencentGuildBotManagerImpl(
         }
     }
 
-    override fun all(): Sequence<TencentGuildBot> {
+    override fun all(): Sequence<TencentGuildComponentBot> {
         return botMap.values.asSequence()
     }
 
@@ -128,7 +128,7 @@ internal class TencentGuildBotManagerImpl(
         appKey: String,
         token: String,
         block: TencentBotConfiguration.() -> Unit
-    ): TencentGuildBot {
+    ): TencentGuildComponentBot {
         val configure = configuration.botConfigure
         lock.write {
             val sourceBot = tencentBot(appId, appKey, token) {
@@ -143,7 +143,7 @@ internal class TencentGuildBotManagerImpl(
             return botMap.compute(appId) { key, old ->
                 if (old != null) throw BotAlreadyRegisteredException(key)
 
-                TencentGuildBotImpl(sourceBot, this, eventProcessor, component).apply {
+                TencentGuildComponentBotImpl(sourceBot, this, eventProcessor, component).apply {
                     coroutineContext[Job]!!.invokeOnCompletion {
                         // remove self on completion
                         botMap.remove(key)

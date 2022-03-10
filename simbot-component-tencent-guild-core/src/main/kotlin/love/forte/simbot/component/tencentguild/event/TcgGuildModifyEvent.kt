@@ -34,13 +34,13 @@ import love.forte.simbot.tencentguild.*
  *
  * @author ForteScarlet
  */
-public sealed class TcgGuildModifyEvent<F, T> : TcgEvent<TencentGuildInfo>(), ChangedEvent<TencentGuildBot, F, T>,
+public sealed class TcgGuildModifyEvent<F, T> : TcgEvent<TencentGuildInfo>(), ChangedEvent<TencentGuildComponentBot, F, T>,
     GuildEvent {
     abstract override val sourceEventEntity: TencentGuildInfo
     abstract override val eventSignal: EventSignals.Guilds<TencentGuildInfo>
 
     @JvmSynthetic
-    abstract override suspend fun source(): TencentGuildBot
+    abstract override suspend fun source(): TencentGuildComponentBot
 
     @JvmSynthetic
     abstract override suspend fun after(): T
@@ -52,7 +52,7 @@ public sealed class TcgGuildModifyEvent<F, T> : TcgEvent<TencentGuildInfo>(), Ch
     abstract override suspend fun guild(): TencentGuild
 
     abstract override val changedTime: Timestamp
-    abstract override val source: TencentGuildBot
+    abstract override val source: TencentGuildComponentBot
     abstract override val key: Event.Key<out TcgGuildModifyEvent<*, *>>
 
     //// impl
@@ -68,7 +68,7 @@ public sealed class TcgGuildModifyEvent<F, T> : TcgEvent<TencentGuildInfo>(), Ch
 
     @JvmSynthetic
     override suspend fun organization(): TencentGuild = guild()
-    override val bot: TencentGuildBot get() = source
+    override val bot: TencentGuildComponentBot get() = source
 
     /**
      * 可见范围是内部的。
@@ -87,11 +87,11 @@ public sealed class TcgGuildModifyEvent<F, T> : TcgEvent<TencentGuildInfo>(), Ch
      * - 机器人被加入到某个频道的时候
      */
     public abstract class Create : TcgGuildModifyEvent<Any?, TencentGuild>() {
-        abstract override val source: TencentGuildBot
+        abstract override val source: TencentGuildComponentBot
         abstract override val after: TencentGuild
 
         @JvmSynthetic
-        override suspend fun source(): TencentGuildBot = source
+        override suspend fun source(): TencentGuildComponentBot = source
 
         @JvmSynthetic
         override suspend fun after(): TencentGuild = after
@@ -126,14 +126,14 @@ public sealed class TcgGuildModifyEvent<F, T> : TcgEvent<TencentGuildInfo>(), Ch
      * [after] 字段内容为变更后的字段内容
      */
     public abstract class Update : TcgGuildModifyEvent<Any?, TencentGuild>() {
-        abstract override val source: TencentGuildBot
+        abstract override val source: TencentGuildComponentBot
         abstract override val after: TencentGuild
 
         @JvmSynthetic
         override suspend fun after(): TencentGuild = after
 
         @JvmSynthetic
-        override suspend fun source(): TencentGuildBot = source
+        override suspend fun source(): TencentGuildComponentBot = source
 
         @JvmSynthetic
         override suspend fun before(): Any? = null
@@ -165,14 +165,14 @@ public sealed class TcgGuildModifyEvent<F, T> : TcgEvent<TencentGuildInfo>(), Ch
      *
      */
     public abstract class Delete : TcgGuildModifyEvent<TencentGuild, Any?>() {
-        abstract override val source: TencentGuildBot
+        abstract override val source: TencentGuildComponentBot
         abstract override val before: TencentGuild
 
         @JvmSynthetic
         override suspend fun before(): TencentGuild = before
 
         @JvmSynthetic
-        override suspend fun source(): TencentGuildBot = source
+        override suspend fun source(): TencentGuildComponentBot = source
 
         @JvmSynthetic
         override suspend fun after(): Any? = null

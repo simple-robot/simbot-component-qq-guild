@@ -30,7 +30,7 @@ import love.forte.simbot.tencentguild.*
  * @author ForteScarlet
  */
 public abstract class TcgEvent<T : Any> : BotContainer {
-    abstract override val bot: TencentGuildBot
+    abstract override val bot: TencentGuildComponentBot
 
 
     /**

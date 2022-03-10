@@ -36,7 +36,7 @@ import kotlin.coroutines.*
  *
  * @author ForteScarlet
  */
-public abstract class TencentGuildBotManager : BotManager<TencentGuildBot>() {
+public abstract class TencentGuildBotManager : BotManager<TencentGuildComponentBot>() {
 
     protected abstract val logger: Logger
 
@@ -44,7 +44,7 @@ public abstract class TencentGuildBotManager : BotManager<TencentGuildBot>() {
      * 注册一个Bot的信息，并使用默认配置。
      */
     @OptIn(ExperimentalSerializationApi::class)
-    override fun register(verifyInfo: BotVerifyInfo): TencentGuildBot {
+    override fun register(verifyInfo: BotVerifyInfo): TencentGuildComponentBot {
         val serializer = TencentBotViaBotFileConfiguration.serializer()
 
         val jsonElement = verifyInfo.inputStream().use { inp -> CJson.decodeFromStream(JsonElement.serializer(), inp) }
@@ -73,7 +73,7 @@ public abstract class TencentGuildBotManager : BotManager<TencentGuildBot>() {
         appKey: String,
         token: String,
         block: TencentBotConfiguration.() -> Unit = {}
-    ): TencentGuildBot
+    ): TencentGuildComponentBot
 
 
     public abstract val configuration: TencentGuildBotManagerConfiguration

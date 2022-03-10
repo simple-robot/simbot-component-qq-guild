@@ -34,13 +34,13 @@ import java.util.stream.*
  * @author ForteScarlet
  */
 internal class TencentChannelImpl internal constructor(
-    override val bot: TencentGuildBotImpl,
+    override val bot: TencentGuildComponentBotImpl,
     private val info: TencentChannelInfo,
     private val from: suspend () -> TencentGuildImpl
 ) : TencentChannel, TencentChannelInfo by info {
 
     internal constructor(
-        bot: TencentGuildBotImpl, info: TencentChannelInfo, from: TencentGuildImpl
+        bot: TencentGuildComponentBotImpl, info: TencentChannelInfo, from: TencentGuildImpl
     ) : this(bot, info, { from })
 
     override suspend fun send(message: Message): MessageReceipt {
