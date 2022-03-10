@@ -51,6 +51,7 @@ internal class TencentGuildComponentBotImpl(
     override val logger =
         LoggerFactory.getLogger("love.forte.simbot.component.tencentguild.bot.${sourceBot.ticket.appKey}")
 
+    @Volatile
     private lateinit var meId: ID
 
     override fun isMe(id: ID): Boolean {
