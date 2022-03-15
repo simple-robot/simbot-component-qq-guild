@@ -55,7 +55,6 @@ public data class Ark internal constructor(
         public fun create(templateId: ID, kv: List<TencentMessage.Ark.Kv> = emptyList()): Ark =
             Ark(templateId, kv.toList())
     }
-
 }
 
 
