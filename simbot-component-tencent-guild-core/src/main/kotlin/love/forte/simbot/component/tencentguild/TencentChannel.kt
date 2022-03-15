@@ -88,7 +88,7 @@ public interface TencentChannel : Channel, TencentChannelInfo {
      * 子频道目前无法直接获取成员列表。将会直接返回 [previous] 的成员列表。
      */
     @JvmSynthetic
-    override suspend fun members(groupingId: ID?, limiter: Limiter): Flow<TencentMember> {
+    override suspend fun members(groupingId: ID?, limiter: Limiter): kotlinx.coroutines.flow.Flow<TencentMember> {
         return previous().members(groupingId, limiter)
     }
 

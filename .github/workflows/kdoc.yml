@@ -22,7 +22,6 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: 11
-          cache: 'gradle'
 
       - name: Create gradle.properties
         run: |
@@ -34,7 +33,7 @@ jobs:
       - name: Gradle generate documentation
         uses: gradle/gradle-build-action@v2
         with:
-          gradle-version: 7.3.3
+          gradle-version: 7.4
           arguments: clean build dokkaHtmlMultiModuleAndPost -DisSnapshot=false
 
       - name: Push to doc repository
