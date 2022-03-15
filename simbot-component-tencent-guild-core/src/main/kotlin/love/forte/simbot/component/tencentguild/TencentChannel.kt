@@ -18,7 +18,6 @@
 package love.forte.simbot.component.tencentguild
 
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
 import love.forte.simbot.*
 import love.forte.simbot.definition.*
 import love.forte.simbot.message.*
@@ -70,7 +69,7 @@ public interface TencentChannel : Channel, TencentChannelInfo {
     override suspend fun previous(): TencentGuild
 
     @JvmSynthetic
-    override suspend fun roles(groupingId: ID?, limiter: Limiter): Flow<TencentRole>
+    override suspend fun roles(groupingId: ID?, limiter: Limiter): kotlinx.coroutines.flow.Flow<TencentRole>
 
 
     //// Impl
