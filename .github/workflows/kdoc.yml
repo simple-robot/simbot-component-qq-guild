@@ -1,9 +1,8 @@
 name: Deploy doc
-on: # push
-  push:
-    tags:
-      - doc**
-      - v3.*.*
+on: push
+  # push:
+  #   tags:
+  #     - v3.*.*
 
 jobs:
   deploy-doc:
