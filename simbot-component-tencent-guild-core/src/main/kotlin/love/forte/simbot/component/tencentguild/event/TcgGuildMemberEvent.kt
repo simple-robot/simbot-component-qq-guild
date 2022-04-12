@@ -17,13 +17,17 @@
 
 package love.forte.simbot.component.tencentguild.event
 
-import kotlinx.coroutines.*
-import love.forte.simbot.*
-import love.forte.simbot.component.tencentguild.*
-import love.forte.simbot.definition.*
+import kotlinx.coroutines.runBlocking
+import love.forte.simbot.Api4J
+import love.forte.simbot.Timestamp
+import love.forte.simbot.component.tencentguild.TencentGuild
+import love.forte.simbot.component.tencentguild.TencentGuildComponentBot
+import love.forte.simbot.component.tencentguild.TencentMember
+import love.forte.simbot.definition.MemberInfo
 import love.forte.simbot.event.*
-import love.forte.simbot.message.*
-import love.forte.simbot.tencentguild.*
+import love.forte.simbot.message.doSafeCast
+import love.forte.simbot.tencentguild.EventSignals
+import love.forte.simbot.tencentguild.TencentMemberInfo
 
 /**
  *
@@ -87,7 +91,7 @@ public sealed class TcgGuildMemberEvent<T : Any> : TcgEvent<T>(), GuildEvent, Me
      * 发送时机
      * - 新用户加入频道
      */
-    public abstract class Increase : TcgGuildMemberEvent<TencentMemberInfo>(), MemberIncreaseEvent {
+    public abstract class Increase : TcgGuildMemberEvent<TencentMemberInfo>(), MemberIncreaseEvent<TencentGuild, TencentMember> {
         @JvmSynthetic
         abstract override suspend fun source(): TencentGuild
         abstract override val target: TencentMember
@@ -144,7 +148,7 @@ public sealed class TcgGuildMemberEvent<T : Any> : TcgEvent<T>(), GuildEvent, Me
      * - 用户离开频道
      *
      */
-    public abstract class Decrease : TcgGuildMemberEvent<TencentMemberInfo>(), MemberDecreaseEvent {
+    public abstract class Decrease : TcgGuildMemberEvent<TencentMemberInfo>(), MemberDecreaseEvent<TencentGuild, TencentMember> {
         @JvmSynthetic
         abstract override suspend fun source(): TencentGuild
         abstract override val target: TencentMember
