@@ -79,7 +79,7 @@ sealed class P : SimbotProject() {
         val version = Version(
             major = "${Simbot.version.major}.${Simbot.version.minor}",
             minor = 0, patch = 0,
-            status = preview(6, 0),
+            status = preview(2, 0),
             isSnapshot = Simbot.isSnapshot
         )
         private const val CURRENT_VERSION = "1.0"
