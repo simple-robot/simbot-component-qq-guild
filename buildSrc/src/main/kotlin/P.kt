@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022 ForteScarlet <ForteScarlet@163.com>
+ *  Copyright (c) 2022-2022 ForteScarlet <ForteScarlet@163.com>
  *
  *  本文件是 simbot-component-tencent-guild 的一部分。
  *
@@ -79,7 +79,7 @@ sealed class P : SimbotProject() {
         val version = Version(
             major = "${Simbot.version.major}.${Simbot.version.minor}",
             minor = 0, patch = 0,
-            status = preview(1, 0),
+            status = preview(6, 0),
             isSnapshot = Simbot.isSnapshot
         )
         private const val CURRENT_VERSION = "1.0"
