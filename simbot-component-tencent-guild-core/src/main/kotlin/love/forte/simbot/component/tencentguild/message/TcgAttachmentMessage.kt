@@ -17,11 +17,18 @@
 
 package love.forte.simbot.component.tencentguild.message
 
-import kotlinx.serialization.*
-import love.forte.simbot.*
-import love.forte.simbot.component.tencentguild.internal.*
-import love.forte.simbot.message.*
-import love.forte.simbot.tencentguild.*
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import love.forte.simbot.ID
+import love.forte.simbot.LoggerFactory
+import love.forte.simbot.component.tencentguild.internal.SendingMessageParser
+import love.forte.simbot.component.tencentguild.internal.TencentMessageForSendingBuilder
+import love.forte.simbot.message.Message
+import love.forte.simbot.message.Messages
+import love.forte.simbot.message.RemoteResource
+import love.forte.simbot.message.doSafeCast
+import love.forte.simbot.tencentguild.TencentMessage
 
 
 /**
@@ -32,21 +39,21 @@ import love.forte.simbot.tencentguild.*
  */
 @SerialName("tcg.attachment")
 @Serializable
-public data class AttachmentMessage(override val url: String) : RemoteResource<AttachmentMessage> {
+public data class TcgAttachmentMessage(override val url: String) : RemoteResource<TcgAttachmentMessage>, TcgMessageElement<TcgAttachmentMessage> {
     @Transient
     override val id: ID = url.ID
 
-    override val key: Message.Key<AttachmentMessage>
+    override val key: Message.Key<TcgAttachmentMessage>
         get() = Key
 
-    public companion object Key : Message.Key<AttachmentMessage> {
-        override fun safeCast(value: Any): AttachmentMessage? = doSafeCast(value)
+    public companion object Key : Message.Key<TcgAttachmentMessage> {
+        override fun safeCast(value: Any): TcgAttachmentMessage? = doSafeCast(value)
     }
 }
 
 
-public fun TencentMessage.Attachment.toMessage(): AttachmentMessage = AttachmentMessage(url)
-public fun AttachmentMessage.toAttachment(): TencentMessage.Attachment = TencentMessage.Attachment(url)
+public fun TencentMessage.Attachment.toMessage(): TcgAttachmentMessage = TcgAttachmentMessage(url)
+public fun TcgAttachmentMessage.toAttachment(): TencentMessage.Attachment = TencentMessage.Attachment(url)
 
 
 internal object AttachmentParser : SendingMessageParser {
@@ -57,7 +64,7 @@ internal object AttachmentParser : SendingMessageParser {
         messages: Messages?,
         builder: TencentMessageForSendingBuilder
     ) {
-        if (element is AttachmentMessage) {
+        if (element is TcgAttachmentMessage) {
             logger.warn("Attachment message is not yet supported for sending")
         }
     }

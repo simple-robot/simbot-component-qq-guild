@@ -181,17 +181,17 @@ val listener = coreListener<TcgChannelAtMessageEvent> { context: EventListenerPr
     // 目前支持:
     // Text
     // At
-    // Ark(tencent guild 专属)
-    // AttachmentMessage(tencent guild 专属)
-    // MentionChannel(tencent guild 专属)
-    // ReplyTo(tencent guild 专属)
+    // TcgArk(tencent guild 专属)
+    // TcgAttachmentMessage(tencent guild 专属)
+    // TcgMentionChannel(tencent guild 专属)
+    // TcgReplyTo(tencent guild 专属)
 
     // 🌟 消息：@事件发送者 你好啊
     // channel.send(At(event.id) + Text { "你好啊！" }) // err
 
     // ⚠️ 注意！目前来看，频道bot不一定能够允许直接发送消息，因此目前有两种方案：
-    // 1. tencent-guild 模块会提供一个特殊的Message用于拼接：ReplyTo(xxx.ID)
-    // 比如：At(123.ID) + Text { "233" } + ReplyTo(xxx.ID)
+    // 1. tencent-guild 模块会提供一个特殊的Message用于拼接：TcgReplyTo(xxx.ID)
+    // 比如：At(123.ID) + Text { "233" } + TcgReplyTo(xxx.ID)
     // 但是这种情况仅限于你知道message的ID是什么
 
     // 2. event.reply

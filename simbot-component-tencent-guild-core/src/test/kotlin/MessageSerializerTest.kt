@@ -15,15 +15,19 @@
  *
  */
 
-import com.charleskorn.kaml.*
-import kotlinx.serialization.json.*
-import kotlinx.serialization.modules.*
-import love.forte.simbot.*
-import love.forte.simbot.component.tencentguild.*
-import love.forte.simbot.component.tencentguild.message.*
-import love.forte.simbot.message.*
-import love.forte.simbot.tencentguild.*
-import kotlin.test.*
+import com.charleskorn.kaml.Yaml
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.plus
+import love.forte.simbot.ID
+import love.forte.simbot.component.tencentguild.TencentGuildComponent
+import love.forte.simbot.component.tencentguild.message.TcgMentionChannel
+import love.forte.simbot.component.tencentguild.message.toMessage
+import love.forte.simbot.message.At
+import love.forte.simbot.message.Messages
+import love.forte.simbot.message.Text
+import love.forte.simbot.message.plus
+import love.forte.simbot.tencentguild.buildArk
+import kotlin.test.Test
 
 /**
  *
@@ -42,7 +46,7 @@ class MessageSerializerTest {
 
     private val yaml = Yaml(module)
 
-    private val messages = At(1.ID) + Text { "Forte" } + MentionChannel(555.ID) + buildArk(114514.ID) {
+    private val messages = At(1.ID) + Text { "Forte" } + TcgMentionChannel(555.ID) + buildArk(114514.ID) {
         kvs {
             kv("Key", "value-145")
             kv("KK2") {
