@@ -225,9 +225,7 @@ public sealed class TcgGuildMemberEvent : TcgEvent<TencentMemberInfo>(), GuildEv
      * @see EventSignals.GuildMembers.GuildMemberUpdate
      */
     @Deprecated("暂无")
-    public abstract class Update
-    //: TcgGuildMemberEvent(), ChangedEvent<TencentMember, Any?, TencentMember>
-    {
+    public abstract class Update {
 
     }
 
