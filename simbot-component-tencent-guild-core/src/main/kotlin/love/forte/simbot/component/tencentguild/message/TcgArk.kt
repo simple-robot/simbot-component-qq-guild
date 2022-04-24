@@ -17,12 +17,17 @@
 
 package love.forte.simbot.component.tencentguild.message
 
-import kotlinx.serialization.*
-import love.forte.simbot.*
-import love.forte.simbot.component.tencentguild.internal.*
-import love.forte.simbot.component.tencentguild.message.Ark.Key.byArk
-import love.forte.simbot.message.*
-import love.forte.simbot.tencentguild.*
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import love.forte.simbot.ID
+import love.forte.simbot.component.tencentguild.internal.SendingMessageParser
+import love.forte.simbot.component.tencentguild.internal.TencentMessageForSendingBuilder
+import love.forte.simbot.component.tencentguild.message.TcgArk.Key.byArk
+import love.forte.simbot.message.Message
+import love.forte.simbot.message.Messages
+import love.forte.simbot.message.doSafeCast
+import love.forte.simbot.tencentguild.TencentMessage
+import love.forte.simbot.tencentguild.buildArk
 
 /**
  * [TencentMessage.Ark] 对应的 [Message.Element].
@@ -31,13 +36,13 @@ import love.forte.simbot.tencentguild.*
  */
 @SerialName("tcg.ark")
 @Serializable
-public data class Ark internal constructor(
+public data class TcgArk internal constructor(
     @SerialName("template_id")
     @Serializable(ID.AsCharSequenceIDSerializer::class)
     public val templateId: ID,
     public val kvs: List<TencentMessage.Ark.Kv> = emptyList()
-) : Message.Element<Ark> {
-    override val key: Message.Key<Ark>
+) : TcgMessageElement<TcgArk> {
+    override val key: Message.Key<TcgArk>
         get() = Key
 
     /**
@@ -45,22 +50,22 @@ public data class Ark internal constructor(
      */
     public fun toRealArk(): TencentMessage.Ark = TencentMessage.Ark(templateId, kvs.toList())
 
-    public companion object Key : Message.Key<Ark> {
-        override fun safeCast(value: Any): Ark? = doSafeCast(value)
+    public companion object Key : Message.Key<TcgArk> {
+        override fun safeCast(value: Any): TcgArk? = doSafeCast(value)
 
         @JvmStatic
-        public fun byArk(ark: TencentMessage.Ark): Ark = Ark(ark.templateId, ark.kv.toList())
+        public fun byArk(ark: TencentMessage.Ark): TcgArk = TcgArk(ark.templateId, ark.kv.toList())
 
         @JvmStatic
-        public fun create(templateId: ID, kv: List<TencentMessage.Ark.Kv> = emptyList()): Ark =
-            Ark(templateId, kv.toList())
+        public fun create(templateId: ID, kv: List<TencentMessage.Ark.Kv> = emptyList()): TcgArk =
+            TcgArk(templateId, kv.toList())
     }
 }
 
 
-public fun TencentMessage.Ark.toMessage(): Ark = Ark(templateId, kv)
+public fun TencentMessage.Ark.toMessage(): TcgArk = TcgArk(templateId, kv)
 
-public fun Ark.toArk(): TencentMessage.Ark = buildArk(templateId) {
+public fun TcgArk.toArk(): TencentMessage.Ark = buildArk(templateId) {
     kvs = this@toArk.kvs.toMutableList()
 }
 
@@ -72,7 +77,7 @@ internal object ArkParser : SendingMessageParser {
         messages: Messages?,
         builder: TencentMessageForSendingBuilder
     ) {
-        if (element is Ark) {
+        if (element is TcgArk) {
             builder.arkAppend {
                 from(element.toRealArk())
             }

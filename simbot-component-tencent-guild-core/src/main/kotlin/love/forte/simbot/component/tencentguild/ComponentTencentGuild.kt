@@ -17,10 +17,14 @@
 
 package love.forte.simbot.component.tencentguild
 
-import kotlinx.serialization.modules.*
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
 import love.forte.simbot.*
-import love.forte.simbot.component.tencentguild.message.*
-import love.forte.simbot.message.*
+import love.forte.simbot.component.tencentguild.message.TcgArk
+import love.forte.simbot.component.tencentguild.message.TcgAttachmentMessage
+import love.forte.simbot.component.tencentguild.message.TcgMentionChannel
+import love.forte.simbot.component.tencentguild.message.TcgReplyTo
+import love.forte.simbot.message.Message
 
 
 /**
@@ -65,10 +69,10 @@ public class TencentGuildComponent : Component {
         @JvmStatic
         public val messageSerializersModule: SerializersModule = SerializersModule {
             polymorphic(Message.Element::class) {
-                subclass(Ark::class, Ark.serializer())
-                subclass(MentionChannel::class, MentionChannel.serializer())
-                subclass(AttachmentMessage::class, AttachmentMessage.serializer())
-                subclass(ReplyTo::class, ReplyTo.serializer())
+                subclass(TcgArk::class, TcgArk.serializer())
+                subclass(TcgMentionChannel::class, TcgMentionChannel.serializer())
+                subclass(TcgAttachmentMessage::class, TcgAttachmentMessage.serializer())
+                subclass(TcgReplyTo::class, TcgReplyTo.serializer())
             }
         }
 

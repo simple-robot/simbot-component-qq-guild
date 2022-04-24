@@ -17,23 +17,28 @@
 
 package love.forte.simbot.component.tencentguild.message
 
-import kotlinx.serialization.*
-import love.forte.simbot.*
-import love.forte.simbot.component.tencentguild.internal.*
-import love.forte.simbot.message.*
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import love.forte.simbot.ID
+import love.forte.simbot.component.tencentguild.internal.SendingMessageParser
+import love.forte.simbot.component.tencentguild.internal.TencentMessageForSendingBuilder
+import love.forte.simbot.message.At
+import love.forte.simbot.message.Message
+import love.forte.simbot.message.Messages
+import love.forte.simbot.message.doSafeCast
 
 
 @SerialName("tcg.mentionChannel") // tencentguild.channel.mention
 @Serializable
-public data class MentionChannel(
+public data class TcgMentionChannel(
     @Serializable(ID.AsCharSequenceIDSerializer::class)
     public val target: ID
-) : Message.Element<MentionChannel> {
-    override val key: Message.Key<MentionChannel>
+) : TcgMessageElement<TcgMentionChannel> {
+    override val key: Message.Key<TcgMentionChannel>
         get() = Key
 
-    public companion object Key : Message.Key<MentionChannel> {
-        override fun safeCast(value: Any): MentionChannel? = doSafeCast(value)
+    public companion object Key : Message.Key<TcgMentionChannel> {
+        override fun safeCast(value: Any): TcgMentionChannel? = doSafeCast(value)
     }
 }
 
@@ -52,7 +57,7 @@ internal object MentionParser : SendingMessageParser {
                 builder.contentAppend("<@${element.target}>")
             }
         }
-        if (element is MentionChannel) {
+        if (element is TcgMentionChannel) {
             builder.contentAppend("<#${element.target}>")
         }
     }
