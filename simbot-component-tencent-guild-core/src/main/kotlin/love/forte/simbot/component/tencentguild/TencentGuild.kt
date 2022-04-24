@@ -17,13 +17,15 @@
 
 package love.forte.simbot.component.tencentguild
 
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.runBlocking
 import love.forte.simbot.*
-import love.forte.simbot.action.*
-import love.forte.simbot.definition.*
-import love.forte.simbot.utils.*
-import java.util.stream.*
+import love.forte.simbot.definition.Guild
+import love.forte.simbot.definition.GuildMember
+import love.forte.simbot.definition.Organization
+import love.forte.simbot.utils.runInBlocking
+import java.util.stream.Stream
 
 /**
  *
@@ -95,7 +97,7 @@ public interface TencentGuild : Guild {
     //// Impls
 
     @JvmSynthetic
-    override suspend fun unmute(): Boolean = throw NotSupportActionException("unmute not support")
+    override suspend fun unmute(): Boolean = false
 
     @JvmSynthetic
     override suspend fun previous(): Organization? = null

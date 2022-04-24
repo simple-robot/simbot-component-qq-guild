@@ -17,19 +17,22 @@
 
 package love.forte.simbot.component.tencentguild.internal.event
 
-import love.forte.simbot.*
-import love.forte.simbot.action.*
-import love.forte.simbot.component.tencentguild.*
-import love.forte.simbot.component.tencentguild.event.*
+import love.forte.simbot.ID
+import love.forte.simbot.action.MessageReplyReceipt
+import love.forte.simbot.component.tencentguild.TencentMember
+import love.forte.simbot.component.tencentguild.event.TcgChannelAtMessageEvent
 import love.forte.simbot.component.tencentguild.internal.*
-import love.forte.simbot.component.tencentguild.util.*
-import love.forte.simbot.event.*
-import love.forte.simbot.message.*
-import love.forte.simbot.tencentguild.*
-import love.forte.simbot.tencentguild.api.channel.*
-import love.forte.simbot.tencentguild.api.guild.*
-import love.forte.simbot.tencentguild.api.message.*
-import love.forte.simbot.utils.*
+import love.forte.simbot.component.tencentguild.util.requestBy
+import love.forte.simbot.event.Event
+import love.forte.simbot.message.Message
+import love.forte.simbot.message.MessageReceipt
+import love.forte.simbot.tencentguild.EventSignals
+import love.forte.simbot.tencentguild.TencentMessage
+import love.forte.simbot.tencentguild.api.channel.GetChannelApi
+import love.forte.simbot.tencentguild.api.guild.GetGuildApi
+import love.forte.simbot.tencentguild.api.message.MessageSendApi
+import love.forte.simbot.utils.LazyValue
+import love.forte.simbot.utils.lazyValue
 
 /**
  *
@@ -74,14 +77,6 @@ internal class TcgChannelAtMessageEventImpl(
 
     override suspend fun source(): TencentChannelImpl = _sourceChannel.await()
     override suspend fun channel(): TencentChannelImpl = _sourceChannel.await()
-
-    override val timestamp: Timestamp
-        get() = sourceEventEntity.timestamp
-
-    /**
-     * 暂时固定为 PUBLIC
-     */
-    override val visibleScope: Event.VisibleScope get() = Event.VisibleScope.PUBLIC
 
     override val messageContent: TencentReceiveMessageContentImpl by lazy(LazyThreadSafetyMode.NONE) {
         TencentReceiveMessageContentImpl(sourceEventEntity)

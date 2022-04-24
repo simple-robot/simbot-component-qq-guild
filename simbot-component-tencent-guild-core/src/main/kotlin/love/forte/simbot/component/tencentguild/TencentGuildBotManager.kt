@@ -18,14 +18,18 @@
 package love.forte.simbot.component.tencentguild
 
 import io.ktor.http.*
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.Serializable
 import love.forte.simbot.*
-import love.forte.simbot.component.tencentguild.internal.*
-import love.forte.simbot.event.*
-import love.forte.simbot.tencentguild.*
-import org.slf4j.*
-import kotlin.coroutines.*
+import love.forte.simbot.component.tencentguild.internal.TencentGuildBotManagerImpl
+import love.forte.simbot.event.EventProcessor
+import love.forte.simbot.tencentguild.EventSignals
+import love.forte.simbot.tencentguild.Intents
+import love.forte.simbot.tencentguild.TencentGuildApi
+import love.forte.simbot.tencentguild.TencentGuildBotConfiguration
+import org.slf4j.Logger
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 
 /**
@@ -49,23 +53,19 @@ public abstract class TencentGuildBotManager : BotManager<TencentGuildComponentB
     override fun register(verifyInfo: BotVerifyInfo): TencentGuildComponentBot {
         val serializer = TencentBotViaBotFileConfiguration.serializer()
 
-        val jsonElement = verifyInfo.inputStream().use { inp -> CJson.decodeFromStream(JsonElement.serializer(), inp) }
-        val component = jsonElement.jsonObject["component"]?.jsonPrimitive?.content
-            ?: throw NoSuchComponentException("Component is not found in [${verifyInfo.infoName}]")
+        val component = verifyInfo.componentId
 
-        logger.debug("[{}] json element load: {}", verifyInfo.infoName, jsonElement)
-
-        this.component.id.literal
-        if (component != TencentGuildComponent.ID_VALUE) {
+        val currentComponent = this.component.id.literal
+        if (component != currentComponent) {
             logger.debug(
                 "[{}] mismatch: [{}] != [{}]",
-                verifyInfo.infoName,
+                verifyInfo.name,
                 component,
-                TencentGuildComponent.ID_VALUE
+                currentComponent
             )
-            throw ComponentMismatchException("[$component] != [${TencentGuildComponent.ID_VALUE}]")
+            throw ComponentMismatchException("[$component] != [$currentComponent]")
         }
-        val configuration = CJson.decodeFromJsonElement(serializer, jsonElement)
+        val configuration = verifyInfo.decode(serializer)
 
         // no config
         return register(configuration.appId, configuration.appKey, configuration.token, configuration::includeConfig)
@@ -127,44 +127,27 @@ public class TencentGuildBotManagerConfiguration(public var eventProcessor: Even
 
 }
 
-// 只有在注册时候会使用到, 不保留为属性。
-
-//@OptIn(ExperimentalSerializationApi::class)
-// private val CProp get() = Properties(SerializersModule { })
-// private val CYaml get() = CYamlFunction?.invoke()
-// private val CYamlFunction: (() -> com.charleskorn.kaml.Yaml)? by lazy {
-//     try {
-//         Class.forName("com.charleskorn.kaml.Yaml")
-//         return@lazy {
-//             com.charleskorn.kaml.Yaml(
-//                 configuration = YamlConfiguration(
-//                     strictMode = false
-//                 )
-//             )
-//         }
-//     } catch (e: ClassNotFoundException) {
-//         LoggerFactory.getLogger(TencentGuildBotManager::class)
-//             .error("[com.charleskorn.kaml.Yaml] not in your classpath. If you want to support for yaml, add 'com.charleskorn.kaml:kaml:\$version' into your classpath.")
-//         return@lazy null
-//     }
-// }
-private val CJson
-    get() = Json {
-        isLenient = true
-        ignoreUnknownKeys = true
-    }
-
 /**
- * 通过 `Map<String, Object>` 进行反序列化的配置类，
+ * bot配置文件所对应的配置类，
+ *
  * 通过由配置文件读取而来的信息来对指定Bot进行信息配置。
  */
 @Suppress("MemberVisibilityCanBePrivate")
 @Serializable
-internal class TencentBotViaBotFileConfiguration(
+public data class TencentBotViaBotFileConfiguration(
+    /**
+     * app id.
+     */
     val appId: String,
 
+    /**
+     * app key.
+     */
     val appKey: String,
 
+    /**
+     * token.
+     */
     val token: String,
 
 
@@ -211,7 +194,7 @@ internal class TencentBotViaBotFileConfiguration(
         }
 
 
-    fun includeConfig(configuration: TencentGuildBotConfiguration) {
+    internal fun includeConfig(configuration: TencentGuildBotConfiguration) {
         if (totalShard != null) {
             configuration.totalShard = totalShard
         }
