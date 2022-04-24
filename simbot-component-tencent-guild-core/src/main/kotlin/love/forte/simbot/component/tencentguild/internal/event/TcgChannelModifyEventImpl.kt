@@ -17,32 +17,30 @@
 
 package love.forte.simbot.component.tencentguild.internal.event
 
-import love.forte.simbot.*
-import love.forte.simbot.component.tencentguild.*
-import love.forte.simbot.component.tencentguild.event.*
-import love.forte.simbot.component.tencentguild.internal.*
-import love.forte.simbot.component.tencentguild.util.*
-import love.forte.simbot.event.*
-import love.forte.simbot.tencentguild.*
-import love.forte.simbot.tencentguild.api.guild.*
-import love.forte.simbot.utils.*
+import love.forte.simbot.ID
+import love.forte.simbot.Timestamp
+import love.forte.simbot.component.tencentguild.event.TcgChannelModifyEvent
+import love.forte.simbot.component.tencentguild.internal.TencentChannelImpl
+import love.forte.simbot.component.tencentguild.internal.TencentGuildComponentBotImpl
+import love.forte.simbot.component.tencentguild.internal.TencentGuildImpl
+import love.forte.simbot.component.tencentguild.util.requestBy
+import love.forte.simbot.event.Event
+import love.forte.simbot.tencentguild.EventSignals
+import love.forte.simbot.tencentguild.TencentChannelInfo
+import love.forte.simbot.tencentguild.api.guild.GetGuildApi
+import love.forte.simbot.utils.lazyValue
 
 
 internal class TcgChannelCreate
 constructor(
     override val sourceEventEntity: TencentChannelInfo,
     override val bot: TencentGuildComponentBotImpl,
-    override val channel: TencentChannelImpl,
+    override val source: TencentChannelImpl,
 ) : TcgChannelModifyEvent.Create() {
-    override val after: TencentChannelImpl get() = channel
-    override val changedTime: Timestamp = Timestamp.now()
-    override val timestamp: Timestamp get() = changedTime
     override val id: ID = tcgChannelModifyId(0, bot.id, channel.id, changedTime)
     override val eventSignal: EventSignals.Guilds.ChannelCreate
         get() = EventSignals.Guilds.ChannelCreate
 
-    override suspend fun after(): TencentChannel = after
-    override suspend fun source(): TencentGuild = channel.guild()
 
     internal object Parser : BaseSignalToEvent<TencentChannelInfo>() {
         override val key: Event.Key<out Create> get() = Create
@@ -66,17 +64,12 @@ internal class TcgChannelUpdate
 constructor(
     override val sourceEventEntity: TencentChannelInfo,
     override val bot: TencentGuildComponentBotImpl,
-    override val channel: TencentChannelImpl,
+    override val source: TencentChannelImpl,
 ) : TcgChannelModifyEvent.Update() {
-    override val after: TencentChannelImpl get() = channel
-    override val changedTime: Timestamp = Timestamp.now()
-    override val timestamp: Timestamp get() = changedTime
     override val id: ID = tcgChannelModifyId(1, bot.id, channel.id, changedTime)
     override val eventSignal: EventSignals.Guilds.ChannelUpdate
         get() = EventSignals.Guilds.ChannelUpdate
 
-    override suspend fun source(): TencentGuild = channel.guild()
-    override suspend fun after(): TencentChannel = after
 
     internal object Parser : BaseSignalToEvent<TencentChannelInfo>() {
         override val key: Event.Key<out Update> get() = Update
@@ -101,17 +94,11 @@ internal class TcgChannelDelete
 constructor(
     override val sourceEventEntity: TencentChannelInfo,
     override val bot: TencentGuildComponentBotImpl,
-    override val channel: TencentChannelImpl,
+    override val source: TencentChannelImpl,
 ) : TcgChannelModifyEvent.Delete() {
-    override val before: TencentChannel get() = channel
-    override val changedTime: Timestamp = Timestamp.now()
-    override val timestamp: Timestamp get() = changedTime
     override val id: ID = tcgChannelModifyId(2, bot.id, channel.id, changedTime)
     override val eventSignal: EventSignals.Guilds.ChannelDelete
         get() = EventSignals.Guilds.ChannelDelete
-
-    override suspend fun before(): TencentChannel = before
-    override suspend fun source(): TencentGuild = channel.guild()
 
     internal object Parser : BaseSignalToEvent<TencentChannelInfo>() {
         override val key: Event.Key<out Delete> get() = Delete

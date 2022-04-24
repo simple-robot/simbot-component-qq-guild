@@ -17,9 +17,15 @@
 
 package love.forte.simbot.component.tencentguild.event
 
-import love.forte.simbot.component.tencentguild.*
-import love.forte.simbot.definition.*
-import love.forte.simbot.tencentguild.*
+import love.forte.simbot.ID
+import love.forte.simbot.Timestamp
+import love.forte.simbot.component.tencentguild.TencentGuildComponentBot
+import love.forte.simbot.definition.BotContainer
+import love.forte.simbot.event.BaseEvent
+import love.forte.simbot.event.BaseEventKey
+import love.forte.simbot.event.Event
+import love.forte.simbot.message.doSafeCast
+import love.forte.simbot.tencentguild.EventSignals
 
 /**
  *
@@ -29,9 +35,19 @@ import love.forte.simbot.tencentguild.*
  *
  * @author ForteScarlet
  */
-public abstract class TcgEvent<T : Any> : BotContainer {
+@BaseEvent
+public abstract class TcgEvent<T : Any> : Event, BotContainer {
     abstract override val bot: TencentGuildComponentBot
 
+    /**
+     * 事件ID。
+     */
+    abstract override val id: ID
+
+    /**
+     * 接收到事件的时间。
+     */
+    abstract override val timestamp: Timestamp
 
     /**
      * 真正的原始事件所得到的事件实体。
@@ -43,4 +59,10 @@ public abstract class TcgEvent<T : Any> : BotContainer {
      */
     public abstract val eventSignal: EventSignals<T>
 
+
+    abstract override val key: Event.Key<out TcgEvent<*>>
+
+    public companion object : BaseEventKey<TcgEvent<*>>("tcg.event", Event) {
+        override fun safeCast(value: Any): TcgEvent<*>? = doSafeCast(value)
+    }
 }

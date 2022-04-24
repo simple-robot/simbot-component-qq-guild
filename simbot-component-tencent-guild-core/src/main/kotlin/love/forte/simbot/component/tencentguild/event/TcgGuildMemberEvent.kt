@@ -19,9 +19,8 @@ package love.forte.simbot.component.tencentguild.event
 
 import kotlinx.coroutines.runBlocking
 import love.forte.simbot.Api4J
-import love.forte.simbot.Timestamp
+import love.forte.simbot.action.ActionType
 import love.forte.simbot.component.tencentguild.TencentGuild
-import love.forte.simbot.component.tencentguild.TencentGuildComponentBot
 import love.forte.simbot.component.tencentguild.TencentMember
 import love.forte.simbot.definition.MemberInfo
 import love.forte.simbot.event.*
@@ -37,91 +36,182 @@ import love.forte.simbot.tencentguild.TencentMemberInfo
  *
  * @author ForteScarlet
  */
-public sealed class TcgGuildMemberEvent<T : Any> : TcgEvent<T>(), GuildEvent, MemberEvent {
-    abstract override val key: Event.Key<out TcgGuildMemberEvent<*>>
-    abstract override val timestamp: Timestamp
-    abstract override val visibleScope: Event.VisibleScope
+@BaseEvent
+public sealed class TcgGuildMemberEvent : TcgEvent<TencentMemberInfo>(), GuildEvent, MemberEvent {
+    abstract override val key: Event.Key<out TcgGuildMemberEvent>
 
+
+    /**
+     * 涉及的频道服务器信息。同 [organization].
+     */
     @JvmSynthetic
     abstract override suspend fun guild(): TencentGuild
 
+    /**
+     * 涉及的用户信息。同 [user].
+     */
     @JvmSynthetic
     abstract override suspend fun member(): TencentMember
 
-    abstract override val bot: TencentGuildComponentBot
-    abstract override val sourceEventEntity: T
-    abstract override val eventSignal: EventSignals<T>
-
-    //// impl
-
+    /**
+     * 涉及的用户信息。同 [member].
+     */
     @JvmSynthetic
     override suspend fun user(): TencentMember = member()
 
+    /**
+     * 涉及的频道服务器信息。同 [guild].
+     */
     @JvmSynthetic
     override suspend fun organization(): TencentGuild = guild()
 
-
+    /**
+     * 涉及的频道服务器信息。同 [organization].
+     */
     @Api4J
     override val guild: TencentGuild
         get() = runBlocking { guild() }
 
+    /**
+     * 涉及的用户信息。同 [user].
+     */
     @Api4J
     override val member: TencentMember
         get() = runBlocking { member() }
 
+    /**
+     * 涉及的用户信息。同 [member].
+     */
     @Api4J
     override val user: TencentMember
         get() = runBlocking { user() }
 
+    /**
+     * 涉及的频道服务器信息。同 [guild].
+     */
     @Api4J
     override val organization: TencentGuild
         get() = runBlocking { organization() }
 
-    public companion object Key : BaseEventKey<TcgGuildMemberEvent<*>>(
+
+    public companion object Key : BaseEventKey<TcgGuildMemberEvent>(
         "tcg.guild_member", setOf(
-            MemberEvent, GuildEvent
+            TcgEvent, MemberEvent, GuildEvent
         )
     ) {
-        override fun safeCast(value: Any): TcgGuildMemberEvent<*>? = doSafeCast(value)
+        override fun safeCast(value: Any): TcgGuildMemberEvent? = doSafeCast(value)
     }
 
     /**
-     * 成员增加
+     * 成员增加事件，同时属于 [GuildEvent].
      *
-     * 发送时机
-     * - 新用户加入频道
+     * 发送时机：新用户加入频道
      */
-    public abstract class Increase : TcgGuildMemberEvent<TencentMemberInfo>(), MemberIncreaseEvent<TencentGuild, TencentMember> {
+    public abstract class Increase : TcgGuildMemberEvent(), MemberIncreaseEvent, GuildEvent {
+        /**
+         * 增加的成员。同 [user].
+         */
+        @OptIn(Api4J::class)
+        abstract override val member: TencentMember
+
+        /**
+         * 增加的成员。同 [user].
+         */
+        @JvmSynthetic
+        override suspend fun member(): TencentMember = member
+
+        /**
+         * 增加的成员。同 [member].
+         */
+        @OptIn(Api4J::class)
+        override val user: TencentMember get() = member
+
+        /**
+         * 增加的成员。同 [member].
+         */
+        @JvmSynthetic
+        override suspend fun user(): TencentMember = member()
+
+        /**
+         * 增加的成员。同 [member].
+         */
+        @OptIn(Api4J::class)
+        override val after: TencentMember get() = member
+
+        /**
+         * 增加的成员。同 [member].
+         */
+        @JvmSynthetic
+        override suspend fun after(): TencentMember = member
+
+        /**
+         * 增加成员的频道。
+         */
         @JvmSynthetic
         abstract override suspend fun source(): TencentGuild
-        abstract override val target: TencentMember
+
+        /**
+         * 增加成员的频道。
+         */
+        @Api4J
+        override val source: TencentGuild get() = runBlocking { source() }
+
+
+        /**
+         * 增加成员的频道。同 [source].
+         */
+        @Api4J
+        override val organization: TencentGuild get() = source
+
+
+        /**
+         * 增加成员的频道。同 [source].
+         */
+        @JvmSynthetic
+        override suspend fun organization(): TencentGuild = source()
+
+        /**
+         * 增加成员的频道。同 [source].
+         */
+        @Api4J
+        override val guild: TencentGuild get() = source
+
+        /**
+         * 增加成员的频道。同 [source].
+         */
+        @JvmSynthetic
+        override suspend fun guild(): TencentGuild = source()
+
+
+        /**
+         * 无法判断加入类型。通常为频道分享链接点击加入，视为主动加入。
+         */
+        override val actionType: ActionType
+            get() = ActionType.PROACTIVE
+
+        /**
+         * 操作者。无法得知，始终为null。
+         */
+        @OptIn(Api4J::class)
+        override val operator: MemberInfo?
+            get() = null
+
+        /**
+         * 操作者。无法得知，始终为null。
+         */
+        @JvmSynthetic
+        override suspend fun operator(): MemberInfo? = null
+
+
+        override val key: Event.Key<Increase> get() = Key
 
         override val eventSignal: EventSignals<TencentMemberInfo>
             get() = EventSignals.GuildMembers.GuildMemberAdd
 
-        override val key: Event.Key<Increase> get() = Key
-
-        @JvmSynthetic
-        override suspend fun operator(): MemberInfo = target
-
-        @OptIn(Api4J::class)
-        override val operator: MemberInfo?
-            get() = target
-
-        override val source: TencentGuild get() = runBlocking { source() }
-
-        @Api4J
-        override val organization: TencentGuild
-            get() = source
-        override val after: TencentMember get() = target
-        override val before: TencentMember? get() = null
-
-        @JvmSynthetic
-        override suspend fun target(): TencentMember = target
 
         public companion object Key : BaseEventKey<Increase>(
             "tcg.guild_member_increase", setOf(
-                TcgGuildMemberEvent, MemberIncreaseEvent
+                TcgGuildMemberEvent, MemberIncreaseEvent, GuildEvent
             )
         ) {
             override fun safeCast(value: Any): Increase? = doSafeCast(value)
@@ -142,43 +232,115 @@ public sealed class TcgGuildMemberEvent<T : Any> : TcgEvent<T>(), GuildEvent, Me
     }
 
     /**
-     * 成员减少：成员离开或退出
+     * 成员减少：成员离开或退出，同时属于 [GuildEvent].
      *
-     * 发送时机
-     * - 用户离开频道
+     * 发送时机: 用户离开频道
      *
      */
-    public abstract class Decrease : TcgGuildMemberEvent<TencentMemberInfo>(), MemberDecreaseEvent<TencentGuild, TencentMember> {
+    public abstract class Decrease : TcgGuildMemberEvent(),
+        MemberDecreaseEvent, GuildEvent {
+
+        /**
+         * 离开的成员。同 [user].
+         */
+        @OptIn(Api4J::class)
+        abstract override val member: TencentMember
+
+        /**
+         * 离开的成员。同 [user].
+         */
+        @JvmSynthetic
+        override suspend fun member(): TencentMember = member
+
+        /**
+         * 离开的成员。同 [member].
+         */
+        @OptIn(Api4J::class)
+        override val user: TencentMember get() = member
+
+        /**
+         * 离开的成员。同 [member].
+         */
+        @JvmSynthetic
+        override suspend fun user(): TencentMember = member()
+
+        /**
+         * 离开的成员。同 [member].
+         */
+        @OptIn(Api4J::class)
+        override val before: TencentMember get() = member
+
+        /**
+         * 离开的成员。同 [member].
+         */
+        @JvmSynthetic
+        override suspend fun before(): TencentMember = member
+
+        /**
+         * 离开成员的频道。
+         */
         @JvmSynthetic
         abstract override suspend fun source(): TencentGuild
-        abstract override val target: TencentMember
+
+        /**
+         * 离开成员的频道。
+         */
+        @Api4J
+        override val source: TencentGuild get() = runBlocking { source() }
+
+
+        /**
+         * 离开成员的频道。同 [source].
+         */
+        @Api4J
+        override val organization: TencentGuild get() = source
+
+
+        /**
+         * 离开成员的频道。同 [source].
+         */
+        @JvmSynthetic
+        override suspend fun organization(): TencentGuild = source()
+
+        /**
+         * 离开成员的频道。同 [source].
+         */
+        @Api4J
+        override val guild: TencentGuild get() = source
+
+        /**
+         * 离开成员的频道。同 [source].
+         */
+        @JvmSynthetic
+        override suspend fun guild(): TencentGuild = source()
+
+        /**
+         * 离开频道是主动的。（无法区分）
+         */
+        override val actionType: ActionType get() = ActionType.PROACTIVE
+
+        /**
+         * 无法获取操作者，通常为其自行操作。始终为null。
+         */
+        @JvmSynthetic
+        override suspend fun operator(): MemberInfo? = null
+
+        /**
+         * 无法获取操作者，通常为其自行操作。始终为null。
+         */
+        @OptIn(Api4J::class)
+        override val operator: MemberInfo?
+            get() = null
+
 
         override val eventSignal: EventSignals<TencentMemberInfo>
             get() = EventSignals.GuildMembers.GuildMemberRemove
 
         override val key: Event.Key<Decrease> get() = Key
 
-        @JvmSynthetic
-        override suspend fun operator(): MemberInfo = target
-
-        @OptIn(Api4J::class)
-        override val operator: MemberInfo?
-            get() = target
-
-
-        @Api4J
-        override val organization: TencentGuild
-            get() = source
-        override val source: TencentGuild get() = runBlocking { source() }
-        override val after: TencentMember? get() = null
-        override val before: TencentMember get() = target
-
-        @JvmSynthetic
-        override suspend fun target(): TencentMember = target
-
         public companion object Key : BaseEventKey<Decrease>(
             "tcg.guild_member_decrease", setOf(
-                TcgGuildMemberEvent, MemberDecreaseEvent
+                TcgGuildMemberEvent, MemberDecreaseEvent, GuildEvent
             )
         ) {
             override fun safeCast(value: Any): Decrease? = doSafeCast(value)

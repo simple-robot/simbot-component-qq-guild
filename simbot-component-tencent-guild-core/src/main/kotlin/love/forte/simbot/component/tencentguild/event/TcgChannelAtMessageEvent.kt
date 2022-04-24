@@ -17,13 +17,21 @@
 
 package love.forte.simbot.component.tencentguild.event
 
-import kotlinx.coroutines.*
-import love.forte.simbot.*
-import love.forte.simbot.action.*
-import love.forte.simbot.component.tencentguild.*
-import love.forte.simbot.event.*
-import love.forte.simbot.message.*
-import love.forte.simbot.tencentguild.*
+import kotlinx.coroutines.runBlocking
+import love.forte.simbot.Api4J
+import love.forte.simbot.Timestamp
+import love.forte.simbot.action.MessageReplyReceipt
+import love.forte.simbot.action.ReplySupport
+import love.forte.simbot.action.SendSupport
+import love.forte.simbot.component.tencentguild.TencentChannel
+import love.forte.simbot.component.tencentguild.TencentMember
+import love.forte.simbot.event.BaseEventKey
+import love.forte.simbot.event.ChannelMessageEvent
+import love.forte.simbot.message.Message
+import love.forte.simbot.message.ReceivedMessageContent
+import love.forte.simbot.message.doSafeCast
+import love.forte.simbot.tencentguild.EventSignals
+import love.forte.simbot.tencentguild.TencentMessage
 
 /**
  *
@@ -41,49 +49,80 @@ public abstract class TcgChannelAtMessageEvent : TcgEvent<TencentMessage>(), Cha
     abstract override val sourceEventEntity: TencentMessage
     override val eventSignal: EventSignals<TencentMessage> get() = EventSignals.AtMessages.AtMessageCreate
 
+    /**
+     * 此消息的发送者。
+     */
     @JvmSynthetic
     abstract override suspend fun author(): TencentMember
 
-    @JvmSynthetic
-    abstract override suspend fun source(): TencentChannel
-
-    @JvmSynthetic
-    abstract override suspend fun channel(): TencentChannel
-    abstract override val timestamp: Timestamp
-    abstract override val visibleScope: Event.VisibleScope
-    abstract override val bot: TencentGuildComponentBot
-    abstract override val messageContent: ReceivedMessageContent
-
-    //// impl
-
-    @JvmSynthetic
-    override suspend fun organization(): TencentChannel = channel()
-
+    /**
+     * 此消息的发送者。
+     */
     @Api4J
     override val author: TencentMember
         get() = runBlocking { author() }
 
-    @Api4J
-    override val channel: TencentChannel
-        get() = runBlocking { channel() }
+    /**
+     * 此事件发生的频道。同 [channel].
+     */
+    @JvmSynthetic
+    abstract override suspend fun source(): TencentChannel
 
+    /**
+     * 此事件发生的频道。同 [channel].
+     */
     @Api4J
     override val source: TencentChannel
         get() = runBlocking { source() }
 
+
+    /**
+     * 此事件发生的频道。同 [source].
+     */
+    @JvmSynthetic
+    abstract override suspend fun channel(): TencentChannel
+
+    /**
+     * 此事件发生的频道。同 [source].
+     */
+    @Api4J
+    override val channel: TencentChannel
+        get() = runBlocking { channel() }
+
+    /**
+     * 事件发生时间。
+     */
+    override val timestamp: Timestamp get() = sourceEventEntity.timestamp
+
+    /**
+     * 接收到的消息。
+     */
+    abstract override val messageContent: ReceivedMessageContent
+
+    /**
+     * 此事件发生的频道。同 [channel].
+     */
+    @JvmSynthetic
+    override suspend fun organization(): TencentChannel = channel()
+
+    /**
+     * 此事件发生的频道。同 [channel].
+     */
     @Api4J
     override val organization: TencentChannel
         get() = runBlocking { organization() }
 
 
-    /**
-     * Tcg支持消息回复。
-     */
-    @JvmSynthetic
-    abstract override suspend fun reply(message: Message): MessageReplyReceipt
 
     /**
-     * Tcg暂不支持撤回他人消息。
+     * 通过当前事件中的 `msgId` 回复此事件的发送者。
+     */
+    @JvmSynthetic
+    abstract override suspend fun reply(message: Message): MessageReplyReceipt // TODO update return type.
+
+
+    /**
+     * 暂不支持撤回他人消息，始终返回false。
      */
     @JvmSynthetic
     override suspend fun delete(): Boolean = false // not support, maybe.

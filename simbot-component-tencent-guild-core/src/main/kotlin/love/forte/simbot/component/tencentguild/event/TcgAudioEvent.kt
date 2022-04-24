@@ -17,60 +17,71 @@
 
 package love.forte.simbot.component.tencentguild.event
 
-import kotlinx.coroutines.*
-import love.forte.simbot.*
-import love.forte.simbot.component.tencentguild.*
-import love.forte.simbot.event.*
-import love.forte.simbot.message.*
-import love.forte.simbot.tencentguild.*
+import kotlinx.coroutines.runBlocking
+import love.forte.simbot.Api4J
+import love.forte.simbot.Timestamp
+import love.forte.simbot.component.tencentguild.TencentChannel
+import love.forte.simbot.event.BaseEvent
+import love.forte.simbot.event.BaseEventKey
+import love.forte.simbot.event.ChannelEvent
+import love.forte.simbot.event.Event
+import love.forte.simbot.message.doSafeCast
+import love.forte.simbot.tencentguild.EventSignals
+import love.forte.simbot.tencentguild.TencentAudioAction
 
 
 /**
- * 音频事件
+ * 子频道音频事件.
  *
  * @see EventSignals.AudioAction.AudioStart
  * @see EventSignals.AudioAction.AudioFinish
  * @see EventSignals.AudioAction.AudioOnMic
  * @see EventSignals.AudioAction.AudioOffMic
  */
-public sealed class TcgAudioEvent : TcgEvent<TencentAudioAction>(),
-    ChannelEvent, GuildEvent {
-    abstract override val id: ID
+@BaseEvent
+public sealed class TcgAudioEvent : TcgEvent<TencentAudioAction>(), ChannelEvent {
 
+    override val timestamp: Timestamp = Timestamp.now()
+
+    /**
+     * 事件发生的频道。
+     */
     @JvmSynthetic
     abstract override suspend fun channel(): TencentChannel
 
-    @JvmSynthetic
-    abstract override suspend fun guild(): TencentGuild
-    abstract override val key: Event.Key<out TcgAudioEvent>
-    abstract override val bot: TencentGuildComponentBot
 
-    @JvmSynthetic
-    abstract override suspend fun organization(): TencentGuild
-
-    abstract override val sourceEventEntity: TencentAudioAction
-    abstract override val eventSignal: EventSignals<TencentAudioAction>
-
+    /**
+     * 事件发生的频道。
+     */
     @Api4J
     override val channel: TencentChannel
         get() = runBlocking { channel() }
 
-    @Api4J
-    override val guild: TencentGuild
-        get() = runBlocking { guild() }
 
+    /**
+     * 事件发生的频道。同 [channel].
+     */
     @Api4J
-    override val organization: TencentGuild
-        get() = runBlocking { organization() }
+    override val organization: TencentChannel get() = channel
 
+    /**
+     * 事件发生的频道。同 [channel].
+     */
+    @JvmSynthetic
+    override suspend fun organization(): TencentChannel = channel()
+
+
+    abstract override val key: Event.Key<out TcgAudioEvent>
 
     public companion object Key : BaseEventKey<TcgAudioEvent>(
-        "tcg.audio", setOf(ChannelEvent)
+        "tcg.audio", TcgEvent, ChannelEvent
     ) {
         override fun safeCast(value: Any): TcgAudioEvent? = doSafeCast(value)
     }
 
     /**
+     * 音频开始播放时。
+     *
      * @see EventSignals.AudioAction.AudioStart
      */
     public abstract class Start : TcgAudioEvent() {
@@ -81,13 +92,14 @@ public sealed class TcgAudioEvent : TcgEvent<TencentAudioAction>(),
             get() = Key
 
         public companion object Key : BaseEventKey<Start>(
-            "tcg.audio.start", setOf(TcgAudioEvent)
+            "tcg.audio.start", TcgAudioEvent
         ) {
             override fun safeCast(value: Any): Start? = doSafeCast(value)
         }
     }
 
     /**
+     * 音频播放结束时
      * @see EventSignals.AudioAction.AudioFinish
      */
     public abstract class Finish : TcgAudioEvent() {
@@ -98,13 +110,14 @@ public sealed class TcgAudioEvent : TcgEvent<TencentAudioAction>(),
             get() = Key
 
         public companion object Key : BaseEventKey<Finish>(
-            "tcg.audio.finish", setOf(TcgAudioEvent)
+            "tcg.audio.finish", TcgAudioEvent
         ) {
             override fun safeCast(value: Any): Finish? = doSafeCast(value)
         }
     }
 
     /**
+     * 上麦时
      * @see EventSignals.AudioAction.AudioOnMic
      */
     public abstract class OnMic : TcgAudioEvent() {
@@ -115,13 +128,14 @@ public sealed class TcgAudioEvent : TcgEvent<TencentAudioAction>(),
             get() = Key
 
         public companion object Key : BaseEventKey<OnMic>(
-            "tcg.audio.on_mic", setOf(TcgAudioEvent)
+            "tcg.audio.on_mic", TcgAudioEvent
         ) {
             override fun safeCast(value: Any): OnMic? = doSafeCast(value)
         }
     }
 
     /**
+     * 下麦时
      * @see EventSignals.AudioAction.AudioOffMic
      */
     public abstract class OffMic : TcgAudioEvent() {
@@ -132,7 +146,7 @@ public sealed class TcgAudioEvent : TcgEvent<TencentAudioAction>(),
             get() = Key
 
         public companion object Key : BaseEventKey<OffMic>(
-            "tcg.audio.off_mic", setOf(TcgAudioEvent)
+            "tcg.audio.off_mic", TcgAudioEvent
         ) {
             override fun safeCast(value: Any): OffMic? = doSafeCast(value)
         }
