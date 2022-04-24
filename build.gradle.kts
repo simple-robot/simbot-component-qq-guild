@@ -178,7 +178,7 @@ tasks.register("dokkaHtmlMultiModuleAndPost") {
 tasks.create("createChangelog") {
     group = "build"
     doFirst {
-        val version = "v${rootProject.version}"
+        val version = "v${P.ComponentTencentGuild.version.fullVersion(false)}"
         println("Generate change log for $version ...")
         // configurations.runtimeClasspath
         val changelogDir = rootProject.file(".changelog").also {
@@ -190,7 +190,7 @@ tasks.create("createChangelog") {
             val autoGenerateText = """
                 
 
-                ## 其他日志
+                ## 更新日志
                 
             """.trimIndent()
 
