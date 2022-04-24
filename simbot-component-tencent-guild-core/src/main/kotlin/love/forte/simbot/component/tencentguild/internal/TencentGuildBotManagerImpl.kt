@@ -18,18 +18,25 @@
 package love.forte.simbot.component.tencentguild.internal
 
 import kotlinx.coroutines.*
-import love.forte.simbot.*
+import love.forte.simbot.BotAlreadyRegisteredException
+import love.forte.simbot.ComponentMismatchException
+import love.forte.simbot.ID
 import love.forte.simbot.LoggerFactory
-import love.forte.simbot.component.tencentguild.*
-import love.forte.simbot.component.tencentguild.event.*
-import love.forte.simbot.component.tencentguild.internal.event.*
-import love.forte.simbot.event.*
-import love.forte.simbot.tencentguild.*
-import org.slf4j.*
-import java.util.concurrent.*
-import java.util.concurrent.locks.*
-import kotlin.concurrent.*
-import kotlin.coroutines.*
+import love.forte.simbot.component.tencentguild.TencentGuildBotManager
+import love.forte.simbot.component.tencentguild.TencentGuildBotManagerConfiguration
+import love.forte.simbot.component.tencentguild.TencentGuildComponent
+import love.forte.simbot.component.tencentguild.TencentGuildComponentBot
+import love.forte.simbot.component.tencentguild.event.TcgBotRegisteredEvent
+import love.forte.simbot.component.tencentguild.internal.event.TcgBotRegisteredEventImpl
+import love.forte.simbot.event.pushIfProcessable
+import love.forte.simbot.tencentguild.TencentGuildBotConfiguration
+import love.forte.simbot.tencentguild.tencentGuildBot
+import org.slf4j.Logger
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.concurrent.read
+import kotlin.concurrent.write
+import kotlin.coroutines.CoroutineContext
 
 /**
  *
@@ -118,8 +125,8 @@ internal class TencentGuildBotManagerImpl(
         }
     }
 
-    override fun all(): Sequence<TencentGuildComponentBot> {
-        return botMap.values.asSequence()
+    override fun all(): List<TencentGuildComponentBot> {
+        return botMap.values.toList()
     }
 
 

@@ -17,13 +17,18 @@
 
 package love.forte.simbot.component.tencentguild.internal
 
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
-import love.forte.simbot.*
-import love.forte.simbot.component.tencentguild.*
-import love.forte.simbot.definition.*
-import love.forte.simbot.tencentguild.*
-import java.util.stream.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.runBlocking
+import love.forte.simbot.Api4J
+import love.forte.simbot.action.UnsupportedActionException
+import love.forte.simbot.component.tencentguild.TencentMember
+import love.forte.simbot.component.tencentguild.TencentRole
+import love.forte.simbot.definition.UserStatus
+import love.forte.simbot.message.Message
+import love.forte.simbot.message.MessageReceipt
+import love.forte.simbot.tencentguild.TencentMemberInfo
+import java.util.stream.Stream
 
 /**
  *
@@ -69,6 +74,13 @@ internal class TencentMemberImpl internal constructor(
             return runBlocking { guild() }.getRoles().filter { it.id.toString() in roleIds }
         }
 
+
+    @Deprecated("Not yet implemented")
+    @JvmSynthetic
+    override suspend fun send(message: Message): MessageReceipt {
+        throw UnsupportedActionException("send(message)")
+        // TODO
+    }
 
 }
 

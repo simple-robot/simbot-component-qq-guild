@@ -17,16 +17,19 @@
 
 package love.forte.simbot.component.tencentguild
 
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.isActive
 import love.forte.simbot.*
-import love.forte.simbot.action.*
-import love.forte.simbot.definition.*
-import love.forte.simbot.event.*
-import love.forte.simbot.message.*
-import love.forte.simbot.resources.*
-import love.forte.simbot.tencentguild.*
-import java.util.stream.*
+import love.forte.simbot.action.UnsupportedActionException
+import love.forte.simbot.definition.Friend
+import love.forte.simbot.definition.Group
+import love.forte.simbot.definition.UserStatus
+import love.forte.simbot.event.EventProcessor
+import love.forte.simbot.message.Image
+import love.forte.simbot.resources.Resource
+import love.forte.simbot.tencentguild.TencentGuildBot
+import java.util.stream.Stream
 
 /**
  * 一个tencent频道BOT的接口实例。
@@ -96,12 +99,12 @@ public abstract class TencentGuildComponentBot : Bot {
     @JvmSynthetic
     override suspend fun uploadImage(resource: Resource): Image<*> {
         // TODO fake remote image.
-        throw NotSupportActionException("uploadImage(Resource)")
+        throw UnsupportedActionException("uploadImage(Resource)")
     }
 
     override suspend fun resolveImage(id: ID): Image<*> {
         // TODO fake remote image.
-        throw NotSupportActionException("resolveImage(ID)")
+        throw UnsupportedActionException("resolveImage(ID)")
     }
 
 

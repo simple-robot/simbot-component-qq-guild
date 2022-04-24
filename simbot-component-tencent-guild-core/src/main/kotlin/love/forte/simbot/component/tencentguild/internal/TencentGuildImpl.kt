@@ -17,21 +17,28 @@
 
 package love.forte.simbot.component.tencentguild.internal
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.future.*
-import love.forte.simbot.*
-import love.forte.simbot.action.*
-import love.forte.simbot.component.tencentguild.*
-import love.forte.simbot.component.tencentguild.util.*
-import love.forte.simbot.tencentguild.*
-import love.forte.simbot.tencentguild.api.channel.*
-import love.forte.simbot.tencentguild.api.member.*
-import love.forte.simbot.tencentguild.api.role.*
-import love.forte.simbot.utils.*
-import java.util.stream.*
-import kotlin.streams.*
-import kotlin.time.*
+import kotlinx.coroutines.future.asCompletableFuture
+import kotlinx.coroutines.runBlocking
+import love.forte.simbot.Api4J
+import love.forte.simbot.ID
+import love.forte.simbot.Limiter
+import love.forte.simbot.component.tencentguild.TencentGuild
+import love.forte.simbot.component.tencentguild.TencentRole
+import love.forte.simbot.component.tencentguild.util.requestBy
+import love.forte.simbot.tencentguild.TencentChannelInfo
+import love.forte.simbot.tencentguild.TencentGuildInfo
+import love.forte.simbot.tencentguild.TencentRoleInfo
+import love.forte.simbot.tencentguild.api.channel.GetGuildChannelListApi
+import love.forte.simbot.tencentguild.api.member.GetMemberApi
+import love.forte.simbot.tencentguild.api.role.GetGuildRoleListApi
+import love.forte.simbot.utils.LazyValue
+import love.forte.simbot.utils.lazyValue
+import love.forte.simbot.withLimiter
+import java.util.stream.Stream
+import kotlin.streams.asStream
+import kotlin.time.Duration
 
 /**
  *
@@ -90,8 +97,8 @@ internal class TencentGuildImpl(
         }.withLimiter(limiter).asStream()
     }
 
-    override suspend fun mute(duration: Duration): Boolean =
-        throw NotSupportActionException("mute not support") // false // not support
+    override suspend fun mute(duration: Duration): Boolean = false
+        // throw NotSupportActionException("mute not support") // false // not support
 
 
     private var _owner: LazyValue<TencentMemberImpl> = lazyValue {
