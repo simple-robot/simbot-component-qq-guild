@@ -15,12 +15,14 @@
  *
  */
 
-import kotlinx.coroutines.flow.*
-import love.forte.simbot.component.tencentguild.*
-import love.forte.simbot.component.tencentguild.event.*
-import love.forte.simbot.core.event.*
-import love.forte.simbot.event.*
-import love.forte.simbot.message.*
+import kotlinx.coroutines.flow.Flow
+import love.forte.simbot.component.tencentguild.TencentChannel
+import love.forte.simbot.component.tencentguild.TencentGuild
+import love.forte.simbot.component.tencentguild.event.TcgChannelAtMessageEvent
+import love.forte.simbot.core.event.coreListener
+import love.forte.simbot.message.At
+import love.forte.simbot.message.Text
+import love.forte.simbot.message.plus
 
 /**
  *
@@ -31,7 +33,7 @@ class ListenerTest {
 
 
 val listener =
-    coreListener(eventKey = TcgChannelAtMessageEvent) { context: EventProcessingContext, event: TcgChannelAtMessageEvent ->
+    coreListener(eventKey = TcgChannelAtMessageEvent) { event: TcgChannelAtMessageEvent ->
         // 此消息事件的子频道
         val channel: TencentChannel = event.source()
 
