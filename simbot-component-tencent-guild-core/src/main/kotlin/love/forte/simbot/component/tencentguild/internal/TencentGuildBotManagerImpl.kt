@@ -19,7 +19,6 @@ package love.forte.simbot.component.tencentguild.internal
 
 import kotlinx.coroutines.*
 import love.forte.simbot.BotAlreadyRegisteredException
-import love.forte.simbot.ComponentMismatchException
 import love.forte.simbot.ID
 import love.forte.simbot.LoggerFactory
 import love.forte.simbot.component.tencentguild.TencentGuildBotManager
@@ -28,6 +27,7 @@ import love.forte.simbot.component.tencentguild.TencentGuildComponent
 import love.forte.simbot.component.tencentguild.TencentGuildComponentBot
 import love.forte.simbot.component.tencentguild.event.TcgBotRegisteredEvent
 import love.forte.simbot.component.tencentguild.internal.event.TcgBotRegisteredEventImpl
+import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.event.pushIfProcessable
 import love.forte.simbot.tencentguild.TencentGuildBotConfiguration
 import love.forte.simbot.tencentguild.tencentGuildBot
@@ -43,60 +43,57 @@ import kotlin.coroutines.CoroutineContext
  * @author ForteScarlet
  */
 internal class TencentGuildBotManagerImpl(
-    override val configuration: TencentGuildBotManagerConfiguration
+    override val eventProcessor: EventProcessor,
+    override val configuration: TencentGuildBotManagerConfiguration,
+    override val component: TencentGuildComponent,
 ) : TencentGuildBotManager() {
     companion object {
         private val LOGGER = LoggerFactory.getLogger(TencentGuildBotManagerImpl::class)
     }
-
+    
     private val completableJob: CompletableJob
     override val coroutineContext: CoroutineContext
-
+    
     init {
         val parentContext = configuration.parentCoroutineContext
         val parentJob = parentContext[Job]
         completableJob = SupervisorJob(parentJob)
         coroutineContext = parentContext.minusKey(Job) + completableJob
     }
-
+    
     override val logger: Logger
         get() = LOGGER
-
-
+    
+    
     // private val isCanceled = AtomicBoolean(false)
-
+    
     private val lock = ReentrantReadWriteLock()
-    private val eventProcessor = configuration.eventProcessor
-
-    override val component: TencentGuildComponent =
-        eventProcessor.getComponent(TencentGuildComponent.ID_VALUE) as? TencentGuildComponent
-            ?: throw ComponentMismatchException("The component['${TencentGuildComponent.ID_VALUE}'] cannot cast to [love.forte.simbot.component.tencentguild.TencentGuildComponent]")
-
+    
     override val isActive: Boolean
         get() = completableJob.isActive
-
+    
     override val isCancelled: Boolean
         get() = completableJob.isCancelled
-
+    
     override val isStarted: Boolean
         get() = completableJob.isActive
-
+    
     override fun invokeOnCompletion(handler: CompletionHandler) {
         completableJob.invokeOnCompletion(handler)
     }
-
+    
     override suspend fun join() {
         completableJob.join()
     }
-
+    
     // nothing to start
     override suspend fun start(): Boolean {
         return !completableJob.isCompleted
     }
-
+    
     private var botMap = ConcurrentHashMap<String, TencentGuildComponentBotImpl>()
-
-
+    
+    
     override suspend fun doCancel(reason: Throwable?): Boolean {
         lock.write {
             val cancelled = completableJob.isCancelled
@@ -106,7 +103,7 @@ internal class TencentGuildBotManagerImpl(
             if (cancelled) {
                 return false
             }
-
+            
             if (reason != null) {
                 completableJob.cancel(reason.localizedMessage, reason)
             } else {
@@ -116,25 +113,25 @@ internal class TencentGuildBotManagerImpl(
             return true
         }
     }
-
+    
     override fun get(id: ID): TencentGuildComponentBot? {
         lock.read {
             if (completableJob.isCancelled) throw IllegalStateException("This manager has already cancelled.")
-
+            
             return botMap[id.toString()]
         }
     }
-
+    
     override fun all(): List<TencentGuildComponentBot> {
         return botMap.values.toList()
     }
-
-
+    
+    
     override fun register(
         appId: String,
         appKey: String,
         token: String,
-        block: TencentGuildBotConfiguration.() -> Unit
+        block: TencentGuildBotConfiguration.() -> Unit,
     ): TencentGuildComponentBot {
         val configure = configuration.botConfigure
         lock.write {
@@ -149,7 +146,7 @@ internal class TencentGuildBotManagerImpl(
             logger.info("Registered bot info: {}", sourceBot.botInfo)
             return botMap.compute(appId) { key, old ->
                 if (old != null) throw BotAlreadyRegisteredException(key)
-
+                
                 TencentGuildComponentBotImpl(sourceBot, this, eventProcessor, component).apply {
                     coroutineContext[Job]!!.invokeOnCompletion {
                         // remove self on completion
