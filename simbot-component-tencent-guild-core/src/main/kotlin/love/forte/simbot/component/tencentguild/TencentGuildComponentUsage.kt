@@ -20,6 +20,7 @@ package love.forte.simbot.component.tencentguild
 import love.forte.simbot.ability.CompletionPerceivable
 import love.forte.simbot.application.Application
 import love.forte.simbot.application.ApplicationBuilder
+import love.forte.simbot.application.ApplicationBuilderDsl
 
 
 /**
@@ -44,6 +45,7 @@ import love.forte.simbot.application.ApplicationBuilder
  * @see TencentGuildComponent
  *
  */
+@ApplicationBuilderDsl
 public fun <A : Application> ApplicationBuilder<A>.useTencentGuildComponent(configurator: TencentGuildComponentConfiguration.(perceivable: CompletionPerceivable<A>) -> Unit = {}) {
     install(TencentGuildComponent, configurator)
 }
@@ -70,6 +72,7 @@ public fun <A : Application> ApplicationBuilder<A>.useTencentGuildComponent(conf
  * @see TencentGuildBotManager
  *
  */
+@ApplicationBuilderDsl
 public fun <A : Application> ApplicationBuilder<A>.useTencentGuildBotManager(configurator: TencentGuildBotManagerConfiguration.(perceivable: CompletionPerceivable<A>) -> Unit = {}) {
     install(TencentGuildBotManager, configurator)
 }
@@ -100,6 +103,7 @@ public fun <A : Application> ApplicationBuilder<A>.useTencentGuildBotManager(con
  *
  *
  */
+@ApplicationBuilderDsl
 public fun <A : Application> ApplicationBuilder<A>.useTencentGuild(builder: TencentGuildUsageBuilder<A>.() -> Unit = {}) {
     TencentGuildUsageBuilderImpl<A>().also(builder).build(this)
 }
