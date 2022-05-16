@@ -180,5 +180,7 @@ internal fun preview(minor: Int, patch: Int) = PVS(PVS.PREVIEW_STATUS, minor, pa
 
 
 
-
+private fun isSnapshot() {
+    // TODO
+}
 
