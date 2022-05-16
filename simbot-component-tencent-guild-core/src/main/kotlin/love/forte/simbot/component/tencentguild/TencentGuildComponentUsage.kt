@@ -17,3 +17,152 @@
 
 package love.forte.simbot.component.tencentguild
 
+import love.forte.simbot.ability.CompletionPerceivable
+import love.forte.simbot.application.Application
+import love.forte.simbot.application.ApplicationBuilder
+
+
+/**
+ * 在 [ApplicationBuilder] 中安装使用 [TencentGuildComponent]。
+ *
+ * usage:
+ * ```kotlin
+ * simbotApplication(Foo) {
+ *    useTencentGuildComponent()
+ *    // 或
+ *    useTencentGuildComponent { ... }
+ * }
+ * ```
+ *
+ * 相当于：
+ * ```kotlin
+ * simbotApplication(Foo) {
+ *    install(TencentGuildComponent) { ... }
+ * }
+ * ```
+ *
+ * @see TencentGuildComponent
+ *
+ */
+public fun <A : Application> ApplicationBuilder<A>.useTencentGuildComponent(configurator: TencentGuildComponentConfiguration.(perceivable: CompletionPerceivable<A>) -> Unit = {}) {
+    install(TencentGuildComponent, configurator)
+}
+
+/**
+ * 在 [ApplicationBuilder] 中安装使用 [TencentGuildBotManager]。
+ *
+ * usage:
+ * ```kotlin
+ * simbotApplication(Foo) {
+ *    useTencentGuildBotManager()
+ *    // 或
+ *    useTencentGuildBotManager { ... }
+ * }
+ * ```
+ *
+ * 相当于：
+ * ```kotlin
+ * simbotApplication(Foo) {
+ *    install(TencentGuildBotManager) { ... }
+ * }
+ * ```
+ *
+ * @see TencentGuildBotManager
+ *
+ */
+public fun <A : Application> ApplicationBuilder<A>.useTencentGuildBotManager(configurator: TencentGuildBotManagerConfiguration.(perceivable: CompletionPerceivable<A>) -> Unit = {}) {
+    install(TencentGuildBotManager, configurator)
+}
+
+
+/**
+ * 同时安装使用 [TencentGuildComponent] 和 [TencentGuildBotManager].
+ *
+ * usage:
+ * ```kotlin
+ * simbotApplication(Foo) {
+ *    useTencentGuild()
+ *    // 或
+ *    useTencentGuild {
+ *       component { ... }
+ *       botManager { ... }
+ *    }
+ * }
+ * ```
+ *
+ * 相当于：
+ * ```kotlin
+ * simbotApplication(Foo) {
+ *    install(TencentGuildComponent) { ... }
+ *    install(TencentGuildBotManager) { ... }
+ * }
+ * ```
+ *
+ *
+ */
+public fun <A : Application> ApplicationBuilder<A>.useTencentGuild(builder: TencentGuildUsageBuilder<A>.() -> Unit = {}) {
+    TencentGuildUsageBuilderImpl<A>().also(builder).build(this)
+}
+
+/**
+ * 为 [TencentGuildUsageBuilder] 中的函数染色。
+ */
+@DslMarker
+@Target(AnnotationTarget.FUNCTION)
+internal annotation class TencentGuildUsageBuilderDsl
+
+
+/**
+ * 使用在 [useTencentGuild] 函数中，用于同时针对 [TencentGuildComponent] 和 [TencentGuildBotManager]
+ * 进行配置。
+ *
+ * @see useTencentGuild
+ */
+public interface TencentGuildUsageBuilder<A : Application> {
+    
+    /**
+     * 追加一个安装 [TencentGuildComponent] 时候使用的配置。
+     */
+    @TencentGuildUsageBuilderDsl
+    public fun component(configurator: TencentGuildComponentConfiguration.(perceivable: CompletionPerceivable<A>) -> Unit)
+    
+    
+    /**
+     * 追加一个安装 [TencentGuildBotManager] 时候使用的配置。
+     */
+    @TencentGuildUsageBuilderDsl
+    public fun botManager(configurator: TencentGuildBotManagerConfiguration.(perceivable: CompletionPerceivable<A>) -> Unit)
+    
+}
+
+
+private class TencentGuildUsageBuilderImpl<A : Application> : TencentGuildUsageBuilder<A> {
+    private var componentConfig: TencentGuildComponentConfiguration.(perceivable: CompletionPerceivable<A>) -> Unit = {}
+    private var botManagerConfig: TencentGuildBotManagerConfiguration.(perceivable: CompletionPerceivable<A>) -> Unit =
+        {}
+    
+    override fun component(configurator: TencentGuildComponentConfiguration.(perceivable: CompletionPerceivable<A>) -> Unit) {
+        componentConfig.also { old ->
+            componentConfig = {
+                old(it)
+                configurator(it)
+            }
+        }
+    }
+    
+    override fun botManager(configurator: TencentGuildBotManagerConfiguration.(perceivable: CompletionPerceivable<A>) -> Unit) {
+        botManagerConfig.also { old ->
+            botManagerConfig = {
+                old(it)
+                configurator(it)
+            }
+        }
+    }
+    
+    fun build(applicationBuilder: ApplicationBuilder<A>) {
+        applicationBuilder.useTencentGuildComponent(componentConfig)
+        applicationBuilder.useTencentGuildBotManager(botManagerConfig)
+    }
+    
+    
+}
