@@ -34,15 +34,18 @@ repositories {
 }
 
 dependencies {
-    api(project(P.ComponentTencentGuild.apiStdlibPath))
-    api(V.Simbot.Core.notation)
+    api(project(P.ComponentTencentGuild.apiStdlibPath)) {
+        exclude(V.Simbot.Core.group)
+    }
+    implementation(V.Simbot.Core.notation)
+    
     api(V.Ktor.Client.Jvm.Core.notation)
     api(V.Ktor.Client.Jvm.CIO.notation)
     api(V.Ktor.Client.Websockets.notation)
     api(V.Ktor.Client.Serialization.notation)
     api(V.Kotlinx.Serialization.Json.notation)
-    api(V.Kotlinx.Serialization.Properties.notation)
-
+    
+    compileOnly(V.Kotlinx.Serialization.Properties.notation)
     compileOnly(V.Kotlinx.Serialization.Yaml.notation)
 
     testImplementation(V.Kotlin.Test.Junit.notation)

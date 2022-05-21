@@ -17,19 +17,27 @@
 
 package love.forte.simbot.component.tencentguild.internal
 
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.runBlocking
 import love.forte.simbot.*
-import love.forte.simbot.component.tencentguild.*
-import love.forte.simbot.component.tencentguild.event.*
-import love.forte.simbot.component.tencentguild.internal.event.*
-import love.forte.simbot.event.*
+import love.forte.simbot.component.tencentguild.TencentGuild
+import love.forte.simbot.component.tencentguild.TencentGuildBotManager
+import love.forte.simbot.component.tencentguild.TencentGuildComponent
+import love.forte.simbot.component.tencentguild.TencentGuildComponentBot
+import love.forte.simbot.component.tencentguild.event.TcgBotStartedEvent
+import love.forte.simbot.component.tencentguild.internal.event.TcgBotStartedEventImpl
+import love.forte.simbot.component.tencentguild.internal.event.eventSignalParsers
+import love.forte.simbot.event.EventProcessor
+import love.forte.simbot.event.pushIfProcessable
 import love.forte.simbot.tencentguild.*
-import love.forte.simbot.tencentguild.api.guild.*
-import love.forte.simbot.utils.*
-import java.util.stream.*
-import kotlin.coroutines.*
-import kotlin.streams.*
+import love.forte.simbot.tencentguild.api.guild.GetBotGuildListApi
+import love.forte.simbot.tencentguild.api.guild.GetGuildApi
+import love.forte.simbot.utils.runInBlocking
+import java.util.stream.Stream
+import kotlin.coroutines.CoroutineContext
+import kotlin.streams.asStream
 
 /**
  *
@@ -76,8 +84,8 @@ internal class TencentGuildComponentBotImpl(
             TencentGuildImpl(bot = this, guildInfo = info)
         }.asStream()
     }
-
-
+  
+    
     private fun getGuildFlow(limiter: Limiter): Flow<TencentGuildInfo> {
         return limiter.toFlow { batchSize ->
             val batch = if (batchSize in 1..100) batchSize else 100

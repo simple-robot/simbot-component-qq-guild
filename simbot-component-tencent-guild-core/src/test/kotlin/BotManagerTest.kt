@@ -15,69 +15,58 @@
  *
  */
 
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import love.forte.simbot.ID
-import love.forte.simbot.LoggerFactory
+import love.forte.simbot.ability.CompletionPerceivable
 import love.forte.simbot.action.replyIfSupport
-import love.forte.simbot.component.tencentguild.TencentGuildComponentBot
-import love.forte.simbot.component.tencentguild.tencentGuildBotManager
-import love.forte.simbot.core.event.coreListener
-import love.forte.simbot.core.event.coreListenerManager
-import love.forte.simbot.core.event.listen
-import love.forte.simbot.event.*
+import love.forte.simbot.component.tencentguild.TencentGuildBotManagerConfiguration
+import love.forte.simbot.component.tencentguild.useTencentGuild
+import love.forte.simbot.core.application.createSimpleApplication
+import love.forte.simbot.core.event.EventInterceptorsGenerator
+import love.forte.simbot.core.event.EventListenersGenerator
+import love.forte.simbot.event.EventResult
+import love.forte.simbot.event.GroupMessageEvent
 import love.forte.simbot.message.At
 import love.forte.simbot.message.Text
 import love.forte.simbot.message.plus
 import love.forte.simbot.tencentguild.EventSignals
-import org.slf4j.Logger
 
 
-private val listenerManager = coreListenerManager {
-    interceptors {
-        processingIntercept(114514.ID) {
-            println("Processing Intercept 1 start")
-            it.proceed().also {
-                println("Processing Intercept 1 end")
-            }
+private fun EventInterceptorsGenerator.myInterceptors() {
+    processingIntercept(114514.ID) {
+        println("Processing Intercept 1 start")
+        it.proceed().also {
+            println("Processing Intercept 1 end")
         }
-        listenerIntercept(1.ID) {
-            println("Listener Intercept 2 start")
-            it.proceed().also {
-                println("Listener Intercept 2 end")
-            }
+    }
+    listenerIntercept(1.ID) {
+        println("Listener Intercept 2 start")
+        it.proceed().also {
+            println("Listener Intercept 2 end")
         }
-        listenerIntercept(2.ID) {
-            println("Listener Intercept 3 start")
-            it.proceed().also {
-                println("Listener Intercept 3 end")
-            }
+    }
+    listenerIntercept(2.ID) {
+        println("Listener Intercept 3 start")
+        it.proceed().also {
+            println("Listener Intercept 3 end")
         }
-        listenerIntercept(3.ID) {
-            println("Listener Intercept 4 start")
-            it.proceed().also {
-                println("Listener Intercept 4 end")
-            }
+    }
+    listenerIntercept(3.ID) {
+        println("Listener Intercept 4 start")
+        it.proceed().also {
+            println("Listener Intercept 4 end")
         }
     }
 }
 
 
-private val botManager = tencentGuildBotManager(listenerManager) {
+private fun TencentGuildBotManagerConfiguration.tencentGuildConfig() {
     botConfigure = { _, _, _ ->
         intentsForShardFactory = { EventSignals.AtMessages.intents }
     }
 }
 
-
-suspend fun main() {
-    val listener = listenerManager.listen(
-        eventKey = GroupMessageEvent, // 实际上为伴生对象 GroupMessageEvent.Key
-        // id = UUID.randomUUID().ID, // 可省略参数：唯一ID
-        // blockNext = false, // 可省略参数：是否阻断下一个函数的执行
-        // isAsync = false, // 可省略参数：是否异步执行
-    ) { event: GroupMessageEvent ->
-        
+private fun EventListenersGenerator.myListeners() {
+    GroupMessageEvent { event ->
         println(this)
         
         // 尝试回复消息
@@ -88,63 +77,43 @@ suspend fun main() {
         event.group().members().collect { // 函数式为挂起，属性式为非挂起
             println("Member: $it")
         }
-        
-        // do something?
-        
-        
-        "abc" // return something?
+        EventResult.of("abc") // return something?
     }
-    
-    
-    // 方式2：直接通过 register注册一个实例
-    listenerManager.register(coreListener(GroupMessageEvent) {
-        // do some
-    })
-    
-    
-    
-    
-    listenerManager.listen(eventKey = ChannelMessageEvent) {
-        // do
-        
-        null // result
-    }
-    val bot: TencentGuildComponentBot = botManager.register("", "", "") {
+}
+
+private fun TencentGuildBotManagerConfiguration.tencentBot(completionPerceivable: CompletionPerceivable<*>) {
+    register("", "", "", {
         intentsForShardFactory = { EventSignals.AtMessages.intents }
+    }) { bot ->
+        completionPerceivable.onCompletion {
+            bot.start()
+        }
     }
-    
-    val id = bot.id
-    
-    println(botManager.get(id))
-    
-    bot.launch {
-        delay(10_000)
-        bot.cancel()
-    }
-    
-    bot.start()
-    
-    bot.join()
-    
-    println(botManager.get(id))
+}
+
+/**
+ * 程序入口
+ */
+suspend fun main() {
+    createSimpleApplication {
+        eventProcessor {
+            interceptors {
+                myInterceptors()
+            }
+            listeners {
+                myListeners()
+            }
+        }
+        
+        useTencentGuild {
+            botManager {
+                tencentGuildConfig()
+                tencentBot(it)
+            }
+        }
+    }.join()
     
     
 }
 
 
-fun <E : Event> listener(
-    id: ID,
-    type: Event.Key<E>,
-    invoker: suspend (EventListenerProcessingContext, E) -> Any?,
-): EventListener =
-    object : EventListener {
-        override val logger: Logger = LoggerFactory.getLogger("a")
-        override val id: ID get() = id
-        override val isAsync: Boolean get() = false
-        
-        override fun isTarget(eventType: Event.Key<*>): Boolean = eventType.isSubFrom(type)
-        override suspend fun invoke(context: EventListenerProcessingContext): EventResult {
-            val result = invoker(context, type.safeCast(context.event)!!)
-            return EventResult.of(result)
-        }
-    }
