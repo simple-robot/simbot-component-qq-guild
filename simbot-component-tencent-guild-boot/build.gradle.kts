@@ -36,7 +36,6 @@ dependencies {
     api(project(P.ComponentTencentGuild.componentPath)) {
         exclude(V.Simbot.Core.group)
     }
-    implementation(V.Simbot.Core.notation)
     implementation(V.Simbot.BootApi.notation)
     
     testImplementation(V.Simbot.BootCore.notation)
