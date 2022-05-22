@@ -148,7 +148,14 @@ public abstract class TencentGuildComponentBot : Bot {
 
     @Api4J
     abstract override fun getGuilds(grouping: Grouping, limiter: Limiter): Stream<out TencentGuild>
-
+    
+    
+    @Api4J
+    override fun getGuilds(): Stream<out TencentGuild> = getGuilds(Grouping.EMPTY, Limiter)
+    
+    @Api4J
+    override fun getGuilds(limiter: Limiter): Stream<out TencentGuild> = getGuilds(Grouping.EMPTY, limiter)
+    
     @Api4J
     abstract override fun getGuild(id: ID): TencentGuild?
 
@@ -172,6 +179,12 @@ public abstract class TencentGuildComponentBot : Bot {
 
     @OptIn(Api4J::class)
     override fun getGroup(id: ID): Group? = null
+    
+    @OptIn(Api4J::class)
+    override fun getGroups(): Stream<out Group> = Stream.empty()
+    
+    @OptIn(Api4J::class)
+    override fun getGroups(limiter: Limiter): Stream<out Group> = Stream.empty()
 }
 
 

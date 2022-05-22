@@ -33,29 +33,18 @@ repositories {
 }
 
 dependencies {
-    api(project(P.ComponentTencentGuild.componentPath))
-    api(V.Simbot.BootApi.notation)
+    api(project(P.ComponentTencentGuild.componentPath)) {
+        exclude(V.Simbot.Core.group)
+    }
+    implementation(V.Simbot.BootApi.notation)
+    
     testImplementation(V.Simbot.BootCore.notation)
-    // api("love.forte.simbot.boot:simboot-api:3.0.0.preview.0.5")
-
-
-    // api(V.Ktor.Client.Jvm.Core.notation)
-    // api(V.Ktor.Client.Jvm.CIO.notation)
-    // api(V.Ktor.Client.Auth.notation)
-    // api(V.Ktor.Client.Websockets.notation)
-    // api(V.Ktor.Client.Serialization.notation)
-    // api(V.Kotlinx.Serialization.Json.notation)
-    // compileOnly(V.Kotlinx.Serialization.Properties.notation)
-    // compileOnly(V.Kotlinx.Serialization.Yaml.notation)
-
-
     testImplementation(V.Kotlin.Test.Junit.notation)
     testImplementation(V.Log4j.Api.notation)
     testImplementation(V.Log4j.Core.notation)
     testImplementation(V.Log4j.Slf4jImpl.notation)
     testImplementation(V.Kotlinx.Serialization.Yaml.notation)
-
-    // implementation("love.forte.simple-robot:api:3.0.0-PREVIEW")
+    testImplementation(V.Kotlinx.Serialization.Properties.notation)
 }
 
 tasks.getByName<Test>("test") {

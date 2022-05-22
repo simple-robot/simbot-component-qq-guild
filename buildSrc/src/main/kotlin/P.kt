@@ -56,7 +56,7 @@ sealed class P : SimbotProject() {
         // e.g. 3.0.0.preview.6.0
         val version = Version(
             "3", 0, 0,
-            status = preview(9, 0),
+            status = preview(10, 0),
             isSnapshot = System.getProperty("isSnapshot")?.equals("true", true) ?: false
         )
 
@@ -66,20 +66,12 @@ sealed class P : SimbotProject() {
 
     }
 
-    // object Simbot {
-    //     val SNAPSHOT = System.getProperty("isSnapshot")?.equals("true", true) ?: false
-    //     const val GROUP = "love.forte.simbot"
-    //     const val BOOT_GROUP = "love.forte.simbot.boot"
-    //     const val REAL_VERSION = "3.0.0.preview.5.0"
-    //     val VERSION = if (SNAPSHOT) "$REAL_VERSION-SNAPSHOT" else REAL_VERSION
-    // }
-
     object ComponentTencentGuild {
         val isSnapshot get() = Simbot.isSnapshot
         val version = Version(
             major = "${Simbot.version.major}.${Simbot.version.minor}",
             minor = 0, patch = 0,
-            status = preview(4, 0),
+            status = preview(5, 0),
             isSnapshot = Simbot.isSnapshot
         )
         const val GROUP = "${Simbot.GROUP}.component"
