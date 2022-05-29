@@ -17,7 +17,6 @@
 
 import love.forte.simbot.ID
 import love.forte.simbot.ability.CompletionPerceivable
-import love.forte.simbot.action.replyIfSupport
 import love.forte.simbot.component.tencentguild.TencentGuildBotManagerConfiguration
 import love.forte.simbot.component.tencentguild.useTencentGuild
 import love.forte.simbot.core.application.createSimpleApplication
@@ -70,7 +69,7 @@ private fun EventListenersGenerator.myListeners() {
         println(this)
         
         // 尝试回复消息
-        event.replyIfSupport(At(123.ID) + Text { "你好！" }) // 假如事件实现 ReplyMessageSupport, 则可以直接使用 event.reply(...)
+        event.reply(At(123.ID) + Text { "你好！" }) // 假如事件实现 ReplyMessageSupport, 则可以直接使用 event.reply(...)
         
         // 获取一些信息
         // event.group.members()

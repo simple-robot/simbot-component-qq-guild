@@ -17,17 +17,25 @@
 
 package love.forte.simbot.component.tencentguild.internal
 
-import love.forte.simbot.*
-import love.forte.simbot.action.*
-import love.forte.simbot.message.*
-import love.forte.simbot.tencentguild.*
+import love.forte.simbot.ID
+import love.forte.simbot.message.MessageReceipt
+import love.forte.simbot.tencentguild.TencentMessage
+
+
+
+public interface TencentMessageReceipt : MessageReceipt {
+    /**
+     * 腾讯频道消息发送api发送消息后得到的回执，也就是消息对象。
+     */
+    public val messageResult: TencentMessage
+}
+
 
 /**
  *
  * @author ForteScarlet
  */
-@Suppress("MemberVisibilityCanBePrivate")
-internal class MessageAsReceipt(val messageResult: TencentMessage) : MessageReceipt {
+internal class MessageAsReceipt(override val messageResult: TencentMessage) : TencentMessageReceipt {
     override val id: ID
         get() = messageResult.id
 
@@ -35,22 +43,5 @@ internal class MessageAsReceipt(val messageResult: TencentMessage) : MessageRece
         get() = true
 }
 
-/**
- *
- * @author ForteScarlet
- */
-@Suppress("MemberVisibilityCanBePrivate")
-internal class MessageAsReplyReceipt(val messageResult: TencentMessage) : MessageReplyReceipt {
-    override val id: ID
-        get() = messageResult.id
+internal fun TencentMessage.asReceipt(): TencentMessageReceipt = MessageAsReceipt(this)
 
-    override val isReplySuccess: Boolean
-        get() = true
-
-    override val isSuccess: Boolean
-        get() = true
-}
-
-internal fun TencentMessage.asReceipt(): MessageReceipt = MessageAsReceipt(this)
-
-internal fun TencentMessage.asReplyReceipt(): MessageReplyReceipt = MessageAsReplyReceipt(this)

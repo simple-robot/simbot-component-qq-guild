@@ -76,7 +76,7 @@ public interface TencentMember : GuildMember, MemberInfo, TencentMemberInfo {
 
     @Deprecated("子频道不支持禁言", ReplaceWith("false"))
     @OptIn(Api4J::class)
-    override fun muteBlocking(time: Long, unit: TimeUnit): Boolean = false
+    override fun muteBlocking(duration: Long, unit: TimeUnit): Boolean = false
 
     @OptIn(Api4J::class)
     @Deprecated("子频道不支持禁言", ReplaceWith("false"))

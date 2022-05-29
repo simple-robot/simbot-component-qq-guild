@@ -130,6 +130,7 @@ internal annotation class TencentGuildBotManagerConfigurationDsl
 /**
  * 得到一个BotManager.
  */
+@Suppress("DEPRECATION")
 @Deprecated("Use bot manager in Application.")
 public fun tencentGuildBotManager(
     processor: EventProcessor,

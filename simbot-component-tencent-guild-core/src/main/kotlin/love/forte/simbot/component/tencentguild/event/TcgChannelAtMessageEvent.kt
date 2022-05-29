@@ -20,7 +20,6 @@ package love.forte.simbot.component.tencentguild.event
 import kotlinx.coroutines.runBlocking
 import love.forte.simbot.Api4J
 import love.forte.simbot.Timestamp
-import love.forte.simbot.action.MessageReplyReceipt
 import love.forte.simbot.action.ReplySupport
 import love.forte.simbot.action.SendSupport
 import love.forte.simbot.component.tencentguild.TencentChannel
@@ -28,6 +27,7 @@ import love.forte.simbot.component.tencentguild.TencentMember
 import love.forte.simbot.event.BaseEventKey
 import love.forte.simbot.event.ChannelMessageEvent
 import love.forte.simbot.message.Message
+import love.forte.simbot.message.MessageReceipt
 import love.forte.simbot.message.ReceivedMessageContent
 import love.forte.simbot.message.doSafeCast
 import love.forte.simbot.tencentguild.EventSignals
@@ -118,7 +118,7 @@ public abstract class TcgChannelAtMessageEvent : TcgEvent<TencentMessage>(), Cha
      * 通过当前事件中的 `msgId` 回复此事件的发送者。
      */
     @JvmSynthetic
-    abstract override suspend fun reply(message: Message): MessageReplyReceipt // TODO update return type.
+    abstract override suspend fun reply(message: Message): MessageReceipt // TODO update return type.
 
 
     /**

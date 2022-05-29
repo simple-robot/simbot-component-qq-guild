@@ -102,7 +102,7 @@ subprojects {
     }
 }
 
-tasks.withType<JavaCompile>() {
+tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
 }
 
@@ -191,8 +191,6 @@ tasks.create("createChangelog") {
             val autoGenerateText = """
                 > 对应核心版本: [v$coreVersion](https://github.com/ForteScarlet/simpler-robot/releases/tag/v$coreVersion)
 
-
-                ## 更新日志
                 
             """.trimIndent()
 

@@ -20,9 +20,11 @@ package love.forte.simbot.component.tencentguild
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.runBlocking
-import love.forte.simbot.*
+import love.forte.simbot.Api4J
+import love.forte.simbot.ID
+import love.forte.simbot.Limiter
+import love.forte.simbot.Timestamp
 import love.forte.simbot.definition.Guild
-import love.forte.simbot.definition.GuildMember
 import love.forte.simbot.definition.Organization
 import love.forte.simbot.utils.runInBlocking
 import java.util.stream.Stream
@@ -32,7 +34,7 @@ import java.util.stream.Stream
  * @author ForteScarlet
  */
 public interface TencentGuild : Guild {
-    override val bot: Bot
+    override val bot: TencentGuildComponentGuildMemberBot
     override val createTime: Timestamp
     override val currentMember: Int
     override val description: String
@@ -58,33 +60,44 @@ public interface TencentGuild : Guild {
     @Api4J
     override val owner: TencentMember
         get() = runBlocking { owner() }
-
+    
+    /**
+     * 获取指定成员信息。
+     */
+    @JvmSynthetic
+    override suspend fun member(id: ID): TencentMember?
+    
+    /**
+     * 获取指定成员信息。
+     */
+    override fun getMember(id: ID): TencentMember? = runInBlocking { member(id) }
 
     /**
      * 频道无法获取成员列表。
      */
     @JvmSynthetic
+    @Deprecated("Get member list is not supported", ReplaceWith("emptyFlow()", "kotlinx.coroutines.flow.emptyFlow"))
     override suspend fun members(groupingId: ID?, limiter: Limiter): Flow<TencentMember> = emptyFlow()
 
-    /**
-     * 频道无法获取成员列表
-     */
-    @JvmSynthetic
-    override suspend fun member(id: ID): TencentMember? = null
+
 
     /**
      * 频道无法获取成员列表。
      */
     @OptIn(Api4J::class)
+    @Deprecated("Get member list is not supported", ReplaceWith("Stream.empty()", "java.util.stream.Stream"))
     override fun getMembers(groupingId: ID?, limiter: Limiter): Stream<out TencentMember> = Stream.empty()
 
     @OptIn(Api4J::class)
+    @Deprecated("Get member list is not supported", ReplaceWith("Stream.empty()", "java.util.stream.Stream"))
     override fun getMembers(): Stream<out TencentMember> = Stream.empty()
 
     @OptIn(Api4J::class)
+    @Deprecated("Get member list is not supported", ReplaceWith("Stream.empty()", "java.util.stream.Stream"))
     override fun getMembers(groupingId: ID?): Stream<out TencentMember> = Stream.empty()
 
     @OptIn(Api4J::class)
+    @Deprecated("Get member list is not supported", ReplaceWith("Stream.empty()", "java.util.stream.Stream"))
     override fun getMembers(limiter: Limiter): Stream<out TencentMember> = Stream.empty()
 
 
@@ -101,7 +114,7 @@ public interface TencentGuild : Guild {
 
     @JvmSynthetic
     override suspend fun previous(): Organization? = null
-    override fun getMember(id: ID): GuildMember? = runInBlocking { member(id) }
+
 
     @OptIn(Api4J::class)
     override val previous: Organization?

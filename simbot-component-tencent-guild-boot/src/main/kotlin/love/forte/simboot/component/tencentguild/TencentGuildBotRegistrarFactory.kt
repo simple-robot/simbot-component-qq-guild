@@ -17,23 +17,21 @@
 
 package love.forte.simboot.component.tencentguild
 
-import love.forte.di.annotation.*
-import love.forte.simboot.factory.*
-import love.forte.simbot.*
-import love.forte.simbot.component.tencentguild.*
-import love.forte.simbot.event.*
-import javax.inject.*
+import love.forte.simbot.BotRegistrar
+import love.forte.simbot.component.tencentguild.tencentGuildBotManager
+import love.forte.simbot.event.EventProcessor
 
 
 /**
  *
  * @author ForteScarlet
  */
-@Named("tencentGuildBotRegistrarFactory")
-public class TencentGuildBotRegistrarFactory @Depend(required = false) constructor(
-    @Depend(required = false) private val configure: TencentGuildBotManagerConfigure? = null
-) : BotRegistrarFactory {
-    override fun invoke(processor: EventProcessor): BotRegistrar {
+@Deprecated("No longer use")
+public class TencentGuildBotRegistrarFactory(
+    private val configure: TencentGuildBotManagerConfigure? = null
+) {
+    @Suppress("DEPRECATION")
+    public fun invoke(processor: EventProcessor): BotRegistrar {
         return tencentGuildBotManager(processor) {
             configure?.config(this)
         }

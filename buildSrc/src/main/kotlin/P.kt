@@ -56,7 +56,7 @@ sealed class P : SimbotProject() {
         // e.g. 3.0.0.preview.6.0
         val version = Version(
             "3", 0, 0,
-            status = preview(10, 0),
+            status = preview(11, 0),
             isSnapshot = System.getProperty("isSnapshot")?.equals("true", true) ?: false
         )
 
@@ -71,7 +71,7 @@ sealed class P : SimbotProject() {
         val version = Version(
             major = "${Simbot.version.major}.${Simbot.version.minor}",
             minor = 0, patch = 0,
-            status = preview(5, 0),
+            status = preview(6, 0),
             isSnapshot = Simbot.isSnapshot
         )
         const val GROUP = "${Simbot.GROUP}.component"
@@ -82,7 +82,6 @@ sealed class P : SimbotProject() {
         const val apiStdlibPath = ":simbot-component-tencent-guild-stdlib"
         const val componentPath = ":simbot-component-tencent-guild-core"
         const val componentBootPath = ":simbot-component-tencent-guild-boot"
-        const val componentBootAnnotationPath = ":simbot-component-tencent-guild-boot-annotation"
     }
 
 

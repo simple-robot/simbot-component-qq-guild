@@ -15,10 +15,11 @@
  *
  */
 
-import kotlinx.coroutines.*
-import kotlinx.serialization.json.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.serialization.json.JsonElement
 import love.forte.simbot.tencentguild.*
-import love.forte.simbot.tencentguild.api.message.*
+import love.forte.simbot.tencentguild.api.message.MessageSendApi
 
 suspend fun main() {
     val bot = tencentGuildBot(
@@ -31,7 +32,7 @@ suspend fun main() {
     bot.start()
 
     // 添加事件1
-    bot.processor { decoder, decoded ->
+    bot.processor { _, decoded ->
         val dispatch: Signal.Dispatch = this
         val jsonElement: JsonElement = dispatch.data
         if (dispatch.type == "AT_MESSAGE_CREATE") {
