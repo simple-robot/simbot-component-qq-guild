@@ -17,24 +17,31 @@
 
 package love.forte.simbot.component.tencentguild.internal
 
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
-import love.forte.simbot.*
-import love.forte.simbot.component.tencentguild.*
-import love.forte.simbot.component.tencentguild.event.*
-import love.forte.simbot.component.tencentguild.util.*
-import love.forte.simbot.event.*
-import love.forte.simbot.message.*
-import love.forte.simbot.tencentguild.*
-import love.forte.simbot.tencentguild.api.message.*
-import java.util.stream.*
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.flow.Flow
+import love.forte.simbot.Api4J
+import love.forte.simbot.ID
+import love.forte.simbot.Limiter
+import love.forte.simbot.component.tencentguild.TencentChannel
+import love.forte.simbot.component.tencentguild.TencentGuild
+import love.forte.simbot.component.tencentguild.TencentGuildComponentGuildMemberBot
+import love.forte.simbot.component.tencentguild.TencentRole
+import love.forte.simbot.component.tencentguild.event.TcgChannelAtMessageEvent
+import love.forte.simbot.component.tencentguild.util.requestBy
+import love.forte.simbot.event.EventProcessingContext
+import love.forte.simbot.message.Message
+import love.forte.simbot.message.MessageReceipt
+import love.forte.simbot.tencentguild.TencentChannelInfo
+import love.forte.simbot.tencentguild.api.message.MessageSendApi
+import love.forte.simbot.utils.runInBlocking
+import java.util.stream.Stream
 
 /**
  *
  * @author ForteScarlet
  */
 internal class TencentChannelImpl internal constructor(
-    override val bot: TencentGuildComponentBotImpl,
+    private val baseBot: TencentGuildComponentBotImpl,
     private val info: TencentChannelInfo,
     private val from: suspend () -> TencentGuildImpl
 ) : TencentChannel, TencentChannelInfo by info {
@@ -42,7 +49,12 @@ internal class TencentChannelImpl internal constructor(
     internal constructor(
         bot: TencentGuildComponentBotImpl, info: TencentChannelInfo, from: TencentGuildImpl
     ) : this(bot, info, { from })
-
+    
+    override val bot: TencentGuildComponentGuildMemberBot by lazy {
+        val guild = runInBlocking { from() }
+        guild.bot
+    }
+    
     override suspend fun send(message: Message): MessageReceipt {
         val currentEvent =
             currentCoroutineContext()[EventProcessingContext]?.event?.takeIf { it is TcgChannelAtMessageEvent } as? TcgChannelAtMessageEvent
@@ -52,7 +64,7 @@ internal class TencentChannelImpl internal constructor(
         val messageForSend = MessageParsers.parse(message) {
             this.msgId = msgId
         }
-        return MessageSendApi(info.id, messageForSend).requestBy(bot).asReceipt()
+        return MessageSendApi(info.id, messageForSend).requestBy(baseBot).asReceipt()
     }
 
 

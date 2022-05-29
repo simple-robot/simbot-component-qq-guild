@@ -48,7 +48,7 @@ internal class TencentGuildComponentBotImpl(
     override val manager: TencentGuildBotManager,
     override val eventProcessor: EventProcessor,
     override val component: TencentGuildComponent
-) : TencentGuildComponentBot() {
+) : TencentGuildComponentBot {
 
     override val coroutineContext: CoroutineContext
         get() = sourceBot.coroutineContext
@@ -73,7 +73,7 @@ internal class TencentGuildComponentBotImpl(
      */
     override suspend fun guilds(grouping: Grouping, limiter: Limiter): Flow<TencentGuildImpl> {
         return getGuildFlow(limiter).map { info ->
-            TencentGuildImpl(bot = this, guildInfo = info)
+            TencentGuildImpl(baseBot = this, guildInfo = info)
         }
     }
 
@@ -81,7 +81,7 @@ internal class TencentGuildComponentBotImpl(
     override fun getGuilds(grouping: Grouping, limiter: Limiter): Stream<out TencentGuild> {
 
         return getGuildSequence(limiter).map { info ->
-            TencentGuildImpl(bot = this, guildInfo = info)
+            TencentGuildImpl(baseBot = this, guildInfo = info)
         }.asStream()
     }
   

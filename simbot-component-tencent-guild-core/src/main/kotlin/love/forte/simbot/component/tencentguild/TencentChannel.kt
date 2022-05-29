@@ -17,15 +17,19 @@
 
 package love.forte.simbot.component.tencentguild
 
-import kotlinx.coroutines.*
-import love.forte.simbot.*
-import love.forte.simbot.definition.*
-import love.forte.simbot.message.*
-import love.forte.simbot.tencentguild.*
-import love.forte.simbot.utils.*
-import java.util.concurrent.*
-import java.util.stream.*
-import kotlin.time.*
+import kotlinx.coroutines.runBlocking
+import love.forte.simbot.Api4J
+import love.forte.simbot.ID
+import love.forte.simbot.Limiter
+import love.forte.simbot.Timestamp
+import love.forte.simbot.definition.Channel
+import love.forte.simbot.message.Message
+import love.forte.simbot.message.MessageReceipt
+import love.forte.simbot.tencentguild.TencentChannelInfo
+import love.forte.simbot.utils.runInBlocking
+import java.util.concurrent.TimeUnit
+import java.util.stream.Stream
+import kotlin.time.Duration
 
 /**
  * 子频道。来自于一个 [TencentGuild]。
@@ -37,7 +41,7 @@ public interface TencentChannel : Channel, TencentChannelInfo {
     @JvmSynthetic
     override suspend fun send(message: Message): MessageReceipt
 
-    override val bot: Bot
+    override val bot: TencentGuildComponentGuildMemberBot
     override val createTime: Timestamp
     override val currentMember: Int
     override val description: String
@@ -86,6 +90,8 @@ public interface TencentChannel : Channel, TencentChannelInfo {
     /**
      * 子频道目前无法直接获取成员列表。将会直接返回 [previous] 的成员列表。
      */
+    @Suppress("DEPRECATION")
+    @Deprecated("Get member list is not supported", ReplaceWith("previous().members(groupingId, limiter)"))
     @JvmSynthetic
     override suspend fun members(groupingId: ID?, limiter: Limiter): kotlinx.coroutines.flow.Flow<TencentMember> {
         return previous().members(groupingId, limiter)
@@ -97,26 +103,28 @@ public interface TencentChannel : Channel, TencentChannelInfo {
     }
 
 
-    @Deprecated("子频道不支持禁言", ReplaceWith("false"))
+    @Deprecated("Mute API is not supported", ReplaceWith("false"))
     @JvmSynthetic
     override suspend fun mute(duration: Duration): Boolean = false
 
     @OptIn(Api4J::class)
-    @Deprecated("子频道不支持禁言", ReplaceWith("false"))
-    override fun muteBlocking(time: Long, unit: TimeUnit): Boolean = false
+    @Deprecated("Mute API is not supported", ReplaceWith("false"))
+    override fun muteBlocking(duration: Long, unit: TimeUnit): Boolean = false
 
-    @Deprecated("子频道不支持禁言", ReplaceWith("false"))
+    @Deprecated("Mute API is not supported", ReplaceWith("false"))
     @JvmSynthetic
     override suspend fun unmute(): Boolean = false
 
     @OptIn(Api4J::class)
-    @Deprecated("子频道不支持禁言", ReplaceWith("false"))
+    @Deprecated("Mute API is not supported", ReplaceWith("false"))
     override fun unmuteBlocking(): Boolean = false
 
     /**
      * 子频道目前无法直接获取成员列表。将会直接返回 [previous] 的成员列表。
      */
     @Api4J
+    @Suppress("DEPRECATION")
+    @Deprecated("Get member list is not supported", ReplaceWith("previous.getMembers(groupingId, limiter)"))
     override fun getMembers(groupingId: ID?, limiter: Limiter): Stream<out TencentMember> =
         previous.getMembers(groupingId, limiter)
 
@@ -124,18 +132,24 @@ public interface TencentChannel : Channel, TencentChannelInfo {
      * 子频道目前无法直接获取成员列表。将会直接返回 [previous] 的成员列表。
      */
     @Api4J
+    @Suppress("DEPRECATION")
+    @Deprecated("Get member list is not supported", ReplaceWith("previous.getMembers()"))
     override fun getMembers(): Stream<out TencentMember> = previous.getMembers()
 
     /**
      * 子频道目前无法直接获取成员列表。将会直接返回 [previous] 的成员列表。
      */
     @Api4J
+    @Suppress("DEPRECATION")
+    @Deprecated("Get member list is not supported", ReplaceWith("previous.getMembers(groupingId)"))
     override fun getMembers(groupingId: ID?): Stream<out TencentMember> = previous.getMembers(groupingId)
 
     /**
      * 子频道目前无法直接获取成员列表。将会直接返回 [previous] 的成员列表。
      */
     @Api4J
+    @Suppress("DEPRECATION")
+    @Deprecated("Get member list is not supported", ReplaceWith("previous.getMembers(limiter)"))
     override fun getMembers(limiter: Limiter): Stream<out TencentMember> = previous.getMembers(limiter)
 
 

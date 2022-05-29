@@ -17,10 +17,9 @@
 
 package love.forte.simbot.component.tencentguild.internal
 
-import love.forte.simbot.*
-import love.forte.simbot.action.*
-import love.forte.simbot.message.*
-import love.forte.simbot.tencentguild.*
+import love.forte.simbot.ID
+import love.forte.simbot.message.MessageReceipt
+import love.forte.simbot.tencentguild.TencentMessage
 
 /**
  *
@@ -35,22 +34,5 @@ internal class MessageAsReceipt(val messageResult: TencentMessage) : MessageRece
         get() = true
 }
 
-/**
- *
- * @author ForteScarlet
- */
-@Suppress("MemberVisibilityCanBePrivate")
-internal class MessageAsReplyReceipt(val messageResult: TencentMessage) : MessageReplyReceipt {
-    override val id: ID
-        get() = messageResult.id
-
-    override val isReplySuccess: Boolean
-        get() = true
-
-    override val isSuccess: Boolean
-        get() = true
-}
-
 internal fun TencentMessage.asReceipt(): MessageReceipt = MessageAsReceipt(this)
 
-internal fun TencentMessage.asReplyReceipt(): MessageReplyReceipt = MessageAsReplyReceipt(this)
