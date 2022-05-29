@@ -142,6 +142,7 @@ internal class TencentGuildComponentBotImpl(
      */
     override suspend fun start(): Boolean = sourceBot.start().also {
         // just set everytime.
+        sourceBot.botInfo
         meId = sourceBot.me().id
         
         suspend fun pushEvent() {

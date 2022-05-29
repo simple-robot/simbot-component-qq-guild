@@ -24,19 +24,30 @@ import io.ktor.http.*
 import io.ktor.http.cio.websocket.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.sync.*
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
-import love.forte.simbot.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.int
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import love.forte.simbot.SimbotIllegalStateException
 import love.forte.simbot.tencentguild.*
-import love.forte.simbot.tencentguild.api.*
-import love.forte.simbot.tencentguild.api.user.*
-import org.slf4j.*
+import love.forte.simbot.tencentguild.api.GatewayApis
+import love.forte.simbot.tencentguild.api.GatewayInfo
+import love.forte.simbot.tencentguild.api.request
+import love.forte.simbot.tencentguild.api.user.GetBotInfoApi
+import love.forte.simbot.utils.runInBlocking
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.util.concurrent.*
-import java.util.concurrent.atomic.*
-import kotlin.coroutines.*
-import kotlin.math.*
+import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.ThreadLocalRandom
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicLong
+import kotlin.coroutines.CoroutineContext
+import kotlin.math.max
 
 
 internal fun checkResumeCode(code: Short): Boolean {
@@ -58,13 +69,14 @@ internal class TencentGuildBotImpl(
     override val ticket: TicketImpl,
     override val configuration: TencentGuildBotConfiguration
 ) : TencentGuildBot {
-
+    private var _botInfo: TencentBotInfo? = null
+    
     // verify bot with bot info api.
-    override val botInfo: TencentBotInfo by lazy {
-        runBlocking {
-            GetBotInfoApi.requestBy(this@TencentGuildBotImpl)
+    override val botInfo: TencentBotInfo
+        get() {
+            return _botInfo ?: runInBlocking { me() }
         }
-    }
+    
 
     private val logger = LoggerFactory.getLogger("love.forte.simbot.tencentguild.bot.${ticket.appId}")
 
@@ -437,7 +449,11 @@ internal class TencentGuildBotImpl(
             // 留下最大的值。
             seq.updateAndGet { prev -> max(prev, nowSeq) }
         }
-            .onCompletion { cause -> logger.debug("Session flow completion. cause: {}", cause) }
+            .onCompletion { cause ->
+                if (logger.isDebugEnabled) {
+                    logger.debug("Session flow completion. cause: {}", cause.toString())
+                }
+            }
             .catch { cause -> logger.error("Session flow on catch: ${cause.localizedMessage}", cause) }
             .launchIn(this)
     }
@@ -503,7 +519,9 @@ internal class TencentGuildBotImpl(
     //// self api
 
     override suspend fun me(): TencentBotInfo {
-        return GetBotInfoApi.requestBy(this)
+        return GetBotInfoApi.requestBy(this).also {
+            _botInfo = it
+        }
     }
 
 

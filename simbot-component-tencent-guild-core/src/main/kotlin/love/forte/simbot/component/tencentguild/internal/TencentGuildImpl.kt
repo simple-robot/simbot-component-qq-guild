@@ -53,7 +53,7 @@ internal class TencentGuildImpl(
 ) : TencentGuild, TencentGuildInfo by guildInfo {
     
     override val bot: TencentGuildComponentGuildMemberBot by lazy {
-        runInBlocking { baseBot.asMember(member(baseBot.id)!!) }
+        runInBlocking { baseBot.asMember(member(baseBot.sourceBot.botInfo.id)!!) }
     }
     
     
