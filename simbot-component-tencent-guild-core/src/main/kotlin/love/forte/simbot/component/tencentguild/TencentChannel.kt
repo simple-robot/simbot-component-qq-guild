@@ -22,9 +22,11 @@ import love.forte.simbot.Api4J
 import love.forte.simbot.ID
 import love.forte.simbot.Limiter
 import love.forte.simbot.Timestamp
+import love.forte.simbot.component.tencentguild.internal.TencentMessageReceipt
 import love.forte.simbot.definition.Channel
 import love.forte.simbot.message.Message
-import love.forte.simbot.message.MessageReceipt
+import love.forte.simbot.message.MessageContent
+import love.forte.simbot.message.Text
 import love.forte.simbot.tencentguild.TencentChannelInfo
 import love.forte.simbot.utils.runInBlocking
 import java.util.concurrent.TimeUnit
@@ -38,8 +40,7 @@ import kotlin.time.Duration
  * @author ForteScarlet
  */
 public interface TencentChannel : Channel, TencentChannelInfo {
-    @JvmSynthetic
-    override suspend fun send(message: Message): MessageReceipt
+
 
     override val bot: TencentGuildComponentGuildMemberBot
     override val createTime: Timestamp
@@ -74,8 +75,32 @@ public interface TencentChannel : Channel, TencentChannelInfo {
 
     @JvmSynthetic
     override suspend fun roles(groupingId: ID?, limiter: Limiter): kotlinx.coroutines.flow.Flow<TencentRole>
-
-
+    
+    @JvmSynthetic
+    override suspend fun send(message: Message): TencentMessageReceipt
+    
+    override suspend fun send(text: String): TencentMessageReceipt {
+        return send(Text.of(text))
+    }
+    
+    override suspend fun send(message: MessageContent): TencentMessageReceipt {
+        return send(message)
+    }
+    
+    @Api4J
+    override fun sendBlocking(text: String): TencentMessageReceipt {
+        return sendBlocking(text)
+    }
+    
+    @Api4J
+    override fun sendBlocking(message: Message): TencentMessageReceipt {
+        return sendBlocking(message)
+    }
+    
+    @Api4J
+    override fun sendBlocking(message: MessageContent): TencentMessageReceipt {
+        return sendBlocking(message)
+    }
     //// Impl
 
     @Api4J

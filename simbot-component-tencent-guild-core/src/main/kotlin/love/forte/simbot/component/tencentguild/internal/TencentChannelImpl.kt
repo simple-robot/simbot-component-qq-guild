@@ -30,7 +30,6 @@ import love.forte.simbot.component.tencentguild.event.TcgChannelAtMessageEvent
 import love.forte.simbot.component.tencentguild.util.requestBy
 import love.forte.simbot.event.EventProcessingContext
 import love.forte.simbot.message.Message
-import love.forte.simbot.message.MessageReceipt
 import love.forte.simbot.tencentguild.TencentChannelInfo
 import love.forte.simbot.tencentguild.api.message.MessageSendApi
 import love.forte.simbot.utils.runInBlocking
@@ -55,14 +54,16 @@ internal class TencentChannelImpl internal constructor(
         guild.bot
     }
     
-    override suspend fun send(message: Message): MessageReceipt {
+    override suspend fun send(message: Message): TencentMessageReceipt {
         val currentEvent =
             currentCoroutineContext()[EventProcessingContext]?.event?.takeIf { it is TcgChannelAtMessageEvent } as? TcgChannelAtMessageEvent
 
         val msgId = currentEvent?.sourceEventEntity?.id
 
         val messageForSend = MessageParsers.parse(message) {
-            this.msgId = msgId
+            if (msgId != null) {
+                this.msgId = msgId
+            }
         }
         return MessageSendApi(info.id, messageForSend).requestBy(baseBot).asReceipt()
     }
