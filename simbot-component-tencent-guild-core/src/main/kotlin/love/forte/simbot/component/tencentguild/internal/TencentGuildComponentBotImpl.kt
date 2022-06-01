@@ -34,10 +34,10 @@ import love.forte.simbot.event.pushIfProcessable
 import love.forte.simbot.tencentguild.*
 import love.forte.simbot.tencentguild.api.guild.GetBotGuildListApi
 import love.forte.simbot.tencentguild.api.guild.GetGuildApi
+import love.forte.simbot.utils.item.Items
+import love.forte.simbot.utils.item.items
 import love.forte.simbot.utils.runInBlocking
-import java.util.stream.Stream
 import kotlin.coroutines.CoroutineContext
-import kotlin.streams.asStream
 
 /**
  *
@@ -47,80 +47,53 @@ internal class TencentGuildComponentBotImpl(
     override val sourceBot: TencentGuildBot,
     override val manager: TencentGuildBotManager,
     override val eventProcessor: EventProcessor,
-    override val component: TencentGuildComponent
+    override val component: TencentGuildComponent,
 ) : TencentGuildComponentBot {
-
+    
     override val coroutineContext: CoroutineContext
         get() = sourceBot.coroutineContext
-
+    
     private val job
         get() = sourceBot.coroutineContext[Job]!!
-
+    
     override val logger =
         LoggerFactory.getLogger("love.forte.simbot.component.tencentguild.bot.${sourceBot.ticket.appKey}")
-
+    
     @Volatile
     private lateinit var meId: ID
-
+    
     override fun isMe(id: ID): Boolean {
         if (id == this.id) return true
         if (::meId.isInitialized && meId == id) return true
         return false
     }
-
-    /**
-     * grouping是无效的.
-     */
-    override suspend fun guilds(grouping: Grouping, limiter: Limiter): Flow<TencentGuildImpl> {
-        return getGuildFlow(limiter).map { info ->
-            TencentGuildImpl(baseBot = this, guildInfo = info)
-        }
-    }
-
-    @Api4J
-    override fun getGuilds(grouping: Grouping, limiter: Limiter): Stream<out TencentGuild> {
-
-        return getGuildSequence(limiter).map { info ->
-            TencentGuildImpl(baseBot = this, guildInfo = info)
-        }.asStream()
-    }
-  
+    
+    override val guilds: Items<TencentGuildImpl>
+        get() = bot.items(flowFactory = { prop ->
+            getGuildFlow(limiter(prop.offset, prop.limit, prop.batch)).map { info ->
+                TencentGuildImpl(baseBot = this, guildInfo = info)
+            }
+        })
+    
     
     private fun getGuildFlow(limiter: Limiter): Flow<TencentGuildInfo> {
         return limiter.toFlow { batchSize ->
             val batch = if (batchSize in 1..100) batchSize else 100
             var lastId: ID? = null
-
+            
             while (true) {
                 val list = GetBotGuildListApi(after = lastId, limit = batch).requestBy(sourceBot)
                 if (list.isEmpty()) break
-
+                
                 lastId = list.lastOrNull()?.id
-
+                
                 for (tencentGuildInfo in list) {
                     emit(tencentGuildInfo)
                 }
             }
         }
     }
-
-    private fun getGuildSequence(limiter: Limiter): Sequence<TencentGuildInfo> {
-        return limiter.toSequence { batchSize ->
-            val batch = if (batchSize in 1..100) batchSize else 100
-            var lastId: ID? = null
-            while (true) {
-                val list = runBlocking {
-                    GetBotGuildListApi(after = lastId, limit = batch).requestBy(sourceBot)
-                }
-                if (list.isEmpty()) break
-
-                lastId = list.lastOrNull()?.id
-
-                yieldAll(list)
-            }
-        }
-    }
-
+    
     override suspend fun guild(id: ID): TencentGuild? {
         return try {
             val guild = GetGuildApi(id).requestBy(sourceBot)
@@ -133,10 +106,10 @@ internal class TencentGuildComponentBotImpl(
             }
         }
     }
-
+    
     @Api4J
     override fun getGuild(id: ID): TencentGuild? = runInBlocking { guild(id) }
-
+    
     /**
      * 启动当前bot。
      */
@@ -154,17 +127,17 @@ internal class TencentGuildComponentBotImpl(
             pushEvent()
             return@also
         }
-
-        //activeStatus.compareAndSet(0, 1)
+        
+        // activeStatus.compareAndSet(0, 1)
         // process event.
         sourceBot.processor { json, decoded ->
             // event processor
             logger.trace("EventSignals.events[{}]: {}", type, EventSignals.events[type])
             EventSignals.events[this.type]?.let { signals ->
                 logger.trace("eventSignalParsers[{}]: {}", it, eventSignalParsers[signals])
-
+                
                 eventSignalParsers[signals]?.let { parser ->
-
+                    
                     logger.trace(
                         "eventProcessor.isProcessable({}): {}",
                         parser.key,
@@ -183,27 +156,27 @@ internal class TencentGuildComponentBotImpl(
         }
         pushEvent()
     }
-
-
+    
+    
     override suspend fun join() {
         sourceBot.join()
     }
-
-
+    
+    
     override suspend fun cancel(reason: Throwable?): Boolean = sourceBot.cancel(reason)
-
-
+    
+    
     @Api4J
     override fun cancelBlocking(reason: Throwable?): Boolean {
         return runBlocking { cancel(reason) }
     }
-
+    
     override val isStarted: Boolean
         get() = job.isCompleted || job.isActive
-
-
+    
+    
     override val isCancelled: Boolean
         get() = job.isCancelled
-
-
+    
+    
 }

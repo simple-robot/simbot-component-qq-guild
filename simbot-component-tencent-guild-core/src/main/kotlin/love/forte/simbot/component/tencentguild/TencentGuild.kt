@@ -17,17 +17,15 @@
 
 package love.forte.simbot.component.tencentguild
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.runBlocking
 import love.forte.simbot.Api4J
 import love.forte.simbot.ID
-import love.forte.simbot.Limiter
 import love.forte.simbot.Timestamp
 import love.forte.simbot.definition.Guild
 import love.forte.simbot.definition.Organization
+import love.forte.simbot.utils.item.Items
+import love.forte.simbot.utils.item.Items.Companion.emptyItems
 import love.forte.simbot.utils.runInBlocking
-import java.util.stream.Stream
 
 /**
  *
@@ -43,20 +41,12 @@ public interface TencentGuild : Guild {
     override val maximumMember: Int
     override val name: String
     override val ownerId: ID
-
-    @JvmSynthetic
-    override suspend fun children(groupingId: ID?, limiter: Limiter): Flow<TencentChannel>
-
-    @JvmSynthetic
-    override suspend fun children(groupingId: ID?): Flow<TencentChannel> = children(groupingId, Limiter)
-
-    @Api4J
-    override fun getChildren(groupingId: ID?, limiter: Limiter): Stream<out TencentChannel>
-
-
+    
+    override val children: Items<TencentChannel>
+    
     @JvmSynthetic
     override suspend fun owner(): TencentMember
-
+    
     @Api4J
     override val owner: TencentMember
         get() = runBlocking { owner() }
@@ -70,52 +60,30 @@ public interface TencentGuild : Guild {
     /**
      * 获取指定成员信息。
      */
-    override fun getMember(id: ID): TencentMember? = runInBlocking { member(id) }
-
-    /**
-     * 频道无法获取成员列表。
-     */
-    @JvmSynthetic
-    @Deprecated("Get member list is not supported", ReplaceWith("emptyFlow()", "kotlinx.coroutines.flow.emptyFlow"))
-    override suspend fun members(groupingId: ID?, limiter: Limiter): Flow<TencentMember> = emptyFlow()
-
-
-
-    /**
-     * 频道无法获取成员列表。
-     */
-    @OptIn(Api4J::class)
-    @Deprecated("Get member list is not supported", ReplaceWith("Stream.empty()", "java.util.stream.Stream"))
-    override fun getMembers(groupingId: ID?, limiter: Limiter): Stream<out TencentMember> = Stream.empty()
-
-    @OptIn(Api4J::class)
-    @Deprecated("Get member list is not supported", ReplaceWith("Stream.empty()", "java.util.stream.Stream"))
-    override fun getMembers(): Stream<out TencentMember> = Stream.empty()
-
-    @OptIn(Api4J::class)
-    @Deprecated("Get member list is not supported", ReplaceWith("Stream.empty()", "java.util.stream.Stream"))
-    override fun getMembers(groupingId: ID?): Stream<out TencentMember> = Stream.empty()
-
-    @OptIn(Api4J::class)
-    @Deprecated("Get member list is not supported", ReplaceWith("Stream.empty()", "java.util.stream.Stream"))
-    override fun getMembers(limiter: Limiter): Stream<out TencentMember> = Stream.empty()
-
-
-    @JvmSynthetic
-    override suspend fun roles(groupingId: ID?, limiter: Limiter): Flow<TencentRole>
-
     @Api4J
-    override fun getRoles(groupingId: ID?, limiter: Limiter): Stream<out TencentRole>
-
+    override fun getMember(id: ID): TencentMember? = runInBlocking { member(id) }
+    
+    /**
+     * 频道无法获取成员列表。
+     */
+    @Deprecated(
+        "Get member list is not supported",
+        ReplaceWith("emptyItems()", "love.forte.simbot.utils.item.Items.Companion.emptyItems")
+    )
+    override val members: Items<TencentMember>
+        get() = emptyItems()
+    
+    override val roles: Items<TencentRole>
+    
     //// Impls
-
+    
     @JvmSynthetic
     override suspend fun unmute(): Boolean = false
-
+    
     @JvmSynthetic
     override suspend fun previous(): Organization? = null
-
-
+    
+    
     @OptIn(Api4J::class)
     override val previous: Organization?
         get() = null

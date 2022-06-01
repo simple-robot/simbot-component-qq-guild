@@ -73,7 +73,7 @@ private fun EventListenersGenerator.myListeners() {
         
         // 获取一些信息
         // event.group.members()
-        event.group().members().collect { // 函数式为挂起，属性式为非挂起
+        event.group().members.collect { // 函数式为挂起，属性式为非挂起
             println("Member: $it")
         }
         EventResult.of("abc") // return something?

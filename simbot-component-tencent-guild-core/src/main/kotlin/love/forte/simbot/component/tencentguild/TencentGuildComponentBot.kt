@@ -17,10 +17,10 @@
 
 package love.forte.simbot.component.tencentguild
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.isActive
-import love.forte.simbot.*
+import love.forte.simbot.Api4J
+import love.forte.simbot.Bot
+import love.forte.simbot.ID
 import love.forte.simbot.action.UnsupportedActionException
 import love.forte.simbot.definition.Friend
 import love.forte.simbot.definition.Group
@@ -30,7 +30,8 @@ import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.message.Image
 import love.forte.simbot.resources.Resource
 import love.forte.simbot.tencentguild.TencentGuildBot
-import java.util.stream.Stream
+import love.forte.simbot.utils.item.Items
+import love.forte.simbot.utils.item.Items.Companion.emptyItems
 
 /**
  * 一个tencent频道BOT的接口实例。
@@ -98,8 +99,6 @@ public interface TencentGuildComponentBot : Bot {
      */
     override val status: UserStatus get() = BotStatus
     
-    @JvmSynthetic
-    override suspend fun guilds(grouping: Grouping, limiter: Limiter): Flow<TencentGuild>
     
     //// Impl
     
@@ -128,40 +127,15 @@ public interface TencentGuildComponentBot : Bot {
         return sourceBot.startBlocking()
     }
     
+    @Deprecated("频道不支持群相关API", ReplaceWith("emptyItems()", "love.forte.simbot.utils.item.Items.Companion.emptyItems"))
+    override val groups: Items<Group>
+        get() = emptyItems()
     
-    @Deprecated("频道不支持群相关API", ReplaceWith("emptyFlow()", "kotlinx.coroutines.flow.emptyFlow"))
-    @JvmSynthetic
-    override suspend fun groups(grouping: Grouping, limiter: Limiter): Flow<Group> {
-        return emptyFlow()
-    }
+    @Deprecated("频道不支持好友相关API", ReplaceWith("emptyItems()", "love.forte.simbot.utils.item.Items.Companion.emptyItems"))
+    override val friends: Items<Friend>
+        get() = emptyItems()
     
-    @OptIn(Api4J::class)
-    @Deprecated("频道不支持群相关API", ReplaceWith("Stream.empty()", "java.util.stream.Stream"))
-    override fun getGroups(grouping: Grouping, limiter: Limiter): Stream<out Group> {
-        return Stream.empty()
-    }
-    
-    @Deprecated("频道不支持好友相关API", ReplaceWith("emptyFlow()", "kotlinx.coroutines.flow.emptyFlow"))
-    @JvmSynthetic
-    override suspend fun friends(grouping: Grouping, limiter: Limiter): Flow<Friend> {
-        return emptyFlow()
-    }
-    
-    @OptIn(Api4J::class)
-    @Deprecated("频道不支持群相关API", ReplaceWith("Stream.empty()", "java.util.stream.Stream"))
-    override fun getFriends(grouping: Grouping, limiter: Limiter): Stream<out Friend> {
-        return Stream.empty()
-    }
-    
-    @Api4J
-    override fun getGuilds(grouping: Grouping, limiter: Limiter): Stream<out TencentGuild>
-    
-    
-    @Api4J
-    override fun getGuilds(): Stream<out TencentGuild> = getGuilds(Grouping.EMPTY, Limiter)
-    
-    @Api4J
-    override fun getGuilds(limiter: Limiter): Stream<out TencentGuild> = getGuilds(Grouping.EMPTY, limiter)
+    override val guilds: Items<TencentGuild>
     
     @Api4J
     override fun getGuild(id: ID): TencentGuild?
@@ -175,23 +149,12 @@ public interface TencentGuildComponentBot : Bot {
     @Api4J
     override fun getFriend(id: ID): Friend? = null
     
-    @Api4J
-    override fun getFriends(): Stream<out Friend> = Stream.empty()
-    
-    @Api4J
-    override fun getFriends(limiter: Limiter): Stream<out Friend> = Stream.empty()
-    
     @JvmSynthetic
     override suspend fun group(id: ID): Group? = null
     
     @OptIn(Api4J::class)
     override fun getGroup(id: ID): Group? = null
     
-    @OptIn(Api4J::class)
-    override fun getGroups(): Stream<out Group> = Stream.empty()
-    
-    @OptIn(Api4J::class)
-    override fun getGroups(limiter: Limiter): Stream<out Group> = Stream.empty()
 }
 
 
@@ -241,8 +204,6 @@ public interface TencentGuildComponentGuildMemberBot : TencentGuildComponentBot,
      * 用户状态值。
      */
     override val status: UserStatus
-    
-    
     
     
 }
