@@ -17,7 +17,6 @@
 
 package love.forte.simbot.component.tencentguild
 
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.runBlocking
 import love.forte.simbot.Api4J
 import love.forte.simbot.Bot
@@ -28,9 +27,9 @@ import love.forte.simbot.definition.MemberInfo
 import love.forte.simbot.definition.UserStatus
 import love.forte.simbot.tencentguild.TencentMemberInfo
 import love.forte.simbot.tencentguild.TencentUserInfo
+import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.runInBlocking
 import java.util.concurrent.TimeUnit
-import java.util.stream.Stream
 import kotlin.time.Duration
 
 /**
@@ -48,12 +47,8 @@ public interface TencentMember : GuildMember, MemberInfo, TencentMemberInfo {
     override val id: ID
     override val status: UserStatus
     override val username: String
-
-    @JvmSynthetic
-    override suspend fun roles(): Flow<TencentRole>
-
-    @Api4J
-    override val roles: Stream<out TencentRole>
+    
+    override val roles: Items<TencentRole>
 
     @JvmSynthetic
     override suspend fun organization(): TencentGuild

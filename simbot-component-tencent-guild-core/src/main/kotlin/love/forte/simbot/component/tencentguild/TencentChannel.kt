@@ -20,7 +20,6 @@ package love.forte.simbot.component.tencentguild
 import kotlinx.coroutines.runBlocking
 import love.forte.simbot.Api4J
 import love.forte.simbot.ID
-import love.forte.simbot.Limiter
 import love.forte.simbot.Timestamp
 import love.forte.simbot.component.tencentguild.internal.TencentMessageReceipt
 import love.forte.simbot.definition.Channel
@@ -28,9 +27,10 @@ import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.message.Text
 import love.forte.simbot.tencentguild.TencentChannelInfo
+import love.forte.simbot.utils.item.Items
+import love.forte.simbot.utils.item.Items.Companion.emptyItems
 import love.forte.simbot.utils.runInBlocking
 import java.util.concurrent.TimeUnit
-import java.util.stream.Stream
 import kotlin.time.Duration
 
 /**
@@ -40,8 +40,8 @@ import kotlin.time.Duration
  * @author ForteScarlet
  */
 public interface TencentChannel : Channel, TencentChannelInfo {
-
-
+    
+    
     override val bot: TencentGuildComponentGuildMemberBot
     override val createTime: Timestamp
     override val currentMember: Int
@@ -56,25 +56,21 @@ public interface TencentChannel : Channel, TencentChannelInfo {
     override val channelSubTypeValue: Int
     override val position: Int
     override val parentId: String
-
+    
     @Api4J
     override val previous: TencentGuild
-
+    
     @JvmSynthetic
     override suspend fun guild(): TencentGuild
-
+    
     @JvmSynthetic
     override suspend fun owner(): TencentMember
-
-
-    @Api4J
-    override fun getRoles(groupingId: ID?, limiter: Limiter): Stream<out TencentRole>
-
+    
+    
+    override val roles: Items<TencentRole>
+    
     @JvmSynthetic
     override suspend fun previous(): TencentGuild
-
-    @JvmSynthetic
-    override suspend fun roles(groupingId: ID?, limiter: Limiter): kotlinx.coroutines.flow.Flow<TencentRole>
     
     @JvmSynthetic
     override suspend fun send(message: Message): TencentMessageReceipt
@@ -102,81 +98,48 @@ public interface TencentChannel : Channel, TencentChannelInfo {
         return sendBlocking(message)
     }
     //// Impl
-
+    
     @Api4J
     override val guild: TencentGuild
         get() = runBlocking { guild() }
-
+    
     @Api4J
     override val owner: TencentMember
         get() = runBlocking { owner() }
-
-
+    
+    
     /**
-     * 子频道目前无法直接获取成员列表。将会直接返回 [previous] 的成员列表。
+     * 目前无法直接获取成员列表。
      */
-    @Suppress("DEPRECATION")
-    @Deprecated("Get member list is not supported", ReplaceWith("previous().members(groupingId, limiter)"))
-    @JvmSynthetic
-    override suspend fun members(groupingId: ID?, limiter: Limiter): kotlinx.coroutines.flow.Flow<TencentMember> {
-        return previous().members(groupingId, limiter)
-    }
-
+    @Deprecated("Get member list is not supported",
+        ReplaceWith("emptyItems()", "love.forte.simbot.utils.item.Items.Companion.emptyItems")
+    )
+    override val members: Items<TencentMember>
+        get() = emptyItems() // previous.members // TODO
+    
     @JvmSynthetic
     override suspend fun member(id: ID): TencentMember? {
         return previous().member(id)
     }
-
-
+    
+    
     @Deprecated("Mute API is not supported", ReplaceWith("false"))
     @JvmSynthetic
     override suspend fun mute(duration: Duration): Boolean = false
-
+    
     @OptIn(Api4J::class)
     @Deprecated("Mute API is not supported", ReplaceWith("false"))
     override fun muteBlocking(duration: Long, unit: TimeUnit): Boolean = false
-
+    
     @Deprecated("Mute API is not supported", ReplaceWith("false"))
     @JvmSynthetic
     override suspend fun unmute(): Boolean = false
-
+    
     @OptIn(Api4J::class)
     @Deprecated("Mute API is not supported", ReplaceWith("false"))
     override fun unmuteBlocking(): Boolean = false
-
-    /**
-     * 子频道目前无法直接获取成员列表。将会直接返回 [previous] 的成员列表。
-     */
+    
+    
     @Api4J
-    @Suppress("DEPRECATION")
-    @Deprecated("Get member list is not supported", ReplaceWith("previous.getMembers(groupingId, limiter)"))
-    override fun getMembers(groupingId: ID?, limiter: Limiter): Stream<out TencentMember> =
-        previous.getMembers(groupingId, limiter)
-
-    /**
-     * 子频道目前无法直接获取成员列表。将会直接返回 [previous] 的成员列表。
-     */
-    @Api4J
-    @Suppress("DEPRECATION")
-    @Deprecated("Get member list is not supported", ReplaceWith("previous.getMembers()"))
-    override fun getMembers(): Stream<out TencentMember> = previous.getMembers()
-
-    /**
-     * 子频道目前无法直接获取成员列表。将会直接返回 [previous] 的成员列表。
-     */
-    @Api4J
-    @Suppress("DEPRECATION")
-    @Deprecated("Get member list is not supported", ReplaceWith("previous.getMembers(groupingId)"))
-    override fun getMembers(groupingId: ID?): Stream<out TencentMember> = previous.getMembers(groupingId)
-
-    /**
-     * 子频道目前无法直接获取成员列表。将会直接返回 [previous] 的成员列表。
-     */
-    @Api4J
-    @Suppress("DEPRECATION")
-    @Deprecated("Get member list is not supported", ReplaceWith("previous.getMembers(limiter)"))
-    override fun getMembers(limiter: Limiter): Stream<out TencentMember> = previous.getMembers(limiter)
-
-
     override fun getMember(id: ID): TencentMember? = runInBlocking { member(id) }
 }

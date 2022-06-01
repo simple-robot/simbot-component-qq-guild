@@ -18,15 +18,16 @@
 package love.forte.simbot.component.tencentguild.internal
 
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.count
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.future.asCompletableFuture
 import kotlinx.coroutines.runBlocking
 import love.forte.simbot.Api4J
 import love.forte.simbot.ID
-import love.forte.simbot.Limiter
 import love.forte.simbot.component.tencentguild.TencentGuild
 import love.forte.simbot.component.tencentguild.TencentGuildComponentGuildMemberBot
-import love.forte.simbot.component.tencentguild.TencentRole
 import love.forte.simbot.component.tencentguild.util.requestBy
 import love.forte.simbot.tencentguild.TencentApiException
 import love.forte.simbot.tencentguild.TencentChannelInfo
@@ -36,11 +37,11 @@ import love.forte.simbot.tencentguild.api.channel.GetGuildChannelListApi
 import love.forte.simbot.tencentguild.api.member.GetMemberApi
 import love.forte.simbot.tencentguild.api.role.GetGuildRoleListApi
 import love.forte.simbot.utils.LazyValue
+import love.forte.simbot.utils.item.Items
+import love.forte.simbot.utils.item.effectOn
+import love.forte.simbot.utils.item.items
 import love.forte.simbot.utils.lazyValue
 import love.forte.simbot.utils.runInBlocking
-import love.forte.simbot.withLimiter
-import java.util.stream.Stream
-import kotlin.streams.asStream
 import kotlin.time.Duration
 
 /**
@@ -49,7 +50,7 @@ import kotlin.time.Duration
  */
 internal class TencentGuildImpl(
     private val baseBot: TencentGuildComponentBotImpl,
-    private val guildInfo: TencentGuildInfo
+    private val guildInfo: TencentGuildInfo,
 ) : TencentGuild, TencentGuildInfo by guildInfo {
     
     override val bot: TencentGuildComponentGuildMemberBot by lazy {
@@ -58,7 +59,7 @@ internal class TencentGuildImpl(
     
     
     override suspend fun member(id: ID): TencentMemberImpl? {
-        val member = kotlin.runCatching { GetMemberApi(guildInfo.id, id).requestBy(baseBot) }.getOrElse {e ->
+        val member = kotlin.runCatching { GetMemberApi(guildInfo.id, id).requestBy(baseBot) }.getOrElse { e ->
             if (e !is TencentApiException) throw e
             
             if (e.value == 404) null else throw e
@@ -67,74 +68,51 @@ internal class TencentGuildImpl(
         return member?.let { m -> TencentMemberImpl(baseBot, m, this) }
     }
     
-    @Api4J
-    override fun getRoles(groupingId: ID?, limiter: Limiter): Stream<out TencentRole> {
-        @Suppress("UNCHECKED_CAST")
-        return getRoleSequence(guildInfo.id).map { info ->
-            TencentRoleImpl(baseBot, info)
-        }.asStream().withLimiter(limiter)
-    }
-
-
-    override suspend fun roles(groupingId: ID?, limiter: Limiter): Flow<TencentRoleImpl> {
-        return getRoleFlow(guildInfo.id).map { info ->
-            TencentRoleImpl(baseBot, info)
-        }.withLimiter(limiter)
-    }
-
-    private suspend fun getRoleFlow(guildId: ID): Flow<TencentRoleInfo> = flow {
+    override val roles: Items<TencentRoleImpl>
+        get() = bot.items(flowFactory = { prop ->
+            val flow = getRoleFlow(guildInfo.id).map { info ->
+                TencentRoleImpl(baseBot, info)
+            }
+            prop.effectOn(flow)
+        })
+    
+    private fun getRoleFlow(guildId: ID): Flow<TencentRoleInfo> = flow {
         GetGuildRoleListApi(guildId).requestBy(baseBot).roles.forEach {
             emit(it)
         }
     }
-
-    private fun getRoleSequence(guildId: ID): Sequence<TencentRoleInfo> = sequence {
-        val roles = runBlocking {
-            GetGuildRoleListApi(guildId).requestBy(baseBot).roles
-        }
-        yieldAll(roles)
-    }
-
+    
     override val currentChannel: Int by lazy {
         baseBot.async { getChildrenFlow(guildInfo.id).count() }
             .asCompletableFuture().join()
     }
-
-
-    override suspend fun children(groupingId: ID?, limiter: Limiter): Flow<TencentChannelImpl> {
-        return getChildrenFlow(guildInfo.id).map { info ->
-            TencentChannelImpl(baseBot, info, this)
-        }.withLimiter(limiter)
-    }
-
-
-    @Api4J
-    override fun getChildren(groupingId: ID?, limiter: Limiter): Stream<TencentChannelImpl> {
-        return getChildrenSequence(guildInfo.id).map { info ->
-            TencentChannelImpl(baseBot, info, this)
-        }.withLimiter(limiter).asStream()
-    }
-
+    
+    override val children: Items<TencentChannelImpl>
+        get() = bot.items(flowFactory = { prop ->
+            val flow = getChildrenFlow(guildInfo.id).map { info ->
+                TencentChannelImpl(baseBot, info, this)
+            }
+            prop.effectOn(flow)
+        })
+    
+    
     override suspend fun mute(duration: Duration): Boolean = false
     
-
     
-
     private var _owner: LazyValue<TencentMemberImpl> = lazyValue {
         member(guildInfo.ownerId)!!
     }
-
+    
     override suspend fun owner(): TencentMemberImpl = _owner()
-
+    
     @Api4J
     override val owner: TencentMemberImpl
         get() = runBlocking { owner() }
-
-    private suspend fun getChildrenFlow(guildId: ID): Flow<TencentChannelInfo> =
-        GetGuildChannelListApi(guildId = guildId).requestBy(baseBot).asFlow()
-
-
-    private fun getChildrenSequence(guildId: ID): Sequence<TencentChannelInfo> =
-        runBlocking { GetGuildChannelListApi(guildId = guildId).requestBy(baseBot).asSequence() }
-
+    
+    private fun getChildrenFlow(guildId: ID): Flow<TencentChannelInfo> = flow {
+        val list = GetGuildChannelListApi(guildId = guildId).requestBy(baseBot)
+        list.forEach { emit(it) }
+    }
+    
+    
 }

@@ -17,18 +17,21 @@
 
 package love.forte.simbot.component.tencentguild.internal
 
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
 import love.forte.simbot.Api4J
 import love.forte.simbot.action.UnsupportedActionException
 import love.forte.simbot.component.tencentguild.TencentMember
 import love.forte.simbot.component.tencentguild.TencentRole
 import love.forte.simbot.definition.UserStatus
+import love.forte.simbot.literal
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageReceipt
 import love.forte.simbot.tencentguild.TencentMemberInfo
-import java.util.stream.Stream
+import love.forte.simbot.utils.item.Items
+import love.forte.simbot.utils.item.effectOn
+import love.forte.simbot.utils.item.items
 
 /**
  *
@@ -37,51 +40,52 @@ import java.util.stream.Stream
 internal class TencentMemberImpl internal constructor(
     override val bot: TencentGuildComponentBotImpl,
     private val info: TencentMemberInfo,
-    private val guildFactory: suspend () -> TencentGuildImpl
+    private val guildFactory: suspend () -> TencentGuildImpl,
 ) : TencentMember, TencentMemberInfo by info {
-
+    
     internal constructor(
         bot: TencentGuildComponentBotImpl,
         info: TencentMemberInfo,
-        guild: TencentGuildImpl
+        guild: TencentGuildImpl,
     ) : this(bot, info, { guild })
-
+    
     override suspend fun guild(): TencentGuildImpl = guildFactory()
-
+    
     override suspend fun organization(): TencentGuildImpl = guild()
-
+    
     @Api4J
     override val organization: TencentGuildImpl
         get() = runBlocking { organization() }
-
+    
     override val status: UserStatus =
         if (info.id == bot.id) {
             bot.status
         } else {
             if (info.user.isBot) botStatus else normalStatus
         }
-
-
-    override suspend fun roles(): Flow<TencentRole> {
-        val roleIds = info.roleIds.mapTo(mutableSetOf()) { it.toString() }
-        return guild().roles().filter { it.id.toString() in roleIds }
-    }
-
-    @Api4J
-    override val roles: Stream<out TencentRole>
+    
+    override val roles: Items<TencentRole>
         get() {
             val roleIds = info.roleIds.mapTo(mutableSetOf()) { it.toString() }
-            return runBlocking { guild() }.getRoles().filter { it.id.toString() in roleIds }
+            
+            return bot.items(flowFactory = { prop ->
+                val flow = flow<TencentRole> {
+                    guild().roles.collect { emit(it) }
+                }.filter { it.id.literal in roleIds }
+                
+                prop.effectOn(flow)
+            })
+            
         }
-
-
+    
+    
     @Deprecated("Not yet implemented")
     @JvmSynthetic
     override suspend fun send(message: Message): MessageReceipt {
         throw UnsupportedActionException("send(message)")
         // TODO
     }
-
+    
 }
 
 private val botStatus = UserStatus.builder().bot().fakeUser().build()
