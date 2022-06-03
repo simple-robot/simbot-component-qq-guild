@@ -39,7 +39,8 @@ import love.forte.simbot.tencentguild.api.role.GetGuildRoleListApi
 import love.forte.simbot.utils.LazyValue
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.effectOn
-import love.forte.simbot.utils.item.items
+import love.forte.simbot.utils.item.effectedItemsByFlow
+import love.forte.simbot.utils.item.itemsByFlow
 import love.forte.simbot.utils.lazyValue
 import love.forte.simbot.utils.runInBlocking
 import kotlin.time.Duration
@@ -69,12 +70,12 @@ internal class TencentGuildImpl(
     }
     
     override val roles: Items<TencentRoleImpl>
-        get() = bot.items(flowFactory = { prop ->
+        get() = bot.itemsByFlow { prop ->
             val flow = getRoleFlow(guildInfo.id).map { info ->
                 TencentRoleImpl(baseBot, info)
             }
             prop.effectOn(flow)
-        })
+        }
     
     private fun getRoleFlow(guildId: ID): Flow<TencentRoleInfo> = flow {
         GetGuildRoleListApi(guildId).requestBy(baseBot).roles.forEach {
@@ -88,12 +89,11 @@ internal class TencentGuildImpl(
     }
     
     override val children: Items<TencentChannelImpl>
-        get() = bot.items(flowFactory = { prop ->
-            val flow = getChildrenFlow(guildInfo.id).map { info ->
+        get() = bot.effectedItemsByFlow {
+            getChildrenFlow(guildInfo.id).map { info ->
                 TencentChannelImpl(baseBot, info, this)
             }
-            prop.effectOn(flow)
-        })
+        }
     
     
     override suspend fun mute(duration: Duration): Boolean = false

@@ -35,7 +35,7 @@ import love.forte.simbot.tencentguild.*
 import love.forte.simbot.tencentguild.api.guild.GetBotGuildListApi
 import love.forte.simbot.tencentguild.api.guild.GetGuildApi
 import love.forte.simbot.utils.item.Items
-import love.forte.simbot.utils.item.items
+import love.forte.simbot.utils.item.itemsByFlow
 import love.forte.simbot.utils.runInBlocking
 import kotlin.coroutines.CoroutineContext
 
@@ -69,11 +69,11 @@ internal class TencentGuildComponentBotImpl(
     }
     
     override val guilds: Items<TencentGuildImpl>
-        get() = bot.items(flowFactory = { prop ->
+        get() = bot.itemsByFlow { prop ->
             getGuildFlow(limiter(prop.offset, prop.limit, prop.batch)).map { info ->
                 TencentGuildImpl(baseBot = this, guildInfo = info)
             }
-        })
+        }
     
     
     private fun getGuildFlow(limiter: Limiter): Flow<TencentGuildInfo> {

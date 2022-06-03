@@ -30,8 +30,7 @@ import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageReceipt
 import love.forte.simbot.tencentguild.TencentMemberInfo
 import love.forte.simbot.utils.item.Items
-import love.forte.simbot.utils.item.effectOn
-import love.forte.simbot.utils.item.items
+import love.forte.simbot.utils.item.effectedItemsByFlow
 
 /**
  *
@@ -68,14 +67,12 @@ internal class TencentMemberImpl internal constructor(
         get() {
             val roleIds = info.roleIds.mapTo(mutableSetOf()) { it.toString() }
             
-            return bot.items(flowFactory = { prop ->
-                val flow = flow<TencentRole> {
+            return bot.effectedItemsByFlow {
+                flow<TencentRole> {
                     guild().roles.collect { emit(it) }
                 }.filter { it.id.literal in roleIds }
-                
-                prop.effectOn(flow)
-            })
-            
+            }
+    
         }
     
     

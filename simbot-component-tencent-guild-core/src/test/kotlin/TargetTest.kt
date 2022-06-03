@@ -15,9 +15,10 @@
  *
  */
 
-import love.forte.simbot.component.tencentguild.event.*
-import love.forte.simbot.event.*
-import kotlin.test.*
+import love.forte.simbot.component.tencentguild.event.TcgChannelAtMessageEvent
+import love.forte.simbot.event.ChannelMessageEvent
+import love.forte.simbot.event.Event.Key.Companion.isSub
+import kotlin.test.Test
 
 /**
  *
@@ -30,7 +31,7 @@ class TargetTest {
         val channelType = ChannelMessageEvent.Key
         val sub = TcgChannelAtMessageEvent.Key
 
-        println(sub.isSubFrom(channelType))
+        println(sub isSub channelType)
 
     }
 }
