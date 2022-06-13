@@ -18,9 +18,7 @@
 package love.forte.simbot.component.tencentguild.internal
 
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.runBlocking
-import love.forte.simbot.Api4J
+import love.forte.simbot.ExperimentalSimbotApi
 import love.forte.simbot.action.UnsupportedActionException
 import love.forte.simbot.component.tencentguild.TencentMember
 import love.forte.simbot.component.tencentguild.TencentRole
@@ -36,26 +34,14 @@ import love.forte.simbot.utils.item.effectedItemsByFlow
  *
  * @author ForteScarlet
  */
-internal class TencentMemberImpl internal constructor(
+internal class TencentMemberImpl(
     override val bot: TencentGuildComponentBotImpl,
     private val info: TencentMemberInfo,
-    private val guildFactory: suspend () -> TencentGuildImpl,
+    override val guild: TencentGuildImpl,
 ) : TencentMember, TencentMemberInfo by info {
+    private val roleIdSet = info.roleIds.mapTo(mutableSetOf()) { it.literal }
     
-    internal constructor(
-        bot: TencentGuildComponentBotImpl,
-        info: TencentMemberInfo,
-        guild: TencentGuildImpl,
-    ) : this(bot, info, { guild })
-    
-    override suspend fun guild(): TencentGuildImpl = guildFactory()
-    
-    override suspend fun organization(): TencentGuildImpl = guild()
-    
-    @Api4J
-    override val organization: TencentGuildImpl
-        get() = runBlocking { organization() }
-    
+    @ExperimentalSimbotApi
     override val status: UserStatus =
         if (info.id == bot.id) {
             bot.status
@@ -65,14 +51,11 @@ internal class TencentMemberImpl internal constructor(
     
     override val roles: Items<TencentRole>
         get() {
-            val roleIds = info.roleIds.mapTo(mutableSetOf()) { it.toString() }
             
             return bot.effectedItemsByFlow {
-                flow<TencentRole> {
-                    guild().roles.collect { emit(it) }
-                }.filter { it.id.literal in roleIds }
+                guild.roles.asFlow().filter { it.id.literal in roleIdSet }
             }
-    
+            
         }
     
     
@@ -83,7 +66,13 @@ internal class TencentMemberImpl internal constructor(
         // TODO
     }
     
+    override fun toString(): String {
+        return "TencentMemberImpl(bot=$bot, info=$info, guild=$guild)"
+    }
 }
 
+@ExperimentalSimbotApi
 private val botStatus = UserStatus.builder().bot().fakeUser().build()
+
+@ExperimentalSimbotApi
 private val normalStatus = UserStatus.builder().normal().build()

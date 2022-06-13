@@ -17,7 +17,6 @@
 
 package love.forte.simbot.component.tencentguild
 
-import kotlinx.coroutines.runBlocking
 import love.forte.simbot.Api4J
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
@@ -42,7 +41,7 @@ import kotlin.time.Duration
 public interface TencentChannel : Channel, TencentChannelInfo {
     
     
-    override val bot: TencentGuildComponentGuildMemberBot
+    override val bot: TencentGuildComponentGuildBot
     override val createTime: Timestamp
     override val currentMember: Int
     override val description: String
@@ -57,20 +56,29 @@ public interface TencentChannel : Channel, TencentChannelInfo {
     override val position: Int
     override val parentId: String
     
-    @Api4J
-    override val previous: TencentGuild
+    
+    @OptIn(Api4J::class)
+    override val guild: TencentGuild
+    
+    
+    @OptIn(Api4J::class)
+    override val owner: TencentMember
+    
+    
+    @OptIn(Api4J::class)
+    override val previous: TencentGuild get() = guild
     
     @JvmSynthetic
-    override suspend fun guild(): TencentGuild
+    override suspend fun guild(): TencentGuild = guild
     
     @JvmSynthetic
-    override suspend fun owner(): TencentMember
+    override suspend fun owner(): TencentMember = owner
     
     
     override val roles: Items<TencentRole>
     
     @JvmSynthetic
-    override suspend fun previous(): TencentGuild
+    override suspend fun previous(): TencentGuild = guild
     
     @JvmSynthetic
     override suspend fun send(message: Message): TencentMessageReceipt
@@ -97,15 +105,6 @@ public interface TencentChannel : Channel, TencentChannelInfo {
     override fun sendBlocking(message: MessageContent): TencentMessageReceipt {
         return sendBlocking(message)
     }
-    //// Impl
-    
-    @Api4J
-    override val guild: TencentGuild
-        get() = runBlocking { guild() }
-    
-    @Api4J
-    override val owner: TencentMember
-        get() = runBlocking { owner() }
     
     
     /**

@@ -22,25 +22,33 @@ import love.forte.simbot.Timestamp
 import love.forte.simbot.component.tencentguild.event.TcgGuildModifyEvent
 import love.forte.simbot.component.tencentguild.internal.TencentGuildComponentBotImpl
 import love.forte.simbot.component.tencentguild.internal.TencentGuildImpl
+import love.forte.simbot.component.tencentguild.internal.TencentGuildImpl.Companion.tencentGuildImpl
+import love.forte.simbot.literal
 import love.forte.simbot.tencentguild.EventSignals
 import love.forte.simbot.tencentguild.TencentGuildInfo
 
+private suspend fun TencentGuildComponentBotImpl.findOrCreateGuild(data: TencentGuildInfo): TencentGuildImpl {
+    return getInternalGuild(data.id) ?: tencentGuildImpl(this, data).also {
+        internalGuilds[data.id.literal] = it
+    }
+}
 
 internal class TcgGuildCreate(
     override val sourceEventEntity: TencentGuildInfo,
     override val bot: TencentGuildComponentBotImpl,
-    override val guild: TencentGuildImpl
+    override val guild: TencentGuildImpl,
 ) : TcgGuildModifyEvent.Create() {
     override val timestamp: Timestamp get() = changedTime
     override val id: ID = tcgGuildModifyId(0, bot.id, guild.id, timestamp)
-
+    
     internal object Parser : BaseSignalToEvent<TencentGuildInfo>() {
         override val key = Create
         override val type: EventSignals<TencentGuildInfo>
             get() = EventSignals.Guilds.GuildCreate
-
+        
         override suspend fun doParser(data: TencentGuildInfo, bot: TencentGuildComponentBotImpl): TcgGuildCreate {
-            return TcgGuildCreate(data, bot, TencentGuildImpl(bot, data))
+            val guild = bot.findOrCreateGuild(data)
+            return TcgGuildCreate(data, bot, guild)
         }
     }
 }
@@ -49,18 +57,19 @@ internal class TcgGuildCreate(
 internal class TcgGuildUpdate(
     override val sourceEventEntity: TencentGuildInfo,
     override val bot: TencentGuildComponentBotImpl,
-    override val guild: TencentGuildImpl
+    override val guild: TencentGuildImpl,
 ) : TcgGuildModifyEvent.Update() {
     override val id: ID = tcgGuildModifyId(1, bot.id, guild.id, timestamp)
     override val timestamp: Timestamp get() = changedTime
-
+    
     internal object Parser : BaseSignalToEvent<TencentGuildInfo>() {
         override val key = Update
         override val type: EventSignals<TencentGuildInfo>
             get() = EventSignals.Guilds.GuildUpdate
-
+        
         override suspend fun doParser(data: TencentGuildInfo, bot: TencentGuildComponentBotImpl): TcgGuildUpdate {
-            return TcgGuildUpdate(data, bot, TencentGuildImpl(bot, data))
+            val guild = bot.findOrCreateGuild(data)
+            return TcgGuildUpdate(data, bot, guild)
         }
     }
 }
@@ -69,20 +78,21 @@ internal class TcgGuildUpdate(
 internal class TcgGuildDelete(
     override val sourceEventEntity: TencentGuildInfo,
     override val bot: TencentGuildComponentBotImpl,
-    override val guild: TencentGuildImpl
+    override val guild: TencentGuildImpl,
 ) : TcgGuildModifyEvent.Delete() {
     override val timestamp: Timestamp
         get() = changedTime
     override val id: ID = tcgGuildModifyId(2, bot.id, guild.id, timestamp)
-
-
+    
+    
     internal object Parser : BaseSignalToEvent<TencentGuildInfo>() {
         override val key = Delete
         override val type: EventSignals<TencentGuildInfo>
             get() = EventSignals.Guilds.GuildDelete
-
+        
         override suspend fun doParser(data: TencentGuildInfo, bot: TencentGuildComponentBotImpl): TcgGuildDelete {
-            return TcgGuildDelete(data, bot, TencentGuildImpl(bot, data))
+            val guild = bot.findOrCreateGuild(data)
+            return TcgGuildDelete(data, bot, guild)
         }
     }
 }

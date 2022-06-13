@@ -17,11 +17,19 @@
 
 package love.forte.simbot.component.tencentguild.internal.event
 
-import kotlinx.serialization.json.*
-import love.forte.simbot.*
-import love.forte.simbot.component.tencentguild.internal.*
-import love.forte.simbot.event.*
-import love.forte.simbot.tencentguild.*
+import kotlinx.serialization.json.Json
+import love.forte.simbot.ID
+import love.forte.simbot.Simbot
+import love.forte.simbot.component.tencentguild.internal.TencentChannelImpl
+import love.forte.simbot.component.tencentguild.internal.TencentGuildComponentBotImpl
+import love.forte.simbot.component.tencentguild.internal.TencentGuildImpl
+import love.forte.simbot.component.tencentguild.internal.TencentGuildImpl.Companion.tencentGuildImpl
+import love.forte.simbot.event.Event
+import love.forte.simbot.tencentguild.EventSignals
+import love.forte.simbot.tencentguild.Signal
+import love.forte.simbot.tencentguild.api.channel.GetChannelApi
+import love.forte.simbot.tencentguild.api.guild.GetGuildApi
+import love.forte.simbot.tencentguild.requestBy
 
 
 internal interface SignalToEvent {
@@ -29,7 +37,7 @@ internal interface SignalToEvent {
     suspend operator fun invoke(
         bot: TencentGuildComponentBotImpl,
         decoder: Json,
-        dispatch: Signal.Dispatch, decoded: () -> Any
+        dispatch: Signal.Dispatch, decoded: () -> Any,
     ): Event
 }
 
@@ -37,16 +45,16 @@ internal abstract class BaseSignalToEvent<S : Any> : SignalToEvent {
     abstract val type: EventSignals<S>
     override suspend fun invoke(
         bot: TencentGuildComponentBotImpl, decoder: Json,
-        dispatch: Signal.Dispatch, decoded: () -> Any
+        dispatch: Signal.Dispatch, decoded: () -> Any,
     ): Event {
         Simbot.check(dispatch.type == type.type) {
             "Event type does not match: ${dispatch.type} != ${type.type}"
         }
-
+        
         @Suppress("UNCHECKED_CAST")
         return doParser(decoded() as S, bot)
     }
-
+    
     protected abstract suspend fun doParser(data: S, bot: TencentGuildComponentBotImpl): Event
 }
 
@@ -55,22 +63,49 @@ internal val eventSignalParsers =
         EventSignals.Guilds.GuildCreate to TcgGuildCreate.Parser,
         EventSignals.Guilds.GuildUpdate to TcgGuildUpdate.Parser,
         EventSignals.Guilds.GuildDelete to TcgGuildDelete.Parser,
-
+        
         EventSignals.Guilds.ChannelCreate to TcgChannelCreate.Parser,
         EventSignals.Guilds.ChannelUpdate to TcgChannelUpdate.Parser,
         EventSignals.Guilds.ChannelDelete to TcgChannelDelete.Parser,
-
+        
         EventSignals.GuildMembers.GuildMemberAdd to TcgGuildMemberIncrease.Parser,
         // EventSignals.GuildMembers.GuildMemberUpdate to TODO(),
         EventSignals.GuildMembers.GuildMemberRemove to TcgGuildMemberDecrease.Parser,
-
+        
         // EventSignals.DirectMessage.DirectMessageCreate to TODO(),
-
+        
         EventSignals.AudioAction.AudioStart to TcgAudioStart.Parser,
         EventSignals.AudioAction.AudioFinish to TcgAudioFinish.Parser,
         EventSignals.AudioAction.AudioOnMic to TcgAudioOnMic.Parser,
         EventSignals.AudioAction.AudioOffMic to TcgAudioOffMic.Parser,
-
+        
         EventSignals.AtMessages.AtMessageCreate to TcgChannelAtMessageEventImpl.Parser,
     )
+
+
+internal suspend fun TencentGuildComponentBotImpl.createGuildImpl(
+    guildId: ID,
+): TencentGuildImpl {
+    val guild = GetGuildApi(guildId).requestBy(sourceBot)
+    return tencentGuildImpl(this, guild)
+}
+
+internal suspend fun TencentGuildComponentBotImpl.createChannelImpl(
+    guild: TencentGuildImpl, channelId: ID,
+): TencentChannelImpl {
+    val channel = GetChannelApi(channelId).requestBy(sourceBot)
+    return TencentChannelImpl(this, channel, guild)
+}
+
+internal suspend inline fun TencentGuildComponentBotImpl.findOrCreateGuildImpl(guildId: ID, onCreate: (created: TencentGuildImpl) -> Unit = {}): TencentGuildImpl {
+    return getInternalGuild(guildId) ?: createGuildImpl(guildId).also(onCreate)
+    
+}
+
+internal suspend inline fun TencentGuildComponentBotImpl.findOrCreateChannelImpl(
+    guildId: ID, channelId: ID, onCreateGuild: (created: TencentGuildImpl) -> Unit = {}, onCreateChannel: (created: TencentChannelImpl) -> Unit = {}
+): TencentChannelImpl {
+    val guild = findOrCreateGuildImpl(guildId, onCreateGuild)
+    return guild.getInternalChannel(channelId) ?: createChannelImpl(guild, channelId).also(onCreateChannel)
+}
 

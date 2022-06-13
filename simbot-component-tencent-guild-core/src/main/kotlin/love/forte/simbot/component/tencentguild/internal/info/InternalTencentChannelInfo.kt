@@ -15,37 +15,36 @@
  *
  */
 
-package love.forte.simbot.component.tencentguild.internal
+package love.forte.simbot.component.tencentguild.internal.info
 
 import love.forte.simbot.ID
-import love.forte.simbot.message.MessageReceipt
-import love.forte.simbot.tencentguild.TencentMessage
+import love.forte.simbot.tencentguild.TencentChannelInfo
+
+internal data class InternalTencentChannelInfo(
+    override var id: ID,
+    override var guildId: ID,
+    override var name: String,
+    override var channelTypeValue: Int,
+    override var channelSubTypeValue: Int,
+    override var position: Int,
+    override var parentId: String,
+    override var ownerId: ID,
+) : TencentChannelInfo
 
 
-public interface TencentMessageReceipt : MessageReceipt {
-    /**
-     * 腾讯频道消息发送api发送消息后得到的回执，也就是消息对象。
-     */
-    public val messageResult: TencentMessage
-}
-
-
-/**
- *
- * @author ForteScarlet
- */
-internal class MessageAsReceipt(override val messageResult: TencentMessage) : TencentMessageReceipt {
-    override val id: ID
-        get() = messageResult.id
-
-    override val isSuccess: Boolean
-        get() = true
+internal fun TencentChannelInfo.toInternal(copy: Boolean = true): InternalTencentChannelInfo {
+    if (this is InternalTencentChannelInfo) {
+        return if (copy) copy() else this
+    }
     
-    /**
-     * 消息暂时不支持撤回。
-     */
-    override suspend fun delete(): Boolean = false
+    return InternalTencentChannelInfo(
+        id,
+        guildId,
+        name,
+        channelTypeValue,
+        channelSubTypeValue,
+        position,
+        parentId,
+        ownerId,
+    )
 }
-
-internal fun TencentMessage.asReceipt(): TencentMessageReceipt = MessageAsReceipt(this)
-

@@ -48,90 +48,83 @@ public abstract class TcgChannelAtMessageEvent : TcgEvent<TencentMessage>(), Cha
     SendSupport {
     abstract override val sourceEventEntity: TencentMessage
     override val eventSignal: EventSignals<TencentMessage> get() = EventSignals.AtMessages.AtMessageCreate
-
+    
     /**
      * 此消息的发送者。
      */
     @JvmSynthetic
-    abstract override suspend fun author(): TencentMember
-
+    override suspend fun author(): TencentMember = author
+    
     /**
      * 此消息的发送者。
      */
-    @Api4J
-    override val author: TencentMember
-        get() = runBlocking { author() }
-
+    @OptIn(Api4J::class)
+    abstract override val author: TencentMember
+    
+    
+    /**
+     * 此事件发生的频道。同 [source].
+     */
+    @OptIn(Api4J::class)
+    abstract override val channel: TencentChannel
+    
     /**
      * 此事件发生的频道。同 [channel].
      */
     @JvmSynthetic
-    abstract override suspend fun source(): TencentChannel
-
+    override suspend fun source(): TencentChannel = channel
+    
+    
     /**
      * 此事件发生的频道。同 [channel].
      */
-    @Api4J
+    @OptIn(Api4J::class)
     override val source: TencentChannel
-        get() = runBlocking { source() }
-
-
+        get() = channel
+    
+    
     /**
      * 此事件发生的频道。同 [source].
      */
     @JvmSynthetic
-    abstract override suspend fun channel(): TencentChannel
-
-    /**
-     * 此事件发生的频道。同 [source].
-     */
-    @Api4J
-    override val channel: TencentChannel
-        get() = runBlocking { channel() }
-
+    override suspend fun channel(): TencentChannel = channel
+    
+    
     /**
      * 事件发生时间。
      */
     override val timestamp: Timestamp get() = sourceEventEntity.timestamp
-
+    
     /**
      * 接收到的消息。
      */
     abstract override val messageContent: ReceivedMessageContent
-
+    
     /**
      * 此事件发生的频道。同 [channel].
      */
     @JvmSynthetic
     override suspend fun organization(): TencentChannel = channel()
-
+    
     /**
      * 此事件发生的频道。同 [channel].
      */
     @Api4J
     override val organization: TencentChannel
         get() = runBlocking { organization() }
-
-
-
+    
+    
     /**
      * 通过当前事件中的 `msgId` 回复此事件的发送者。
      */
     @JvmSynthetic
     abstract override suspend fun reply(message: Message): MessageReceipt // TODO update return type.
-
-
-    /**
-     * 暂不支持撤回他人消息，始终返回false。
-     */
-    @JvmSynthetic
-    override suspend fun delete(): Boolean = false // not support, maybe.
-
+    
+    
     override val key: Key get() = Key
-
+    
     public companion object Key : BaseEventKey<TcgChannelAtMessageEvent>(
-        "tcg.at_msg",
-        setOf(ChannelMessageEvent.Key)
+        "tcg.at_msg", setOf(ChannelMessageEvent.Key)
     ) {
         override fun safeCast(value: Any): TcgChannelAtMessageEvent? = doSafeCast(value)
     }

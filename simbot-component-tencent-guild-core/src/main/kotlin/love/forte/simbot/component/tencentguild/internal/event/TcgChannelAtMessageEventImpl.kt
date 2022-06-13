@@ -18,7 +18,6 @@
 package love.forte.simbot.component.tencentguild.internal.event
 
 import love.forte.simbot.ID
-import love.forte.simbot.component.tencentguild.TencentMember
 import love.forte.simbot.component.tencentguild.event.TcgChannelAtMessageEvent
 import love.forte.simbot.component.tencentguild.internal.*
 import love.forte.simbot.component.tencentguild.util.requestBy
@@ -27,11 +26,7 @@ import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageReceipt
 import love.forte.simbot.tencentguild.EventSignals
 import love.forte.simbot.tencentguild.TencentMessage
-import love.forte.simbot.tencentguild.api.channel.GetChannelApi
-import love.forte.simbot.tencentguild.api.guild.GetGuildApi
 import love.forte.simbot.tencentguild.api.message.MessageSendApi
-import love.forte.simbot.utils.LazyValue
-import love.forte.simbot.utils.lazyValue
 
 /**
  *
@@ -40,6 +35,7 @@ import love.forte.simbot.utils.lazyValue
 internal class TcgChannelAtMessageEventImpl(
     override val sourceEventEntity: TencentMessage,
     override val bot: TencentGuildComponentBotImpl,
+    override val channel: TencentChannelImpl,
 ) : TcgChannelAtMessageEvent() {
     override val id: ID = sourceEventEntity.id
     override suspend fun reply(message: Message): MessageReceipt {
@@ -51,31 +47,8 @@ internal class TcgChannelAtMessageEventImpl(
     
     override suspend fun send(message: Message): MessageReceipt = reply(message)
     
-    private val _fromGuild: LazyValue<TencentGuildImpl> = bot.lazyValue {
-        val guildInfo = GetGuildApi(sourceEventEntity.guildId).requestBy(bot)
-        TencentGuildImpl(baseBot = bot, guildInfo)
-    }
+    override val author: TencentMemberImpl = TencentMemberImpl(bot, sourceEventEntity.member, channel.guild)
     
-    override suspend fun author(): TencentMember = _author.await()
-    
-    private val _author: LazyValue<TencentMemberImpl> = bot.lazyValue {
-        TencentMemberImpl(
-            bot = bot,
-            info = sourceEventEntity.member,
-            guild = _fromGuild.await()
-        )
-    }
-    
-    private var _sourceChannel: LazyValue<TencentChannelImpl> = bot.lazyValue {
-        TencentChannelImpl(
-            bot = bot,
-            info = GetChannelApi(sourceEventEntity.channelId).requestBy(bot),
-            from = _fromGuild.await()
-        )
-    }
-    
-    override suspend fun source(): TencentChannelImpl = _sourceChannel.await()
-    override suspend fun channel(): TencentChannelImpl = _sourceChannel.await()
     
     override val messageContent: TencentReceiveMessageContentImpl by lazy(LazyThreadSafetyMode.NONE) {
         TencentReceiveMessageContentImpl(sourceEventEntity)
@@ -88,7 +61,8 @@ internal class TcgChannelAtMessageEventImpl(
             get() = EventSignals.AtMessages.AtMessageCreate
         
         override suspend fun doParser(data: TencentMessage, bot: TencentGuildComponentBotImpl): Event {
-            return TcgChannelAtMessageEventImpl(data, bot)
+            val channel = bot.findOrCreateChannelImpl(data.guildId, data.channelId)
+            return TcgChannelAtMessageEventImpl(data, bot, channel)
         }
         
     }

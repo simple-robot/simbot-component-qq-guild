@@ -17,7 +17,6 @@
 
 package love.forte.simbot.component.tencentguild.event
 
-import kotlinx.coroutines.runBlocking
 import love.forte.simbot.Api4J
 import love.forte.simbot.Timestamp
 import love.forte.simbot.component.tencentguild.TencentChannel
@@ -40,45 +39,44 @@ import love.forte.simbot.tencentguild.TencentAudioAction
  */
 @BaseEvent
 public sealed class TcgAudioEvent : TcgEvent<TencentAudioAction>(), ChannelEvent {
-
+    
     override val timestamp: Timestamp = Timestamp.now()
-
+    
+    /**
+     * 事件发生的频道。
+     */
+    @OptIn(Api4J::class)
+    abstract override val channel: TencentChannel
+    
+    
     /**
      * 事件发生的频道。
      */
     @JvmSynthetic
-    abstract override suspend fun channel(): TencentChannel
-
-
-    /**
-     * 事件发生的频道。
-     */
-    @Api4J
-    override val channel: TencentChannel
-        get() = runBlocking { channel() }
-
-
+    override suspend fun channel(): TencentChannel = channel
+    
+    
     /**
      * 事件发生的频道。同 [channel].
      */
     @Api4J
     override val organization: TencentChannel get() = channel
-
+    
     /**
      * 事件发生的频道。同 [channel].
      */
     @JvmSynthetic
     override suspend fun organization(): TencentChannel = channel()
-
-
+    
+    
     abstract override val key: Event.Key<out TcgAudioEvent>
-
+    
     public companion object Key : BaseEventKey<TcgAudioEvent>(
         "tcg.audio", TcgEvent, ChannelEvent
     ) {
         override fun safeCast(value: Any): TcgAudioEvent? = doSafeCast(value)
     }
-
+    
     /**
      * 音频开始播放时。
      *
@@ -87,17 +85,17 @@ public sealed class TcgAudioEvent : TcgEvent<TencentAudioAction>(), ChannelEvent
     public abstract class Start : TcgAudioEvent() {
         override val eventSignal: EventSignals<TencentAudioAction>
             get() = EventSignals.AudioAction.AudioStart
-
+        
         override val key: Event.Key<Start>
             get() = Key
-
+        
         public companion object Key : BaseEventKey<Start>(
             "tcg.audio.start", TcgAudioEvent
         ) {
             override fun safeCast(value: Any): Start? = doSafeCast(value)
         }
     }
-
+    
     /**
      * 音频播放结束时
      * @see EventSignals.AudioAction.AudioFinish
@@ -105,17 +103,17 @@ public sealed class TcgAudioEvent : TcgEvent<TencentAudioAction>(), ChannelEvent
     public abstract class Finish : TcgAudioEvent() {
         override val eventSignal: EventSignals<TencentAudioAction>
             get() = EventSignals.AudioAction.AudioFinish
-
+        
         override val key: Event.Key<Finish>
             get() = Key
-
+        
         public companion object Key : BaseEventKey<Finish>(
             "tcg.audio.finish", TcgAudioEvent
         ) {
             override fun safeCast(value: Any): Finish? = doSafeCast(value)
         }
     }
-
+    
     /**
      * 上麦时
      * @see EventSignals.AudioAction.AudioOnMic
@@ -123,17 +121,17 @@ public sealed class TcgAudioEvent : TcgEvent<TencentAudioAction>(), ChannelEvent
     public abstract class OnMic : TcgAudioEvent() {
         override val eventSignal: EventSignals<TencentAudioAction>
             get() = EventSignals.AudioAction.AudioOnMic
-
+        
         override val key: Event.Key<OnMic>
             get() = Key
-
+        
         public companion object Key : BaseEventKey<OnMic>(
             "tcg.audio.on_mic", TcgAudioEvent
         ) {
             override fun safeCast(value: Any): OnMic? = doSafeCast(value)
         }
     }
-
+    
     /**
      * 下麦时
      * @see EventSignals.AudioAction.AudioOffMic
@@ -141,17 +139,17 @@ public sealed class TcgAudioEvent : TcgEvent<TencentAudioAction>(), ChannelEvent
     public abstract class OffMic : TcgAudioEvent() {
         override val eventSignal: EventSignals<TencentAudioAction>
             get() = EventSignals.AudioAction.AudioOffMic
-
+        
         override val key: Event.Key<OffMic>
             get() = Key
-
+        
         public companion object Key : BaseEventKey<OffMic>(
             "tcg.audio.off_mic", TcgAudioEvent
         ) {
             override fun safeCast(value: Any): OffMic? = doSafeCast(value)
         }
     }
-
+    
 }
 
 

@@ -67,7 +67,7 @@ internal fun checkResumeCode(code: Short): Boolean {
  */
 internal class TencentGuildBotImpl(
     override val ticket: TicketImpl,
-    override val configuration: TencentGuildBotConfiguration
+    override val configuration: TencentGuildBotConfiguration,
 ) : TencentGuildBot {
     private var _botInfo: TencentBotInfo? = null
     
@@ -77,44 +77,51 @@ internal class TencentGuildBotImpl(
             return _botInfo ?: runInBlocking { me() }
         }
     
-
+    
     private val logger = LoggerFactory.getLogger("love.forte.simbot.tencentguild.bot.${ticket.appId}")
-
+    
     // private val parentJob: Job
     override val coroutineContext: CoroutineContext
     private val httpClient: HttpClient get() = configuration.httpClient
     private val url: Url get() = configuration.serverUrl
     private val decoder: Json get() = configuration.decoder
-
+    
     private val processorQueue: ConcurrentLinkedQueue<suspend Signal.Dispatch.(Json, () -> Any) -> Unit> =
         ConcurrentLinkedQueue()
-
+    
+    private val preProcessorQueue: ConcurrentLinkedQueue<suspend Signal.Dispatch.(Json, () -> Any) -> Unit> =
+        ConcurrentLinkedQueue()
+    
     init {
         val parentJob = configuration.coroutineContext[Job]
         val job = SupervisorJob(parentJob)
         coroutineContext = configuration.coroutineContext + job + CoroutineName("TencentBot.${ticket.appId}")
     }
-
+    
     private val parentJob: Job get() = coroutineContext[Job]!!
-
+    
+    override fun preProcessor(processor: suspend Signal.Dispatch.(decoder: Json, decoded: () -> Any) -> Unit) {
+        preProcessorQueue.add(processor)
+    }
+    
     override fun processor(processor: suspend Signal.Dispatch.(decoder: Json, decoded: () -> Any) -> Unit) {
         processorQueue.add(processor)
     }
-
+    
     private val startLock = Mutex()
-
+    
     override suspend fun start(): Boolean = startLock.withLock {
         for (client in clients) {
             logger.debug("Restarting, close client {}", client)
             client.cancel()
         }
-
+        
         val requestToken = ticket.botToken
         val shardIterFactory = configuration.shardIterFactory
         lateinit var shardIter: IntIterator
-
+        
         val gatewayInfo: GatewayInfo
-
+        
         // gateway info.
         var totalShard = configuration.totalShard
         if (totalShard > 0) {
@@ -134,9 +141,9 @@ internal class TencentGuildBotImpl(
             totalShard = info.shards
             gatewayInfo = info
         }
-
+        
         shardIter = shardIterFactory(totalShard)
-
+        
         val clientList = shardIter.asFlow()
             .map { shard ->
                 logger.debug("Ready for shard $shard in $totalShard")
@@ -152,33 +159,33 @@ internal class TencentGuildBotImpl(
                         logger.debug("delay wait {} for next......", time)
                         delay(time)
                     }
-
-
+                    
+                    
                 }
             }.toList()
-
-
+        
+        
         this.clients = clientList
-
+        
         return true
     }
-
+    
     override suspend fun cancel(reason: Throwable?): Boolean {
         if (parentJob.isCancelled) return false
-
+        
         parentJob.cancel(reason?.let { CancellationException(it.localizedMessage, it) })
         parentJob.join()
         return true
     }
-
+    
     override suspend fun join() {
         parentJob.join()
     }
-
+    
     override val totalShared: Int = configuration.totalShard
-
+    
     override var clients: List<ClientImpl> = emptyList()
-
+    
     internal inner class ClientImpl(
         override val shard: Shard,
         private val sessionData: EventSignals.Other.ReadyEvent.Data,
@@ -186,39 +193,39 @@ internal class TencentGuildBotImpl(
         private var processingJob: Job,
         private val _seq: AtomicLong,
         private var session: DefaultClientWebSocketSession,
-        private val logger: Logger
+        private val logger: Logger,
     ) : TencentGuildBot.Client {
         val nextDelay: Long = if (shard.total - shard.value == 1) 0 else 5000L // 5s
-
+        
         override val bot: TencentGuildBot get() = this@TencentGuildBotImpl
         override val seq: Long get() = _seq.get()
         override val isActive: Boolean get() = session.isActive
         private val _resuming = AtomicBoolean(false)
         override val isResuming: Boolean get() = _resuming.get()
-
+        
         private var resumeJob = launch {
             val closed = session.closeReason.await()
             resume(closed)
         }
-
+        
         suspend fun cancel(reason: Throwable? = null) {
             val cancel = reason?.let { CancellationException(it.localizedMessage, it) }
             val sessionJob = session.coroutineContext[Job]
             sessionJob?.cancel(cancel)
             resumeJob.cancel(cancel)
             heartbeatJob.cancel(cancel)
-
+            
             sessionJob?.join()
             heartbeatJob.join()
             processingJob.join()
-
-
+            
+            
         }
-
+        
         override fun toString(): String {
             return "TencentBot.Client(shard=$shard, sessionData=$sessionData)"
         }
-
+        
         /**
          * 重新连接。
          * // TODO 增加日志
@@ -228,34 +235,34 @@ internal class TencentGuildBotImpl(
                 logger.warn("Client $this was closed, but no reason. stop this client without any action, including resuming.")
                 return
             }
-
+            
             val code = closeReason.code
             if (!checkResumeCode(code)) {
                 logger.debug("Not resume code: {}, close and restart.", code)
                 launch { start() }
                 return
             }
-
+            
             while (!_resuming.compareAndSet(false, true)) {
                 logger.info("In resuming now, delay 100ms")
                 delay(100)
             }
-
+            
             logger.info("Resume. reason: $closeReason")
-
+            
             try {
                 heartbeatJob.cancel()
                 processingJob.cancel()
                 heartbeatJob.join()
                 processingJob.join()
-
+                
                 val gatewayInfo = GatewayApis.Normal.request(
                     this@TencentGuildBotImpl.httpClient,
                     server = this@TencentGuildBotImpl.url,
                     token = this@TencentGuildBotImpl.ticket.botToken,
                     decoder = this@TencentGuildBotImpl.decoder,
                 )
-
+                
                 val resumeSession = resumeSession(gatewayInfo, sessionData, _seq, logger)
                 val (session, _, heartbeatJob, _, _) = resumeSession
                 this.session = session
@@ -269,19 +276,19 @@ internal class TencentGuildBotImpl(
             } finally {
                 _resuming.compareAndSet(true, false)
             }
-
+            
         }
-
-
+        
+        
     }
-
+    
     private suspend fun createSession(shard: Shard, gatewayInfo: GatewayInfo): SessionInfo {
         val requestToken = ticket.botToken
-
+        
         val logger = LoggerFactory.getLogger("love.forte.simbot.tencentguild.bot.${ticket.appId}.$shard")
         val intents = configuration.intentsForShardFactory(shard.value)
         val prop = configuration.clientPropertiesFactory(shard.value)
-
+        
         val identify = Signal.Identify(
             data = Signal.Identify.Data(
                 token = requestToken,
@@ -290,21 +297,21 @@ internal class TencentGuildBotImpl(
                 properties = prop,
             )
         )
-
+        
         val seq = AtomicLong(-1)
-
+        
         val session = httpClient.ws { gatewayInfo }
-
+        
         kotlin.runCatching {
-
+            
             // receive Hello
             val hello = session.waitHello()
-
+            
             logger.debug("Received Hello: {}", hello)
             // 鉴权
             // see https://bot.q.qq.com/wiki/develop/api/gateway/reference.html#%E9%89%B4%E6%9D%83ß
             session.send(decoder.encodeToString(Signal.Identify.serializer(), identify))
-
+            
             // wait for Ready event
             var readyEventData: EventSignals.Other.ReadyEvent.Data? = null
             while (session.isActive) {
@@ -320,26 +327,26 @@ internal class TencentGuildBotImpl(
                 session.closeReason.await().err()
             }
             logger.debug("Ready Event data: {}", readyEventData)
-
+            
             val heartbeatJob = session.heartbeatJob(hello, seq)
-
+            
             return SessionInfo(session, seq, heartbeatJob, logger, readyEventData)
         }.getOrElse {
             // logger.error(it.localizedMessage, it)
             session.closeReason.await().err(it)
-
+            
         }
-
+        
     }
-
+    
     private suspend fun resumeSession(
         gatewayInfo: GatewayInfo,
         sessionData: EventSignals.Other.ReadyEvent.Data,
         seq: AtomicLong,
-        logger: Logger
+        logger: Logger,
     ): SessionInfo {
         val requestToken = ticket.botToken
-
+        
         val resume = Signal.Resume(
             Signal.Resume.Data(
                 token = requestToken,
@@ -347,43 +354,43 @@ internal class TencentGuildBotImpl(
                 seq = seq.get()
             )
         )
-
+        
         val session = httpClient.ws { gatewayInfo }
-
+        
         val hello = session.waitHello()
-
+        
         logger.debug("Received Hello: {}", hello)
-
+        
         // 重连
         // see https://bot.q.qq.com/wiki/develop/api/gateway/reference.html#%E9%89%B4%E6%9D%83ß
         session.send(decoder.encodeToString(Signal.Resume.serializer(), resume))
-
+        
         val heartbeatJob = session.heartbeatJob(hello, seq)
-
+        
         return SessionInfo(session, seq, heartbeatJob, logger, sessionData)
     }
-
+    
     /**
      * 新建一个 client。
      */
     private suspend fun createClient(shard: Shard, gatewayInfo: GatewayInfo): ClientImpl {
         val sessionInfo = createSession(shard, gatewayInfo)
         val (session, seq, heartbeatJob, logger, sessionData) = sessionInfo
-
+        
         val processingJob = processEvent(sessionInfo)
-
+        
         return ClientImpl(shard, sessionData, heartbeatJob, processingJob, seq, session, logger)
     }
-
-
+    
+    
     private suspend fun processEvent(sessionInfo: SessionInfo): Job {
         val dispatchSerializer = Signal.Dispatch.serializer()
         val logger = sessionInfo.logger
         val seq = sessionInfo.seq
-
+        
         return sessionInfo.session.incoming.receiveAsFlow().mapNotNull {
             when (it) {
-
+                
                 is Frame.Text -> {
                     val eventString = it.readText()
                     val jsonElement = decoder.parseToJsonElement(eventString)
@@ -424,41 +431,53 @@ internal class TencentGuildBotImpl(
             }
         }.onEach { dispatch ->
             val nowSeq = dispatch.seq
-            if (processorQueue.isNotEmpty()) {
-                logger.debug("On dispatch: $dispatch")
+            if (processorQueue.isNotEmpty() || preProcessorQueue.isNotEmpty()) {
+                logger.debug("On dispatch and processors or pre processors is not empty. dispatch: $dispatch")
                 val eventType = dispatch.type
                 val signal = EventSignals.events[eventType] ?: run {
                     val e = SimbotIllegalStateException("Unknown event type: $eventType. data: $dispatch")
                     e.process(logger) { "Event receiving" }
                     return@onEach
                 }
-
+                
                 val lazy = lazy { decoder.decodeFromJsonElement(signal.decoder, dispatch.data) }
                 val lazyDecoded = lazy::value
+                preProcessorQueue.forEach { preProcessor ->
+                    try {
+                        preProcessor(dispatch, decoder, lazyDecoded)
+                    } catch (e: Throwable) {
+                        e.process(logger) { "Pre processing" }
+                    }
+                }
+                
+                
                 launch {
-                    processorQueue.forEach { p ->
+                    processorQueue.forEach { processor ->
                         try {
-                            p(dispatch, decoder, lazyDecoded)
+                            processor(dispatch, decoder, lazyDecoded)
                         } catch (e: Throwable) {
                             e.process(logger) { "Processing" }
                         }
                     }
                 }
+            } else {
+                // 但是 processors 和 pre processors 都是空的
+                logger.debug("On dispatch, but the processors and pre processors are empty, skip. dispatch: $dispatch")
             }
-
+            
             // 留下最大的值。
-            seq.updateAndGet { prev -> max(prev, nowSeq) }
-        }
-            .onCompletion { cause ->
-                if (logger.isDebugEnabled) {
-                    logger.debug("Session flow completion. cause: {}", cause.toString())
-                }
+            val currentSeq = seq.updateAndGet { prev -> max(prev, nowSeq) }
+            logger.debug("Current seq: {}", currentSeq)
+        }.onCompletion { cause ->
+            if (logger.isDebugEnabled) {
+                logger.debug("Session flow completion. cause: {}", cause.toString())
             }
+        }
             .catch { cause -> logger.error("Session flow on catch: ${cause.localizedMessage}", cause) }
             .launchIn(this)
     }
-
-
+    
+    
     private suspend inline fun Throwable.process(logger: Logger, msg: () -> String) {
         val processor = configuration.exceptionHandler
         val m = msg()
@@ -474,11 +493,11 @@ internal class TencentGuildBotImpl(
             logger.error("$m failed.", this)
         }
     }
-
+    
     private suspend inline fun HttpClient.ws(crossinline gatewayInfo: () -> GatewayInfo): DefaultClientWebSocketSession {
         return webSocketSession { url(gatewayInfo().url) }
     }
-
+    
     private suspend inline fun DefaultClientWebSocketSession.waitHello(): Signal.Hello {
         // receive Hello
         var hello: Signal.Hello? = null
@@ -494,14 +513,14 @@ internal class TencentGuildBotImpl(
         }
         return hello
     }
-
+    
     private suspend inline fun DefaultClientWebSocketSession.heartbeatJob(hello: Signal.Hello, seq: AtomicLong): Job {
         val heartbeatInterval = hello.data.heartbeatInterval
         val helloIntervalFactory: () -> Long = {
             val r = ThreadLocalRandom.current().nextLong(5000)
             if (r > heartbeatInterval) 0 else heartbeatInterval - r
         }
-
+        
         // heartbeat Job
         val heartbeatJob = this.launch {
             val serializer = Signal.Heartbeat.serializer()
@@ -511,20 +530,20 @@ internal class TencentGuildBotImpl(
                 send(decoder.encodeToString(serializer, hb))
             }
         }
-
+        
         return heartbeatJob
     }
-
-
+    
+    
     //// self api
-
+    
     override suspend fun me(): TencentBotInfo {
         return GetBotInfoApi.requestBy(this).also {
             _botInfo = it
         }
     }
-
-
+    
+    
 }
 
 
@@ -533,7 +552,7 @@ private data class SessionInfo(
     val seq: AtomicLong,
     val heartbeatJob: Job,
     val logger: Logger,
-    val sessionData: EventSignals.Other.ReadyEvent.Data
+    val sessionData: EventSignals.Other.ReadyEvent.Data,
 )
 
 
@@ -557,9 +576,9 @@ private inline fun waitForReady(decoder: Json, frameBlock: () -> Frame): EventSi
     // for hello
     if (frame is Frame.Text) {
         val json = decoder.parseToJsonElement(frame.readText())
-
+        
         // TODO log
-
+        
         if (json.jsonObject["op"]?.jsonPrimitive?.int == Opcode.Dispatch.code) {
             val dis = decoder.decodeFromJsonElement(Signal.Dispatch.serializer(), json)
             if (dis.type == EventSignals.Other.ReadyEvent.type) {
@@ -577,11 +596,11 @@ internal data class TicketImpl(
     override val appId: String,
     @SerialName("app_key")
     override val appKey: String,
-    override val token: String
+    override val token: String,
 ) : TencentGuildBot.Ticket {
     @Transient
     override val botToken: String = "Bot $appId.$token"
-
+    
     override fun toString(): String {
         return "TicketImpl(appId=$appId, appKey=${appKey.hide()}, token=${token.hide()})"
     }
@@ -590,5 +609,5 @@ internal data class TicketImpl(
 private fun String.hide(size: Int = 3, hide: String = "********"): String {
     return if (length <= size) hide
     else "${substring(0, 3)}$hide${substring(lastIndex - 2, length)}"
-
+    
 }

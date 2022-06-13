@@ -17,7 +17,6 @@
 
 package love.forte.simbot.component.tencentguild
 
-import kotlinx.coroutines.runBlocking
 import love.forte.simbot.Api4J
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
@@ -32,7 +31,7 @@ import love.forte.simbot.utils.runInBlocking
  * @author ForteScarlet
  */
 public interface TencentGuild : Guild {
-    override val bot: TencentGuildComponentGuildMemberBot
+    override val bot: TencentGuildComponentGuildBot
     override val createTime: Timestamp
     override val currentMember: Int
     override val description: String
@@ -45,11 +44,10 @@ public interface TencentGuild : Guild {
     override val children: Items<TencentChannel>
     
     @JvmSynthetic
-    override suspend fun owner(): TencentMember
+    override suspend fun owner(): TencentMember = owner
     
-    @Api4J
-    override val owner: TencentMember
-        get() = runBlocking { owner() }
+    @OptIn(Api4J::class)
+    override val owner: TencentMember // get() = runInBlocking { owner() }
     
     /**
      * 获取指定成员信息。
@@ -72,6 +70,7 @@ public interface TencentGuild : Guild {
     )
     override val members: Items<TencentMember>
         get() = emptyItems()
+    
     
     override val roles: Items<TencentRole>
     
