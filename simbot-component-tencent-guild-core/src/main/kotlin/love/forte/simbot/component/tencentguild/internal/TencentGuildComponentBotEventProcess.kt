@@ -67,6 +67,7 @@ private fun TencentGuildComponentBotImpl.onGuildUpdate(decoded: () -> Any) {
     if (eventData is TencentGuildInfo) {
         getInternalGuild(eventData.id)?.also { guild ->
             guild.guildInfo = eventData
+            logger.debug("OnGuildUpdate sync: {}", eventData)
         }
     }
 }
@@ -75,6 +76,7 @@ private fun TencentGuildComponentBotImpl.onGuildDelete(decoded: () -> Any) {
     val eventData = decoded()
     if (eventData is TencentGuildInfo) {
         internalGuilds.remove(eventData.id.literal)
+        logger.debug("OnGuildDelete sync: {}", eventData)
     }
 }
 // endregion
@@ -96,9 +98,12 @@ private suspend fun TencentGuildComponentBotImpl.onChannelCreate(decoded: () -> 
         guild.internalChannels.compute(eventData.id.literal) { _, old ->
             if (old != null) {
                 old.channel = eventData
+                logger.debug("OnChannelCreate sync (update): {}", eventData)
                 old
             } else {
-                TencentChannelImpl(this, eventData, guild)
+                TencentChannelImpl(this, eventData, guild).also {
+                    logger.debug("OnChannelCreate sync (create): {}", it)
+                }
             }
         }
     }
@@ -109,6 +114,9 @@ private fun TencentGuildComponentBotImpl.onChannelUpdate(decoded: () -> Any) {
     if (eventData is TencentChannelInfo) {
         getInternalGuild(eventData.guildId)?.getInternalChannel(eventData.id)?.also { channel ->
             channel.channel = eventData
+            logger.debug("OnChannelUpdate sync: {}", eventData)
+        } ?: kotlin.run {
+            logger.debug("OnChannelUpdate, but not sync. guild or channel by event data: [{}] not found.", eventData)
         }
     }
 }
@@ -116,7 +124,8 @@ private fun TencentGuildComponentBotImpl.onChannelUpdate(decoded: () -> Any) {
 private fun TencentGuildComponentBotImpl.onChannelDelete(decoded: () -> Any) {
     val eventData = decoded()
     if (eventData is TencentChannelInfo) {
-        getInternalGuild(eventData.guildId)?.internalChannels?.remove(eventData.id.literal)
+        val removed = getInternalGuild(eventData.guildId)?.internalChannels?.remove(eventData.id.literal)
+        logger.debug("OnChannelDelete sync: removed channel [{}] by event data {}", removed, eventData)
     }
 }
 // endregion
