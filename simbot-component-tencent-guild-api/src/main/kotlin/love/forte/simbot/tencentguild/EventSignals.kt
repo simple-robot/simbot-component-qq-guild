@@ -17,9 +17,11 @@
 
 package love.forte.simbot.tencentguild
 
-import kotlinx.serialization.*
-import kotlinx.serialization.builtins.*
-import love.forte.simbot.*
+import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.serializer
+import love.forte.simbot.CharSequenceID
 
 /**
  * [intents](https://bot.q.qq.com/wiki/develop/api/gateway/intents.html#intents)
@@ -177,7 +179,7 @@ public sealed class EventSignals<out D : Any>(
         public object GuildMemberAdd : GuildMembers<TencentMemberInfo>("GUILD_MEMBER_ADD", TencentMemberInfo.serializer)
 
         /** 当成员资料变更时 */
-        public object GuildMemberUpdate : GuildMembers<Unit>("GUILD_MEMBER_UPDATE", Unit.serializer())
+        public object GuildMemberUpdate : GuildMembers<TencentMemberInfo>("GUILD_MEMBER_UPDATE", TencentMemberInfo.serializer)
 
         /** 当成员被移除时 */
         public object GuildMemberRemove :

@@ -18,25 +18,28 @@
 package love.forte.simbot.component.tencentguild.internal
 
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
-import love.forte.simbot.*
+import love.forte.simbot.Api4J
+import love.forte.simbot.ID
+import love.forte.simbot.LoggerFactory
 import love.forte.simbot.component.tencentguild.TencentGuild
 import love.forte.simbot.component.tencentguild.TencentGuildBotManager
 import love.forte.simbot.component.tencentguild.TencentGuildComponent
 import love.forte.simbot.component.tencentguild.TencentGuildComponentBot
 import love.forte.simbot.component.tencentguild.event.TcgBotStartedEvent
 import love.forte.simbot.component.tencentguild.internal.event.TcgBotStartedEventImpl
-import love.forte.simbot.component.tencentguild.internal.event.eventSignalParsers
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.event.pushIfProcessable
-import love.forte.simbot.tencentguild.*
+import love.forte.simbot.literal
+import love.forte.simbot.tencentguild.TencentGuildBot
 import love.forte.simbot.tencentguild.api.guild.GetBotGuildListApi
-import love.forte.simbot.tencentguild.api.guild.GetGuildApi
+import love.forte.simbot.tencentguild.requestBy
 import love.forte.simbot.utils.item.Items
-import love.forte.simbot.utils.item.itemsByFlow
+import love.forte.simbot.utils.item.Items.Companion.asItems
 import love.forte.simbot.utils.runInBlocking
+import java.util.concurrent.ConcurrentHashMap
+import kotlin.collections.lastOrNull
+import kotlin.collections.set
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -68,43 +71,50 @@ internal class TencentGuildComponentBotImpl(
         return false
     }
     
+    internal val internalGuilds = ConcurrentHashMap<String, TencentGuildImpl>()
+    
+    internal fun getInternalGuild(id: ID): TencentGuildImpl? = internalGuilds[id.literal]
+    
     override val guilds: Items<TencentGuildImpl>
-        get() = bot.itemsByFlow { prop ->
-            getGuildFlow(limiter(prop.offset, prop.limit, prop.batch)).map { info ->
-                TencentGuildImpl(baseBot = this, guildInfo = info)
-            }
-        }
+        get() = internalGuilds.values.asItems()
+    
+    // get() = bot.itemsByFlow { prop ->
+    //     getGuildFlow(limiter(prop.offset, prop.limit, prop.batch)).map { info ->
+    //         TencentGuildImpl(baseBot = this, guildInfo = info)
+    //     }
+    // }
     
     
-    private fun getGuildFlow(limiter: Limiter): Flow<TencentGuildInfo> {
-        return limiter.toFlow { batchSize ->
-            val batch = if (batchSize in 1..100) batchSize else 100
-            var lastId: ID? = null
-            
-            while (true) {
-                val list = GetBotGuildListApi(after = lastId, limit = batch).requestBy(sourceBot)
-                if (list.isEmpty()) break
-                
-                lastId = list.lastOrNull()?.id
-                
-                for (tencentGuildInfo in list) {
-                    emit(tencentGuildInfo)
-                }
-            }
-        }
-    }
+    // private fun getGuildFlow(limiter: Limiter): Flow<TencentGuildInfo> {
+    //     return limiter.toFlow { batchSize ->
+    //         val batch = if (batchSize in 1..100) batchSize else 100
+    //         var lastId: ID? = null
+    //
+    //         while (true) {
+    //             val list = GetBotGuildListApi(after = lastId, limit = batch).requestBy(sourceBot)
+    //             if (list.isEmpty()) break
+    //
+    //             lastId = list.lastOrNull()?.id
+    //
+    //             for (tencentGuildInfo in list) {
+    //                 emit(tencentGuildInfo)
+    //             }
+    //         }
+    //     }
+    // }
     
     override suspend fun guild(id: ID): TencentGuild? {
-        return try {
-            val guild = GetGuildApi(id).requestBy(sourceBot)
-            TencentGuildImpl(this, guild)
-        } catch (apiException: TencentApiException) {
-            if (apiException.value == 404) {
-                null
-            } else {
-                throw apiException
-            }
-        }
+        return internalGuilds[id.literal]
+        // return try {
+        //     val guild = GetGuildApi(id).requestBy(sourceBot)
+        //     TencentGuildImpl(this, guild)
+        // } catch (apiException: TencentApiException) {
+        //     if (apiException.value == 404) {
+        //         null
+        //     } else {
+        //         throw apiException
+        //     }
+        // }
     }
     
     @Api4J
@@ -118,43 +128,20 @@ internal class TencentGuildComponentBotImpl(
         sourceBot.botInfo
         meId = sourceBot.me().id
         
-        suspend fun pushEvent() {
+        suspend fun pushStartedEvent() {
             eventProcessor.pushIfProcessable(TcgBotStartedEvent) {
                 TcgBotStartedEventImpl(this)
             }
         }
+        
         if (!it) {
-            pushEvent()
+            pushStartedEvent()
             return@also
         }
         
-        // activeStatus.compareAndSet(0, 1)
-        // process event.
-        sourceBot.processor { json, decoded ->
-            // event processor
-            logger.trace("EventSignals.events[{}]: {}", type, EventSignals.events[type])
-            EventSignals.events[this.type]?.let { signals ->
-                logger.trace("eventSignalParsers[{}]: {}", it, eventSignalParsers[signals])
-                
-                eventSignalParsers[signals]?.let { parser ->
-                    
-                    logger.trace(
-                        "eventProcessor.isProcessable({}): {}",
-                        parser.key,
-                        eventProcessor.isProcessable(parser.key)
-                    )
-                    eventProcessor.pushIfProcessable(parser.key) {
-                        parser(
-                            bot = this@TencentGuildComponentBotImpl,
-                            decoder = json,
-                            decoded = decoded,
-                            dispatch = this
-                        )
-                    }
-                }
-            }
-        }
-        pushEvent()
+        initData()
+        registerEventProcessor()
+        pushStartedEvent()
     }
     
     
@@ -178,5 +165,34 @@ internal class TencentGuildComponentBotImpl(
     override val isCancelled: Boolean
         get() = job.isCancelled
     
+    
+    /**
+     * 初始化bot基本信息.
+     */
+    private suspend fun initData() {
+        initGuildListData()
+    }
+    
+}
+
+private suspend fun TencentGuildComponentBotImpl.initGuildListData() {
+    var lastId: ID? = null
+    while (true) {
+        val list = GetBotGuildListApi(after = lastId).requestBy(sourceBot)
+        if (list.isEmpty()) break
+        
+        lastId = list.lastOrNull()?.id
+        
+        for (info in list) {
+            val guildImpl = TencentGuildImpl(this, info)
+            guildImpl.syncData()
+            
+            internalGuilds[info.id.literal] = guildImpl
+            
+            // internalGuilds.merge(info.id.literal, guildImpl) { curr, old ->
+            //     curr
+            // }
+        }
+    }
     
 }

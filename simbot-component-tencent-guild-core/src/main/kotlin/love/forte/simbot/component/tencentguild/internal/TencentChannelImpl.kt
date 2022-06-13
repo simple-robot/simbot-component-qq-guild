@@ -18,10 +18,11 @@
 package love.forte.simbot.component.tencentguild.internal
 
 import kotlinx.coroutines.currentCoroutineContext
-import love.forte.simbot.Api4J
+import love.forte.simbot.ID
+import love.forte.simbot.Timestamp
 import love.forte.simbot.component.tencentguild.TencentChannel
-import love.forte.simbot.component.tencentguild.TencentGuild
-import love.forte.simbot.component.tencentguild.TencentGuildComponentGuildMemberBot
+import love.forte.simbot.component.tencentguild.TencentGuildComponentGuildBot
+import love.forte.simbot.component.tencentguild.TencentMember
 import love.forte.simbot.component.tencentguild.TencentRole
 import love.forte.simbot.component.tencentguild.event.TcgChannelAtMessageEvent
 import love.forte.simbot.component.tencentguild.util.requestBy
@@ -30,7 +31,6 @@ import love.forte.simbot.message.Message
 import love.forte.simbot.tencentguild.TencentChannelInfo
 import love.forte.simbot.tencentguild.api.message.MessageSendApi
 import love.forte.simbot.utils.item.Items
-import love.forte.simbot.utils.runInBlocking
 
 /**
  *
@@ -38,18 +38,11 @@ import love.forte.simbot.utils.runInBlocking
  */
 internal class TencentChannelImpl internal constructor(
     private val baseBot: TencentGuildComponentBotImpl,
-    private val info: TencentChannelInfo,
-    private val from: suspend () -> TencentGuildImpl,
-) : TencentChannel, TencentChannelInfo by info {
+    internal var channel: TencentChannelInfo,
+    override val guild: TencentGuildImpl,
+) : TencentChannel {
     
-    internal constructor(
-        bot: TencentGuildComponentBotImpl, info: TencentChannelInfo, from: TencentGuildImpl,
-    ) : this(bot, info, { from })
-    
-    override val bot: TencentGuildComponentGuildMemberBot by lazy {
-        val guild = runInBlocking { from() }
-        guild.bot
-    }
+    override val bot: TencentGuildComponentGuildBot get() = guild.bot
     
     override suspend fun send(message: Message): TencentMessageReceipt {
         val currentEvent =
@@ -62,22 +55,56 @@ internal class TencentChannelImpl internal constructor(
                 this.msgId = msgId
             }
         }
-        return MessageSendApi(info.id, messageForSend).requestBy(baseBot).asReceipt()
+        return MessageSendApi(channel.id, messageForSend).requestBy(baseBot).asReceipt()
     }
     
+    override val owner: TencentMember
+        get() = guild.owner
     
-    override suspend fun guild(): TencentGuildImpl = from()
-    override suspend fun owner(): TencentMemberImpl = guild().owner()
-    override suspend fun previous(): TencentGuildImpl = guild()
-    
-    @Api4J
-    override val previous: TencentGuild
-        get() = guild
     
     // TODO
-    @OptIn(Api4J::class)
     override val roles: Items<TencentRole>
         get() = guild.roles
     
+    
+    // region info impl
+    @Suppress("DEPRECATION")
+    override val createTime: Timestamp
+        get() = channel.createTime
+    
+    @Suppress("DEPRECATION")
+    override val currentMember: Int
+        get() = channel.currentMember
+    
+    @Suppress("DEPRECATION")
+    override val description: String
+        get() = channel.description
+    override val guildId: ID
+        get() = channel.guildId
+    
+    override val icon: String
+        get() = guild.icon
+    
+    override val id: ID
+        get() = channel.id
+    
+    @Suppress("DEPRECATION")
+    override val maximumMember: Int
+        get() = channel.maximumMember
+    
+    @Suppress("DEPRECATION")
+    override val name: String
+        get() = channel.name
+    override val ownerId: ID
+        get() = channel.ownerId
+    override val channelTypeValue: Int
+        get() = channel.channelTypeValue
+    override val channelSubTypeValue: Int
+        get() = channel.channelSubTypeValue
+    override val position: Int
+        get() = channel.position
+    override val parentId: String
+        get() = channel.parentId
+    // endregion
     
 }

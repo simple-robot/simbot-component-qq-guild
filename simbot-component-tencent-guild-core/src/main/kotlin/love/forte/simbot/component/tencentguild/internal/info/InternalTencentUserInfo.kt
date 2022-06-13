@@ -15,37 +15,36 @@
  *
  */
 
-package test
+package love.forte.simbot.component.tencentguild.internal.info
 
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
-import love.forte.simbot.Timestamp
-import love.forte.simbot.tencentguild.TimestampISO8601Serializer
-import love.forte.simbot.toTimestamp
-import java.time.Instant
-import kotlin.test.Test
-
+import love.forte.simbot.ID
+import love.forte.simbot.tencentguild.TencentUserInfo
 
 /**
  *
  * @author ForteScarlet
  */
-class TimeSerializerTest {
+internal data class InternalTencentUserInfo(
+    override var id: ID,
+    override var username: String,
+    override var avatar: String,
+    override var isBot: Boolean,
+    override var unionOpenid: String?,
+    override var unionUserAccount: String?,
+) : TencentUserInfo
 
-    @Test
-    fun test() {
-        val j1 = Json.encodeToString(A.serializer(), A(Instant.now().toTimestamp()))
-        val j2 = Json.encodeToString(A.serializer(), A(Timestamp.NotSupport))
-    
-        println(j1)
-        println(j2)
-    
-        println(Json.decodeFromString(A.serializer(), j1))
-        println(Json.decodeFromString(A.serializer(), j2))
 
+internal fun TencentUserInfo.toInternal(copy: Boolean = true): InternalTencentUserInfo {
+    if (this is InternalTencentUserInfo) {
+        return if (copy) copy() else this
     }
-
+    
+    return InternalTencentUserInfo(
+        id,
+        username,
+        avatar,
+        isBot,
+        unionOpenid,
+        unionUserAccount
+    )
 }
-
-@Serializable
-data class A(@Serializable(TimestampISO8601Serializer::class) val timestamp: Timestamp)

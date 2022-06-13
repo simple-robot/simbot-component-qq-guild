@@ -17,45 +17,73 @@
 
 package love.forte.simbot.component.tencentguild.internal
 
-import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.count
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.future.asCompletableFuture
-import kotlinx.coroutines.runBlocking
-import love.forte.simbot.Api4J
 import love.forte.simbot.ID
+import love.forte.simbot.Timestamp
 import love.forte.simbot.component.tencentguild.TencentGuild
-import love.forte.simbot.component.tencentguild.TencentGuildComponentGuildMemberBot
+import love.forte.simbot.component.tencentguild.TencentGuildComponentGuildBot
+import love.forte.simbot.component.tencentguild.internal.info.toInternal
 import love.forte.simbot.component.tencentguild.util.requestBy
+import love.forte.simbot.literal
 import love.forte.simbot.tencentguild.TencentApiException
-import love.forte.simbot.tencentguild.TencentChannelInfo
 import love.forte.simbot.tencentguild.TencentGuildInfo
-import love.forte.simbot.tencentguild.TencentRoleInfo
 import love.forte.simbot.tencentguild.api.channel.GetGuildChannelListApi
 import love.forte.simbot.tencentguild.api.member.GetMemberApi
 import love.forte.simbot.tencentguild.api.role.GetGuildRoleListApi
-import love.forte.simbot.utils.LazyValue
 import love.forte.simbot.utils.item.Items
-import love.forte.simbot.utils.item.effectOn
-import love.forte.simbot.utils.item.effectedItemsByFlow
-import love.forte.simbot.utils.item.itemsByFlow
-import love.forte.simbot.utils.lazyValue
-import love.forte.simbot.utils.runInBlocking
+import love.forte.simbot.utils.item.Items.Companion.asItems
+import love.forte.simbot.utils.item.effectedFlowItems
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.time.Duration
+
 
 /**
  *
  * @author ForteScarlet
  */
-internal class TencentGuildImpl(
+internal class TencentGuildImpl private constructor(
     private val baseBot: TencentGuildComponentBotImpl,
-    private val guildInfo: TencentGuildInfo,
-) : TencentGuild, TencentGuildInfo by guildInfo {
+    @Volatile internal var guildInfo: TencentGuildInfo,
+) : TencentGuild {
+    override val maximumChannel: Int
+        get() = guildInfo.maximumChannel
+    override val createTime: Timestamp
+        get() = guildInfo.createTime
+    override val currentMember: Int
+        get() = guildInfo.currentMember
+    override val description: String
+        get() = guildInfo.description
+    override val icon: String
+        get() = guildInfo.icon
+    override val id: ID
+        get() = guildInfo.id
+    override val maximumMember: Int
+        get() = guildInfo.maximumMember
+    override val name: String
+        get() = guildInfo.name
+    override val ownerId: ID
+        get() = guildInfo.ownerId
     
-    override val bot: TencentGuildComponentGuildMemberBot by lazy {
-        runInBlocking { baseBot.asMember(member(baseBot.sourceBot.botInfo.id)!!) }
+    @Suppress("MemberVisibilityCanBePrivate")
+    internal val internalChannels = ConcurrentHashMap<String, TencentChannelImpl>()
+    
+    internal fun getInternalChannel(id: ID): TencentChannelImpl? = internalChannels[id.literal]
+    
+    override lateinit var bot: TencentGuildComponentGuildBot
+        internal set
+    
+    override lateinit var owner: TencentMemberImpl
+        internal set
+    
+    
+    /**
+     * 同步数据，包括成员信息和频道列表信息, 以及 [bot] 和 [owner] 的初始化。
+     * 必须在对象实例后执行一次进行初始化，否则内部属性信息将会为空。
+     *
+     * *Note: 成员列表的获取暂时不支持（只支持私域）*
+     */
+    internal suspend fun syncData() {
+        syncMembers()
+        syncChannels()
     }
     
     
@@ -66,53 +94,76 @@ internal class TencentGuildImpl(
             if (e.value == 404) null else throw e
         }
         
-        return member?.let { m -> TencentMemberImpl(baseBot, m, this) }
+        return member?.let { info -> TencentMemberImpl(baseBot, info.toInternal(), this) }
     }
     
     override val roles: Items<TencentRoleImpl>
-        get() = bot.itemsByFlow { prop ->
-            val flow = getRoleFlow(guildInfo.id).map { info ->
-                TencentRoleImpl(baseBot, info)
+        get() = bot.effectedFlowItems {
+            GetGuildRoleListApi(guildInfo.id).requestBy(baseBot).roles.forEach { info ->
+                val roleImpl = TencentRoleImpl(baseBot, info)
+                emit(roleImpl)
             }
-            prop.effectOn(flow)
+            // getRoleFlow(guildInfo.id).map { info ->
+            //     TencentRoleImpl(baseBot, info)
+            // }
         }
     
-    private fun getRoleFlow(guildId: ID): Flow<TencentRoleInfo> = flow {
-        GetGuildRoleListApi(guildId).requestBy(baseBot).roles.forEach {
-            emit(it)
-        }
-    }
     
-    override val currentChannel: Int by lazy {
-        baseBot.async { getChildrenFlow(guildInfo.id).count() }
-            .asCompletableFuture().join()
-    }
+    override val currentChannel: Int get() = internalChannels.size
     
     override val children: Items<TencentChannelImpl>
-        get() = bot.effectedItemsByFlow {
-            getChildrenFlow(guildInfo.id).map { info ->
-                TencentChannelImpl(baseBot, info, this)
-            }
-        }
+        get() = internalChannels.values.asItems()
+    //     bot.effectedItemsByFlow {
+    //     getChildrenFlow(guildInfo.id).map { info ->
+    //         TencentChannelImpl(baseBot, info, this)
+    //     }
+    // }
     
     
     override suspend fun mute(duration: Duration): Boolean = false
     
-    
-    private var _owner: LazyValue<TencentMemberImpl> = lazyValue {
-        member(guildInfo.ownerId)!!
+    /**
+     * 同步成员列表、owner、bot的信息。
+     */
+    private suspend fun syncMembers() {
+        // emm... 暂时不支持成员列表的获取. 反正挺神奇的
+        
+        syncBot()
+        syncOwner()
     }
     
-    override suspend fun owner(): TencentMemberImpl = _owner()
-    
-    @Api4J
-    override val owner: TencentMemberImpl
-        get() = runBlocking { owner() }
-    
-    private fun getChildrenFlow(guildId: ID): Flow<TencentChannelInfo> = flow {
-        val list = GetGuildChannelListApi(guildId = guildId).requestBy(baseBot)
-        list.forEach { emit(it) }
+    private suspend fun syncOwner() {
+        val ownerId = guildInfo.ownerId
+        val ownerInfo = GetMemberApi(guildInfo.id, ownerId).requestBy(baseBot)
+        
+        owner = TencentMemberImpl(baseBot, ownerInfo.toInternal(), this)
     }
     
+    private suspend fun syncBot() {
+        val member = member(baseBot.id)!!
+        bot = TencentGuildComponentGuildBotImpl(baseBot, member)
+    }
+    
+    
+    private suspend fun syncChannels() {
+        val channelInfoList = GetGuildChannelListApi(guildInfo.id).requestBy(baseBot)
+        for (info in channelInfoList) {
+            val channel = TencentChannelImpl(baseBot, info.toInternal(), this)
+            internalChannels[info.id.literal] = channel
+        }
+        
+    }
+    
+    companion object {
+        suspend fun tencentGuildImpl(
+            baseBot: TencentGuildComponentBotImpl,
+            guildInfo: TencentGuildInfo,
+        ): TencentGuildImpl {
+            return TencentGuildImpl(baseBot, guildInfo).also { it.syncData() }
+        }
+    }
     
 }
+
+
+

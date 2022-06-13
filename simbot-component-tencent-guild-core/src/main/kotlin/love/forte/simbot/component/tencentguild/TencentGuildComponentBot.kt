@@ -20,12 +20,10 @@ package love.forte.simbot.component.tencentguild
 import kotlinx.coroutines.isActive
 import love.forte.simbot.Api4J
 import love.forte.simbot.Bot
+import love.forte.simbot.ExperimentalSimbotApi
 import love.forte.simbot.ID
 import love.forte.simbot.action.UnsupportedActionException
-import love.forte.simbot.definition.Friend
-import love.forte.simbot.definition.Group
-import love.forte.simbot.definition.GuildMemberBot
-import love.forte.simbot.definition.UserStatus
+import love.forte.simbot.definition.*
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.message.Image
 import love.forte.simbot.resources.Resource
@@ -97,6 +95,7 @@ public interface TencentGuildComponentBot : Bot {
     /**
      * bot的用户属性。
      */
+    @ExperimentalSimbotApi
     override val status: UserStatus get() = BotStatus
     
     
@@ -127,13 +126,10 @@ public interface TencentGuildComponentBot : Bot {
         return sourceBot.startBlocking()
     }
     
-    @Deprecated("频道不支持群相关API", ReplaceWith("emptyItems()", "love.forte.simbot.utils.item.Items.Companion.emptyItems"))
+    @Deprecated("Group related APIs are not supported", ReplaceWith("emptyItems()", "love.forte.simbot.utils.item.Items.Companion.emptyItems"))
     override val groups: Items<Group>
         get() = emptyItems()
     
-    @Deprecated("频道不支持好友相关API", ReplaceWith("emptyItems()", "love.forte.simbot.utils.item.Items.Companion.emptyItems"))
-    override val friends: Items<Friend>
-        get() = emptyItems()
     
     override val guilds: Items<TencentGuild>
     
@@ -143,21 +139,32 @@ public interface TencentGuildComponentBot : Bot {
     @JvmSynthetic
     override suspend fun guild(id: ID): TencentGuild?
     
+    
+    @Deprecated("Contact related APIs are not supported", ReplaceWith("emptyItems()", "love.forte.simbot.utils.item.Items.Companion.emptyItems"))
+    override val contacts: Items<Contact>
+        get() = emptyItems()
+    
+    @Deprecated("Contact related APIs are not supported", ReplaceWith("null"))
+    
     @JvmSynthetic
-    override suspend fun friend(id: ID): Friend? = null
+    override suspend fun contact(id: ID): Contact? = null
     
-    @Api4J
-    override fun getFriend(id: ID): Friend? = null
+    @Deprecated("Contact related APIs are not supported", ReplaceWith("null"))
+    @OptIn(Api4J::class)
+    override fun getContact(id: ID): Contact? = null
     
+    @Deprecated("Group related APIs are not supported", ReplaceWith("null", ))
     @JvmSynthetic
     override suspend fun group(id: ID): Group? = null
     
+    @Deprecated("Group related APIs are not supported", ReplaceWith("null"))
     @OptIn(Api4J::class)
     override fun getGroup(id: ID): Group? = null
     
 }
 
 
+@ExperimentalSimbotApi
 private object BotStatus : UserStatus {
     override val isNormal: Boolean get() = false
     override val isOfficial: Boolean get() = false
@@ -174,36 +181,10 @@ private object BotStatus : UserStatus {
  * 如果存在 bot 与 member 的属性值存在冲突的情况，优先使用作为 member 时的属性。
  *
  */
-public interface TencentGuildComponentGuildMemberBot : TencentGuildComponentBot, GuildMemberBot, TencentMember {
-    /**
-     * 此bot的唯一标识。
-     */
-    override val id: ID
+public interface TencentGuildComponentGuildBot : TencentGuildComponentBot, GuildBot {
     
-    /**
-     * 得到当前对象中所存在的真正的bot对象。
-     */
-    override val bot: TencentGuildComponentBot
+    override suspend fun asMember(): TencentMember
     
-    /**
-     * 用户名
-     */
-    override val username: String
-    
-    /**
-     * 作为成员在频道中的昵称。
-     */
-    override val nickname: String
-    
-    /**
-     * 头像地址
-     */
-    override val avatar: String
-    
-    /**
-     * 用户状态值。
-     */
-    override val status: UserStatus
-    
-    
+    @Api4J
+    override fun toMember(): TencentMember
 }

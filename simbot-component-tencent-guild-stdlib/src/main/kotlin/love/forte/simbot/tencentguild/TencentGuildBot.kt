@@ -17,11 +17,13 @@
 
 package love.forte.simbot.tencentguild
 
-import kotlinx.coroutines.*
-import kotlinx.serialization.json.*
-import love.forte.simbot.*
-import love.forte.simbot.tencentguild.api.user.*
-import kotlin.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.json.Json
+import love.forte.simbot.Api4J
+import love.forte.simbot.tencentguild.api.user.GetBotInfoApi
+import kotlin.coroutines.CoroutineContext
 
 
 /**
@@ -52,9 +54,23 @@ public interface TencentGuildBot : CoroutineScope {
     public val botInfo: TencentBotInfo
 
     /**
-     * 添加一个事件处理器。
-     * processor 中的参数 `decoded` 所代表的为 `decoder.decodeFromJsonElement(eventType.decoder, data)` 后的结果，
+     * 添加一个事件预处理器。
+     * [processor] 中的参数 `decoded` 所代表的为 `decoder.decodeFromJsonElement(eventType.decoder, data)` 后的结果，
      * 但是为了避免在多个事件处理器中频繁进行反序列化，因此提供这个 `decoded` 来预先提供一个懒实例化的获取器。
+     *
+     * 预处理器与 [processor] 不同的是，[preProcessor] 所注册的所有事件会在接收到事件的时候以协程**同步**的方式按照顺序执行，
+     * 而后再交由下游的 [processor] 处理。
+     *
+     */
+    @JvmSynthetic
+    public fun preProcessor(processor: suspend Signal.Dispatch.(decoder: Json, decoded: () -> Any) -> Unit)
+
+    /**
+     * 添加一个事件处理器。
+     * [processor] 中的参数 `decoded` 所代表的为 `decoder.decodeFromJsonElement(eventType.decoder, data)` 后的结果，
+     * 但是为了避免在多个事件处理器中频繁进行反序列化，因此提供这个 `decoded` 来预先提供一个懒实例化的获取器。
+     *
+     * [processor] 注册的所有事件会在每次接收到事件的时候**异步**的按照顺序执行。
      *
      */
     @JvmSynthetic

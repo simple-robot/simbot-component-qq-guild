@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022-2022 ForteScarlet <ForteScarlet@163.com>
+ *  Copyright (c) 2022 ForteScarlet <ForteScarlet@163.com>
  *
  *  本文件是 simbot-component-tencent-guild 的一部分。
  *
@@ -17,35 +17,27 @@
 
 package love.forte.simbot.component.tencentguild.internal
 
-import love.forte.simbot.ID
-import love.forte.simbot.message.MessageReceipt
-import love.forte.simbot.tencentguild.TencentMessage
-
-
-public interface TencentMessageReceipt : MessageReceipt {
-    /**
-     * 腾讯频道消息发送api发送消息后得到的回执，也就是消息对象。
-     */
-    public val messageResult: TencentMessage
-}
+import love.forte.simbot.Api4J
+import love.forte.simbot.component.tencentguild.TencentGuildComponentBot
+import love.forte.simbot.component.tencentguild.TencentGuildComponentGuildBot
+import love.forte.simbot.component.tencentguild.TencentMember
 
 
 /**
  *
  * @author ForteScarlet
  */
-internal class MessageAsReceipt(override val messageResult: TencentMessage) : TencentMessageReceipt {
-    override val id: ID
-        get() = messageResult.id
-
-    override val isSuccess: Boolean
-        get() = true
+internal class TencentGuildComponentGuildBotImpl(
+    override val bot: TencentGuildComponentBot,
+    private val member: TencentMember,
+) : TencentGuildComponentGuildBot, TencentGuildComponentBot by bot {
     
-    /**
-     * 消息暂时不支持撤回。
-     */
-    override suspend fun delete(): Boolean = false
+    override suspend fun asMember(): TencentMember = member
+    
+    @Api4J
+    override fun toMember(): TencentMember = member
 }
 
-internal fun TencentMessage.asReceipt(): TencentMessageReceipt = MessageAsReceipt(this)
-
+internal fun TencentGuildComponentBot.asMember(member: TencentMember): TencentGuildComponentGuildBotImpl {
+    return TencentGuildComponentGuildBotImpl(this, member)
+}

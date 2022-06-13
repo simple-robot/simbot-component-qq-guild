@@ -21,9 +21,11 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
 import love.forte.simbot.Api4J
+import love.forte.simbot.ExperimentalSimbotApi
 import love.forte.simbot.action.UnsupportedActionException
 import love.forte.simbot.component.tencentguild.TencentMember
 import love.forte.simbot.component.tencentguild.TencentRole
+import love.forte.simbot.component.tencentguild.internal.info.InternalTencentMemberInfo
 import love.forte.simbot.definition.UserStatus
 import love.forte.simbot.literal
 import love.forte.simbot.message.Message
@@ -38,17 +40,11 @@ import love.forte.simbot.utils.item.effectedItemsByFlow
  */
 internal class TencentMemberImpl internal constructor(
     override val bot: TencentGuildComponentBotImpl,
-    private val info: TencentMemberInfo,
-    private val guildFactory: suspend () -> TencentGuildImpl,
+    private val info: InternalTencentMemberInfo,
+    override val guild: TencentGuildImpl,
 ) : TencentMember, TencentMemberInfo by info {
     
-    internal constructor(
-        bot: TencentGuildComponentBotImpl,
-        info: TencentMemberInfo,
-        guild: TencentGuildImpl,
-    ) : this(bot, info, { guild })
-    
-    override suspend fun guild(): TencentGuildImpl = guildFactory()
+    override suspend fun guild(): TencentGuildImpl = guild // guildFactory()
     
     override suspend fun organization(): TencentGuildImpl = guild()
     
@@ -56,6 +52,7 @@ internal class TencentMemberImpl internal constructor(
     override val organization: TencentGuildImpl
         get() = runBlocking { organization() }
     
+    @ExperimentalSimbotApi
     override val status: UserStatus =
         if (info.id == bot.id) {
             bot.status
@@ -72,7 +69,7 @@ internal class TencentMemberImpl internal constructor(
                     guild().roles.collect { emit(it) }
                 }.filter { it.id.literal in roleIds }
             }
-    
+            
         }
     
     
@@ -85,5 +82,8 @@ internal class TencentMemberImpl internal constructor(
     
 }
 
+@ExperimentalSimbotApi
 private val botStatus = UserStatus.builder().bot().fakeUser().build()
+
+@ExperimentalSimbotApi
 private val normalStatus = UserStatus.builder().normal().build()

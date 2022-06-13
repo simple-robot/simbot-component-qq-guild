@@ -220,13 +220,27 @@ public sealed class TcgGuildMemberEvent : TcgEvent<TencentMemberInfo>(), GuildEv
     }
 
     /**
-     * 成员资料变更
+     * 成员资料变更。无法得到变更前的信息。
      *
      * @see EventSignals.GuildMembers.GuildMemberUpdate
      */
     @Deprecated("暂无")
-    public abstract class Update {
-
+    public abstract class Update : TcgGuildMemberEvent(), MemberChangedEvent {
+        // TODO
+        
+        @OptIn(Api4J::class)
+        abstract override val after: TencentMember
+        
+        override suspend fun after(): TencentMember = after
+        
+        
+        public companion object Key : BaseEventKey<Decrease>(
+            "tcg.guild_member_update", setOf(
+                TcgGuildMemberEvent, MemberChangedEvent
+            )
+        ) {
+            override fun safeCast(value: Any): Decrease? = doSafeCast(value)
+        }
     }
 
     /**
