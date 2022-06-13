@@ -56,7 +56,9 @@ private fun TencentGuildComponentBotImpl.registerEventPreProcessor() {
 private suspend fun TencentGuildComponentBotImpl.onGuildCreate(decoded: () -> Any) {
     val eventData = decoded()
     if (eventData is TencentGuildInfo) {
-        internalGuilds[eventData.id.literal] = tencentGuildImpl(this, eventData)
+        internalGuilds[eventData.id.literal] = tencentGuildImpl(this, eventData).also {
+            logger.debug("OnGuildCreate sync: {}", it)
+        }
     }
 }
 
@@ -83,7 +85,11 @@ private suspend fun TencentGuildComponentBotImpl.onChannelCreate(decoded: () -> 
     val eventData = decoded()
     if (eventData is TencentChannelInfo) {
         val guild = findOrCreateGuildImpl(eventData.guildId) {
-            logger.debug("No existing guild with id [{}] found in [onChannelCreate]. Build and save guild {}", it.id, it)
+            logger.debug(
+                "No existing guild with id [{}] found in [onChannelCreate]. Build and save guild {}",
+                it.id,
+                it
+            )
             internalGuilds[it.id.literal] = it
         }
         

@@ -18,7 +18,6 @@
 package love.forte.simbot.component.tencentguild.internal
 
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flow
 import love.forte.simbot.ExperimentalSimbotApi
 import love.forte.simbot.action.UnsupportedActionException
 import love.forte.simbot.component.tencentguild.TencentMember
@@ -35,11 +34,12 @@ import love.forte.simbot.utils.item.effectedItemsByFlow
  *
  * @author ForteScarlet
  */
-internal class TencentMemberImpl internal constructor(
+internal class TencentMemberImpl(
     override val bot: TencentGuildComponentBotImpl,
     private val info: TencentMemberInfo,
     override val guild: TencentGuildImpl,
 ) : TencentMember, TencentMemberInfo by info {
+    private val roleIdSet = info.roleIds.mapTo(mutableSetOf()) { it.literal }
     
     @ExperimentalSimbotApi
     override val status: UserStatus =
@@ -51,12 +51,9 @@ internal class TencentMemberImpl internal constructor(
     
     override val roles: Items<TencentRole>
         get() {
-            val roleIds = info.roleIds.mapTo(mutableSetOf()) { it.toString() }
             
             return bot.effectedItemsByFlow {
-                flow<TencentRole> {
-                    guild().roles.collect { emit(it) }
-                }.filter { it.id.literal in roleIds }
+                guild.roles.asFlow().filter { it.id.literal in roleIdSet }
             }
             
         }
@@ -69,6 +66,9 @@ internal class TencentMemberImpl internal constructor(
         // TODO
     }
     
+    override fun toString(): String {
+        return "TencentMemberImpl(bot=$bot, info=$info, guild=$guild)"
+    }
 }
 
 @ExperimentalSimbotApi

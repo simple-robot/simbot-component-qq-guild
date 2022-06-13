@@ -66,6 +66,9 @@ internal class TencentChannelImpl internal constructor(
     override val roles: Items<TencentRole>
         get() = guild.roles
     
+    override fun toString(): String {
+        return "TencentChannelImpl(bot=$baseBot, channel=$channel, guild=$guild)"
+    }
     
     // region info impl
     @Suppress("DEPRECATION")

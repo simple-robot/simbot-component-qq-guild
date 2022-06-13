@@ -74,6 +74,9 @@ internal class TencentGuildImpl private constructor(
     override lateinit var owner: TencentMemberImpl
         internal set
     
+    override fun toString(): String {
+        return "TencentGuildImpl(bot=$baseBot, guildInfo=$guildInfo)"
+    }
     
     /**
      * 同步数据，包括成员信息和频道列表信息, 以及 [bot] 和 [owner] 的初始化。
@@ -151,7 +154,6 @@ internal class TencentGuildImpl private constructor(
             val channel = TencentChannelImpl(baseBot, info.toInternal(), this)
             internalChannels[info.id.literal] = channel
         }
-        
     }
     
     companion object {
