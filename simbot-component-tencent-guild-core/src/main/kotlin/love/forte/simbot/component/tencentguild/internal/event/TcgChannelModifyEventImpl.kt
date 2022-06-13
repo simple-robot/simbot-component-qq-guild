@@ -22,17 +22,12 @@ import love.forte.simbot.Timestamp
 import love.forte.simbot.component.tencentguild.event.TcgChannelModifyEvent
 import love.forte.simbot.component.tencentguild.internal.TencentChannelImpl
 import love.forte.simbot.component.tencentguild.internal.TencentGuildComponentBotImpl
-import love.forte.simbot.component.tencentguild.internal.TencentGuildImpl
-import love.forte.simbot.component.tencentguild.util.requestBy
 import love.forte.simbot.event.Event
 import love.forte.simbot.tencentguild.EventSignals
 import love.forte.simbot.tencentguild.TencentChannelInfo
-import love.forte.simbot.tencentguild.api.guild.GetGuildApi
-import love.forte.simbot.utils.lazyValue
 
 
-internal class TcgChannelCreate
-constructor(
+internal class TcgChannelCreate(
     override val sourceEventEntity: TencentChannelInfo,
     override val bot: TencentGuildComponentBotImpl,
     override val source: TencentChannelImpl,
@@ -40,21 +35,14 @@ constructor(
     override val id: ID = tcgChannelModifyId(0, bot.id, channel.id, changedTime)
     override val eventSignal: EventSignals.Guilds.ChannelCreate
         get() = EventSignals.Guilds.ChannelCreate
-
-
+    
+    
     internal object Parser : BaseSignalToEvent<TencentChannelInfo>() {
         override val key: Event.Key<out Create> get() = Create
         override val type: EventSignals<TencentChannelInfo> = EventSignals.Guilds.ChannelCreate
         override suspend fun doParser(data: TencentChannelInfo, bot: TencentGuildComponentBotImpl): TcgChannelCreate {
-            val guildId = data.guildId
-
-            return TcgChannelCreate(
-                data,
-                bot,
-                TencentChannelImpl(bot, data, bot.lazyValue {
-                    TencentGuildImpl(bot, GetGuildApi(guildId).requestBy(bot))
-                })
-            )
+            val channel = bot.findOrCreateChannelImpl(data.guildId, data.id)
+            return TcgChannelCreate(data, bot, channel)
         }
     }
 }
@@ -69,22 +57,15 @@ constructor(
     override val id: ID = tcgChannelModifyId(1, bot.id, channel.id, changedTime)
     override val eventSignal: EventSignals.Guilds.ChannelUpdate
         get() = EventSignals.Guilds.ChannelUpdate
-
-
+    
+    
     internal object Parser : BaseSignalToEvent<TencentChannelInfo>() {
         override val key: Event.Key<out Update> get() = Update
         override val type: EventSignals<TencentChannelInfo> = EventSignals.Guilds.ChannelUpdate
-
+        
         override suspend fun doParser(data: TencentChannelInfo, bot: TencentGuildComponentBotImpl): TcgChannelUpdate {
-            val guildId = data.guildId
-
-            return TcgChannelUpdate(
-                data,
-                bot,
-                TencentChannelImpl(bot, data, bot.lazyValue {
-                    TencentGuildImpl(bot, GetGuildApi(guildId).requestBy(bot))
-                })
-            )
+            val channel = bot.findOrCreateChannelImpl(data.guildId, data.id)
+            return TcgChannelUpdate(data, bot, channel)
         }
     }
 }
@@ -99,21 +80,14 @@ constructor(
     override val id: ID = tcgChannelModifyId(2, bot.id, channel.id, changedTime)
     override val eventSignal: EventSignals.Guilds.ChannelDelete
         get() = EventSignals.Guilds.ChannelDelete
-
+    
     internal object Parser : BaseSignalToEvent<TencentChannelInfo>() {
         override val key: Event.Key<out Delete> get() = Delete
         override val type: EventSignals<TencentChannelInfo> = EventSignals.Guilds.ChannelDelete
-
+        
         override suspend fun doParser(data: TencentChannelInfo, bot: TencentGuildComponentBotImpl): TcgChannelDelete {
-            val guildId = data.guildId
-
-            return TcgChannelDelete(
-                data,
-                bot,
-                TencentChannelImpl(bot, data, bot.lazyValue {
-                    TencentGuildImpl(bot, GetGuildApi(guildId).requestBy(bot))
-                })
-            )
+            val channel = bot.findOrCreateChannelImpl(data.guildId, data.id)
+            return TcgChannelDelete(data, bot, channel)
         }
     }
 }

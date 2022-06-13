@@ -27,6 +27,7 @@ import love.forte.simbot.component.tencentguild.TencentGuildBotManager
 import love.forte.simbot.component.tencentguild.TencentGuildComponent
 import love.forte.simbot.component.tencentguild.TencentGuildComponentBot
 import love.forte.simbot.component.tencentguild.event.TcgBotStartedEvent
+import love.forte.simbot.component.tencentguild.internal.TencentGuildImpl.Companion.tencentGuildImpl
 import love.forte.simbot.component.tencentguild.internal.event.TcgBotStartedEventImpl
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.event.pushIfProcessable
@@ -38,7 +39,6 @@ import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.Items.Companion.asItems
 import love.forte.simbot.utils.runInBlocking
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.collections.lastOrNull
 import kotlin.collections.set
 import kotlin.coroutines.CoroutineContext
 
@@ -78,43 +78,9 @@ internal class TencentGuildComponentBotImpl(
     override val guilds: Items<TencentGuildImpl>
         get() = internalGuilds.values.asItems()
     
-    // get() = bot.itemsByFlow { prop ->
-    //     getGuildFlow(limiter(prop.offset, prop.limit, prop.batch)).map { info ->
-    //         TencentGuildImpl(baseBot = this, guildInfo = info)
-    //     }
-    // }
-    
-    
-    // private fun getGuildFlow(limiter: Limiter): Flow<TencentGuildInfo> {
-    //     return limiter.toFlow { batchSize ->
-    //         val batch = if (batchSize in 1..100) batchSize else 100
-    //         var lastId: ID? = null
-    //
-    //         while (true) {
-    //             val list = GetBotGuildListApi(after = lastId, limit = batch).requestBy(sourceBot)
-    //             if (list.isEmpty()) break
-    //
-    //             lastId = list.lastOrNull()?.id
-    //
-    //             for (tencentGuildInfo in list) {
-    //                 emit(tencentGuildInfo)
-    //             }
-    //         }
-    //     }
-    // }
     
     override suspend fun guild(id: ID): TencentGuild? {
         return internalGuilds[id.literal]
-        // return try {
-        //     val guild = GetGuildApi(id).requestBy(sourceBot)
-        //     TencentGuildImpl(this, guild)
-        // } catch (apiException: TencentApiException) {
-        //     if (apiException.value == 404) {
-        //         null
-        //     } else {
-        //         throw apiException
-        //     }
-        // }
     }
     
     @Api4J
@@ -177,21 +143,18 @@ internal class TencentGuildComponentBotImpl(
 
 private suspend fun TencentGuildComponentBotImpl.initGuildListData() {
     var lastId: ID? = null
+    var times = 1
     while (true) {
         val list = GetBotGuildListApi(after = lastId).requestBy(sourceBot)
         if (list.isEmpty()) break
         
+        logger.debug("Sync batch {} of the guild list, {} pieces of synchronized data, after id: {}", times++, list.size, lastId)
+        
         lastId = list.lastOrNull()?.id
         
         for (info in list) {
-            val guildImpl = TencentGuildImpl(this, info)
-            guildImpl.syncData()
-            
+            val guildImpl = tencentGuildImpl(this, info)
             internalGuilds[info.id.literal] = guildImpl
-            
-            // internalGuilds.merge(info.id.literal, guildImpl) { curr, old ->
-            //     curr
-            // }
         }
     }
     

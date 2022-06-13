@@ -17,10 +17,10 @@
 
 package love.forte.simbot.component.tencentguild.internal
 
-import love.forte.simbot.*
-import love.forte.simbot.component.tencentguild.message.*
-import love.forte.simbot.message.*
-import love.forte.simbot.tencentguild.*
+import love.forte.simbot.ID
+import love.forte.simbot.component.tencentguild.message.TencentReceiveMessageContent
+import love.forte.simbot.message.Messages
+import love.forte.simbot.tencentguild.TencentMessage
 
 /**
  *
@@ -35,15 +35,8 @@ internal class TencentReceiveMessageContentImpl(sourceMessage: TencentMessage) :
 
     override val messageId: ID = sourceMessage.id
 
-    // override val metadata: Metadata = Metadata(
-    //     sourceMessage.id,
-    //     sourceMessage.channelId,
-    //     sourceMessage.guildId,
-    //     sourceMessage.timestamp
-    // )
-
     override val messages: Messages by lazy(LazyThreadSafetyMode.NONE) { MessageParsers.parse(sourceMessage) }
-
+    
 
     override val plainText: String by lazy(LazyThreadSafetyMode.NONE) {
         var content = sourceMessage.content

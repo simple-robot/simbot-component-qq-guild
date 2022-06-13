@@ -35,7 +35,7 @@ internal fun TencentGuildComponentBotImpl.registerEventProcessor() {
  * 注册预处理事件，用于监听各类'变化'事件并同步数据。
  */
 private fun TencentGuildComponentBotImpl.registerEventPreProcessor() {
-    sourceBot.preProcessor { decoder, decoded ->
+    sourceBot.preProcessor { _, decoded ->
         when (type) {
             EventSignals.Guilds.GuildCreate.type -> onGuildCreate(decoded)
             EventSignals.Guilds.GuildUpdate.type -> onGuildUpdate(decoded)
@@ -77,6 +77,7 @@ private fun TencentGuildComponentBotImpl.onGuildDelete(decoded: () -> Any) {
 // endregion
 
 // region channels
+@Suppress("RedundantSuspendModifier")
 private suspend fun TencentGuildComponentBotImpl.onChannelCreate(decoded: () -> Any) {
     val eventData = decoded()
     if (eventData is TencentChannelInfo) {
@@ -112,20 +113,21 @@ private fun TencentGuildComponentBotImpl.onChannelDelete(decoded: () -> Any) {
 // endregion
 
 // region members
+@Suppress("unused", "UNUSED_PARAMETER")
 private fun TencentGuildComponentBotImpl.onMemberAdd(decoded: () -> Any) {
     // nothing.
 }
 
+@Suppress("unused", "UNUSED_PARAMETER")
 private fun TencentGuildComponentBotImpl.onMemberUpdate(decoded: () -> Any) {
-
+    // nothing.
 }
 
+@Suppress("unused", "UNUSED_PARAMETER")
 private fun TencentGuildComponentBotImpl.onMemberRemove(decoded: () -> Any) {
     // nothing.
 }
 // endregion
-
-
 
 
 /**
@@ -142,16 +144,11 @@ private fun TencentGuildComponentBotImpl.registerNormalEventProcessor() {
             eventSignalParsers[signals]?.let { parser ->
                 
                 logger.trace(
-                    "eventProcessor.isProcessable({}): {}",
-                    parser.key,
-                    eventProcessor.isProcessable(parser.key)
+                    "eventProcessor.isProcessable({}): {}", parser.key, eventProcessor.isProcessable(parser.key)
                 )
                 eventProcessor.pushIfProcessable(parser.key) {
                     parser(
-                        bot = this@registerNormalEventProcessor,
-                        decoder = json,
-                        decoded = decoded,
-                        dispatch = this
+                        bot = this@registerNormalEventProcessor, decoder = json, decoded = decoded, dispatch = this
                     )
                 }
             }

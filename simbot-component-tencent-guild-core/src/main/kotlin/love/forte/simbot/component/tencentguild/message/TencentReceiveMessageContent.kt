@@ -17,8 +17,11 @@
 
 package love.forte.simbot.component.tencentguild.message
 
-import love.forte.simbot.*
-import love.forte.simbot.message.*
+import love.forte.simbot.ID
+import love.forte.simbot.message.Messages
+import love.forte.simbot.message.ReceivedMessageContent
+import love.forte.simbot.message.Text
+import love.forte.simbot.message.messages
 
 /**
  *
@@ -75,7 +78,13 @@ public abstract class TencentReceiveMessageContent : ReceivedMessageContent() {
      *
      */
     abstract override val plainText: String
-
+    
+    /**
+     * 暂时不支持消息撤回，将会始终返回false.
+     */
+    override suspend fun delete(): Boolean = false
+    
+    
     override fun toString(): String {
         return "TencentReceiveMessageContent(id=$messageId, messages=$messages)"
     }

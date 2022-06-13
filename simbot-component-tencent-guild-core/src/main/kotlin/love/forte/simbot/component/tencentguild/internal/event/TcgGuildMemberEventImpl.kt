@@ -22,14 +22,10 @@ import love.forte.simbot.Timestamp
 import love.forte.simbot.component.tencentguild.TencentGuild
 import love.forte.simbot.component.tencentguild.event.TcgGuildMemberEvent
 import love.forte.simbot.component.tencentguild.internal.TencentGuildComponentBotImpl
-import love.forte.simbot.component.tencentguild.internal.TencentGuildImpl
 import love.forte.simbot.component.tencentguild.internal.TencentMemberImpl
-import love.forte.simbot.component.tencentguild.util.requestBy
 import love.forte.simbot.event.Event
 import love.forte.simbot.tencentguild.EventSignals
 import love.forte.simbot.tencentguild.TencentMemberInfo
-import love.forte.simbot.tencentguild.api.guild.GetGuildApi
-import love.forte.simbot.utils.lazyValue
 
 
 private fun tcgGuildMemberEventId(type: Int, botId: ID, memberId: ID, timestamp: Timestamp): ID =
@@ -49,27 +45,26 @@ internal class TcgGuildMemberIncrease constructor(
     override val changedTime: Timestamp = Timestamp.now()
     override val timestamp: Timestamp
         get() = changedTime
-
-
+    
+    
     override suspend fun source(): TencentGuild = member.guild()
-
-
+    
+    
     internal object Parser : BaseSignalToEvent<TencentMemberInfo>() {
         override val type: EventSignals<TencentMemberInfo>
             get() = EventSignals.GuildMembers.GuildMemberAdd
-
+        
         override val key: Event.Key<*>
             get() = Increase
-
+        
         override suspend fun doParser(
             data: TencentMemberInfo,
-            bot: TencentGuildComponentBotImpl
+            bot: TencentGuildComponentBotImpl,
         ): TcgGuildMemberIncrease {
             val guildId = data.guildId!!
-            val member = TencentMemberImpl(
-                bot, data,
-                bot.lazyValue { TencentGuildImpl(bot, GetGuildApi(guildId).requestBy(bot)) }
-            )
+            val guild = bot.findOrCreateGuildImpl(guildId)
+            val member = TencentMemberImpl(bot, data, guild)
+            
             return TcgGuildMemberIncrease(bot, data, member)
         }
     }
@@ -88,26 +83,25 @@ internal class TcgGuildMemberDecrease constructor(
     override val changedTime: Timestamp = Timestamp.now()
     override val timestamp: Timestamp
         get() = changedTime
-
+    
     override suspend fun source() = member.guild()
-
-
+    
+    
     internal object Parser : BaseSignalToEvent<TencentMemberInfo>() {
         override val type: EventSignals<TencentMemberInfo>
             get() = EventSignals.GuildMembers.GuildMemberRemove
-
+        
         override val key: Event.Key<*>
             get() = Decrease
-
+        
         override suspend fun doParser(
             data: TencentMemberInfo,
-            bot: TencentGuildComponentBotImpl
+            bot: TencentGuildComponentBotImpl,
         ): TcgGuildMemberDecrease {
             val guildId = data.guildId!!
-            val member = TencentMemberImpl(
-                bot, data,
-                bot.lazyValue { TencentGuildImpl(bot, GetGuildApi(guildId).requestBy(bot)) }
-            )
+            val guild = bot.findOrCreateGuildImpl(guildId)
+            val member = TencentMemberImpl(bot, data, guild)
+            
             return TcgGuildMemberDecrease(bot, data, member)
         }
     }

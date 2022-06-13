@@ -19,13 +19,10 @@ package love.forte.simbot.component.tencentguild.internal
 
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.runBlocking
-import love.forte.simbot.Api4J
 import love.forte.simbot.ExperimentalSimbotApi
 import love.forte.simbot.action.UnsupportedActionException
 import love.forte.simbot.component.tencentguild.TencentMember
 import love.forte.simbot.component.tencentguild.TencentRole
-import love.forte.simbot.component.tencentguild.internal.info.InternalTencentMemberInfo
 import love.forte.simbot.definition.UserStatus
 import love.forte.simbot.literal
 import love.forte.simbot.message.Message
@@ -40,17 +37,9 @@ import love.forte.simbot.utils.item.effectedItemsByFlow
  */
 internal class TencentMemberImpl internal constructor(
     override val bot: TencentGuildComponentBotImpl,
-    private val info: InternalTencentMemberInfo,
+    private val info: TencentMemberInfo,
     override val guild: TencentGuildImpl,
 ) : TencentMember, TencentMemberInfo by info {
-    
-    override suspend fun guild(): TencentGuildImpl = guild // guildFactory()
-    
-    override suspend fun organization(): TencentGuildImpl = guild()
-    
-    @Api4J
-    override val organization: TencentGuildImpl
-        get() = runBlocking { organization() }
     
     @ExperimentalSimbotApi
     override val status: UserStatus =
