@@ -97,15 +97,15 @@ internal suspend fun TencentGuildComponentBotImpl.createChannelImpl(
     return TencentChannelImpl(this, channel, guild)
 }
 
-internal suspend fun TencentGuildComponentBotImpl.findOrCreateGuildImpl(guildId: ID): TencentGuildImpl {
-    return getInternalGuild(guildId) ?: createGuildImpl(guildId)
+internal suspend inline fun TencentGuildComponentBotImpl.findOrCreateGuildImpl(guildId: ID, onCreate: (created: TencentGuildImpl) -> Unit = {}): TencentGuildImpl {
+    return getInternalGuild(guildId) ?: createGuildImpl(guildId).also(onCreate)
     
 }
 
-internal suspend fun TencentGuildComponentBotImpl.findOrCreateChannelImpl(
-    guildId: ID, channelId: ID,
+internal suspend inline fun TencentGuildComponentBotImpl.findOrCreateChannelImpl(
+    guildId: ID, channelId: ID, onCreateGuild: (created: TencentGuildImpl) -> Unit = {}, onCreateChannel: (created: TencentChannelImpl) -> Unit = {}
 ): TencentChannelImpl {
-    val guild = findOrCreateGuildImpl(guildId)
-    return guild.getInternalChannel(channelId) ?: createChannelImpl(guild, channelId)
+    val guild = findOrCreateGuildImpl(guildId, onCreateGuild)
+    return guild.getInternalChannel(channelId) ?: createChannelImpl(guild, channelId).also(onCreateChannel)
 }
 

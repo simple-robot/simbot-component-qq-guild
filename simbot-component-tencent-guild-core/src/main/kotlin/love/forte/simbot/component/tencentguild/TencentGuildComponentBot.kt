@@ -23,7 +23,10 @@ import love.forte.simbot.Bot
 import love.forte.simbot.ExperimentalSimbotApi
 import love.forte.simbot.ID
 import love.forte.simbot.action.UnsupportedActionException
-import love.forte.simbot.definition.*
+import love.forte.simbot.definition.Contact
+import love.forte.simbot.definition.Group
+import love.forte.simbot.definition.GuildBot
+import love.forte.simbot.definition.UserStatus
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.message.Image
 import love.forte.simbot.resources.Resource
@@ -153,7 +156,7 @@ public interface TencentGuildComponentBot : Bot {
     @OptIn(Api4J::class)
     override fun getContact(id: ID): Contact? = null
     
-    @Deprecated("Group related APIs are not supported", ReplaceWith("null", ))
+    @Deprecated("Group related APIs are not supported", ReplaceWith("null"))
     @JvmSynthetic
     override suspend fun group(id: ID): Group? = null
     
@@ -176,9 +179,7 @@ private object BotStatus : UserStatus {
 
 
 /**
- * 腾讯频道组件中 [TencentGuildComponentBot] 对 [GuildMemberBot] 的实现。
- *
- * 如果存在 bot 与 member 的属性值存在冲突的情况，优先使用作为 member 时的属性。
+ * 腾讯频道组件中 [TencentGuildComponentBot] 对 [GuildBot] 的实现。
  *
  */
 public interface TencentGuildComponentGuildBot : TencentGuildComponentBot, GuildBot {

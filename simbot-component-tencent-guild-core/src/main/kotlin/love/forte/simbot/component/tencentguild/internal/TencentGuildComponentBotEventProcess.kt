@@ -19,6 +19,7 @@ package love.forte.simbot.component.tencentguild.internal
 
 import love.forte.simbot.component.tencentguild.internal.TencentGuildImpl.Companion.tencentGuildImpl
 import love.forte.simbot.component.tencentguild.internal.event.eventSignalParsers
+import love.forte.simbot.component.tencentguild.internal.event.findOrCreateGuildImpl
 import love.forte.simbot.event.pushIfProcessable
 import love.forte.simbot.literal
 import love.forte.simbot.tencentguild.EventSignals
@@ -81,10 +82,12 @@ private fun TencentGuildComponentBotImpl.onGuildDelete(decoded: () -> Any) {
 private suspend fun TencentGuildComponentBotImpl.onChannelCreate(decoded: () -> Any) {
     val eventData = decoded()
     if (eventData is TencentChannelInfo) {
-        // TODO maybe... create new guilds? or print warn log?
-        val guild = getInternalGuild(eventData.guildId) ?: return
+        val guild = findOrCreateGuildImpl(eventData.guildId) {
+            logger.debug("No existing guild with id [{}] found in [onChannelCreate]. Build and save guild {}", it.id, it)
+            internalGuilds[it.id.literal] = it
+        }
         
-        guild.internalChannels.compute(eventData.id.literal) { id, old ->
+        guild.internalChannels.compute(eventData.id.literal) { _, old ->
             if (old != null) {
                 old.channel = eventData
                 old
