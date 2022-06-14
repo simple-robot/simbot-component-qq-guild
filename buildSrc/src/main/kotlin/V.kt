@@ -76,14 +76,11 @@ sealed class V(group: String?, id: String, version: String?) : Dep(group, id, ve
             object Common : Stdlib("common")
         }
 
-        object GradlePlugin : Kotlin("gradle-plugin")
-        object CompilerEmbeddable : Kotlin("compiler-embeddable")
         object Reflect : Kotlin("reflect")
         sealed class Test(id: String) : Kotlin("test-$id") {
             object Common : Test("common")
             object Junit : Test("junit")
             object Junit5 : Test("junit5")
-            object Js : Test("js")
             object AnnotationsCommon : Test("annotations-common")
         }
     }
@@ -93,16 +90,6 @@ sealed class V(group: String?, id: String, version: String?) : Dep(group, id, ve
      */
     sealed class Kotlinx(id: String, version: String?, override val isAbsolute: Boolean) :
         V("org.jetbrains.kotlinx", "kotlinx-$id", version) {
-
-        sealed class IO(id: String) : Kotlinx(id = "kotlinx-io-$id", VERSION, true) {
-            companion object {
-                const val VERSION = "0.1.1"
-            }
-
-            object JvmCore : IO("core-jvm")
-
-
-        }
 
         // https://github.com/Kotlin/kotlinx.coroutines
         sealed class Coroutines(id: String) : Kotlinx(id = "coroutines-$id", VERSION, true) {
@@ -115,42 +102,6 @@ sealed class V(group: String?, id: String, version: String?) : Dep(group, id, ve
                 object Jvm : Coroutines("core-jvm")
                 object Js : Coroutines("core-js")
             }
-
-            object Debug : Coroutines("debug")
-            object Test : Coroutines("test")
-
-            // =======
-            //   https://github.com/Kotlin/kotlinx.coroutines/blob/master/reactive/README.md
-            object Reactive : Coroutines("reactive")
-            object Reactor : Coroutines("reactor")
-            object Rx2 : Coroutines("rx2")
-            object Rx3 : Coroutines("rx3")
-            // =======
-
-            // https://github.com/Kotlin/kotlinx.coroutines/blob/master/ui/README.md
-            sealed class UI(id: String) : Coroutines(id) {
-                // kotlinx-coroutines-android -- Dispatchers.Main context for Android applications.
-                // kotlinx-coroutines-javafx -- Dispatchers.JavaFx context for JavaFX UI applications.
-                // kotlinx-coroutines-swing -- Dispatchers.Swing context for Swing UI applications.
-
-                object Android : UI("android")
-                object Javafx : UI("javafx")
-                object Swing : UI("swing")
-            }
-
-            // https://github.com/Kotlin/kotlinx.coroutines/blob/master/integration/README.md
-            sealed class Integration(id: String) : Coroutines(id) {
-                // kotlinx-coroutines-jdk8 -- integration with JDK8 CompletableFuture (Android API level 24).
-                // kotlinx-coroutines-guava -- integration with Guava ListenableFuture.
-                // kotlinx-coroutines-slf4j -- integration with SLF4J MDC.
-                // kotlinx-coroutines-play-services -- integration with Google Play Services Tasks API.
-                object Jdk8 : Integration("jdk8")
-                object Guava : Integration("guava")
-                object Slf4j : Integration("slf4j")
-                object PlayServices : Integration("play-services")
-            }
-
-
         }
 
         // https://github.com/Kotlin/kotlinx.serialization
@@ -228,14 +179,6 @@ sealed class V(group: String?, id: String, version: String?) : Dep(group, id, ve
         object Core : Log4j("core")
         object Slf4jImpl : Log4j("slf4j-impl")
     }
-
-
-    /**
-     * Okio https://square.github.io/okio/#releases
-     */
-    object Okio : V("com.squareup.okio", "okio", "3.0.0")
-
-
 }
 
 fun <T : Any> KClass<T>.all(): Sequence<T> {
