@@ -18,11 +18,18 @@
 package love.forte.simbot.tencentguild.api.message
 
 import io.ktor.http.*
-import kotlinx.serialization.*
-import love.forte.simbot.*
+import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import love.forte.simbot.CharSequenceID
+import love.forte.simbot.ID
+import love.forte.simbot.Timestamp
+import love.forte.simbot.literal
 import love.forte.simbot.tencentguild.*
-import love.forte.simbot.tencentguild.api.*
-import love.forte.simbot.tencentguild.internal.*
+import love.forte.simbot.tencentguild.api.RouteInfoBuilder
+import love.forte.simbot.tencentguild.api.TencentApi
+import love.forte.simbot.tencentguild.internal.TencentUserInfoImpl
 
 
 /**
@@ -68,7 +75,7 @@ public class MessageSendApi(channelId: ID, override val body: TencentMessageForS
     )
 
     // POST /channels/{channel_id}/messages
-    private val path = listOf("channels", channelId.toString(), "messages")
+    private val path: List<String> = listOf("channels", channelId.literal, "messages")
 
     override val resultDeserializer: DeserializationStrategy<out TencentMessage>
         get() = SendMessageResult.serializer()
@@ -84,7 +91,7 @@ public class MessageSendApi(channelId: ID, override val body: TencentMessageForS
 }
 
 @Serializable
-private data class SendMessageResult(
+internal data class SendMessageResult(
     override val id: CharSequenceID,
     @SerialName("channel_id")
     override val channelId: CharSequenceID,
@@ -107,7 +114,7 @@ private data class SendMessageResult(
     override val member: AuthorAsMember = AuthorAsMember(guildId, author)
 }
 
-private data class AuthorAsMember(
+internal data class AuthorAsMember(
     override val guildId: ID?,
     private val author: TencentUserInfoImpl
 ) : TencentMemberInfo {
