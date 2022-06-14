@@ -14,11 +14,6 @@
  *
  *
  */
-pluginManagement {
-    plugins {
-        id("org.jetbrains.dokka") version "1.6.10"
-    }
-}
 
 rootProject.name = "tencent-guild"
 
@@ -27,8 +22,4 @@ include(":simbot-component-tencent-guild-stdlib")
 include(":simbot-component-tencent-guild-core")
 include(":simbot-component-tencent-guild-boot")
 
-// includeAndSaveFilePath(":api", "simbot-component-tencent-guild-api")
-// includeAndSaveFilePath(":stdlib", "simbot-component-tencent-guild-stdlib")
-// includeAndSaveFilePath(":component", "simbot-component-tencent-guild-core")
-// includeAndSaveFilePath(":component-boot", "simbot-component-tencent-guild-boot")
 
