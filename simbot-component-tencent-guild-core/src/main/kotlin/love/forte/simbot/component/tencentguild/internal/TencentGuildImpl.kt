@@ -139,19 +139,28 @@ internal class TencentGuildImpl private constructor(
         val ownerId = guildInfo.ownerId
         val ownerInfo = GetMemberApi(guildInfo.id, ownerId).requestBy(baseBot)
         
-        owner = TencentMemberImpl(baseBot, ownerInfo.toInternal(), this)
+        owner = TencentMemberImpl(baseBot, ownerInfo, this)
+        baseBot.logger.debug("Sync guild owner: {}", ownerInfo)
+    
     }
     
     private suspend fun syncBot() {
         val member = member(baseBot.id)!!
         bot = TencentGuildComponentGuildBotImpl(baseBot, member)
+        baseBot.logger.debug("Sync guild bot: {}", bot)
     }
     
     
     private suspend fun syncChannels() {
         val channelInfoList = GetGuildChannelListApi(guildInfo.id).requestBy(baseBot)
+        baseBot.logger.debug(
+            "Sync the channel list for guild(id={}, name={}), {} pieces of synchronized data",
+            id,
+            name,
+            channelInfoList.size
+        )
         for (info in channelInfoList) {
-            val channel = TencentChannelImpl(baseBot, info.toInternal(), this)
+            val channel = TencentChannelImpl(baseBot, info, this)
             internalChannels[info.id.literal] = channel
         }
     }
