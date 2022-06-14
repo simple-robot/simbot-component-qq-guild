@@ -17,16 +17,24 @@
 
 package love.forte.simbot.component.tencentguild.internal
 
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import love.forte.simbot.ExperimentalSimbotApi
-import love.forte.simbot.action.UnsupportedActionException
 import love.forte.simbot.component.tencentguild.TencentMember
 import love.forte.simbot.component.tencentguild.TencentRole
+import love.forte.simbot.component.tencentguild.event.TcgChannelAtMessageEvent
+import love.forte.simbot.component.tencentguild.util.requestBy
 import love.forte.simbot.definition.UserStatus
+import love.forte.simbot.event.EventProcessingContext
 import love.forte.simbot.literal
 import love.forte.simbot.message.Message
-import love.forte.simbot.message.MessageReceipt
+import love.forte.simbot.message.MessageContent
+import love.forte.simbot.tencentguild.DirectMessageSession
 import love.forte.simbot.tencentguild.TencentMemberInfo
+import love.forte.simbot.tencentguild.api.message.direct.CreateDmsApi
+import love.forte.simbot.tencentguild.api.message.direct.DmsSendApi
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.effectedItemsByFlow
 
@@ -40,6 +48,22 @@ internal class TencentMemberImpl(
     override val guild: TencentGuildImpl,
 ) : TencentMember, TencentMemberInfo by info {
     private val roleIdSet = info.roleIds.mapTo(mutableSetOf()) { it.literal }
+    private lateinit var dms: DirectMessageSession
+    private val dmsInitLock = Mutex()
+    private suspend fun getDms(): DirectMessageSession {
+        if (::dms.isInitialized) {
+            return dms
+        } else {
+            dmsInitLock.withLock {
+                if (::dms.isInitialized) {
+                    return dms
+                }
+                return CreateDmsApi(id, guild.id).requestBy(bot).also {
+                    dms = it
+                }
+            }
+        }
+    }
     
     @ExperimentalSimbotApi
     override val status: UserStatus =
@@ -59,11 +83,38 @@ internal class TencentMemberImpl(
         }
     
     
-    @Deprecated("Not yet implemented")
     @JvmSynthetic
-    override suspend fun send(message: Message): MessageReceipt {
-        throw UnsupportedActionException("send(message)")
-        // TODO
+    override suspend fun send(message: Message): TencentMessageReceipt {
+        val dms = getDms()
+        val currentCoroutineContext = currentCoroutineContext()
+        
+        val messageForSend = MessageParsers.parse(message) {
+            if (this.msgId == null) {
+                val currentEvent =
+                    currentCoroutineContext[EventProcessingContext]?.event?.takeIf { it is TcgChannelAtMessageEvent } as? TcgChannelAtMessageEvent
+                
+                val msgId = currentEvent?.sourceEventEntity?.id
+                if (msgId != null) {
+                    this.msgId = msgId
+                }
+            }
+        }
+        
+        
+        return DmsSendApi(dms.guildId, messageForSend).requestBy(bot).asReceipt()
+    }
+    
+    override suspend fun send(text: String): TencentMessageReceipt {
+        val dms = getDms()
+        val currentEvent =
+            currentCoroutineContext()[EventProcessingContext]?.event?.takeIf { it is TcgChannelAtMessageEvent } as? TcgChannelAtMessageEvent
+        val msgId = currentEvent?.sourceEventEntity?.id
+        
+        return DmsSendApi(guildId = dms.guildId, content = text, msgId = msgId).requestBy(bot).asReceipt()
+    }
+    
+    override suspend fun send(message: MessageContent): TencentMessageReceipt {
+        return send(message.messages)
     }
     
     override fun toString(): String {

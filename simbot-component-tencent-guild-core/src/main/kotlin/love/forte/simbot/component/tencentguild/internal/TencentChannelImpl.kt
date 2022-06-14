@@ -45,14 +45,18 @@ internal class TencentChannelImpl internal constructor(
     override val bot: TencentGuildComponentGuildBot get() = guild.bot
     
     override suspend fun send(message: Message): TencentMessageReceipt {
-        val currentEvent =
-            currentCoroutineContext()[EventProcessingContext]?.event?.takeIf { it is TcgChannelAtMessageEvent } as? TcgChannelAtMessageEvent
+        val currentCoroutineContext = currentCoroutineContext()
         
-        val msgId = currentEvent?.sourceEventEntity?.id
         
         val messageForSend = MessageParsers.parse(message) {
-            if (msgId != null) {
-                this.msgId = msgId
+            if (this.msgId == null) {
+                val currentEvent =
+                    currentCoroutineContext[EventProcessingContext]?.event?.takeIf { it is TcgChannelAtMessageEvent } as? TcgChannelAtMessageEvent
+    
+                val msgId = currentEvent?.sourceEventEntity?.id
+                if (msgId != null) {
+                    this.msgId = msgId
+                }
             }
         }
         return MessageSendApi(channel.id, messageForSend).requestBy(baseBot).asReceipt()
