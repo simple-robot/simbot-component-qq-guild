@@ -17,9 +17,10 @@
 
 package love.forte.simbot.tencentguild.api.message
 
-import kotlinx.serialization.*
-import love.forte.simbot.*
-import love.forte.simbot.tencentguild.*
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import love.forte.simbot.ID
+import love.forte.simbot.tencentguild.TencentMessage
 
 
 /**
@@ -56,3 +57,4 @@ public data class TencentMessageForSending @JvmOverloads constructor(
     @Serializable(ID.AsCharSequenceIDSerializer::class)
     public var msgId: ID? = null,
 )
+

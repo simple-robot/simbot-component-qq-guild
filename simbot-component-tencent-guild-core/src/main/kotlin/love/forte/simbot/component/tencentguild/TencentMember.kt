@@ -18,12 +18,16 @@
 package love.forte.simbot.component.tencentguild
 
 import love.forte.simbot.*
+import love.forte.simbot.component.tencentguild.internal.TencentMessageReceipt
 import love.forte.simbot.definition.GuildMember
 import love.forte.simbot.definition.MemberInfo
 import love.forte.simbot.definition.UserStatus
+import love.forte.simbot.message.Message
+import love.forte.simbot.message.MessageContent
 import love.forte.simbot.tencentguild.TencentMemberInfo
 import love.forte.simbot.tencentguild.TencentUserInfo
 import love.forte.simbot.utils.item.Items
+import love.forte.simbot.utils.runInBlocking
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration
 
@@ -50,6 +54,19 @@ public interface TencentMember : GuildMember, MemberInfo, TencentMemberInfo {
     
     @OptIn(Api4J::class)
     override val guild: TencentGuild
+    
+    override suspend fun send(message: Message): TencentMessageReceipt
+    override suspend fun send(text: String): TencentMessageReceipt
+    override suspend fun send(message: MessageContent): TencentMessageReceipt
+    
+    @Api4J
+    override fun sendBlocking(text: String): TencentMessageReceipt = runInBlocking { send(text) }
+    
+    @Api4J
+    override fun sendBlocking(message: Message): TencentMessageReceipt = runInBlocking { send(message) }
+    
+    @Api4J
+    override fun sendBlocking(message: MessageContent): TencentMessageReceipt = runInBlocking { send(message) }
     
     //// Impl
     

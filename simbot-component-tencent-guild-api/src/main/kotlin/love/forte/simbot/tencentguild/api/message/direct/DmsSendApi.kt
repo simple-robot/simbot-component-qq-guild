@@ -52,27 +52,27 @@ import love.forte.simbot.tencentguild.api.message.TencentMessageForSending
  *
  * @author ForteScarlet
  */
-public class DmsSendApi(dmsId: ID, override val body: TencentMessageForSending) : TencentApi<TencentMessage>() {
+public class DmsSendApi(guildId: ID, override val body: TencentMessageForSending) : TencentApi<TencentMessage>() {
     @JvmOverloads
-    public constructor(dmsId: ID, content: String, msgId: ID? = null) : this(
-        dmsId,
+    public constructor(guildId: ID, content: String, msgId: ID? = null) : this(
+        guildId,
         TencentMessageForSending(content = content, msgId = msgId)
     )
     
     @JvmOverloads
-    public constructor(dmsId: ID, embed: TencentMessage.Embed, msgId: ID? = null) : this(
-        dmsId,
+    public constructor(guildId: ID, embed: TencentMessage.Embed, msgId: ID? = null) : this(
+        guildId,
         TencentMessageForSending(embed = embed, msgId = msgId)
     )
     
     @JvmOverloads
-    public constructor(dmsId: ID, ark: TencentMessage.Ark, msgId: ID? = null) : this(
-        dmsId,
+    public constructor(guildId: ID, ark: TencentMessage.Ark, msgId: ID? = null) : this(
+        guildId,
         TencentMessageForSending(ark = ark, msgId = msgId)
     )
     
     // POST /channels/{channel_id}/messages
-    private val path: List<String> = listOf("dms", dmsId.literal, "messages")
+    private val path: List<String> = listOf("dms", guildId.literal, "messages")
     
     override val resultDeserializer: DeserializationStrategy<out TencentMessage>
         get() = SendMessageResult.serializer()
