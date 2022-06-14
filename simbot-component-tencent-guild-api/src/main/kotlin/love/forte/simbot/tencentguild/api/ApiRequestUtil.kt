@@ -21,12 +21,14 @@ package love.forte.simbot.tencentguild.api
 
 import io.ktor.client.*
 import io.ktor.http.*
-import kotlinx.coroutines.*
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
-import love.forte.simbot.*
-import love.forte.simbot.tencentguild.*
-import java.util.function.*
+import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.StringFormat
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonBuilder
+import love.forte.simbot.Api4J
+import love.forte.simbot.LoggerFactory
+import love.forte.simbot.tencentguild.InternalSrTcgApi
+import java.util.function.Consumer
 
 internal val logger = LoggerFactory.getLogger("love.forte.simbot.tencentguild.api.request")
 
@@ -87,7 +89,7 @@ public suspend fun <R> TencentApi<R>.request(
     client: HttpClient,
     server: Url,
     token: String,
-    decoder: StringFormat = defaultJson
+    decoder: StringFormat = defaultJson,
 ): R {
     return doRequest(client, server, token, decoder)
 }
@@ -104,7 +106,7 @@ public fun <R> doRequest(
     client: HttpClient,
     server: String,
     token: String,
-    decoder: StringFormat = defaultJson
+    decoder: StringFormat = defaultJson,
 ): R = runBlocking {
     api.request(client, Url(server), token, decoder)
 }
@@ -123,7 +125,7 @@ public fun newJson(
             isLenient = true
             ignoreUnknownKeys = true
         }
-    }
+    },
 ): Json = Json {
     build.accept(this)
 }

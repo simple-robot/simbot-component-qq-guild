@@ -39,18 +39,18 @@ import java.time.format.DateTimeFormatter
 public object TencentGuildApi {
     @Suppress("MemberVisibilityCanBePrivate")
     public const val URL_STRING: String = "https://api.sgroup.qq.com"
-
+    
     @JvmField
     public val URL: Url = Url(URL_STRING)
-
+    
     @Suppress("MemberVisibilityCanBePrivate")
     public const val SANDBOX_URL_STRING: String = "https://sandbox.api.sgroup.qq.com"
-
+    
     @JvmField
     public val SANDBOX_URL: Url = Url(SANDBOX_URL_STRING)
-
+    
     public val serializersModule: SerializersModule = SerializersModule {
-        //region infos
+        // region infos
         polymorphicDefault(TencentGuildInfo::class) {
             TencentGuildInfoImpl.serializer()
         }
@@ -66,8 +66,8 @@ public object TencentGuildApi {
         polymorphicDefault(TencentChannelInfo::class) {
             TencentChannelInfoImpl.serializer()
         }
-        //endregion
-
+        // endregion
+        
     }
 }
 
@@ -77,11 +77,11 @@ public object TimestampISO8601Serializer : KSerializer<Timestamp> {
         return DateTimeFormatter.ISO_INSTANT.parse(decoder.decodeString(), Instant::from).toTimestamp()
         // return Instant.parse(decoder.decodeString()).toTimestamp()
     }
-
+    
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("ISO8601Timestamp", PrimitiveKind.STRING)
-
+    
     override fun serialize(encoder: Encoder, value: Timestamp) {
         encoder.encodeString(DateTimeFormatter.ISO_INSTANT.format(value.instantValue))
     }
-
+    
 }

@@ -18,8 +18,8 @@
 package love.forte.simbot.tencentguild
 
 import io.ktor.http.*
-import io.ktor.http.cio.websocket.*
-import kotlinx.serialization.*
+import io.ktor.websocket.*
+import kotlinx.serialization.Serializable
 
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -27,23 +27,23 @@ public class TencentApiException : IllegalStateException {
     public val info: ErrInfo?
     public val value: Int
     public val description: String
-
+    
     public constructor(value: Int, description: String) : super("$value: $description") {
         this.info = null
         this.value = value
         this.description = description
     }
-
+    
     public constructor(
         info: ErrInfo,
         value: Int,
-        description: String
+        description: String,
     ) : super("$value: $description; response info: $info") {
         this.info = info
         this.value = value
         this.description = description
     }
-
+    
 }
 
 public inline fun ErrInfo.err(codeBlock: () -> HttpStatusCode): Nothing {

@@ -18,9 +18,10 @@
 package love.forte.simbot.tencentguild.api.role
 
 import io.ktor.http.*
-import kotlinx.serialization.*
-import love.forte.simbot.*
-import love.forte.simbot.tencentguild.api.*
+import kotlinx.serialization.Serializable
+import love.forte.simbot.ID
+import love.forte.simbot.tencentguild.api.RouteInfoBuilder
+import love.forte.simbot.tencentguild.api.TencentApiWithoutResult
 
 /**
  * [删除频道身份组成员](https://bot.q.qq.com/wiki/develop/api/openapi/guild/delete_guild_member_role.html)
@@ -31,9 +32,9 @@ public class RemoveMemberRoleApi(
     channelId: ID, guildId: ID,
     userId: ID, roleId: ID,
 ) : TencentApiWithoutResult() {
-
+    
     private val _body = Body(channelId.toString())
-
+    
     // DELETE /guilds/{guild_id}/members/{user_id}/roles/{role_id}
     private val path = listOf(
         "guilds",
@@ -43,18 +44,18 @@ public class RemoveMemberRoleApi(
         "roles",
         roleId.toString(),
     )
-
+    
     override val method: HttpMethod
         get() = HttpMethod.Delete
-
+    
     override fun route(builder: RouteInfoBuilder) {
         builder.apiPath = path
     }
-
+    
     override val body: Any get() = _body
-
+    
     /** 接收一个只填充了子频道id字段的对象 */
     @Serializable
     private data class Body(val id: String)
-
+    
 }

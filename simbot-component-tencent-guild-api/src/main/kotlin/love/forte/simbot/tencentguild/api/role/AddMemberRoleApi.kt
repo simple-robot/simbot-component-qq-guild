@@ -18,9 +18,10 @@
 package love.forte.simbot.tencentguild.api.role
 
 import io.ktor.http.*
-import kotlinx.serialization.*
-import love.forte.simbot.*
-import love.forte.simbot.tencentguild.api.*
+import kotlinx.serialization.Serializable
+import love.forte.simbot.ID
+import love.forte.simbot.tencentguild.api.RouteInfoBuilder
+import love.forte.simbot.tencentguild.api.TencentApiWithoutResult
 
 /**
  *
@@ -33,7 +34,7 @@ public class AddMemberRoleApi(
     userId: ID, roleId: ID,
 ) : TencentApiWithoutResult() {
     private val _body = Body(channelId.toString())
-
+    
     // PUT /guilds/{guild_id}/members/{user_id}/roles/{role_id}
     private val path = listOf(
         "guilds",
@@ -43,19 +44,19 @@ public class AddMemberRoleApi(
         "roles",
         roleId.toString(),
     )
-
+    
     override val method: HttpMethod
         get() = HttpMethod.Put
-
+    
     override fun route(builder: RouteInfoBuilder) {
         builder.apiPath = path
     }
-
+    
     override val body: Any get() = _body
-
+    
     /** 接收一个只填充了子频道id字段的对象 */
     @Serializable
     private data class Body(val id: String)
-
-
+    
+    
 }

@@ -126,11 +126,17 @@ sealed class V(group: String?, id: String, version: String?) : Dep(group, id, ve
         companion object {
             // NoSuchMethodError: java.nio.ByteBuffer.limit(I)Ljava/nio/ByteBuffer;
             // https://youtrack.jetbrains.com/issue/KTOR-3358
-            const val VERSION = "1.6.7" // 1.6.6
+            // 1.6.6
+            const val VERSION = "2.0.0"
+        }
+        
+        sealed class Serialization(id: String) : Ktor(id = "serialization-$id") {
+            object KotlinxJson : Serialization("kotlinx-json")
         }
 
         // server
         sealed class Server(id: String) : Ktor(id = "server-$id") {
+            object ContentNegotiation : Server("content-negotiation")
             object Core : Server("core")
             object Netty : Server("netty")
             object Jetty : Server("jetty")
@@ -140,6 +146,7 @@ sealed class V(group: String?, id: String, version: String?) : Dep(group, id, ve
 
         // client
         sealed class Client(id: String) : Ktor(id = "client-$id") {
+            object ContentNegotiation : Client("content-negotiation")
             object Serialization : Client("serialization")
             object Auth : Client("auth")
             object Websockets : Client("websockets")
