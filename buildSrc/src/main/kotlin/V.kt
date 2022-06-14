@@ -175,7 +175,7 @@ sealed class V(group: String?, id: String, version: String?) : Dep(group, id, ve
         companion object {
             // NoSuchMethodError: java.nio.ByteBuffer.limit(I)Ljava/nio/ByteBuffer;
             // https://youtrack.jetbrains.com/issue/KTOR-3358
-            const val VERSION = "1.6.4" // 1.6.6
+            const val VERSION = "1.6.7" // 1.6.6
         }
 
         // server
