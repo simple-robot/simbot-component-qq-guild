@@ -21,12 +21,14 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+import io.ktor.client.utils.*
 import io.ktor.http.*
-import io.ktor.utils.io.*
-import kotlinx.serialization.*
-import kotlinx.serialization.builtins.*
-import kotlinx.serialization.json.*
-import love.forte.simbot.tencentguild.*
+import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.StringFormat
+import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.json.Json
+import love.forte.simbot.tencentguild.ErrInfo
+import love.forte.simbot.tencentguild.err
 
 
 /**
@@ -37,37 +39,37 @@ import love.forte.simbot.tencentguild.*
  * @see TencentCacheableApi
  */
 public abstract class TencentApi<out R> {
-
+    
     /**
      * 得到响应值的反序列化器.
      */
     public abstract val resultDeserializer: DeserializationStrategy<out R>
-
-
+    
+    
     /**
      * 此api请求方式
      */
     public abstract val method: HttpMethod
-
-
+    
+    
     /**
      * 此请求对应的api路由路径以及路径参数。
      * 例如：`/guild/list`
      */
     public abstract fun route(builder: RouteInfoBuilder)
-
-
+    
+    
     /**
      * 此次请求所发送的数据。为null则代表没有参数。
      */
     public abstract val body: Any?
-
-
+    
+    
     /**
      * Do something after resp.
      */
     public open fun post(resp: @UnsafeVariance R) {}
-
+    
     /**
      * 使用此api发起一次请求，并得到预期中的结果。如果返回了代表错误的响应值
      *
@@ -80,12 +82,12 @@ public abstract class TencentApi<out R> {
         client: HttpClient,
         server: Url,
         token: String,
-        decoder: StringFormat = Json
+        decoder: StringFormat = Json,
     ): R {
         val resp = requestForResponse(client, server, token)
-
+        
         checkStatus(resp) { resp.status }
-
+        
         // decode
         return decodeFromHttpResponseViaString(decoder, resp)
     }
@@ -94,26 +96,26 @@ public abstract class TencentApi<out R> {
 
 private suspend fun TencentApi<*>.requestForResponse(client: HttpClient, server: Url, token: String): HttpResponse {
     val api = this
-
+    
     return client.request {
         method = api.method
-
+        
         headers {
             this[HttpHeaders.Authorization] = token
         }
-
+        
         url {
             // route builder
             val routeBuilder = RouteInfoBuilder { name, value ->
                 parameters.append(name, value.toString())
             }
-
+            
             api.route(routeBuilder)
-            api.body?.also { b -> body = b }
-
+            setBody(api.body ?: EmptyContent)
+            
             protocol = server.protocol
             host = server.host
-            path(routeBuilder.apiPath)
+            appendPathSegments(routeBuilder.apiPath)
             routeBuilder.contentType?.let {
                 headers {
                     this[HttpHeaders.ContentType] = it.toString()
@@ -125,19 +127,19 @@ private suspend fun TencentApi<*>.requestForResponse(client: HttpClient, server:
 
 
 private suspend fun <R> TencentApi<R>.decodeFromHttpResponseViaString(
-    decoder: StringFormat, response: HttpResponse
+    decoder: StringFormat, response: HttpResponse,
 ): R {
-    val remainingText = response.content.readRemaining().readText()
-
+    val remainingText = response.bodyAsText()
+    
     logger.trace("resp: {}", remainingText)
-
+    
     return decoder.decodeFromString(resultDeserializer, remainingText)
 }
 
 private suspend inline fun checkStatus(resp: HttpResponse, status: () -> HttpStatusCode) {
     val s = status()
     if (!s.isSuccess()) {
-        val info = resp.receive<ErrInfo>()
+        val info = resp.body<ErrInfo>()
         // throw err
         info.err { s }
     }
@@ -151,7 +153,7 @@ public abstract class TencentApiWithoutResult : TencentApi<Unit>() {
 public abstract class GetTencentApi<R> : TencentApi<R>() {
     override val method: HttpMethod
         get() = HttpMethod.Get
-
+    
     override val body: Any?
         get() = null
 }

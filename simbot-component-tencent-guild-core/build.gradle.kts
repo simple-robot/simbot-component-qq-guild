@@ -42,7 +42,8 @@ dependencies {
     api(V.Ktor.Client.Jvm.Core.notation)
     api(V.Ktor.Client.Jvm.CIO.notation)
     api(V.Ktor.Client.Websockets.notation)
-    api(V.Ktor.Client.Serialization.notation)
+    api(V.Ktor.Client.ContentNegotiation.notation)
+    api(V.Ktor.Serialization.KotlinxJson.notation)
     api(V.Kotlinx.Serialization.Json.notation)
     
     compileOnly(V.Kotlinx.Serialization.Properties.notation)

@@ -61,33 +61,33 @@ public class MessageSendApi(channelId: ID, override val body: TencentMessageForS
         channelId,
         TencentMessageForSending(content = content, msgId = msgId)
     )
-
+    
     @JvmOverloads
     public constructor(channelId: ID, embed: TencentMessage.Embed, msgId: ID? = null) : this(
         channelId,
         TencentMessageForSending(embed = embed, msgId = msgId)
     )
-
+    
     @JvmOverloads
     public constructor(channelId: ID, ark: TencentMessage.Ark, msgId: ID? = null) : this(
         channelId,
         TencentMessageForSending(ark = ark, msgId = msgId)
     )
-
+    
     // POST /channels/{channel_id}/messages
     private val path: List<String> = listOf("channels", channelId.literal, "messages")
-
+    
     override val resultDeserializer: DeserializationStrategy<out TencentMessage>
         get() = SendMessageResult.serializer()
-
+    
     override val method: HttpMethod
         get() = HttpMethod.Post
-
+    
     override fun route(builder: RouteInfoBuilder) {
         builder.apiPath = path
     }
-
-
+    
+    
 }
 
 @Serializable
@@ -108,7 +108,7 @@ internal data class SendMessageResult(
     override val attachments: List<TencentMessage.Attachment> = emptyList(),
     override val embeds: List<TencentMessage.Embed> = emptyList(),
     override val mentions: List<TencentUserInfoImpl> = emptyList(),
-    override val ark: TencentMessage.Ark? = null
+    override val ark: TencentMessage.Ark? = null,
 ) : TencentMessage {
     @Transient
     override val member: AuthorAsMember = AuthorAsMember(guildId, author)
@@ -116,7 +116,7 @@ internal data class SendMessageResult(
 
 internal data class AuthorAsMember(
     override val guildId: ID?,
-    private val author: TencentUserInfoImpl
+    private val author: TencentUserInfoImpl,
 ) : TencentMemberInfo {
     override val user: TencentUserInfo get() = author
     override val nick: String get() = ""
