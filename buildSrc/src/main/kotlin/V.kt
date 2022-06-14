@@ -107,7 +107,7 @@ sealed class V(group: String?, id: String, version: String?) : Dep(group, id, ve
         // https://github.com/Kotlin/kotlinx.coroutines
         sealed class Coroutines(id: String) : Kotlinx(id = "coroutines-$id", VERSION, true) {
             companion object {
-                const val VERSION = "1.5.2-native-mt"
+                const val VERSION = "1.6.2"
             }
 
             // https://github.com/Kotlin/kotlinx.coroutines/blob/master/kotlinx-coroutines-core/README.md
