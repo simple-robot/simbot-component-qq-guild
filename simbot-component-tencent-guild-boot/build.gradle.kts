@@ -39,7 +39,7 @@ dependencies {
     implementation(V.Simbot.BootApi.notation)
     
     testImplementation(V.Simbot.BootCore.notation)
-    testImplementation(V.Kotlin.Test.Junit.notation)
+    testImplementation(V.Kotlin.Test.Testng.notation)
     testImplementation(V.Log4j.Api.notation)
     testImplementation(V.Log4j.Core.notation)
     testImplementation(V.Log4j.Slf4jImpl.notation)
@@ -48,7 +48,7 @@ dependencies {
 }
 
 tasks.getByName<Test>("test") {
-    useJUnit()
+    useTestNG()
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {

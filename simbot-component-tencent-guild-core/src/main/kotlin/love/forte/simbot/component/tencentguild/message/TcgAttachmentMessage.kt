@@ -19,14 +19,12 @@ package love.forte.simbot.component.tencentguild.message
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 import love.forte.simbot.ID
 import love.forte.simbot.LoggerFactory
 import love.forte.simbot.component.tencentguild.internal.SendingMessageParser
 import love.forte.simbot.component.tencentguild.internal.TencentMessageForSendingBuilder
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.Messages
-import love.forte.simbot.message.RemoteResource
 import love.forte.simbot.message.doSafeCast
 import love.forte.simbot.tencentguild.TencentMessage
 
@@ -39,13 +37,14 @@ import love.forte.simbot.tencentguild.TencentMessage
  */
 @SerialName("tcg.attachment")
 @Serializable
-public data class TcgAttachmentMessage(override val url: String) : RemoteResource<TcgAttachmentMessage>, TcgMessageElement<TcgAttachmentMessage> {
-    @Transient
-    override val id: ID = url.ID
-
+public data class TcgAttachmentMessage(public val url: String) : TcgMessageElement<TcgAttachmentMessage> {
+    
+    @Deprecated("Just get url", ReplaceWith("url.ID", "love.forte.simbot.ID"))
+    public val id: ID get() = url.ID
+    
     override val key: Message.Key<TcgAttachmentMessage>
         get() = Key
-
+    
     public companion object Key : Message.Key<TcgAttachmentMessage> {
         override fun safeCast(value: Any): TcgAttachmentMessage? = doSafeCast(value)
     }
@@ -62,11 +61,11 @@ internal object AttachmentParser : SendingMessageParser {
         index: Int,
         element: Message.Element<*>,
         messages: Messages?,
-        builder: TencentMessageForSendingBuilder
+        builder: TencentMessageForSendingBuilder,
     ) {
         if (element is TcgAttachmentMessage) {
             logger.warn("Attachment message is not yet supported for sending")
         }
     }
-
+    
 }

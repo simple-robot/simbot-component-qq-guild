@@ -80,6 +80,7 @@ sealed class V(group: String?, id: String, version: String?) : Dep(group, id, ve
         sealed class Test(id: String) : Kotlin("test-$id") {
             object Common : Test("common")
             object Junit : Test("junit")
+            object Testng : Test("testng")
             object Junit5 : Test("junit5")
             object AnnotationsCommon : Test("annotations-common")
         }

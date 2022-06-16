@@ -21,12 +21,10 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import love.forte.simbot.ExperimentalSimbotApi
 import love.forte.simbot.component.tencentguild.TencentMember
 import love.forte.simbot.component.tencentguild.TencentRole
 import love.forte.simbot.component.tencentguild.event.TcgChannelAtMessageEvent
 import love.forte.simbot.component.tencentguild.util.requestBy
-import love.forte.simbot.definition.UserStatus
 import love.forte.simbot.event.EventProcessingContext
 import love.forte.simbot.literal
 import love.forte.simbot.message.Message
@@ -64,14 +62,6 @@ internal class TencentMemberImpl(
             }
         }
     }
-    
-    @ExperimentalSimbotApi
-    override val status: UserStatus =
-        if (info.id == bot.id) {
-            bot.status
-        } else {
-            if (info.user.isBot) botStatus else normalStatus
-        }
     
     override val roles: Items<TencentRole>
         get() {
@@ -122,8 +112,3 @@ internal class TencentMemberImpl(
     }
 }
 
-@ExperimentalSimbotApi
-private val botStatus = UserStatus.builder().bot().fakeUser().build()
-
-@ExperimentalSimbotApi
-private val normalStatus = UserStatus.builder().normal().build()
