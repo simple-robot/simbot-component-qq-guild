@@ -17,11 +17,13 @@
 
 package love.forte.simbot.component.tencentguild
 
-import love.forte.simbot.*
+import love.forte.simbot.Api4J
+import love.forte.simbot.Bot
+import love.forte.simbot.ID
+import love.forte.simbot.Timestamp
 import love.forte.simbot.component.tencentguild.internal.TencentMessageReceipt
 import love.forte.simbot.definition.GuildMember
 import love.forte.simbot.definition.MemberInfo
-import love.forte.simbot.definition.UserStatus
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.tencentguild.TencentMemberInfo
@@ -45,8 +47,6 @@ public interface TencentMember : GuildMember, MemberInfo, TencentMemberInfo {
     override val bot: Bot
     override val id: ID
     
-    @ExperimentalSimbotApi
-    override val status: UserStatus
     override val username: String
     
     override val roles: Items<TencentRole>

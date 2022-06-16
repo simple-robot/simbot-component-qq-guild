@@ -51,7 +51,7 @@ internal object MentionParser : SendingMessageParser {
         builder: TencentMessageForSendingBuilder
     ) {
         if (element is At) {
-            if (element.atType == "channel") {
+            if (element.type == "channel") {
                 builder.contentAppend("<#${element.target}>")
             } else {
                 builder.contentAppend("<@${element.target}>")

@@ -38,7 +38,7 @@ dependencies {
 
     api(V.Kotlinx.Serialization.Json.notation)
 
-    testImplementation(V.Kotlin.Test.Junit5.notation)
+    testImplementation(V.Kotlin.Test.Testng.notation)
 }
 repositories {
     maven {
@@ -48,7 +48,7 @@ repositories {
 }
 
 tasks.getByName<Test>("test") {
-    useJUnitPlatform()
+    useTestNG()
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {

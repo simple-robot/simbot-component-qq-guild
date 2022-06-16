@@ -17,8 +17,8 @@
 
 package love.forte.simbot.component.tencentguild.internal
 
-import love.forte.simbot.component.tencentguild.*
-import love.forte.simbot.tencentguild.*
+import love.forte.simbot.component.tencentguild.TencentRole
+import love.forte.simbot.tencentguild.TencentRoleInfo
 
 /**
  *
@@ -27,14 +27,13 @@ import love.forte.simbot.tencentguild.*
 internal class TencentRoleImpl(
     @Suppress("unused")
     private val bot: TencentGuildComponentBotImpl,
-    private val info: TencentRoleInfo
+    private val info: TencentRoleInfo,
 ) : TencentRole, TencentRoleInfo by info {
-
+    
     override val isAdmin: Boolean = isDefault && id.toString() != TencentRoleInfo.DefaultRole.ALL_MEMBER.code.toString()
-
-
-    override val isOwner: Boolean = info.id.toString() == TencentRoleInfo.DefaultRole.OWNER.code.toString()
+    
+    
     companion object {
     }
-
+    
 }

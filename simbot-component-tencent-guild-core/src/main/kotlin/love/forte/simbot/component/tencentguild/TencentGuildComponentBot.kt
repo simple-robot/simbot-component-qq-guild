@@ -20,16 +20,13 @@ package love.forte.simbot.component.tencentguild
 import kotlinx.coroutines.isActive
 import love.forte.simbot.Api4J
 import love.forte.simbot.Bot
-import love.forte.simbot.ExperimentalSimbotApi
 import love.forte.simbot.ID
 import love.forte.simbot.action.UnsupportedActionException
 import love.forte.simbot.definition.Contact
 import love.forte.simbot.definition.Group
 import love.forte.simbot.definition.GuildBot
-import love.forte.simbot.definition.UserStatus
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.message.Image
-import love.forte.simbot.resources.Resource
 import love.forte.simbot.tencentguild.TencentGuildBot
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.Items.Companion.emptyItems
@@ -95,23 +92,11 @@ public interface TencentGuildComponentBot : Bot {
     override val eventProcessor: EventProcessor
     
     
-    /**
-     * bot的用户属性。
-     */
-    @ExperimentalSimbotApi
-    override val status: UserStatus get() = BotStatus
-    
-    
     //// Impl
     
-    @JvmSynthetic
-    override suspend fun uploadImage(resource: Resource): Image<*> {
-        // TODO fake remote image.
-        throw UnsupportedActionException("uploadImage(Resource)")
-    }
-    
     override suspend fun resolveImage(id: ID): Image<*> {
-        // TODO fake remote image.
+        
+        // TODO fake remote image?
         throw UnsupportedActionException("resolveImage(ID)")
     }
     
@@ -129,7 +114,10 @@ public interface TencentGuildComponentBot : Bot {
         return sourceBot.startBlocking()
     }
     
-    @Deprecated("Group related APIs are not supported", ReplaceWith("emptyItems()", "love.forte.simbot.utils.item.Items.Companion.emptyItems"))
+    @Deprecated(
+        "Group related APIs are not supported",
+        ReplaceWith("emptyItems()", "love.forte.simbot.utils.item.Items.Companion.emptyItems")
+    )
     override val groups: Items<Group>
         get() = emptyItems()
     
@@ -143,7 +131,10 @@ public interface TencentGuildComponentBot : Bot {
     override suspend fun guild(id: ID): TencentGuild?
     
     
-    @Deprecated("Contact related APIs are not supported", ReplaceWith("emptyItems()", "love.forte.simbot.utils.item.Items.Companion.emptyItems"))
+    @Deprecated(
+        "Contact related APIs are not supported",
+        ReplaceWith("emptyItems()", "love.forte.simbot.utils.item.Items.Companion.emptyItems")
+    )
     override val contacts: Items<Contact>
         get() = emptyItems()
     
@@ -163,17 +154,6 @@ public interface TencentGuildComponentBot : Bot {
     @Deprecated("Group related APIs are not supported", ReplaceWith("null"))
     @OptIn(Api4J::class)
     override fun getGroup(id: ID): Group? = null
-    
-}
-
-
-@ExperimentalSimbotApi
-private object BotStatus : UserStatus {
-    override val isNormal: Boolean get() = false
-    override val isOfficial: Boolean get() = false
-    override val isFake: Boolean get() = true
-    override val isAnonymous: Boolean get() = false
-    override val isBot: Boolean get() = true
     
 }
 

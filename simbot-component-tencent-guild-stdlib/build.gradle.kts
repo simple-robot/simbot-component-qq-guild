@@ -36,7 +36,7 @@ dependencies {
     // api(V.Ktor.Client.Serialization.notation)
     // api(V.Kotlinx.Serialization.Json.notation)
 
-    testImplementation(V.Kotlin.Test.Junit5.notation)
+    testImplementation(V.Kotlin.Test.Testng.notation)
     testImplementation(V.Log4j.Api.notation)
     testImplementation(V.Log4j.Core.notation)
     testImplementation(V.Log4j.Slf4jImpl.notation)
@@ -49,7 +49,7 @@ repositories {
 }
 
 tasks.getByName<Test>("test") {
-    useJUnitPlatform()
+    useTestNG()
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {

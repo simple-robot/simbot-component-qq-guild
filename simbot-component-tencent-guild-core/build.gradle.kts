@@ -49,7 +49,7 @@ dependencies {
     compileOnly(V.Kotlinx.Serialization.Properties.notation)
     compileOnly(V.Kotlinx.Serialization.Yaml.notation)
 
-    testImplementation(V.Kotlin.Test.Junit.notation)
+    testImplementation(V.Kotlin.Test.Testng.notation)
     testImplementation(V.Kotlinx.Serialization.Yaml.notation)
 
     // compileOnly("com.google.auto.service:auto-service:1.0.1")
@@ -57,7 +57,7 @@ dependencies {
 }
 
 tasks.getByName<Test>("test") {
-    useJUnit()
+    useTestNG()
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
