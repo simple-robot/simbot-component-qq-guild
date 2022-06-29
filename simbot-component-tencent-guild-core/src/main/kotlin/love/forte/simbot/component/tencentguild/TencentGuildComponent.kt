@@ -32,8 +32,8 @@ import love.forte.simbot.message.Message
  * @author ForteScarlet
  */
 public class TencentGuildComponent : Component {
-    override val id: ID
-        get() = componentID
+    override val id: String
+        get() = ID_VALUE
     
     override val componentSerializersModule: SerializersModule
         get() = messageSerializersModule
@@ -68,6 +68,7 @@ public class TencentGuildComponent : Component {
         /**
          * [ID_VALUE] 的 [ID] 类型。
          */
+        @Deprecated("Unused")
         public val componentID: CharSequenceID = ID_VALUE.ID
         
         /**
@@ -130,31 +131,6 @@ public class TencentGuildComponentRegistrarFactory :
 }
 
 
-// region botManager 扩展
-/**
- * 从 [OriginBotManager] 中过滤取出所有 [TencentGuildBotManager] 实例.
- */
-@FragileSimbotApi
-@Suppress("NOTHING_TO_INLINE")
-public inline fun tencentGuildBotManagers(): List<TencentGuildBotManager> =
-    OriginBotManager.filterIsInstance<TencentGuildBotManager>()
-
-/**
- * 从中过滤取出所有 [TencentGuildBotManager] 实例.
- */
-@Suppress("NOTHING_TO_INLINE")
-public inline fun Iterable<BotManager<*>>.tencentGuildBotManagers(): List<TencentGuildBotManager> =
-    filterIsInstance<TencentGuildBotManager>()
-
-/**
- * 从序列中过滤出 [TencentGuildBotManager] 实例.
- */
-@Suppress("NOTHING_TO_INLINE")
-public inline fun Sequence<BotManager<*>>.tencentGuildBotManagers(): Sequence<TencentGuildBotManager> =
-    filterIsInstance<TencentGuildBotManager>()
-
-
-// endregion
 
 
 

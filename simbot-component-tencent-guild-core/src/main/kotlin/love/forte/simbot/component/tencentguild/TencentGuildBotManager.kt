@@ -57,7 +57,7 @@ public abstract class TencentGuildBotManager : BotManager<TencentGuildComponentB
         
         val component = verifyInfo.componentId
         
-        val currentComponent = this.component.id.literal
+        val currentComponent = this.component.id
         if (component != currentComponent) {
             logger.debug(
                 "[{}] mismatch: [{}] != [{}]",
@@ -103,7 +103,7 @@ public abstract class TencentGuildBotManager : BotManager<TencentGuildComponentB
             
             // find component
             val component =
-                components.find { it.id.literal == TencentGuildComponent.ID_VALUE } as? TencentGuildComponent
+                components.find { it.id == TencentGuildComponent.ID_VALUE } as? TencentGuildComponent
                     ?: throw NoSuchComponentException("component id [${TencentGuildComponent.ID_VALUE}], and type of TencentGuildComponent.")
             
             return TencentGuildBotManagerImpl(eventProcessor, configuration, component).also {
