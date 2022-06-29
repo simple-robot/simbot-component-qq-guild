@@ -121,8 +121,8 @@ if (isPublishConfigurable) {
             )
 
             transitionCheckOptions {
-                maxRetries.set(20)
-                delayBetween.set(java.time.Duration.ofSeconds(5))
+                maxRetries.set(60)
+                delayBetween.set(java.time.Duration.ofSeconds(30))
             }
 
             repositories {
