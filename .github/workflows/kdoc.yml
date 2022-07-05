@@ -4,6 +4,9 @@ on: # push
     tags:
       - v3.*.*
 
+env:
+  SIMBOT_IS_SNAPSHOT: false
+
 jobs:
   deploy-doc:
     name: Deploy-doc
