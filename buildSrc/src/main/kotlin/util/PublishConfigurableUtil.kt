@@ -15,19 +15,24 @@
  *
  */
 
-plugins {
-    id("simbot-tencent-guild.module-conventions")
-    id("simbot-tencent-guild.maven-publish")
-    kotlin("plugin.serialization")
-    
-}
+package util
 
-dependencies {
-    api(project(":simbot-component-tencent-guild-api"))
-    api(libs.ktor.client.ws)
-    
-    testImplementation(libs.log4j.api)
-    testImplementation(libs.log4j.core)
-    testImplementation(libs.log4j.slf4jImpl)
-}
+data class PublishConfigurableResult(
+    val isSnapshotOnly: Boolean,
+    val isReleaseOnly: Boolean,
+    val isPublishConfigurable: Boolean = when {
+        isSnapshotOnly -> P.Simbot.isSnapshot
+        isReleaseOnly -> !P.Simbot.isSnapshot
+        else -> true
+    },
+)
 
+
+fun checkPublishConfigurable(): PublishConfigurableResult {
+    val isSnapshotOnly =
+        (System.getProperty("snapshotOnly") ?: System.getenv(Env.SNAPSHOT_ONLY))?.equals("true", true) == true
+    val isReleaseOnly =
+        (System.getProperty("releaseOnly") ?: System.getenv(Env.RELEASES_ONLY))?.equals("true", true) == true
+    
+    return PublishConfigurableResult(isSnapshotOnly, isReleaseOnly)
+}

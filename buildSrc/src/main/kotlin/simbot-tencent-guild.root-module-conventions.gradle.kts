@@ -14,20 +14,30 @@
  *
  *
  */
-
 plugins {
-    id("simbot-tencent-guild.module-conventions")
-    id("simbot-tencent-guild.maven-publish")
-    kotlin("plugin.serialization")
-    
+    idea
 }
 
-dependencies {
-    api(project(":simbot-component-tencent-guild-api"))
-    api(libs.ktor.client.ws)
-    
-    testImplementation(libs.log4j.api)
-    testImplementation(libs.log4j.core)
-    testImplementation(libs.log4j.slf4jImpl)
+group = P.ComponentTencentGuild.GROUP
+version = P.ComponentTencentGuild.VERSION
+description = P.ComponentTencentGuild.DESCRIPTION
+
+idea {
+    module.apply {
+        isDownloadSources = true
+        isDownloadJavadoc = true
+    }
+    project {
+        modules.forEach { module ->
+            module.apply {
+                isDownloadSources = true
+                isDownloadJavadoc = true
+            }
+        }
+    }
 }
 
+configurations.all {
+    // check for updates every build
+    resolutionStrategy.cacheChangingModulesFor(0, "seconds")
+}

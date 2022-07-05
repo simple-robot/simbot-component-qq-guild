@@ -17,6 +17,17 @@
 
 rootProject.name = "tencent-guild"
 
+enableFeaturePreview("VERSION_CATALOGS")
+
+dependencyResolutionManagement {
+    @Suppress("UnstableApiUsage")
+    versionCatalogs {
+        create("libs") {
+            from(files(File(rootProject.projectDir, "libs.versions.toml")))
+        }
+    }
+}
+
 include(":simbot-component-tencent-guild-api")
 include(":simbot-component-tencent-guild-stdlib")
 include(":simbot-component-tencent-guild-core")

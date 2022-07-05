@@ -15,19 +15,10 @@
  *
  */
 
-plugins {
-    id("simbot-tencent-guild.module-conventions")
-    id("simbot-tencent-guild.maven-publish")
-    kotlin("plugin.serialization")
+object Env {
+    const val IS_SNAPSHOT = "SIMBOT_IS_SNAPSHOT"
+    const val SNAPSHOT_ONLY = "SIMBOT_SNAPSHOT_ONLY"
+    const val RELEASES_ONLY = "SIMBOT_RELEASES_ONLY"
+    
     
 }
-
-dependencies {
-    api(project(":simbot-component-tencent-guild-api"))
-    api(libs.ktor.client.ws)
-    
-    testImplementation(libs.log4j.api)
-    testImplementation(libs.log4j.core)
-    testImplementation(libs.log4j.slf4jImpl)
-}
-

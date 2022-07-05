@@ -4,10 +4,20 @@ on:
     branches:
       - main
       - dev-snapshot**
-      - v*.*.**
+      - v*.**.**.**
     paths:
       - '**src/main/kotlin/**.kt'
       - '**src/main/java/**.java'
+
+env:
+  GPG_KEY_ID: ${{ secrets.SIGN_KEY_ID }}
+  GPG_SECRET_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+  GPG_PASSWORD: ${{ secrets.SIGN_PASS }}
+  OSSRH_USER: ${{ secrets.OSS_USERNAME }}
+  OSSRH_PASSWORD: ${{ secrets.OSS_PASSWORD }}
+  SIMBOT_IS_SNAPSHOT: true
+  SIMBOT_SNAPSHOT_ONLY: true
+
 
 jobs:
   publish-snapshot:
@@ -25,16 +35,10 @@ jobs:
           distribution: 'temurin'
           java-version: 8
 
-      # the gpg
-      - name: Decode gpg file
-        run: |
-          echo "${{ secrets.GPG_B64 }}" > ForteScarlet.gpg.b64
-          base64 -d ForteScarlet.gpg.b64 > ForteScarlet.gpg
-
       # setup Gradle
       - name: Gradle publish snapshot
         uses: gradle/gradle-build-action@v2
         with:
-          gradle-version: 7.4
-          arguments: clean test publishToSonatype closeAndReleaseStagingRepository -DsnapshotOnly -DisSnapshot=true -Psigning.secretKeyRingFile=ForteScarlet.gpg -Psigning.keyId=${{ secrets.SIGN_KEY_ID }} -Psigning.password=${{ secrets.SIGN_PASS }} -Psonatype.username=${{ secrets.OSS_USERNAME }} -Psonatype.password=${{ secrets.OSS_PASSWORD }}
+          gradle-version: 7.4.2
+          arguments: clean test publishToSonatype closeAndReleaseStagingRepository
 
