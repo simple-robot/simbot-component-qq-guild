@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2021-2022 ForteScarlet <ForteScarlet@163.com>
+ *  Copyright (c) 2022-2022 ForteScarlet <ForteScarlet@163.com>
  *
  *  本文件是 simbot-component-tencent-guild 的一部分。
  *
@@ -15,3 +15,24 @@
  *
  */
 
+@Suppress("ClassName", "unused")
+sealed class Sonatype {
+    abstract val name: String
+    abstract val url: String
+    
+    object Central : Sonatype() {
+        const val NAME = "central"
+        const val URL = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+        override val name: String get() = NAME
+        override val url: String get() = URL
+    }
+    
+    object Snapshot : Sonatype() {
+        const val NAME = "snapshot"
+        const val URL = "https://oss.sonatype.org/content/repositories/snapshots/"
+        override val name: String
+            get() = NAME
+        override val url: String
+            get() = URL
+    }
+}
