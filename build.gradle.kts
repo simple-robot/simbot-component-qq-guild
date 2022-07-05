@@ -28,7 +28,7 @@ plugins {
 }
 
 group = P.ComponentTencentGuild.GROUP
-version = P.ComponentTencentGuild.VERSION
+version = P.ComponentTencentGuild.versionValue
 
 println("=== Current version: $version ===")
 
@@ -59,7 +59,7 @@ println("isPublishConfigurable: $isPublishConfigurable")
 
 subprojects {
     group = P.ComponentTencentGuild.GROUP
-    version = P.ComponentTencentGuild.VERSION
+    version = P.ComponentTencentGuild.versionValue
 
     apply(plugin = "java")
 

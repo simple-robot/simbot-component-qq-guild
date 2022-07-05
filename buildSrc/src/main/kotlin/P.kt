@@ -34,57 +34,47 @@
 */
 
 
-abstract class SimbotProject {
-    abstract val group: String
-    abstract val version: String
-}
-
 
 /**
  * Project versions.
  */
 @Suppress("unused", "MemberVisibilityCanBePrivate")
-sealed class P : SimbotProject() {
+object P {
     object Simbot {
-        init {
-            println("System.getProperty(\"isSnapshot\"): ${System.getProperty("isSnapshot")}")
-        }
-
         const val GROUP = "love.forte.simbot"
         const val BOOT_GROUP = "love.forte.simbot.boot"
-
-        // e.g. 3.0.0.preview.6.0
+        
         val version = Version(
             "3", 0, 0,
-            status = preview(18, 0),
+            status = preview(19, 0),
             isSnapshot = System.getProperty("isSnapshot")?.equals("true", true) ?: false
         )
-
+        
         val isSnapshot get() = version.isSnapshot
-
+        
         val VERSION = version.fullVersion(true) // = if (SNAPSHOT) "$REAL_VERSION-SNAPSHOT" else REAL_VERSION
-
+        
     }
-
+    
     object ComponentTencentGuild {
         val isSnapshot get() = Simbot.isSnapshot
         val version = Version(
             major = "${Simbot.version.major}.${Simbot.version.minor}",
             minor = 0, patch = 0,
-            status = preview(12, 0),
+            status = preview(13, 0),
             isSnapshot = Simbot.isSnapshot
         )
         const val GROUP = "${Simbot.GROUP}.component"
-
-        val VERSION: String = version.fullVersion(true)
-
+        
+        val versionValue: String get() = version.fullVersion(true)
+        
         const val apiPath = ":simbot-component-tencent-guild-api"
         const val apiStdlibPath = ":simbot-component-tencent-guild-stdlib"
         const val componentPath = ":simbot-component-tencent-guild-core"
         const val componentBootPath = ":simbot-component-tencent-guild-boot"
     }
-
-
+    
+    
 }
 
 
@@ -105,7 +95,7 @@ data class Version(
      * 修订号
      */
     val patch: Int,
-
+    
     /**
      * 状态号。状态号会追加在 [major].[minor].[patch] 之后，由 `.` 拼接，
      * 变为 [major].[minor].[patch].[PVS.status].[PVS.minor].[PVS.patch].
@@ -117,17 +107,17 @@ data class Version(
      *
      */
     val status: PVS? = null,
-
+    
     /**
      * 是否快照。如果是，将会在版本号结尾处拼接 `-SNAPSHOT`。
      */
-    val isSnapshot: Boolean = false
+    val isSnapshot: Boolean = false,
 ) {
     companion object {
         const val SNAPSHOT_SUFFIX = "-SNAPSHOT"
     }
-
-
+    
+    
     /**
      * 完整的版本号。
      */
@@ -142,7 +132,7 @@ data class Version(
             }
         }
     }
-
+    
 }
 
 /**
@@ -168,7 +158,6 @@ data class PVS(
 
 
 internal fun preview(minor: Int, patch: Int) = PVS(PVS.PREVIEW_STATUS, minor, patch)
-
 
 
 private fun isSnapshot() {
