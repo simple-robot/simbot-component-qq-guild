@@ -40,8 +40,10 @@ import love.forte.simbot.utils.item.Items
  */
 internal class TencentChannelImpl internal constructor(
     private val baseBot: TencentGuildComponentBotImpl,
+    @Volatile
     internal var channel: TencentChannelInfo,
     override val guild: TencentGuildImpl,
+    override val category: TencentChannelCategoryImpl,
 ) : TencentChannel {
     
     override val bot: TencentGuildComponentGuildBot get() = guild.bot

@@ -34,44 +34,44 @@ package love.forte.simbot.tencentguild
 /**
  * 文字子频道
  */
-public const val TEXT: Int = 0
+public const val CHANNEL_TYPE_TEXT: Int = 0
 
 /**
  * > 保留，不可用
  */
 @Deprecated("reserved, unavailable")
-public const val UNKNOWN_1: Int = 1
+public const val CHANNEL_TYPE_UNKNOWN_1: Int = 1
 
 /**
  * 语音子频道
  */
-public const val VOICE: Int = 2
+public const val CHANNEL_TYPE_VOICE: Int = 2
 
 /**
  * > 保留，不可用
  */
 @Deprecated("reserved, unavailable")
-public const val UNKNOWN_3: Int = 3
+public const val CHANNEL_TYPE_UNKNOWN_3: Int = 3
 
 /**
  * 子频道分组
  */
-public const val GROUPING: Int = 4
+public const val CHANNEL_TYPE_GROUPING: Int = 4
 
 /**
  * 直播子频道
  */
-public const val LIVE: Int = 10005
+public const val CHANNEL_TYPE_LIVE: Int = 10005
 
 /**
  * 应用子频道
  */
-public const val APP: Int = 10006
+public const val CHANNEL_TYPE_APP: Int = 10006
 
 /**
  * 论坛子频道
  */
-public const val FORUM: Int = 10007
+public const val CHANNEL_TYPE_FORUM: Int = 10007
 // endregion
 
 
@@ -82,7 +82,7 @@ public const val FORUM: Int = 10007
  *
  * e.g.
  * ```java
- * int appValue = ChannelTypes.APP;
+ * int appValue = ChannelTypes.CHANNEL_TYPE_APP;
  * boolean isText = ChannelTypes.isText(0);
  * ```
  *
@@ -97,42 +97,42 @@ public value class ChannelType(public val code: Int) {
 
 // region 工厂(?)函数
 @get:JvmSynthetic
-public inline val ChannelType.Companion.Text: ChannelType get() = ChannelType(TEXT)
+public inline val ChannelType.Companion.Text: ChannelType get() = ChannelType(CHANNEL_TYPE_TEXT)
 
 @get:JvmSynthetic
-public inline val ChannelType.Companion.Voice: ChannelType get() = ChannelType(VOICE)
+public inline val ChannelType.Companion.Voice: ChannelType get() = ChannelType(CHANNEL_TYPE_VOICE)
 
 @get:JvmSynthetic
-public inline val ChannelType.Companion.Grouping: ChannelType get() = ChannelType(GROUPING)
+public inline val ChannelType.Companion.Grouping: ChannelType get() = ChannelType(CHANNEL_TYPE_GROUPING)
 
 @get:JvmSynthetic
-public inline val ChannelType.Companion.Live: ChannelType get() = ChannelType(LIVE)
+public inline val ChannelType.Companion.Live: ChannelType get() = ChannelType(CHANNEL_TYPE_LIVE)
 
 @get:JvmSynthetic
-public inline val ChannelType.Companion.App: ChannelType get() = ChannelType(APP)
+public inline val ChannelType.Companion.App: ChannelType get() = ChannelType(CHANNEL_TYPE_APP)
 
 @get:JvmSynthetic
-public inline val ChannelType.Companion.Forum: ChannelType get() = ChannelType(FORUM)
+public inline val ChannelType.Companion.Forum: ChannelType get() = ChannelType(CHANNEL_TYPE_FORUM)
 // endregion
 
 // region 判断
 @get:JvmName("isText")
-public val ChannelType.isText: Boolean get() = code == TEXT
+public val ChannelType.isText: Boolean get() = code == CHANNEL_TYPE_TEXT
 
 @get:JvmName("isVoice")
-public val ChannelType.isVoice: Boolean get() = code == VOICE
+public val ChannelType.isVoice: Boolean get() = code == CHANNEL_TYPE_VOICE
 
 @get:JvmName("isGrouping")
-public val ChannelType.isGrouping: Boolean get() = code == GROUPING
+public val ChannelType.isGrouping: Boolean get() = code == CHANNEL_TYPE_GROUPING
 
 @get:JvmName("isLive")
-public val ChannelType.isLive: Boolean get() = code == LIVE
+public val ChannelType.isLive: Boolean get() = code == CHANNEL_TYPE_LIVE
 
 @get:JvmName("isApp")
-public val ChannelType.isApp: Boolean get() = code == APP
+public val ChannelType.isApp: Boolean get() = code == CHANNEL_TYPE_APP
 
 @get:JvmName("isForum")
-public val ChannelType.isForum: Boolean get() = code == FORUM
+public val ChannelType.isForum: Boolean get() = code == CHANNEL_TYPE_FORUM
 
 // endregion
 

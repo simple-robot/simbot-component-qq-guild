@@ -32,16 +32,16 @@ package love.forte.simbot.tencentguild
  */
 
 /** 闲聊 */
-public const val SMALL_TALK: Int = 0
+public const val CHANNEL_SUB_TYPES_SMALL_TALK: Int = 0
 
 /** 公告 */
-public const val ANNOUNCEMENT: Int = 1
+public const val CHANNEL_SUB_TYPES_ANNOUNCEMENT: Int = 1
 
 /** 攻略 */
-public const val RAIDERS: Int = 2
+public const val CHANNEL_SUB_TYPES_RAIDERS: Int = 2
 
 /** 开黑 */
-public const val PLAY_TOGETHER: Int = 3
+public const val CHANNEL_SUB_TYPES_PLAY_TOGETHER: Int = 3
 // endregion
 
 /**
@@ -52,7 +52,7 @@ public const val PLAY_TOGETHER: Int = 3
  * e.g.
  *
  * ```java
- * int smallTalkValue = ChannelSubTypes.SMALL_TALK;
+ * int smallTalkValue = ChannelSubTypes.CHANNEL_SUB_TYPES_SMALL_TALK;
  * boolean isSmallTalk = ChannelSubTypes.isSmallTalk(0);
  * ```
  *
@@ -67,31 +67,31 @@ public value class ChannelSubType(public val code: Int) {
 
 // region 工厂
 @get:JvmSynthetic
-public inline val ChannelSubType.Companion.SmallTalk: ChannelSubType get() = ChannelSubType(SMALL_TALK)
+public inline val ChannelSubType.Companion.SmallTalk: ChannelSubType get() = ChannelSubType(CHANNEL_SUB_TYPES_SMALL_TALK)
 
 @get:JvmSynthetic
-public inline val ChannelSubType.Companion.Announcement: ChannelSubType get() = ChannelSubType(ANNOUNCEMENT)
+public inline val ChannelSubType.Companion.Announcement: ChannelSubType get() = ChannelSubType(CHANNEL_SUB_TYPES_ANNOUNCEMENT)
 
 @get:JvmSynthetic
-public inline val ChannelSubType.Companion.Raiders: ChannelSubType get() = ChannelSubType(RAIDERS)
+public inline val ChannelSubType.Companion.Raiders: ChannelSubType get() = ChannelSubType(CHANNEL_SUB_TYPES_RAIDERS)
 
 @get:JvmSynthetic
-public inline val ChannelSubType.Companion.PlayTogether: ChannelSubType get() = ChannelSubType(PLAY_TOGETHER)
+public inline val ChannelSubType.Companion.PlayTogether: ChannelSubType get() = ChannelSubType(CHANNEL_SUB_TYPES_PLAY_TOGETHER)
 // endregion
 
 
 // region 判断
 @get:JvmName("isSmallTalk")
-public val ChannelSubType.isSmallTalk: Boolean get() = code == SMALL_TALK
+public val ChannelSubType.isSmallTalk: Boolean get() = code == CHANNEL_SUB_TYPES_SMALL_TALK
 
 @get:JvmName("isAnnouncement")
-public val ChannelSubType.isAnnouncement: Boolean get() = code == ANNOUNCEMENT
+public val ChannelSubType.isAnnouncement: Boolean get() = code == CHANNEL_SUB_TYPES_ANNOUNCEMENT
 
 @get:JvmName("isRaiders")
-public val ChannelSubType.isRaiders: Boolean get() = code == RAIDERS
+public val ChannelSubType.isRaiders: Boolean get() = code == CHANNEL_SUB_TYPES_RAIDERS
 
 @get:JvmName("isPlayTogether")
-public val ChannelSubType.isPlayTogether: Boolean get() = code == PLAY_TOGETHER
+public val ChannelSubType.isPlayTogether: Boolean get() = code == CHANNEL_SUB_TYPES_PLAY_TOGETHER
 // endregion
 
 

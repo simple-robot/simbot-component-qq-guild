@@ -54,6 +54,11 @@ public interface TencentChannel : Channel, TencentChannelInfo {
     override val name: String
     override val ownerId: ID
     
+    /**
+     * 子频道始终有分组。
+     */
+    override val category: TencentChannelCategory
+    
     @get:JvmSynthetic
     override val channelType: ChannelType
     

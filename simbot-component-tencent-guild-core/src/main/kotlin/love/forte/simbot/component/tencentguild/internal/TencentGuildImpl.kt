@@ -30,6 +30,7 @@ import love.forte.simbot.tencentguild.TencentGuildInfo
 import love.forte.simbot.tencentguild.api.channel.GetGuildChannelListApi
 import love.forte.simbot.tencentguild.api.member.GetMemberApi
 import love.forte.simbot.tencentguild.api.role.GetGuildRoleListApi
+import love.forte.simbot.tencentguild.isGrouping
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.Items.Companion.asItems
 import love.forte.simbot.utils.item.effectedFlowItems
@@ -64,8 +65,8 @@ internal class TencentGuildImpl private constructor(
     override val ownerId: ID
         get() = guildInfo.ownerId
     
-    @Suppress("MemberVisibilityCanBePrivate")
     internal val internalChannels = ConcurrentHashMap<String, TencentChannelImpl>()
+    internal val internalChannelCategories = ConcurrentHashMap<String, TencentChannelCategoryImpl>()
     
     internal fun getInternalChannel(id: ID): TencentChannelImpl? = internalChannels[id.literal]
     
@@ -140,7 +141,7 @@ internal class TencentGuildImpl private constructor(
         
         owner = TencentMemberImpl(baseBot, ownerInfo, this)
         baseBot.logger.debug("Sync guild owner: {}", ownerInfo)
-    
+        
     }
     
     private suspend fun syncBot() {
@@ -159,8 +160,34 @@ internal class TencentGuildImpl private constructor(
             channelInfoList.size
         )
         for (info in channelInfoList) {
-            val channel = TencentChannelImpl(baseBot, info, this)
-            internalChannels[info.id.literal] = channel
+            if (info.channelType.isGrouping) {
+                internalChannelCategories.compute(info.id.literal) { _, current ->
+                    current?.also {
+                        it.channel = info
+                    } ?: TencentChannelCategoryImpl(baseBot, this, info)
+                }
+            } else {
+                // find category
+                val categoryId = info.parentId
+                val category = internalChannelCategories[categoryId]
+                
+                if (category == null) {
+                    baseBot.logger.warn(
+                        "Cannot find category(id={}) for sync channel({}). \nThis is an expected problem and please report this log to issues: https://github.com/simple-robot/simbot-component-tencent-guild/issues",
+                        categoryId,
+                        info
+                    )
+                    continue
+                }
+                
+                internalChannels.compute(info.id.literal) { _, current ->
+                    current?.also {
+                        it.channel = info
+                    } ?: TencentChannelImpl(baseBot, info, this, category)
+                }
+                
+                
+            }
         }
     }
     
