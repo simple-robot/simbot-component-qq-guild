@@ -17,10 +17,16 @@
 
 package love.forte.simbot.tencentguild
 
-import kotlinx.serialization.*
-import love.forte.simbot.*
-import love.forte.simbot.definition.*
-import love.forte.simbot.tencentguild.internal.*
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import love.forte.simbot.ID
+import love.forte.simbot.Timestamp
+import love.forte.simbot.definition.ChannelInfo
+import love.forte.simbot.tencentguild.internal.TencentChannelInfoImpl
 
 /**
  *
@@ -32,65 +38,71 @@ public interface TencentChannelInfo : ChannelInfo {
      * 子频道id
      */
     override val id: ID
-
+    
     /**
      * 频道id
      */
     override val guildId: ID
-
+    
     /**
      * 子频道名
      */
     override val name: String
-
+    
     /**
      * 子频道类型
      * @see ChannelType
      */
-    public val channelTypeValue: Int
-
+    public val channelType: ChannelType
+    
+    /**
+     * 子频道类型
+     * @see ChannelType
+     */
+    public val channelTypeValue: Int get() = channelType.code
+    
     /**
      * 子频道子类型
      * @see ChannelSubType
      */
     public val channelSubTypeValue: Int
-
+    
     /**
      * 排序，必填，而且不能够和其他子频道的值重复
      */
     public val position: Int
-
+    
     /**
      * 分组 id
      */
     public val parentId: String
-
+    
     /**
      * 创建人 id
      */
     override val ownerId: ID
-
-
+    
+    
     @Deprecated("子频道没有创建时间信息", ReplaceWith("Timestamp.NotSupport", "love.forte.simbot.Timestamp"))
     override val createTime: Timestamp
         get() = Timestamp.NotSupport
-
+    
     @Deprecated("子频道没有人数信息", ReplaceWith("-1"))
     override val currentMember: Int
         get() = -1
-
+    
     @Deprecated("子频道没有描述信息", ReplaceWith("\"\""))
     override val description: String
         get() = ""
-
+    
     @Deprecated("子频道没有图标", ReplaceWith("\"\""))
     override val icon: String
         get() = ""
-
+    
     @Deprecated("子频道没有人数信息", ReplaceWith("-1"))
     override val maximumMember: Int
         get() = -1
-
+    
     public companion object {
         internal val serializer: KSerializer<out TencentChannelInfo> = TencentChannelInfoImpl.serializer()
     }
@@ -108,7 +120,7 @@ public enum class ChannelType(public val code: Int) {
     GROUPING(4),
     LIVE(10005),
     ;
-
+    
     public companion object {
         @JvmStatic
         public fun byCode(code: Int): ChannelType = when (code) {
@@ -124,22 +136,37 @@ public enum class ChannelType(public val code: Int) {
 }
 
 /**
+ * 提供 [Int] 向 [ChannelType] 的序列化器。
+ */
+public object IntToChannelTypeSerializer : KSerializer<ChannelType> {
+    override fun deserialize(decoder: Decoder): ChannelType {
+        return ChannelType.byCode(decoder.decodeInt())
+    }
+    
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("ChannelTypeDescriptor", PrimitiveKind.INT)
+    
+    override fun serialize(encoder: Encoder, value: ChannelType) {
+        encoder.encodeInt(value.code)
+    }
+}
+
+/**
  * https://bot.q.qq.com/wiki/develop/api/openapi/channel/model.html#channelsubtype
  */
 public enum class ChannelSubType(public val code: Int) {
     /** 闲聊 */
     SMALL_TALK(0),
-
+    
     /** 公告 */
     ANNOUNCEMENT(1),
-
+    
     /** 攻略 */
     RAIDERS(2),
-
+    
     /** 开黑 */
     PLAY_TOGETHER(3),
     ;
-
+    
     public companion object {
         @JvmStatic
         public fun byCode(code: Int): ChannelSubType = when (code) {
