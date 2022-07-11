@@ -25,6 +25,7 @@ import love.forte.simbot.definition.Channel
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.message.Text
+import love.forte.simbot.tencentguild.ChannelSubType
 import love.forte.simbot.tencentguild.ChannelType
 import love.forte.simbot.tencentguild.TencentChannelInfo
 import love.forte.simbot.utils.item.Items
@@ -55,7 +56,9 @@ public interface TencentChannel : Channel, TencentChannelInfo {
     
     @get:JvmSynthetic
     override val channelType: ChannelType
-    override val channelSubTypeValue: Int
+    
+    @get:JvmSynthetic
+    override val channelSubType: ChannelSubType
     override val position: Int
     override val parentId: String
     

@@ -19,7 +19,7 @@
 
 package love.forte.simbot.tencentguild
 
-// region 编码常量
+// region 常量
 
 /*
  * 编码常量信息来自于：
@@ -92,17 +92,30 @@ public const val FORUM: Int = 10007
 @kotlinx.serialization.Serializable
 @JvmInline
 public value class ChannelType(public val code: Int) {
-    public companion object {
-        public inline val Text: ChannelType get() = ChannelType(TEXT)
-        public inline val Voice: ChannelType get() = ChannelType(VOICE)
-        public inline val Grouping: ChannelType get() = ChannelType(GROUPING)
-        public inline val Live: ChannelType get() = ChannelType(LIVE)
-        public inline val App: ChannelType get() = ChannelType(APP)
-        public inline val Forum: ChannelType get() = ChannelType(FORUM)
-    }
+    public companion object
 }
 
-// region 判断函数
+// region 工厂(?)函数
+@get:JvmSynthetic
+public inline val ChannelType.Companion.Text: ChannelType get() = ChannelType(TEXT)
+
+@get:JvmSynthetic
+public inline val ChannelType.Companion.Voice: ChannelType get() = ChannelType(VOICE)
+
+@get:JvmSynthetic
+public inline val ChannelType.Companion.Grouping: ChannelType get() = ChannelType(GROUPING)
+
+@get:JvmSynthetic
+public inline val ChannelType.Companion.Live: ChannelType get() = ChannelType(LIVE)
+
+@get:JvmSynthetic
+public inline val ChannelType.Companion.App: ChannelType get() = ChannelType(APP)
+
+@get:JvmSynthetic
+public inline val ChannelType.Companion.Forum: ChannelType get() = ChannelType(FORUM)
+// endregion
+
+// region 判断
 @get:JvmName("isText")
 public val ChannelType.isText: Boolean get() = code == TEXT
 
