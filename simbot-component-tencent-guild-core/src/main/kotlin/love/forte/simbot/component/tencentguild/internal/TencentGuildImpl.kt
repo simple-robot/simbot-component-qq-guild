@@ -19,6 +19,7 @@ package love.forte.simbot.component.tencentguild.internal
 
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
+import love.forte.simbot.component.tencentguild.TencentChannel
 import love.forte.simbot.component.tencentguild.TencentGuild
 import love.forte.simbot.component.tencentguild.TencentGuildComponentGuildBot
 import love.forte.simbot.component.tencentguild.internal.info.toInternal
@@ -106,22 +107,20 @@ internal class TencentGuildImpl private constructor(
                 val roleImpl = TencentRoleImpl(baseBot, info)
                 emit(roleImpl)
             }
-            // getRoleFlow(guildInfo.id).map { info ->
-            //     TencentRoleImpl(baseBot, info)
-            // }
         }
     
     
     override val currentChannel: Int get() = internalChannels.size
     
-    override val children: Items<TencentChannelImpl>
+    override val channels: Items<TencentChannelImpl>
         get() = internalChannels.values.asItems()
-    //     bot.effectedItemsByFlow {
-    //     getChildrenFlow(guildInfo.id).map { info ->
-    //         TencentChannelImpl(baseBot, info, this)
-    //     }
-    // }
     
+    override fun getChannel(id: ID): TencentChannel? {
+        return internalChannels[id.literal]
+    }
+    
+    override val channelList: List<TencentChannel>
+        get() = internalChannels.values.toList()
     
     override suspend fun mute(duration: Duration): Boolean = false
     

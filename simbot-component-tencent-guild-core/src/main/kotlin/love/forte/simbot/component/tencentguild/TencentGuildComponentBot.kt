@@ -19,9 +19,9 @@ package love.forte.simbot.component.tencentguild
 
 import kotlinx.coroutines.isActive
 import love.forte.simbot.Api4J
-import love.forte.simbot.Bot
 import love.forte.simbot.ID
 import love.forte.simbot.action.UnsupportedActionException
+import love.forte.simbot.bot.Bot
 import love.forte.simbot.definition.Contact
 import love.forte.simbot.definition.Group
 import love.forte.simbot.definition.GuildBot

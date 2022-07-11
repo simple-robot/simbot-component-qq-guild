@@ -18,9 +18,9 @@
 package love.forte.simbot.component.tencentguild.internal
 
 import kotlinx.coroutines.*
-import love.forte.simbot.BotAlreadyRegisteredException
 import love.forte.simbot.ID
 import love.forte.simbot.LoggerFactory
+import love.forte.simbot.bot.BotAlreadyRegisteredException
 import love.forte.simbot.component.tencentguild.TencentGuildBotManager
 import love.forte.simbot.component.tencentguild.TencentGuildBotManagerConfiguration
 import love.forte.simbot.component.tencentguild.TencentGuildComponent

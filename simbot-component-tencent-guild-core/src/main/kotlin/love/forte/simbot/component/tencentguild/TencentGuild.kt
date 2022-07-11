@@ -41,13 +41,61 @@ public interface TencentGuild : Guild {
     override val name: String
     override val ownerId: ID
     
-    override val children: Items<TencentChannel>
+    /**
+     * 得到此频道服务器下的所有子频道。
+     */
+    override val channels: Items<TencentChannel>
+    
+    
+    /**
+     * 得到此频道服务器下的所有子频道的列表副本。
+     */
+    public val channelList: List<TencentChannel>
+    
+    /**
+     * 获取指定ID的子频道。
+     */
+    @OptIn(Api4J::class)
+    override fun getChannel(id: ID): TencentChannel?
+    
+    /**
+     * 获取指定ID的子频道。
+     */
+    @JvmSynthetic
+    override suspend fun channel(id: ID): TencentChannel? = getChannel(id)
+    
+    
+    /**
+     * 得到此频道服务器下的所有子频道。
+     *
+     * @see channels
+     */
+    override val children: Items<TencentChannel> get() = channels
+    
+    
+    /**
+     * 获取指定ID的子频道。
+     *
+     * @see channel
+     */
+    @JvmSynthetic
+    override suspend fun child(id: ID): TencentChannel? = channel(id)
+    
+    
+    /**
+     * 获取指定ID的子频道。
+     *
+     * @see getChannel
+     */
+    @OptIn(Api4J::class)
+    override fun getChild(id: ID): TencentChannel? = getChannel(id)
+    
     
     @JvmSynthetic
     override suspend fun owner(): TencentMember = owner
     
     @OptIn(Api4J::class)
-    override val owner: TencentMember // get() = runInBlocking { owner() }
+    override val owner: TencentMember
     
     /**
      * 获取指定成员信息。

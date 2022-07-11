@@ -17,7 +17,7 @@
 
 package love.forte.simboot.component.tencentguild
 
-import love.forte.simbot.BotRegistrar
+import love.forte.simbot.bot.BotRegistrar
 import love.forte.simbot.component.tencentguild.tencentGuildBotManager
 import love.forte.simbot.event.EventProcessor
 
