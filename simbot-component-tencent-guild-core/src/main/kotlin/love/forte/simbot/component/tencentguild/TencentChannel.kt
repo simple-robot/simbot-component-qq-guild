@@ -17,6 +17,7 @@
 
 package love.forte.simbot.component.tencentguild
 
+import kotlinx.serialization.Serializable
 import love.forte.simbot.Api4J
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
@@ -25,6 +26,8 @@ import love.forte.simbot.definition.Channel
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.message.Text
+import love.forte.simbot.tencentguild.ChannelType
+import love.forte.simbot.tencentguild.IntToChannelTypeSerializer
 import love.forte.simbot.tencentguild.TencentChannelInfo
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.Items.Companion.emptyItems
@@ -51,7 +54,9 @@ public interface TencentChannel : Channel, TencentChannelInfo {
     override val maximumMember: Int
     override val name: String
     override val ownerId: ID
-    override val channelTypeValue: Int
+    
+    @Serializable(IntToChannelTypeSerializer::class)
+    override val channelType: ChannelType
     override val channelSubTypeValue: Int
     override val position: Int
     override val parentId: String
@@ -110,7 +115,8 @@ public interface TencentChannel : Channel, TencentChannelInfo {
     /**
      * 目前无法直接获取成员列表。
      */
-    @Deprecated("Get member list is not supported",
+    @Deprecated(
+        "Get member list is not supported",
         ReplaceWith("emptyItems()", "love.forte.simbot.utils.item.Items.Companion.emptyItems")
     )
     override val members: Items<TencentMember>
