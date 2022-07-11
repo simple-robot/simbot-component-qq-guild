@@ -15,35 +15,34 @@
  *
  */
 
-package love.forte.simbot.tencentguild.internal
+package love.forte.simbot.component.tencentguild
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import love.forte.simbot.CharSequenceID
-import love.forte.simbot.tencentguild.ChannelSubType
-import love.forte.simbot.tencentguild.ChannelType
+import love.forte.simbot.Api4J
+import love.forte.simbot.definition.BotContainer
+import love.forte.simbot.definition.Category
+import love.forte.simbot.definition.GuildInfoContainer
+import love.forte.simbot.tencentguild.CHANNEL_TYPE_GROUPING
 import love.forte.simbot.tencentguild.TencentChannelInfo
 
-
-@Serializable
-internal data class TencentChannelInfoImpl(
-    override val id: CharSequenceID,
-    @SerialName("guild_id")
-    override val guildId: CharSequenceID,
+/**
+ *
+ * 当一个频道的 [TencentChannel.channelType] 的值等于 [CHANNEL_TYPE_GROUPING] 时，
+ * 此频道代表为一个分组。
+ *
+ * @author ForteScarlet
+ */
+public interface TencentChannelCategory : Category, TencentChannelInfo, BotContainer, GuildInfoContainer {
+    override val bot: TencentGuildComponentGuildBot
     
-    override val name: String,
+    /**
+     * 获取此分类所属的频道服务器。
+     */
+    @OptIn(Api4J::class)
+    override val guild: TencentGuild
     
-    @SerialName("type")
-    @get:JvmSynthetic
-    override val channelType: ChannelType,
-    
-    @SerialName("sub_type")
-    override val channelSubType: ChannelSubType,
-    
-    override val position: Int,
-    @SerialName("parent_id")
-    override val parentId: String,
-    
-    @SerialName("owner_id")
-    override val ownerId: CharSequenceID,
-) : TencentChannelInfo
+    /**
+     * 获取此分类所属的频道服务器。
+     */
+    @JvmSynthetic
+    override suspend fun guild(): TencentGuild = guild
+}

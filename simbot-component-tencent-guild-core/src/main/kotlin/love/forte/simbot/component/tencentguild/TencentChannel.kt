@@ -25,6 +25,8 @@ import love.forte.simbot.definition.Channel
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.message.Text
+import love.forte.simbot.tencentguild.ChannelSubType
+import love.forte.simbot.tencentguild.ChannelType
 import love.forte.simbot.tencentguild.TencentChannelInfo
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.Items.Companion.emptyItems
@@ -51,8 +53,17 @@ public interface TencentChannel : Channel, TencentChannelInfo {
     override val maximumMember: Int
     override val name: String
     override val ownerId: ID
-    override val channelTypeValue: Int
-    override val channelSubTypeValue: Int
+    
+    /**
+     * 子频道始终有分组。
+     */
+    override val category: TencentChannelCategory
+    
+    @get:JvmSynthetic
+    override val channelType: ChannelType
+    
+    @get:JvmSynthetic
+    override val channelSubType: ChannelSubType
     override val position: Int
     override val parentId: String
     
@@ -110,7 +121,8 @@ public interface TencentChannel : Channel, TencentChannelInfo {
     /**
      * 目前无法直接获取成员列表。
      */
-    @Deprecated("Get member list is not supported",
+    @Deprecated(
+        "Get member list is not supported",
         ReplaceWith("emptyItems()", "love.forte.simbot.utils.item.Items.Companion.emptyItems")
     )
     override val members: Items<TencentMember>
@@ -128,7 +140,7 @@ public interface TencentChannel : Channel, TencentChannelInfo {
     
     @OptIn(Api4J::class)
     @Deprecated("Mute API is not supported", ReplaceWith("false"))
-    override fun muteBlocking(duration: Long, unit: TimeUnit): Boolean = false
+    override fun muteBlocking(time: Long, timeUnit: TimeUnit): Boolean = false
     
     @Deprecated("Mute API is not supported", ReplaceWith("false"))
     @JvmSynthetic

@@ -28,6 +28,8 @@ import love.forte.simbot.component.tencentguild.event.TcgChannelAtMessageEvent
 import love.forte.simbot.component.tencentguild.util.requestBy
 import love.forte.simbot.event.EventProcessingContext
 import love.forte.simbot.message.Message
+import love.forte.simbot.tencentguild.ChannelSubType
+import love.forte.simbot.tencentguild.ChannelType
 import love.forte.simbot.tencentguild.TencentChannelInfo
 import love.forte.simbot.tencentguild.api.message.MessageSendApi
 import love.forte.simbot.utils.item.Items
@@ -38,8 +40,10 @@ import love.forte.simbot.utils.item.Items
  */
 internal class TencentChannelImpl internal constructor(
     private val baseBot: TencentGuildComponentBotImpl,
+    @Volatile
     internal var channel: TencentChannelInfo,
     override val guild: TencentGuildImpl,
+    override val category: TencentChannelCategoryImpl,
 ) : TencentChannel {
     
     override val bot: TencentGuildComponentGuildBot get() = guild.bot
@@ -52,7 +56,7 @@ internal class TencentChannelImpl internal constructor(
             if (this.msgId == null) {
                 val currentEvent =
                     currentCoroutineContext[EventProcessingContext]?.event?.takeIf { it is TcgChannelAtMessageEvent } as? TcgChannelAtMessageEvent
-    
+                
                 val msgId = currentEvent?.sourceEventEntity?.id
                 if (msgId != null) {
                     this.msgId = msgId
@@ -104,10 +108,10 @@ internal class TencentChannelImpl internal constructor(
         get() = channel.name
     override val ownerId: ID
         get() = channel.ownerId
-    override val channelTypeValue: Int
-        get() = channel.channelTypeValue
-    override val channelSubTypeValue: Int
-        get() = channel.channelSubTypeValue
+    override val channelType: ChannelType
+        get() = channel.channelType
+    override val channelSubType: ChannelSubType
+        get() = channel.channelSubType
     override val position: Int
         get() = channel.position
     override val parentId: String
