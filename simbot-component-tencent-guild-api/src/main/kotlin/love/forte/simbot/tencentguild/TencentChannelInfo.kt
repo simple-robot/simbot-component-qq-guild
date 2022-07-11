@@ -53,6 +53,7 @@ public interface TencentChannelInfo : ChannelInfo {
      * 子频道类型
      * @see ChannelType
      */
+    @get:JvmSynthetic
     public val channelType: ChannelType
     
     /**
@@ -112,7 +113,7 @@ public interface TencentChannelInfo : ChannelInfo {
 /**
  * https://bot.q.qq.com/wiki/develop/api/openapi/channel/model.html#channeltype
  */
-public enum class ChannelType(public val code: Int) {
+public enum class ChannelType2(public val code: Int) {
     TEXT(0),
     UNKNOWN_1(1),
     VOICE(2),
@@ -123,7 +124,7 @@ public enum class ChannelType(public val code: Int) {
     
     public companion object {
         @JvmStatic
-        public fun byCode(code: Int): ChannelType = when (code) {
+        public fun byCode(code: Int): ChannelType2 = when (code) {
             0 -> TEXT
             1 -> UNKNOWN_1
             2 -> VOICE
@@ -132,21 +133,6 @@ public enum class ChannelType(public val code: Int) {
             10005 -> LIVE
             else -> throw NoSuchElementException("code: $code")
         }
-    }
-}
-
-/**
- * 提供 [Int] 向 [ChannelType] 的序列化器。
- */
-public object IntToChannelTypeSerializer : KSerializer<ChannelType> {
-    override fun deserialize(decoder: Decoder): ChannelType {
-        return ChannelType.byCode(decoder.decodeInt())
-    }
-    
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("ChannelTypeDescriptor", PrimitiveKind.INT)
-    
-    override fun serialize(encoder: Encoder, value: ChannelType) {
-        encoder.encodeInt(value.code)
     }
 }
 
@@ -176,5 +162,21 @@ public enum class ChannelSubType(public val code: Int) {
             3 -> PLAY_TOGETHER
             else -> throw NoSuchElementException("code: $code")
         }
+    }
+}
+
+/**
+ * 提供 [Int] 到 [ChannelSubType] 的序列化器。
+ */
+public object IntToChannelSubTypeSerializer : KSerializer<ChannelSubType> {
+    override fun deserialize(decoder: Decoder): ChannelSubType {
+        return ChannelSubType.byCode(decoder.decodeInt())
+    }
+    
+    override val descriptor: SerialDescriptor =
+        PrimitiveSerialDescriptor("love.forte.simbot.tencentguild.IntToChannelSubTypeSerializer", PrimitiveKind.INT)
+    
+    override fun serialize(encoder: Encoder, value: ChannelSubType) {
+        encoder.encodeInt(value.code)
     }
 }

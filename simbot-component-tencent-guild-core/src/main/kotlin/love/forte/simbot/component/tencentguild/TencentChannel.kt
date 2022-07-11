@@ -17,7 +17,6 @@
 
 package love.forte.simbot.component.tencentguild
 
-import kotlinx.serialization.Serializable
 import love.forte.simbot.Api4J
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
@@ -27,7 +26,6 @@ import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.message.Text
 import love.forte.simbot.tencentguild.ChannelType
-import love.forte.simbot.tencentguild.IntToChannelTypeSerializer
 import love.forte.simbot.tencentguild.TencentChannelInfo
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.Items.Companion.emptyItems
@@ -55,7 +53,7 @@ public interface TencentChannel : Channel, TencentChannelInfo {
     override val name: String
     override val ownerId: ID
     
-    @Serializable(IntToChannelTypeSerializer::class)
+    @get:JvmSynthetic
     override val channelType: ChannelType
     override val channelSubTypeValue: Int
     override val position: Int
