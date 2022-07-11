@@ -17,10 +17,11 @@
 
 package love.forte.simbot.tencentguild
 
-import kotlinx.serialization.*
-import love.forte.simbot.*
-import love.forte.simbot.definition.*
-import love.forte.simbot.tencentguild.internal.*
+import kotlinx.serialization.KSerializer
+import love.forte.simbot.ID
+import love.forte.simbot.Timestamp
+import love.forte.simbot.definition.GuildInfo
+import love.forte.simbot.tencentguild.internal.TencentGuildInfoImpl
 
 /**
  *
@@ -28,7 +29,7 @@ import love.forte.simbot.tencentguild.internal.*
  *
  * @author ForteScarlet
  */
-public interface TencentGuildInfo : GuildInfo {
+public interface TencentGuildInfo : GuildInfo, TencentGuildObjective {
 
     /**
      * 频道ID

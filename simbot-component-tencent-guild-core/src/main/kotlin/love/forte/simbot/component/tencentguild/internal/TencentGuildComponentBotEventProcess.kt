@@ -37,7 +37,7 @@ internal fun TencentGuildComponentBotImpl.registerEventProcessor() {
  * 注册预处理事件，用于监听各类'变化'事件并同步数据。
  */
 private fun TencentGuildComponentBotImpl.registerEventPreProcessor() {
-    sourceBot.preProcessor { _, decoded ->
+    source.preProcessor { _, decoded ->
         when (type) {
             EventSignals.Guilds.GuildCreate.type -> onGuildCreate(decoded)
             EventSignals.Guilds.GuildUpdate.type -> onGuildUpdate(decoded)
@@ -67,7 +67,7 @@ private fun TencentGuildComponentBotImpl.onGuildUpdate(decoded: () -> Any) {
     val eventData = decoded()
     if (eventData is TencentGuildInfo) {
         getInternalGuild(eventData.id)?.also { guild ->
-            guild.guildInfo = eventData
+            guild.source = eventData
             logger.debug("OnGuildUpdate sync: {}", eventData)
         }
     }
@@ -98,7 +98,7 @@ private suspend fun TencentGuildComponentBotImpl.onChannelCreate(decoded: () -> 
         
         guild.internalChannels.compute(eventData.id.literal) { _, current ->
             current?.also {
-                it.channel = eventData
+                it.source = eventData
             } ?: run {
                 // TODO warn or err log if not found?
                 val category = guild.internalChannelCategories[eventData.parentId]!!
@@ -125,7 +125,7 @@ private fun TencentGuildComponentBotImpl.onChannelUpdate(decoded: () -> Any) {
         } else {
             // TODO update category?
             guild.getInternalChannel(eventData.id)?.also { channel ->
-                channel.channel = eventData
+                channel.source = eventData
                 logger.debug("OnChannelUpdate sync: {}", eventData)
             } ?: kotlin.run {
                 logger.debug(
@@ -152,7 +152,7 @@ private fun TencentGuildComponentBotImpl.onChannelDelete(decoded: () -> Any) {
             val values = guild.internalChannels.values.iterator()
             while (values.hasNext()) {
                 val next = values.next()
-                if (next.parentId == categoryId) {
+                if (next.source.parentId == categoryId) {
                     values.remove()
                     logger.debug(
                         "OnChannelDelete sync: removed channel [{}] (by category(id={})) from event data {}",
@@ -193,7 +193,7 @@ private fun TencentGuildComponentBotImpl.onMemberRemove(decoded: () -> Any) {
  */
 private fun TencentGuildComponentBotImpl.registerNormalEventProcessor() {
     // process event.
-    sourceBot.processor { json, decoded ->
+    source.processor { json, decoded ->
         // event processor
         logger.trace("EventSignals.events[{}]: {}", type, EventSignals.events[type])
         EventSignals.events[this.type]?.let { signals ->

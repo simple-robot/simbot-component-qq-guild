@@ -22,6 +22,7 @@ import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.definition.Guild
 import love.forte.simbot.definition.Organization
+import love.forte.simbot.tencentguild.TencentGuildInfo
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.Items.Companion.emptyItems
 import love.forte.simbot.utils.runInBlocking
@@ -30,7 +31,7 @@ import love.forte.simbot.utils.runInBlocking
  *
  * @author ForteScarlet
  */
-public interface TencentGuild : Guild {
+public interface TencentGuild : Guild, TencentGuildObjectiveContainer<TencentGuildInfo> {
     override val bot: TencentGuildComponentGuildBot
     override val createTime: Timestamp
     override val currentMember: Int

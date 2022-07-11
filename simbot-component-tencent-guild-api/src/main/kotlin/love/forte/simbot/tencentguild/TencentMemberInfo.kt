@@ -17,17 +17,18 @@
 
 package love.forte.simbot.tencentguild
 
-import kotlinx.serialization.*
-import love.forte.simbot.*
-import love.forte.simbot.definition.*
-import love.forte.simbot.tencentguild.internal.*
+import kotlinx.serialization.KSerializer
+import love.forte.simbot.ID
+import love.forte.simbot.Timestamp
+import love.forte.simbot.definition.MemberInfo
+import love.forte.simbot.tencentguild.internal.TencentMemberInfoImpl
 
 /**
  * [成员](https://bot.q.qq.com/wiki/develop/api/openapi/member/model.html)
  *
  * @author ForteScarlet
  */
-public interface TencentMemberInfo : MemberInfo {
+public interface TencentMemberInfo : MemberInfo, TencentGuildObjective {
     /**
      * 频道id
      */

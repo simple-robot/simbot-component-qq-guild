@@ -19,7 +19,6 @@ package love.forte.simbot.component.tencentguild
 
 import love.forte.simbot.Api4J
 import love.forte.simbot.ID
-import love.forte.simbot.Timestamp
 import love.forte.simbot.bot.Bot
 import love.forte.simbot.component.tencentguild.internal.TencentMessageReceipt
 import love.forte.simbot.definition.GuildMember
@@ -27,7 +26,6 @@ import love.forte.simbot.definition.MemberInfo
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.tencentguild.TencentMemberInfo
-import love.forte.simbot.tencentguild.TencentUserInfo
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.runInBlocking
 import java.util.concurrent.TimeUnit
@@ -37,12 +35,7 @@ import kotlin.time.Duration
  *
  * @author ForteScarlet
  */
-public interface TencentMember : GuildMember, MemberInfo, TencentMemberInfo {
-    override val guildId: ID?
-    override val user: TencentUserInfo
-    override val nick: String
-    override val roleIds: List<ID>
-    override val joinedAt: Timestamp
+public interface TencentMember : GuildMember, MemberInfo, TencentGuildObjectiveContainer<TencentMemberInfo> {
     override val avatar: String
     override val bot: Bot
     override val id: ID

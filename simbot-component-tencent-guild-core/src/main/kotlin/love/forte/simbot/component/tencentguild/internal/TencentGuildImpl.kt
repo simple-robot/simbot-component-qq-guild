@@ -44,26 +44,26 @@ import kotlin.time.Duration
  */
 internal class TencentGuildImpl private constructor(
     private val baseBot: TencentGuildComponentBotImpl,
-    @Volatile internal var guildInfo: TencentGuildInfo,
+    @Volatile override var source: TencentGuildInfo,
 ) : TencentGuild {
     override val maximumChannel: Int
-        get() = guildInfo.maximumChannel
+        get() = source.maximumChannel
     override val createTime: Timestamp
-        get() = guildInfo.createTime
+        get() = source.createTime
     override val currentMember: Int
-        get() = guildInfo.currentMember
+        get() = source.currentMember
     override val description: String
-        get() = guildInfo.description
+        get() = source.description
     override val icon: String
-        get() = guildInfo.icon
+        get() = source.icon
     override val id: ID
-        get() = guildInfo.id
+        get() = source.id
     override val maximumMember: Int
-        get() = guildInfo.maximumMember
+        get() = source.maximumMember
     override val name: String
-        get() = guildInfo.name
+        get() = source.name
     override val ownerId: ID
-        get() = guildInfo.ownerId
+        get() = source.ownerId
     
     internal val internalChannels = ConcurrentHashMap<String, TencentChannelImpl>()
     internal val internalChannelCategories = ConcurrentHashMap<String, TencentChannelCategoryImpl>()
@@ -77,7 +77,7 @@ internal class TencentGuildImpl private constructor(
         internal set
     
     override fun toString(): String {
-        return "TencentGuildImpl(bot=$baseBot, guildInfo=$guildInfo)"
+        return "TencentGuildImpl(bot=$baseBot, guildInfo=$source)"
     }
     
     /**
@@ -93,10 +93,10 @@ internal class TencentGuildImpl private constructor(
     
     
     override suspend fun member(id: ID): TencentMemberImpl? {
-        val member = kotlin.runCatching { GetMemberApi(guildInfo.id, id).requestBy(baseBot) }.getOrElse { e ->
-            if (e !is TencentApiException) throw e
+        val member = kotlin.runCatching { GetMemberApi(source.id, id).requestBy(baseBot) }.getOrElse { e ->
+            if (e is TencentApiException && e.value == 404) return@getOrElse null
             
-            if (e.value == 404) null else throw e
+            throw e
         }
         
         return member?.let { info -> TencentMemberImpl(baseBot, info.toInternal(), this) }
@@ -104,7 +104,7 @@ internal class TencentGuildImpl private constructor(
     
     override val roles: Items<TencentRoleImpl>
         get() = bot.effectedFlowItems {
-            GetGuildRoleListApi(guildInfo.id).requestBy(baseBot).roles.forEach { info ->
+            GetGuildRoleListApi(source.id).requestBy(baseBot).roles.forEach { info ->
                 val roleImpl = TencentRoleImpl(baseBot, info)
                 emit(roleImpl)
             }
@@ -136,8 +136,8 @@ internal class TencentGuildImpl private constructor(
     }
     
     private suspend fun syncOwner() {
-        val ownerId = guildInfo.ownerId
-        val ownerInfo = GetMemberApi(guildInfo.id, ownerId).requestBy(baseBot)
+        val ownerId = source.ownerId
+        val ownerInfo = GetMemberApi(source.id, ownerId).requestBy(baseBot)
         
         owner = TencentMemberImpl(baseBot, ownerInfo, this)
         baseBot.logger.debug("Sync guild owner: {}", ownerInfo)
@@ -152,7 +152,7 @@ internal class TencentGuildImpl private constructor(
     
     
     private suspend fun syncChannels() {
-        val channelInfoList = GetGuildChannelListApi(guildInfo.id).requestBy(baseBot)
+        val channelInfoList = GetGuildChannelListApi(source.id).requestBy(baseBot)
         baseBot.logger.debug(
             "Sync the channel list for guild(id={}, name={}), {} pieces of synchronized data",
             id,
@@ -182,7 +182,7 @@ internal class TencentGuildImpl private constructor(
                 
                 internalChannels.compute(info.id.literal) { _, current ->
                     current?.also {
-                        it.channel = info
+                        it.source = info
                     } ?: TencentChannelImpl(baseBot, info, this, category)
                 }
                 
