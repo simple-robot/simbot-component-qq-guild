@@ -128,7 +128,7 @@ public interface TencentChannel : Channel, TencentChannelInfo {
     
     @OptIn(Api4J::class)
     @Deprecated("Mute API is not supported", ReplaceWith("false"))
-    override fun muteBlocking(duration: Long, unit: TimeUnit): Boolean = false
+    override fun muteBlocking(time: Long, timeUnit: TimeUnit): Boolean = false
     
     @Deprecated("Mute API is not supported", ReplaceWith("false"))
     @JvmSynthetic
