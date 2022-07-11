@@ -26,7 +26,7 @@ import love.forte.simbot.tencentguild.TencentChannelInfo
 
 /**
  *
- * 当一个频道的 [TencentChannel.channelType] 的值等于 [CHANNEL_TYPE_GROUPING] 时，
+ * 当一个频道的 [TencentChannel.source.channelType][TencentChannelInfo.channelType] 的值等于 [CHANNEL_TYPE_GROUPING] 时，
  * 此频道代表为一个分组。
  *
  * @author ForteScarlet

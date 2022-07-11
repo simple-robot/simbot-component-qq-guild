@@ -47,20 +47,20 @@ import kotlin.coroutines.CoroutineContext
  * @author ForteScarlet
  */
 internal class TencentGuildComponentBotImpl(
-    override val sourceBot: TencentGuildBot,
+    override val source: TencentGuildBot,
     override val manager: TencentGuildBotManager,
     override val eventProcessor: EventProcessor,
     override val component: TencentGuildComponent,
 ) : TencentGuildComponentBot {
     
     override val coroutineContext: CoroutineContext
-        get() = sourceBot.coroutineContext
+        get() = source.coroutineContext
     
     private val job
-        get() = sourceBot.coroutineContext[Job]!!
+        get() = source.coroutineContext[Job]!!
     
     override val logger =
-        LoggerFactory.getLogger("love.forte.simbot.component.tencentguild.bot.${sourceBot.ticket.appKey}")
+        LoggerFactory.getLogger("love.forte.simbot.component.tencentguild.bot.${source.ticket.appKey}")
     
     @Volatile
     private lateinit var meId: ID
@@ -89,10 +89,10 @@ internal class TencentGuildComponentBotImpl(
     /**
      * 启动当前bot。
      */
-    override suspend fun start(): Boolean = sourceBot.start().also {
+    override suspend fun start(): Boolean = source.start().also {
         // just set everytime.
-        sourceBot.botInfo
-        meId = sourceBot.me().id
+        source.botInfo
+        meId = source.me().id
         
         suspend fun pushStartedEvent() {
             eventProcessor.pushIfProcessable(TcgBotStartedEvent) {
@@ -112,11 +112,11 @@ internal class TencentGuildComponentBotImpl(
     
     
     override suspend fun join() {
-        sourceBot.join()
+        source.join()
     }
     
     
-    override suspend fun cancel(reason: Throwable?): Boolean = sourceBot.cancel(reason)
+    override suspend fun cancel(reason: Throwable?): Boolean = source.cancel(reason)
     
     
     @Api4J
@@ -145,7 +145,7 @@ private suspend fun TencentGuildComponentBotImpl.initGuildListData() {
     var lastId: ID? = null
     var times = 1
     while (true) {
-        val list = GetBotGuildListApi(after = lastId).requestBy(sourceBot)
+        val list = GetBotGuildListApi(after = lastId).requestBy(source)
         if (list.isEmpty()) break
         
         logger.debug("Sync batch {} of the guild list, {} pieces of synchronized data, after id: {}", times++, list.size, lastId)

@@ -19,9 +19,10 @@
 
 package love.forte.simbot.component.tencentguild.util
 
-import love.forte.simbot.component.tencentguild.*
-import love.forte.simbot.tencentguild.*
-import love.forte.simbot.tencentguild.api.*
+import love.forte.simbot.component.tencentguild.TencentGuildComponentBot
+import love.forte.simbot.tencentguild.api.TencentApi
+import love.forte.simbot.tencentguild.request
+import love.forte.simbot.tencentguild.requestBy
 
 
 /**
@@ -40,7 +41,7 @@ public suspend inline fun <R> TencentApi<R>.request(bot: TencentGuildComponentBo
  */
 @JvmSynthetic
 public suspend inline fun <R> TencentApi<R>.requestBy(bot: TencentGuildComponentBot): R {
-    return requestBy(bot.sourceBot)
+    return requestBy(bot.source)
 }
 
 /**
@@ -50,5 +51,5 @@ public suspend inline fun <R> TencentApi<R>.requestBy(bot: TencentGuildComponent
  */
 @JvmSynthetic
 public suspend inline fun <R> TencentGuildComponentBot.request(api: TencentApi<R>): R {
-    return sourceBot.request(api)
+    return source.request(api)
 }

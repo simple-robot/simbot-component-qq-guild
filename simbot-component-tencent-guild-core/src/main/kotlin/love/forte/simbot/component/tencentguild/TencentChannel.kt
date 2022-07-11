@@ -25,8 +25,6 @@ import love.forte.simbot.definition.Channel
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.message.Text
-import love.forte.simbot.tencentguild.ChannelSubType
-import love.forte.simbot.tencentguild.ChannelType
 import love.forte.simbot.tencentguild.TencentChannelInfo
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.Items.Companion.emptyItems
@@ -40,8 +38,7 @@ import kotlin.time.Duration
  * @see TencentGuild
  * @author ForteScarlet
  */
-public interface TencentChannel : Channel, TencentChannelInfo {
-    
+public interface TencentChannel : Channel, TencentGuildObjectiveContainer<TencentChannelInfo> {
     
     override val bot: TencentGuildComponentGuildBot
     override val createTime: Timestamp
@@ -58,15 +55,6 @@ public interface TencentChannel : Channel, TencentChannelInfo {
      * 子频道始终有分组。
      */
     override val category: TencentChannelCategory
-    
-    @get:JvmSynthetic
-    override val channelType: ChannelType
-    
-    @get:JvmSynthetic
-    override val channelSubType: ChannelSubType
-    override val position: Int
-    override val parentId: String
-    
     
     @OptIn(Api4J::class)
     override val guild: TencentGuild

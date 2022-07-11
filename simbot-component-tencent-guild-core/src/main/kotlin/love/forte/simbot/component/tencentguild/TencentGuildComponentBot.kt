@@ -50,10 +50,13 @@ public interface TencentGuildComponentBot : Bot {
     /**
      * 在 stdlib 模块下的原始Bot类型。
      */
-    public val sourceBot: TencentGuildBot
+    public val source: TencentGuildBot
+    
+    @Deprecated("Use 'source'", ReplaceWith("source"))
+    public val sourceBot: TencentGuildBot get() = source
     
     override val id: ID
-        get() = sourceBot.ticket.appId.ID
+        get() = source.ticket.appId.ID
     
     /**
      * 腾讯机器人有两个可能的唯一标识：作为bot的clientId以及在系统中作为用户的 user id.
@@ -73,13 +76,13 @@ public interface TencentGuildComponentBot : Bot {
      * bot的用户名
      */
     override val username: String
-        get() = sourceBot.botInfo.username
+        get() = source.botInfo.username
     
     /**
      * bot的头像
      */
     override val avatar: String
-        get() = sourceBot.botInfo.avatar
+        get() = source.botInfo.avatar
     
     /**
      * bot所属的bot管理器
@@ -102,16 +105,16 @@ public interface TencentGuildComponentBot : Bot {
     
     
     override val isActive: Boolean
-        get() = sourceBot.isActive
+        get() = source.isActive
     
     @Api4J
     override fun cancelBlocking(reason: Throwable?): Boolean {
-        return sourceBot.cancelBlocking(reason)
+        return source.cancelBlocking(reason)
     }
     
     @Api4J
     override fun startBlocking(): Boolean {
-        return sourceBot.startBlocking()
+        return source.startBlocking()
     }
     
     @Deprecated(

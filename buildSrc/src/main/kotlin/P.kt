@@ -26,7 +26,7 @@ object P {
         
         val version = Version(
             "3", 0, 0,
-            status = VersionStatus.beta(null, null, "-M3"),
+            status = VersionStatus.beta(null, null, "M3"),
             isSnapshot = isSnapshot()
         )
         
@@ -56,7 +56,7 @@ object P {
         val version = Version(
             major = "${Simbot.version.major}.${Simbot.version.minor}",
             minor = 0, patch = 0,
-            status = VersionStatus.preview(14, 0),
+            status = VersionStatus.alpha(1, null),
             isSnapshot = Simbot.isSnapshot
         )
         const val GROUP = "${Simbot.GROUP}.component"

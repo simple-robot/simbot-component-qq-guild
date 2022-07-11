@@ -28,7 +28,7 @@ import love.forte.simbot.tencentguild.internal.TencentChannelInfoImpl
  * tencent channel info
  * @author ForteScarlet
  */
-public interface TencentChannelInfo : ChannelInfo {
+public interface TencentChannelInfo : ChannelInfo, TencentGuildObjective {
     /**
      * 子频道id
      */

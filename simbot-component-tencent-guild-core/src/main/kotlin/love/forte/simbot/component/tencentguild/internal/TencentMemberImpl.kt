@@ -21,6 +21,8 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import love.forte.simbot.ID
+import love.forte.simbot.Timestamp
 import love.forte.simbot.component.tencentguild.TencentMember
 import love.forte.simbot.component.tencentguild.TencentRole
 import love.forte.simbot.component.tencentguild.event.TcgChannelAtMessageEvent
@@ -42,10 +44,21 @@ import love.forte.simbot.utils.item.effectedItemsByFlow
  */
 internal class TencentMemberImpl(
     override val bot: TencentGuildComponentBotImpl,
-    private val info: TencentMemberInfo,
+    override val source: TencentMemberInfo,
     override val guild: TencentGuildImpl,
-) : TencentMember, TencentMemberInfo by info {
-    private val roleIdSet = info.roleIds.mapTo(mutableSetOf()) { it.literal }
+) : TencentMember {
+    override val joinTime: Timestamp
+        get() = source.joinTime
+    override val nickname: String
+        get() = source.nickname
+    override val avatar: String
+        get() = source.avatar
+    override val id: ID
+        get() = source.id
+    override val username: String
+        get() = source.username
+    
+    private val roleIdSet = source.roleIds.mapTo(mutableSetOf()) { it.literal }
     private lateinit var dms: DirectMessageSession
     private val dmsInitLock = Mutex()
     private suspend fun getDms(): DirectMessageSession {
@@ -103,12 +116,13 @@ internal class TencentMemberImpl(
         return DmsSendApi(guildId = dms.guildId, content = text, msgId = msgId).requestBy(bot).asReceipt()
     }
     
+    
     override suspend fun send(message: MessageContent): TencentMessageReceipt {
         return send(message.messages)
     }
     
     override fun toString(): String {
-        return "TencentMemberImpl(bot=$bot, info=$info, guild=$guild)"
+        return "TencentMemberImpl(bot=$bot, source=$source, guild=$guild)"
     }
 }
 

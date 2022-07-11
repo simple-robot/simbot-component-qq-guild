@@ -28,8 +28,6 @@ import love.forte.simbot.component.tencentguild.event.TcgChannelAtMessageEvent
 import love.forte.simbot.component.tencentguild.util.requestBy
 import love.forte.simbot.event.EventProcessingContext
 import love.forte.simbot.message.Message
-import love.forte.simbot.tencentguild.ChannelSubType
-import love.forte.simbot.tencentguild.ChannelType
 import love.forte.simbot.tencentguild.TencentChannelInfo
 import love.forte.simbot.tencentguild.api.message.MessageSendApi
 import love.forte.simbot.utils.item.Items
@@ -41,7 +39,7 @@ import love.forte.simbot.utils.item.Items
 internal class TencentChannelImpl internal constructor(
     private val baseBot: TencentGuildComponentBotImpl,
     @Volatile
-    internal var channel: TencentChannelInfo,
+    override var source: TencentChannelInfo,
     override val guild: TencentGuildImpl,
     override val category: TencentChannelCategoryImpl,
 ) : TencentChannel {
@@ -63,7 +61,7 @@ internal class TencentChannelImpl internal constructor(
                 }
             }
         }
-        return MessageSendApi(channel.id, messageForSend).requestBy(baseBot).asReceipt()
+        return MessageSendApi(source.id, messageForSend).requestBy(baseBot).asReceipt()
     }
     
     override val owner: TencentMember
@@ -75,47 +73,39 @@ internal class TencentChannelImpl internal constructor(
         get() = guild.roles
     
     override fun toString(): String {
-        return "TencentChannelImpl(bot=$baseBot, channel=$channel, guild=$guild)"
+        return "TencentChannelImpl(bot=$baseBot, source=$source, guild=$guild)"
     }
     
     // region info impl
     @Suppress("DEPRECATION")
     override val createTime: Timestamp
-        get() = channel.createTime
+        get() = source.createTime
     
     @Suppress("DEPRECATION")
     override val currentMember: Int
-        get() = channel.currentMember
+        get() = source.currentMember
     
     @Suppress("DEPRECATION")
     override val description: String
-        get() = channel.description
+        get() = source.description
     override val guildId: ID
-        get() = channel.guildId
+        get() = source.guildId
     
     override val icon: String
         get() = guild.icon
     
     override val id: ID
-        get() = channel.id
+        get() = source.id
     
     @Suppress("DEPRECATION")
     override val maximumMember: Int
-        get() = channel.maximumMember
+        get() = source.maximumMember
     
     @Suppress("DEPRECATION")
     override val name: String
-        get() = channel.name
+        get() = source.name
     override val ownerId: ID
-        get() = channel.ownerId
-    override val channelType: ChannelType
-        get() = channel.channelType
-    override val channelSubType: ChannelSubType
-        get() = channel.channelSubType
-    override val position: Int
-        get() = channel.position
-    override val parentId: String
-        get() = channel.parentId
+        get() = source.ownerId
     // endregion
     
 }
