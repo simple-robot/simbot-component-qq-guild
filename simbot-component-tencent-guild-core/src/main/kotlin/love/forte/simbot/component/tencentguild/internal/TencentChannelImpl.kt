@@ -28,6 +28,7 @@ import love.forte.simbot.component.tencentguild.event.TcgChannelAtMessageEvent
 import love.forte.simbot.component.tencentguild.util.requestBy
 import love.forte.simbot.event.EventProcessingContext
 import love.forte.simbot.message.Message
+import love.forte.simbot.tencentguild.ChannelSubType
 import love.forte.simbot.tencentguild.ChannelType
 import love.forte.simbot.tencentguild.TencentChannelInfo
 import love.forte.simbot.tencentguild.api.message.MessageSendApi
@@ -107,8 +108,8 @@ internal class TencentChannelImpl internal constructor(
         get() = channel.ownerId
     override val channelType: ChannelType
         get() = channel.channelType
-    override val channelSubTypeValue: Int
-        get() = channel.channelSubTypeValue
+    override val channelSubType: ChannelSubType
+        get() = channel.channelSubType
     override val position: Int
         get() = channel.position
     override val parentId: String

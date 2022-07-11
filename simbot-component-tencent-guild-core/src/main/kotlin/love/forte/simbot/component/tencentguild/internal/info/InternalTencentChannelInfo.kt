@@ -18,6 +18,7 @@
 package love.forte.simbot.component.tencentguild.internal.info
 
 import love.forte.simbot.ID
+import love.forte.simbot.tencentguild.ChannelSubType
 import love.forte.simbot.tencentguild.ChannelType
 import love.forte.simbot.tencentguild.TencentChannelInfo
 
@@ -26,7 +27,7 @@ internal data class InternalTencentChannelInfo(
     override var guildId: ID,
     override var name: String,
     override var channelType: ChannelType,
-    override var channelSubTypeValue: Int,
+    override var channelSubType: ChannelSubType,
     override var position: Int,
     override var parentId: String,
     override var ownerId: ID,
@@ -43,7 +44,7 @@ internal fun TencentChannelInfo.toInternal(copy: Boolean = true): InternalTencen
         guildId,
         name,
         channelType,
-        channelSubTypeValue,
+        channelSubType,
         position,
         parentId,
         ownerId,

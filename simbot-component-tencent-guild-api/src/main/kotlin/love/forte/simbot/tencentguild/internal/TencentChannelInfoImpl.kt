@@ -20,8 +20,8 @@ package love.forte.simbot.tencentguild.internal
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.CharSequenceID
+import love.forte.simbot.tencentguild.ChannelSubType
 import love.forte.simbot.tencentguild.ChannelType
-import love.forte.simbot.tencentguild.IntToChannelTypeSerializer
 import love.forte.simbot.tencentguild.TencentChannelInfo
 
 
@@ -34,11 +34,11 @@ internal data class TencentChannelInfoImpl(
     override val name: String,
     
     @SerialName("type")
-    @Serializable(IntToChannelTypeSerializer::class)
+    @get:JvmSynthetic
     override val channelType: ChannelType,
     
     @SerialName("sub_type")
-    override val channelSubTypeValue: Int,
+    override val channelSubType: ChannelSubType,
     
     override val position: Int,
     @SerialName("parent_id")
