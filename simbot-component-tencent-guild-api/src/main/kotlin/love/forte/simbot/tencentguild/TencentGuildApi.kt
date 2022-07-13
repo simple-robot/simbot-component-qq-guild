@@ -74,14 +74,14 @@ public object TencentGuildApi {
 
 public object TimestampISO8601Serializer : KSerializer<Timestamp> {
     override fun deserialize(decoder: Decoder): Timestamp {
-        return DateTimeFormatter.ISO_INSTANT.parse(decoder.decodeString(), Instant::from).toTimestamp()
+        return DateTimeFormatter.ISO_DATE_TIME.parse(decoder.decodeString(), Instant::from).toTimestamp()
         // return Instant.parse(decoder.decodeString()).toTimestamp()
     }
     
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("ISO8601Timestamp", PrimitiveKind.STRING)
     
     override fun serialize(encoder: Encoder, value: Timestamp) {
-        encoder.encodeString(DateTimeFormatter.ISO_INSTANT.format(value.instantValue))
+        encoder.encodeString(DateTimeFormatter.ISO_DATE_TIME.format(value.instantValue))
     }
     
 }
