@@ -18,6 +18,7 @@
 package love.forte.simbot.component.tencentguild.internal
 
 import love.forte.simbot.ID
+import love.forte.simbot.LoggerFactory
 import love.forte.simbot.Timestamp
 import love.forte.simbot.component.tencentguild.TencentChannel
 import love.forte.simbot.component.tencentguild.TencentGuild
@@ -46,6 +47,9 @@ internal class TencentGuildImpl private constructor(
     private val baseBot: TencentGuildComponentBotImpl,
     @Volatile override var source: TencentGuildInfo,
 ) : TencentGuild {
+    private val logger = LoggerFactory.getLogger("love.forte.simbot.component.tencentguild.internal.TencentGuildImpl[${source.id}]")
+    
+    
     override val maximumChannel: Int
         get() = source.maximumChannel
     override val createTime: Timestamp
@@ -86,9 +90,25 @@ internal class TencentGuildImpl private constructor(
      *
      * *Note: 成员列表的获取暂时不支持（只支持私域）*
      */
+    internal suspend fun initData() {
+        // TODO 如果不支持，变更策略(查询时)
+        syncData()
+    }
+    
+    /**
+     * 同步数据，包括成员信息和频道列表信息, 以及 [bot] 和 [owner] 的初始化。
+     * 必须在对象实例后执行一次进行初始化，否则内部属性信息将会为空。
+     *
+     * *Note: 成员列表的获取暂时不支持（只支持私域）*
+     */
     internal suspend fun syncData() {
-        syncMembers()
-        syncChannels()
+        kotlin.runCatching { syncMembers() }.onFailure { e ->
+            logger.error("Sync members data for guild $this failed.", e)
+        }
+        // TODO 如果不支持，变更策略(查询时)
+        kotlin.runCatching { syncChannels() }.onFailure { e ->
+            logger.error("Sync channels data for guild $this failed.", e)
+        }
     }
     
     
@@ -140,20 +160,23 @@ internal class TencentGuildImpl private constructor(
         val ownerInfo = GetMemberApi(source.id, ownerId).requestBy(baseBot)
         
         owner = TencentMemberImpl(baseBot, ownerInfo, this)
-        baseBot.logger.debug("Sync guild owner: {}", ownerInfo)
+        logger.debug("Sync guild owner: {}", ownerInfo)
         
     }
     
     private suspend fun syncBot() {
-        val member = member(baseBot.id)!!
+        val member = member(baseBot.source.botInfo.id)!!
         bot = TencentGuildComponentGuildBotImpl(baseBot, member)
-        baseBot.logger.debug("Sync guild bot: {}", bot)
+        logger.debug("Sync guild bot: {}", bot)
     }
     
     
     private suspend fun syncChannels() {
-        val channelInfoList = GetGuildChannelListApi(source.id).requestBy(baseBot)
-        baseBot.logger.debug(
+        val channelInfoList = GetGuildChannelListApi(source.id).requestBy(baseBot).sortedBy {
+            if (it.channelType.isGrouping) 0 else 1
+        }
+        
+        logger.info(
             "Sync the channel list for guild(id={}, name={}), {} pieces of synchronized data",
             id,
             name,
@@ -172,7 +195,7 @@ internal class TencentGuildImpl private constructor(
                 val category = internalChannelCategories[categoryId]
                 
                 if (category == null) {
-                    baseBot.logger.warn(
+                    logger.warn(
                         "Cannot find category(id={}) for sync channel({}). \nThis is an expected problem and please report this log to issues: https://github.com/simple-robot/simbot-component-tencent-guild/issues",
                         categoryId,
                         info
@@ -192,11 +215,12 @@ internal class TencentGuildImpl private constructor(
     }
     
     companion object {
+        
         suspend fun tencentGuildImpl(
             baseBot: TencentGuildComponentBotImpl,
             guildInfo: TencentGuildInfo,
         ): TencentGuildImpl {
-            return TencentGuildImpl(baseBot, guildInfo).also { it.syncData() }
+            return TencentGuildImpl(baseBot, guildInfo).also { it.initData() }
         }
     }
     
