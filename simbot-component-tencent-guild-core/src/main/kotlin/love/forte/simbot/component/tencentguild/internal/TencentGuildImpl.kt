@@ -176,7 +176,7 @@ internal class TencentGuildImpl private constructor(
             if (it.channelType.isGrouping) 0 else 1
         }
         
-        logger.info(
+        logger.debug(
             "Sync the channel list for guild(id={}, name={}), {} pieces of synchronized data",
             id,
             name,
