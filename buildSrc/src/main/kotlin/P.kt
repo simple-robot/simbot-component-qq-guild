@@ -56,7 +56,7 @@ object P {
         val version = Version(
             major = "${Simbot.version.major}.${Simbot.version.minor}",
             minor = 0, patch = 0,
-            status = VersionStatus.alpha(1, null),
+            status = VersionStatus.alpha(2, null),
             isSnapshot = Simbot.isSnapshot
         )
         const val GROUP = "${Simbot.GROUP}.component"
