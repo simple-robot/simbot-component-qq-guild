@@ -17,9 +17,13 @@
 
 package love.forte.simbot.tencentguild.internal
 
-import kotlinx.serialization.*
-import love.forte.simbot.*
-import love.forte.simbot.tencentguild.*
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import love.forte.simbot.CharSequenceID
+import love.forte.simbot.Timestamp
+import love.forte.simbot.tencentguild.TencentMemberInfo
+import love.forte.simbot.tencentguild.TimestampISO8601Serializer
 
 /**
  *
@@ -32,10 +36,10 @@ internal data class TencentMemberInfoImpl(
     override val user: TencentUserInfoImpl,
     override val nick: String = "",
     @SerialName("roles")
-    override val roleIds: List<CharSequenceID>,
+    override val roleIds: List<CharSequenceID> = emptyList(),
     @SerialName("joined_at")
     @Serializable(TimestampISO8601Serializer::class)
-    override val joinedAt: Timestamp
+    override val joinedAt: Timestamp = Timestamp.NotSupport
 ) : TencentMemberInfo
 
 
@@ -45,10 +49,10 @@ internal data class TencentMemberInfoImplForMessage(
     override var guildId: CharSequenceID? = null,
     override val nick: String = "",
     @SerialName("roles")
-    override val roleIds: List<CharSequenceID>,
+    override val roleIds: List<CharSequenceID> = emptyList(),
     @SerialName("joined_at")
     @Serializable(TimestampISO8601Serializer::class)
-    override val joinedAt: Timestamp
+    override val joinedAt: Timestamp = Timestamp.NotSupport
 ) : TencentMemberInfo {
     @Transient
     override lateinit var user: TencentUserInfoImpl
