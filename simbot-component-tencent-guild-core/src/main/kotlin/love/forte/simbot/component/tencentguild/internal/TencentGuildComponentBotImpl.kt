@@ -18,6 +18,8 @@
 package love.forte.simbot.component.tencentguild.internal
 
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import love.forte.simbot.Api4J
 import love.forte.simbot.ID
@@ -33,6 +35,7 @@ import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.event.pushIfProcessable
 import love.forte.simbot.literal
 import love.forte.simbot.tencentguild.TencentGuildBot
+import love.forte.simbot.tencentguild.TencentGuildInfo
 import love.forte.simbot.tencentguild.api.guild.GetBotGuildListApi
 import love.forte.simbot.tencentguild.requestBy
 import love.forte.simbot.utils.item.Items
@@ -144,18 +147,48 @@ internal class TencentGuildComponentBotImpl(
 private suspend fun TencentGuildComponentBotImpl.initGuildListData() {
     var lastId: ID? = null
     var times = 1
+    val guildInfoList = mutableListOf<TencentGuildInfo>()
     while (true) {
         val list = GetBotGuildListApi(after = lastId).requestBy(source)
         if (list.isEmpty()) break
         
-        logger.debug("Sync batch {} of the guild list, {} pieces of synchronized data, after id: {}", times++, list.size, lastId)
+        logger.debug(
+            "Sync batch {} of the guild list, {} pieces of synchronized data, after id: {}",
+            times++,
+            list.size,
+            lastId
+        )
+        
+        guildInfoList.addAll(list)
         
         lastId = list.lastOrNull()?.id
         
-        for (info in list) {
-            val guildImpl = tencentGuildImpl(this, info)
+    }
+    
+    logger.info("{} pieces of guild information are synchronized", guildInfoList.size)
+    logger.info("Begin to initialize guild information asynchronously...")
+    
+    val initDataJob = SupervisorJob(this.coroutineContext[Job])
+    
+    for (info in guildInfoList) {
+        launch(initDataJob) {
+            val guildImpl = tencentGuildImpl(this@initGuildListData, info)
+            // 基本不会出现重复，初始化阶段直接覆盖。
             internalGuilds[info.id.literal] = guildImpl
         }
     }
+    
+    // wait for sync jobs...
+    initDataJob.children.forEach {
+        it.join()
+    }
+    initDataJob.cancel()
+    
+    logger.info("{} pieces of guild are initialized.", internalGuilds.size)
+    
+    // for (info in guildInfoList) {
+    //     val guildImpl = tencentGuildImpl(this, info)
+    //     internalGuilds[info.id.literal] = guildImpl
+    // }
     
 }
