@@ -87,6 +87,7 @@ public sealed class EventSignals<out D : Any>(
                 "AUDIO_ON_MIC" to AudioAction.AudioOnMic,
                 "AUDIO_OFF_MIC" to AudioAction.AudioOffMic,
                 "AT_MESSAGE_CREATE" to AtMessages.AtMessageCreate,
+                "PUBLIC_MESSAGE_DELETE" to AtMessages.PublicMessageDelete,
             )
         }
     }
@@ -169,7 +170,7 @@ public sealed class EventSignals<out D : Any>(
 
             @JvmStatic
             public val intentsValue: Int
-                get() = AtMessages.intents.value
+                get() = intents.value
         }
     }
 
@@ -191,7 +192,7 @@ public sealed class EventSignals<out D : Any>(
 
             @JvmStatic
             public val intentsValue: Int
-                get() = AtMessages.intents.value
+                get() = intents.value
         }
     }
 
@@ -207,7 +208,7 @@ public sealed class EventSignals<out D : Any>(
 
             @JvmStatic
             public val intentsValue: Int
-                get() = AtMessages.intents.value
+                get() = intents.value
         }
     }
 
@@ -230,7 +231,7 @@ public sealed class EventSignals<out D : Any>(
 
             @JvmStatic
             public val intentsValue: Int
-                get() = AtMessages.intents.value
+                get() = intents.value
         }
     }
 
@@ -239,6 +240,9 @@ public sealed class EventSignals<out D : Any>(
         /** 当收到@机器人的消息时 */
         public object AtMessageCreate : AtMessages<TencentMessage>("AT_MESSAGE_CREATE", TencentMessage.serializer)
 
+        // 文档内暂无描述，因此暂时不支持解析
+        public object PublicMessageDelete : AtMessages<Unit>("PUBLIC_MESSAGE_DELETE", Unit.serializer())
+        
         public companion object {
             @JvmSynthetic
             public val intents: Intents = Intents(1 shl 30)

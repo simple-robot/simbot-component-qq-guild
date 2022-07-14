@@ -17,9 +17,12 @@
 
 package love.forte.simbot.tencentguild.internal
 
-import kotlinx.serialization.*
-import love.forte.simbot.*
-import love.forte.simbot.tencentguild.*
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import love.forte.simbot.CharSequenceID
+import love.forte.simbot.Timestamp
+import love.forte.simbot.tencentguild.TencentMessage
+import love.forte.simbot.tencentguild.TimestampISO8601Serializer
 
 @Serializable
 internal data class TencentMessageImpl(
@@ -30,7 +33,7 @@ internal data class TencentMessageImpl(
     override val guildId: CharSequenceID,
     override val content: String,
     @Serializable(TimestampISO8601Serializer::class)
-    override val timestamp: Timestamp,
+    override val timestamp: Timestamp = Timestamp.NotSupport,
     @SerialName("edited_timestamp")
     override val editedTimestamp: Timestamp = Timestamp.NotSupport,
     @SerialName("mention_everyone")
