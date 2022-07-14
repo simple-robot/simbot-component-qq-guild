@@ -20,11 +20,13 @@ package love.forte.simbot.component.tencentguild.internal.event
 import kotlinx.serialization.json.Json
 import love.forte.simbot.ID
 import love.forte.simbot.Simbot
+import love.forte.simbot.component.tencentguild.internal.TencentChannelCategoryImpl
 import love.forte.simbot.component.tencentguild.internal.TencentChannelImpl
 import love.forte.simbot.component.tencentguild.internal.TencentGuildComponentBotImpl
 import love.forte.simbot.component.tencentguild.internal.TencentGuildImpl
 import love.forte.simbot.component.tencentguild.internal.TencentGuildImpl.Companion.tencentGuildImpl
 import love.forte.simbot.event.Event
+import love.forte.simbot.literal
 import love.forte.simbot.tencentguild.EventSignals
 import love.forte.simbot.tencentguild.Signal
 import love.forte.simbot.tencentguild.api.channel.GetChannelApi
@@ -86,26 +88,51 @@ internal val eventSignalParsers =
 internal suspend fun TencentGuildComponentBotImpl.createGuildImpl(
     guildId: ID,
 ): TencentGuildImpl {
-    val guild = GetGuildApi(guildId).requestBy(sourceBot)
+    val guild = GetGuildApi(guildId).requestBy(source)
     return tencentGuildImpl(this, guild)
 }
 
 internal suspend fun TencentGuildComponentBotImpl.createChannelImpl(
     guild: TencentGuildImpl, channelId: ID,
 ): TencentChannelImpl {
-    val channel = GetChannelApi(channelId).requestBy(sourceBot)
-    return TencentChannelImpl(this, channel, guild)
+    val channel = GetChannelApi(channelId).requestBy(source)
+    val category = resolveCategory(guild, channel.parentId.ID)
+    return TencentChannelImpl(this, channel, guild, category)
 }
 
-internal suspend inline fun TencentGuildComponentBotImpl.findOrCreateGuildImpl(guildId: ID, onCreate: (created: TencentGuildImpl) -> Unit = {}): TencentGuildImpl {
+internal suspend fun TencentGuildComponentBotImpl.resolveCategory(
+    guild: TencentGuildImpl,
+    id: ID,
+): TencentChannelCategoryImpl {
+    val idValue = id.literal
+    return guild.internalChannelCategories[idValue] ?: run {
+        val categoryInfo = GetChannelApi(id).requestBy(source)
+        guild.internalChannelCategories.compute(id.literal) { _, current ->
+            current?.also {
+                it.channel = categoryInfo
+            } ?: TencentChannelCategoryImpl(this, guild, categoryInfo)
+        }!!
+    }
+}
+
+internal suspend inline fun TencentGuildComponentBotImpl.findOrCreateGuildImpl(
+    guildId: ID,
+    onCreate: (created: TencentGuildImpl) -> Unit = {},
+): TencentGuildImpl {
     return getInternalGuild(guildId) ?: createGuildImpl(guildId).also(onCreate)
     
 }
 
 internal suspend inline fun TencentGuildComponentBotImpl.findOrCreateChannelImpl(
-    guildId: ID, channelId: ID, onCreateGuild: (created: TencentGuildImpl) -> Unit = {}, onCreateChannel: (created: TencentChannelImpl) -> Unit = {}
+    guildId: ID,
+    channelId: ID,
+    onCreateGuild: (created: TencentGuildImpl) -> Unit = {},
+    onCreateChannel: (created: TencentChannelImpl) -> Unit = {},
 ): TencentChannelImpl {
     val guild = findOrCreateGuildImpl(guildId, onCreateGuild)
-    return guild.getInternalChannel(channelId) ?: createChannelImpl(guild, channelId).also(onCreateChannel)
+    
+    return guild.getInternalChannel(channelId) ?: run {
+        createChannelImpl(guild, channelId).also(onCreateChannel)
+    }
 }
 

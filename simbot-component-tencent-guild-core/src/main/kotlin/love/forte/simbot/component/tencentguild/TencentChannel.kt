@@ -38,8 +38,7 @@ import kotlin.time.Duration
  * @see TencentGuild
  * @author ForteScarlet
  */
-public interface TencentChannel : Channel, TencentChannelInfo {
-    
+public interface TencentChannel : Channel, TencentGuildObjectiveContainer<TencentChannelInfo> {
     
     override val bot: TencentGuildComponentGuildBot
     override val createTime: Timestamp
@@ -51,11 +50,11 @@ public interface TencentChannel : Channel, TencentChannelInfo {
     override val maximumMember: Int
     override val name: String
     override val ownerId: ID
-    override val channelTypeValue: Int
-    override val channelSubTypeValue: Int
-    override val position: Int
-    override val parentId: String
     
+    /**
+     * 子频道始终有分组。
+     */
+    override val category: TencentChannelCategory
     
     @OptIn(Api4J::class)
     override val guild: TencentGuild
@@ -110,7 +109,8 @@ public interface TencentChannel : Channel, TencentChannelInfo {
     /**
      * 目前无法直接获取成员列表。
      */
-    @Deprecated("Get member list is not supported",
+    @Deprecated(
+        "Get member list is not supported",
         ReplaceWith("emptyItems()", "love.forte.simbot.utils.item.Items.Companion.emptyItems")
     )
     override val members: Items<TencentMember>
@@ -128,7 +128,7 @@ public interface TencentChannel : Channel, TencentChannelInfo {
     
     @OptIn(Api4J::class)
     @Deprecated("Mute API is not supported", ReplaceWith("false"))
-    override fun muteBlocking(duration: Long, unit: TimeUnit): Boolean = false
+    override fun muteBlocking(time: Long, timeUnit: TimeUnit): Boolean = false
     
     @Deprecated("Mute API is not supported", ReplaceWith("false"))
     @JvmSynthetic

@@ -17,8 +17,9 @@
 
 package love.forte.simbot.tencentguild
 
-import kotlinx.serialization.*
-import love.forte.simbot.*
+import kotlinx.serialization.KSerializer
+import love.forte.simbot.ID
+import love.forte.simbot.bot.BotInfo
 
 
 /**
@@ -33,7 +34,7 @@ public interface TencentBotInfo : TencentUserInfo, BotInfo {
     override val isBot: Boolean
     override val unionOpenid: String?
     override val unionUserAccount: String?
-
+    
     public companion object {
         internal val serializer: KSerializer<out TencentBotInfo> = TencentBotInfoImpl.serializer()
     }

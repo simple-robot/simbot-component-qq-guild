@@ -17,10 +17,12 @@
 
 package love.forte.simbot.tencentguild
 
-import kotlinx.serialization.*
-import love.forte.simbot.*
-import love.forte.simbot.definition.*
-import love.forte.simbot.tencentguild.internal.*
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import love.forte.simbot.Api4J
+import love.forte.simbot.ID
+import love.forte.simbot.definition.IDContainer
+import love.forte.simbot.tencentguild.internal.TencentChannelPermissionsInfoImpl
 
 /**
  *
@@ -66,15 +68,6 @@ public value class Permissions(public val value: Long) {
     public val isChannelManageable: Boolean get() = (value and CHANNEL_MANAGEABLE) != 0L
 
     public val isAdmin: Boolean get() = value != 0L
-
-    // public val status: PermissionStatus
-    //     get() = PermissionStatus.builder().also {
-    //         if (value != 0L) {
-    //             it.admin()
-    //             it.organizationAdmin()
-    //             it.channelAdmin()
-    //         }
-    //     }.build()
 
     public operator fun plus(other: Permissions): Permissions = Permissions(value or other.value)
     public operator fun plus(other: Long): Permissions = Permissions(value or other)

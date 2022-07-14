@@ -23,6 +23,9 @@ import love.forte.simbot.*
 import love.forte.simbot.application.ApplicationConfiguration
 import love.forte.simbot.application.EventProviderAutoRegistrarFactory
 import love.forte.simbot.application.EventProviderFactory
+import love.forte.simbot.bot.BotManager
+import love.forte.simbot.bot.BotVerifyInfo
+import love.forte.simbot.bot.ComponentMismatchException
 import love.forte.simbot.component.tencentguild.internal.TencentGuildBotManagerImpl
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.tencentguild.EventSignals

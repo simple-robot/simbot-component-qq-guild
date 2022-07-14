@@ -25,6 +25,7 @@ import love.forte.simbot.literal
 import love.forte.simbot.tencentguild.EventSignals
 import love.forte.simbot.tencentguild.TencentChannelInfo
 import love.forte.simbot.tencentguild.TencentGuildInfo
+import love.forte.simbot.tencentguild.isGrouping
 
 
 internal fun TencentGuildComponentBotImpl.registerEventProcessor() {
@@ -36,7 +37,7 @@ internal fun TencentGuildComponentBotImpl.registerEventProcessor() {
  * 注册预处理事件，用于监听各类'变化'事件并同步数据。
  */
 private fun TencentGuildComponentBotImpl.registerEventPreProcessor() {
-    sourceBot.preProcessor { _, decoded ->
+    source.preProcessor { _, decoded ->
         when (type) {
             EventSignals.Guilds.GuildCreate.type -> onGuildCreate(decoded)
             EventSignals.Guilds.GuildUpdate.type -> onGuildUpdate(decoded)
@@ -66,7 +67,7 @@ private fun TencentGuildComponentBotImpl.onGuildUpdate(decoded: () -> Any) {
     val eventData = decoded()
     if (eventData is TencentGuildInfo) {
         getInternalGuild(eventData.id)?.also { guild ->
-            guild.guildInfo = eventData
+            guild.source = eventData
             logger.debug("OnGuildUpdate sync: {}", eventData)
         }
     }
@@ -95,15 +96,13 @@ private suspend fun TencentGuildComponentBotImpl.onChannelCreate(decoded: () -> 
             internalGuilds[it.id.literal] = it
         }
         
-        guild.internalChannels.compute(eventData.id.literal) { _, old ->
-            if (old != null) {
-                old.channel = eventData
-                logger.debug("OnChannelCreate sync (update): {}", eventData)
-                old
-            } else {
-                TencentChannelImpl(this, eventData, guild).also {
-                    logger.debug("OnChannelCreate sync (create): {}", it)
-                }
+        guild.internalChannels.compute(eventData.id.literal) { _, current ->
+            current?.also {
+                it.source = eventData
+            } ?: run {
+                // TODO warn or err log if not found?
+                val category = guild.internalChannelCategories[eventData.parentId]!!
+                TencentChannelImpl(this, eventData, guild, category)
             }
         }
     }
@@ -112,11 +111,28 @@ private suspend fun TencentGuildComponentBotImpl.onChannelCreate(decoded: () -> 
 private fun TencentGuildComponentBotImpl.onChannelUpdate(decoded: () -> Any) {
     val eventData = decoded()
     if (eventData is TencentChannelInfo) {
-        getInternalGuild(eventData.guildId)?.getInternalChannel(eventData.id)?.also { channel ->
-            channel.channel = eventData
-            logger.debug("OnChannelUpdate sync: {}", eventData)
-        } ?: kotlin.run {
-            logger.debug("OnChannelUpdate, but not sync. guild or channel by event data: [{}] not found.", eventData)
+        val guild = getInternalGuild(eventData.guildId) ?: return
+        if (eventData.channelType.isGrouping) {
+            guild.internalChannelCategories[eventData.id.literal]?.also { category ->
+                category.channel = eventData
+                logger.debug("OnChannelUpdate sync: {}", eventData)
+            } ?: run {
+                logger.debug(
+                    "OnChannelUpdate, but not sync. guild or channel by event data: [{}] not found.",
+                    eventData
+                )
+            }
+        } else {
+            // TODO update category?
+            guild.getInternalChannel(eventData.id)?.also { channel ->
+                channel.source = eventData
+                logger.debug("OnChannelUpdate sync: {}", eventData)
+            } ?: kotlin.run {
+                logger.debug(
+                    "OnChannelUpdate, but not sync. guild or channel by event data: [{}] not found.",
+                    eventData
+                )
+            }
         }
     }
 }
@@ -124,8 +140,32 @@ private fun TencentGuildComponentBotImpl.onChannelUpdate(decoded: () -> Any) {
 private fun TencentGuildComponentBotImpl.onChannelDelete(decoded: () -> Any) {
     val eventData = decoded()
     if (eventData is TencentChannelInfo) {
-        val removed = getInternalGuild(eventData.guildId)?.internalChannels?.remove(eventData.id.literal)
-        logger.debug("OnChannelDelete sync: removed channel [{}] by event data {}", removed, eventData)
+        val guild = getInternalGuild(eventData.guildId) ?: return
+        if (eventData.channelType.isGrouping) {
+            val categoryId = eventData.id.literal
+            val removedCategory = guild.internalChannelCategories.remove(eventData.id.literal)
+            logger.debug(
+                "OnChannelDelete sync: removed channel category [{}] from event data {}",
+                removedCategory,
+                eventData
+            )
+            val values = guild.internalChannels.values.iterator()
+            while (values.hasNext()) {
+                val next = values.next()
+                if (next.source.parentId == categoryId) {
+                    values.remove()
+                    logger.debug(
+                        "OnChannelDelete sync: removed channel [{}] (by category(id={})) from event data {}",
+                        removedCategory,
+                        categoryId,
+                        eventData
+                    )
+                }
+            }
+        } else {
+            val removed = guild.internalChannels.remove(eventData.id.literal)
+            logger.debug("OnChannelDelete sync: removed channel [{}] by event data {}", removed, eventData)
+        }
     }
 }
 // endregion
@@ -153,7 +193,7 @@ private fun TencentGuildComponentBotImpl.onMemberRemove(decoded: () -> Any) {
  */
 private fun TencentGuildComponentBotImpl.registerNormalEventProcessor() {
     // process event.
-    sourceBot.processor { json, decoded ->
+    source.processor { json, decoded ->
         // event processor
         logger.trace("EventSignals.events[{}]: {}", type, EventSignals.events[type])
         EventSignals.events[this.type]?.let { signals ->

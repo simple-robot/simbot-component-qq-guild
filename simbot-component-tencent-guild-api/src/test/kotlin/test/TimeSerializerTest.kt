@@ -35,13 +35,14 @@ class TimeSerializerTest {
     @Test
     fun test() {
         val j1 = Json.encodeToString(A.serializer(), A(Instant.now().toTimestamp()))
-        val j2 = Json.encodeToString(A.serializer(), A(Timestamp.NotSupport))
-    
         println(j1)
+      
+        val j2 = Json.encodeToString(A.serializer(), A(Timestamp.NotSupport))
         println(j2)
     
         println(Json.decodeFromString(A.serializer(), j1))
         println(Json.decodeFromString(A.serializer(), j2))
+        println(Json.decodeFromString(A.serializer(), """{"timestamp": "2022-07-13T00:00:00+08:00"}"""))
 
     }
 
