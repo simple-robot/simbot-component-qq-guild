@@ -184,6 +184,8 @@ private suspend fun TencentGuildComponentBotImpl.initGuildListData() {
     }
     initDataJob.cancel()
     
+    logger.info("{} pieces of guild are initialized.", internalGuilds.size)
+    
     // for (info in guildInfoList) {
     //     val guildImpl = tencentGuildImpl(this, info)
     //     internalGuilds[info.id.literal] = guildImpl
