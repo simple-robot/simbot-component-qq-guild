@@ -17,17 +17,17 @@
 
 package love.forte.simbot.component.tencentguild.internal
 
-import love.forte.simbot.component.tencentguild.message.*
+import love.forte.simbot.component.tencentguild.message.toMessage
 import love.forte.simbot.message.*
-import love.forte.simbot.tencentguild.*
+import love.forte.simbot.tencentguild.TencentMessage
 
 
 internal object ContentParser : SendingMessageParser {
-    override fun invoke(
+    override suspend fun invoke(
         index: Int,
         element: Message.Element<*>,
         messages: Messages?,
-        builder: TencentMessageForSendingBuilder
+        builder: TencentMessageForSendingForParse
     ) {
         if (element is PlainText<*>) {
             builder.contentAppend(element.text)
