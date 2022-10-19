@@ -17,7 +17,7 @@
 
 package love.forte.simbot.component.tencentguild.internal
 
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.FlowCollector
 
 
 public suspend inline fun <reified R> FlowCollector<R>.flowForLimiter(

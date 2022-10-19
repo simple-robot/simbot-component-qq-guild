@@ -17,10 +17,12 @@
 
 package love.forte.simbot.component.tencentguild.event
 
-import love.forte.simbot.component.tencentguild.*
-import love.forte.simbot.event.*
+import love.forte.simbot.component.tencentguild.TencentGuildBotManager
+import love.forte.simbot.component.tencentguild.TencentGuildComponentBot
+import love.forte.simbot.event.BaseEventKey
+import love.forte.simbot.event.Event
 import love.forte.simbot.event.internal.*
-import love.forte.simbot.message.*
+import love.forte.simbot.message.doSafeCast
 
 /**
  *

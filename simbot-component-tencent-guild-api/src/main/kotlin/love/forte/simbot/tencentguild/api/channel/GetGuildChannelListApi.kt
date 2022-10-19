@@ -17,11 +17,12 @@
 
 package love.forte.simbot.tencentguild.api.channel
 
-import kotlinx.serialization.*
-import kotlinx.serialization.builtins.*
-import love.forte.simbot.*
-import love.forte.simbot.tencentguild.*
-import love.forte.simbot.tencentguild.api.*
+import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.builtins.ListSerializer
+import love.forte.simbot.ID
+import love.forte.simbot.tencentguild.TencentChannelInfo
+import love.forte.simbot.tencentguild.api.GetTencentApi
+import love.forte.simbot.tencentguild.api.RouteInfoBuilder
 
 
 /**

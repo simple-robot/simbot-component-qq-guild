@@ -17,7 +17,7 @@
 
 package love.forte.simbot.tencentguild
 
-import kotlinx.serialization.json.*
+import kotlinx.serialization.json.Json
 
 
 public inline fun TencentGuildBot.processor(

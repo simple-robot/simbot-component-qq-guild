@@ -15,7 +15,7 @@
  *
  */
 
-import kotlin.test.*
+import kotlin.test.Test
 
 /**
  *

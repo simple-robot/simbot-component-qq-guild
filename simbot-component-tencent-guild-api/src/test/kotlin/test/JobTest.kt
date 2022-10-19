@@ -18,7 +18,7 @@
 package test
 
 import kotlinx.coroutines.*
-import kotlin.test.*
+import kotlin.test.Test
 
 /**
  *

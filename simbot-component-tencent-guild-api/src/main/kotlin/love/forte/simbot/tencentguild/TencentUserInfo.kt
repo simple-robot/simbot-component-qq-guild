@@ -17,10 +17,10 @@
 
 package love.forte.simbot.tencentguild
 
-import kotlinx.serialization.*
-import love.forte.simbot.*
-import love.forte.simbot.definition.*
-import love.forte.simbot.tencentguild.internal.*
+import kotlinx.serialization.KSerializer
+import love.forte.simbot.ID
+import love.forte.simbot.definition.UserInfo
+import love.forte.simbot.tencentguild.internal.TencentUserInfoImpl
 
 /**
  *

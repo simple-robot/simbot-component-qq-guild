@@ -17,11 +17,12 @@
 
 package test
 
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
-import kotlinx.serialization.modules.*
-import love.forte.simbot.tencentguild.*
-import love.forte.simbot.tencentguild.api.role.*
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.plus
+import love.forte.simbot.tencentguild.TencentGuildApi
+import love.forte.simbot.tencentguild.TencentMemberInfo
+import love.forte.simbot.tencentguild.api.role.GuildRoleList
 
 /**
  *

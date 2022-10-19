@@ -17,12 +17,9 @@
 
 package love.forte.simbot.tencentguild.api.message
 
-import com.sun.xml.internal.bind.v2.TODO
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 import love.forte.simbot.ID
-import love.forte.simbot.resources.Resource
 import love.forte.simbot.tencentguild.TencentMessage
 
 

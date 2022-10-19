@@ -15,7 +15,7 @@
  *
  */
 
-import love.forte.simbot.*
+import love.forte.simbot.LoggerFactory
 
 
 val l = LoggerFactory.getLogger("love.forte.test")
