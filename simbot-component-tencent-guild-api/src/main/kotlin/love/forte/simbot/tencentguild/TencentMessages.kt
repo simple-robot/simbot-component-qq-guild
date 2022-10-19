@@ -17,6 +17,7 @@
 
 package love.forte.simbot.tencentguild
 
+import com.sun.xml.internal.ws.api.message.Attachment
 import kotlinx.serialization.*
 import love.forte.simbot.*
 import love.forte.simbot.tencentguild.internal.*
@@ -93,10 +94,18 @@ public interface TencentMessage {
      * ark消息对象	ark消息
      */
     public val ark: Ark?
-
+    
+    /**
+     * `seq_in_channel` string
+     *
+     * 子频道消息 seq，用于消息间的排序，seq 在同一子频道中按从先到后的顺序递增，不同的子频道之间消息无法排序
+     */
+    public val seqInChannel: String?
+    
+    
 
     /**
-     * [https://bot.q.qq.com/wiki/develop/api/openapi/message/model.html#messageembed]
+     * [MessageEmbed](https://bot.q.qq.com/wiki/develop/api/openapi/message/model.html#messageembed)
      */
     @Serializable
     public data class Embed(
@@ -107,6 +116,7 @@ public interface TencentMessage {
 
         /**
          * 描述
+         * TODO 貌似不存在了
          */
         public val description: String,
 
@@ -120,6 +130,8 @@ public interface TencentMessage {
          */
         public val timestamp: Timestamp,
 
+        // TODO thumbnail: MessageEmbedThumbnail
+        
         /**
          * MessageEmbedField 对象数组	字段信息
          */
@@ -127,7 +139,7 @@ public interface TencentMessage {
     ) {
 
         /**
-         * [https://bot.q.qq.com/wiki/develop/api/openapi/message/model.html#messageembedfield]
+         * [MessageEmbedField](https://bot.q.qq.com/wiki/develop/api/openapi/message/model.html#messageembedfield)
          */
         @Serializable
         public data class Field(
@@ -138,6 +150,7 @@ public interface TencentMessage {
 
             /**
              * 字段值
+             * // TODO 似乎已经不存在了
              */
             public val value: String,
         )
@@ -202,9 +215,59 @@ public interface TencentMessage {
             @Serializable
             public data class Kv(public val key: String, public val value: String)
         }
-
+    
+        
     }
 
+    
+        /**
+         * [MessageMarkdown](https://bot.q.qq.com/wiki/develop/api/openapi/message/model.html#messagemarkdown)
+         */
+        @Serializable
+        public data class Markdown(
+            /**
+             * markdown 模板 id
+             */
+            @SerialName("template_id")
+            val templateId: Int?,
+
+            /**
+             * markdown 自定义模板 id
+             */
+            @SerialName("custom_template_id")
+            val customTemplateId: String?,
+
+            /**
+             * markdown 模板模板参数
+             */
+            val params: List<Params>?,
+
+            /**
+             * 原生 markdown 内容,与上面三个参数互斥,参数都传值将报错。
+             */
+            val content: String? = null,
+        ) {
+    
+            /**
+             * [MessageMarkdownParams](https://bot.q.qq.com/wiki/develop/api/openapi/message/model.html#MessageMarkdownParams)
+             */
+            @Serializable
+            public data class Params(
+                /**
+                 * markdown 模版 key
+                 */
+                val key: String,
+                /**
+                 * markdown 模版 [key] 对应的 `values` .
+                 *
+                 * > 列表长度大小为 1，传入多个会报错
+                 *
+                 * _但代码层面暂时不做验证限制。_
+                 *
+                 */
+                val values: List<String>
+            )
+        }
 
     public companion object {
         internal val serializer: KSerializer<out TencentMessage> = TencentMessageImpl.serializer()

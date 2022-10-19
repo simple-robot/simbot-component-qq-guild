@@ -43,13 +43,15 @@ internal data class TencentMessageImpl(
     override val embeds: List<TencentMessage.Embed> = emptyList(),
     override val mentions: List<TencentUserInfoImpl> = emptyList(),
     override val member: TencentMemberInfoImplForMessage,
-    override val ark: TencentMessage.Ark? = null
+    override val ark: TencentMessage.Ark? = null,
+    override val seqInChannel: String? = null,
 ) : TencentMessage {
     init {
         if (member.guildId == null) {
             member.guildId = guildId
         }
         member.user = author
-
+        
     }
+    
 }
