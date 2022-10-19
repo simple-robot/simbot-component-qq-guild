@@ -31,7 +31,7 @@ import java.util.concurrent.*
  * 通过消息体和message builder, 以责任链的形式构建消息体。
  */
 public fun interface SendingMessageParser :
-        suspend (Int, Message.Element<*>, Messages?, TencentMessageForSendingForParse) -> Unit {
+    suspend (Int, Message.Element<*>, Messages?, TencentMessageForSendingForParse) -> Unit {
     /**
      * 将 [Message.Element] 拼接到 [TencentMessageForSendingBuilder] 中。
      *
@@ -70,6 +70,7 @@ public object MessageParsers {
         add(ArkParser)
         add(AttachmentParser)
         add(ReplyToParser)
+        add(ImageParser)
     }
     
     @ExperimentalSimbotApi
@@ -138,7 +139,7 @@ public class TencentMessageForSendingForParse internal constructor() {
      * - [Resource]
      */
     public var fileImage: Resource? = null
-
+    
     
     @TmfsDsl
     public inline fun forSending(block: TencentMessageForSending.() -> Unit) {
@@ -155,7 +156,7 @@ public class TencentMessageForSendingForParse internal constructor() {
             }
         }
     }
-
+    
 }
 
 internal operator fun TencentMessageForSendingForParse.component1(): TencentMessageForSending = forSending
@@ -166,64 +167,3 @@ internal operator fun TencentMessageForSendingForParse.component2(): Resource? =
 @DslMarker
 internal annotation class TmfsDsl // TencentMessageForSendingBuilderDsl
 
-@TmfsDsl
-public class TencentMessageForSendingBuilder {
-    
-    @TmfsDsl
-    public var msgId: ID? = null
-    
-    @TmfsDsl
-    public var content: String? = null
-    
-    public fun contentAppend(contentText: String) {
-        if (content == null) {
-            content = contentText
-        } else {
-            content += contentText
-        }
-    }
-    
-    @TmfsDsl
-    public var embed: EmbedBuilder? = null
-    
-    public fun embed(block: EmbedBuilder.() -> Unit) {
-        embed = EmbedBuilder().also(block)
-    }
-    
-    public fun embedAppend(block: EmbedBuilder.() -> Unit) {
-        if (embed != null) {
-            embed!!.also(block)
-        }
-    }
-    
-    @TmfsDsl
-    public var ark: ArkBuilder? = null
-    
-    public fun ark(templateId: ID, block: ArkBuilder.() -> Unit) {
-        ark = ArkBuilder(templateId).also(block)
-    }
-    
-    public fun arkAppendOrCreate(templateId: ID?, block: ArkBuilder.() -> Unit) {
-        if (ark == null) {
-            ark = ArkBuilder(templateId!!)
-        } else {
-            ark!!.also(block)
-        }
-    }
-    
-    public fun arkAppend(block: ArkBuilder.() -> Unit) {
-        if (ark != null) {
-            ark!!.also(block)
-        }
-    }
-    
-    @TmfsDsl
-    public var image: String? = null
-    
-    
-    public fun build(): TencentMessageForSending {
-        return TencentMessageForSending(
-            content, embed?.build(), ark?.build(), image, msgId
-        )
-    }
-}
