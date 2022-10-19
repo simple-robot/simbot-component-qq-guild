@@ -20,10 +20,7 @@ package love.forte.simbot.component.tencentguild.internal
 import kotlinx.coroutines.currentCoroutineContext
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
-import love.forte.simbot.component.tencentguild.TencentChannel
-import love.forte.simbot.component.tencentguild.TencentGuildComponentGuildBot
-import love.forte.simbot.component.tencentguild.TencentMember
-import love.forte.simbot.component.tencentguild.TencentRole
+import love.forte.simbot.component.tencentguild.*
 import love.forte.simbot.component.tencentguild.event.TcgChannelAtMessageEvent
 import love.forte.simbot.component.tencentguild.util.requestBy
 import love.forte.simbot.event.EventProcessingContext
@@ -40,11 +37,14 @@ internal class TencentChannelImpl internal constructor(
     private val baseBot: TencentGuildComponentBotImpl,
     @Volatile
     override var source: TencentChannelInfo,
-    override val guild: TencentGuildImpl,
+    internal val guildInternal: TencentGuildImpl,
     override val category: TencentChannelCategoryImpl,
 ) : TencentChannel {
+    override suspend fun guild(): TencentGuild = guildInternal
     
-    override val bot: TencentGuildComponentGuildBot get() = guild.bot
+    override suspend fun owner(): TencentMember = guildInternal.owner()
+    
+    override val bot: TencentGuildComponentGuildBot get() = guildInternal.bot
     
     override suspend fun send(message: Message): TencentMessageReceipt {
         val currentCoroutineContext = currentCoroutineContext()
@@ -55,7 +55,7 @@ internal class TencentChannelImpl internal constructor(
                 if (this.msgId == null) {
                     val currentEvent =
                         currentCoroutineContext[EventProcessingContext]?.event?.takeIf { it is TcgChannelAtMessageEvent } as? TcgChannelAtMessageEvent
-        
+                    
                     val msgId = currentEvent?.sourceEventEntity?.id
                     if (msgId != null) {
                         this.msgId = msgId
@@ -66,16 +66,13 @@ internal class TencentChannelImpl internal constructor(
         return MessageSendApi(source.id, messageForSend, fileImage).requestBy(baseBot).asReceipt()
     }
     
-    override val owner: TencentMember
-        get() = guild.owner
-    
     
     // TODO
     override val roles: Items<TencentRole>
-        get() = guild.roles
+        get() = guildInternal.roles
     
     override fun toString(): String {
-        return "TencentChannelImpl(bot=$baseBot, source=$source, guild=$guild)"
+        return "TencentChannelImpl(bot=$baseBot, source=$source, guild=$guildInternal)"
     }
     
     // region info impl
@@ -94,7 +91,7 @@ internal class TencentChannelImpl internal constructor(
         get() = source.guildId
     
     override val icon: String
-        get() = guild.icon
+        get() = guildInternal.icon
     
     override val id: ID
         get() = source.id
@@ -103,9 +100,9 @@ internal class TencentChannelImpl internal constructor(
     override val maximumMember: Int
         get() = source.maximumMember
     
-    @Suppress("DEPRECATION")
     override val name: String
         get() = source.name
+    
     override val ownerId: ID
         get() = source.ownerId
     // endregion

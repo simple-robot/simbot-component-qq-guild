@@ -48,7 +48,7 @@ internal class TcgChannelAtMessageEventImpl(
     override suspend fun send(message: Message): MessageReceipt = reply(message)
     
     override val authorInternal: TencentMemberImpl =
-        TencentMemberImpl(bot, sourceEventEntity.member, channelInternal.guild)
+        TencentMemberImpl(bot, sourceEventEntity.member, channelInternal.guildInternal)
     
     
     override val messageContent: TencentReceiveMessageContentImpl by lazy(LazyThreadSafetyMode.NONE) {

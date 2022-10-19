@@ -99,7 +99,8 @@ public sealed class TcgGuildModifyEvent : TcgEvent<TencentGuildInfo>(),
         /**
          * 创建前。始终为null。
          */
-        @JvmSynthetic
+        @JvmBlocking(asProperty = true, suffix = "")
+        @JvmAsync(asProperty = true)
         override suspend fun before(): TencentGuild? = null
         
         /**

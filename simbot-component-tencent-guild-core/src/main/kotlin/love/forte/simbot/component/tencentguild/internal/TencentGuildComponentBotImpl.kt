@@ -20,6 +20,8 @@ package love.forte.simbot.component.tencentguild.internal
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import love.forte.plugin.suspendtrans.annotation.JvmAsync
+import love.forte.plugin.suspendtrans.annotation.JvmBlocking
 import love.forte.simbot.ID
 import love.forte.simbot.LoggerFactory
 import love.forte.simbot.component.tencentguild.TencentGuild
@@ -79,6 +81,8 @@ internal class TencentGuildComponentBotImpl(
         get() = internalGuilds.values.asItems()
     
     
+    @JvmBlocking(baseName = "getGuild", suffix = "")
+    @JvmAsync(baseName = "getGuild")
     override suspend fun guild(id: ID): TencentGuild? {
         return internalGuilds[id.literal]
     }

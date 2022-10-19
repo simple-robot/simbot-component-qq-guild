@@ -148,4 +148,9 @@ public interface TencentGuildComponentBot : Bot {
  */
 public interface TencentGuildComponentGuildBot : TencentGuildComponentBot, GuildBot {
     override suspend fun asMember(): TencentMember
+    override val guilds: Items<TencentGuild>
+    
+    @JvmBlocking(baseName = "getGuild", suffix = "")
+    @JvmAsync(baseName = "getGuild")
+    override suspend fun guild(id: ID): TencentGuild?
 }

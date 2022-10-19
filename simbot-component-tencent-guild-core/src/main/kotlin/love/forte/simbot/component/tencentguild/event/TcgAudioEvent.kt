@@ -39,8 +39,8 @@ import love.forte.simbot.tencentguild.TencentAudioAction
  * @see EventSignals.AudioAction.AudioOffMic
  */
 @BaseEvent
-@JvmBlocking
-@JvmAsync
+@JvmBlocking(asProperty = true, suffix = "")
+@JvmAsync(asProperty = true)
 public sealed class TcgAudioEvent : TcgEvent<TencentAudioAction>(), ChannelEvent {
     
     override val timestamp: Timestamp = Timestamp.now()
