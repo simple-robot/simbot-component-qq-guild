@@ -91,20 +91,22 @@ internal class TencentMemberImpl(
         val dms = getDms()
         val currentCoroutineContext = currentCoroutineContext()
         
-        val messageForSend = MessageParsers.parse(message) {
-            if (this.msgId == null) {
-                val currentEvent =
-                    currentCoroutineContext[EventProcessingContext]?.event?.takeIf { it is TcgChannelAtMessageEvent } as? TcgChannelAtMessageEvent
-                
-                val msgId = currentEvent?.sourceEventEntity?.id
-                if (msgId != null) {
-                    this.msgId = msgId
+        val (messageForSend, fileImage) = MessageParsers.parse(message) {
+            forSending {
+                if (this.msgId == null) {
+                    val currentEvent =
+                        currentCoroutineContext[EventProcessingContext]?.event?.takeIf { it is TcgChannelAtMessageEvent } as? TcgChannelAtMessageEvent
+        
+                    val msgId = currentEvent?.sourceEventEntity?.id
+                    if (msgId != null) {
+                        this.msgId = msgId
+                    }
                 }
             }
         }
         
         
-        return DmsSendApi(dms.guildId, messageForSend).requestBy(bot).asReceipt()
+        return DmsSendApi(dms.guildId, messageForSend, fileImage).requestBy(bot).asReceipt()
     }
     
     override suspend fun send(text: String): TencentMessageReceipt {

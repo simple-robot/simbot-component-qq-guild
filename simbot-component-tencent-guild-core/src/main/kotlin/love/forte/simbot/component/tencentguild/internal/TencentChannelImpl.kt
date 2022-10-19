@@ -50,18 +50,20 @@ internal class TencentChannelImpl internal constructor(
         val currentCoroutineContext = currentCoroutineContext()
         
         
-        val messageForSend = MessageParsers.parse(message) {
-            if (this.msgId == null) {
-                val currentEvent =
-                    currentCoroutineContext[EventProcessingContext]?.event?.takeIf { it is TcgChannelAtMessageEvent } as? TcgChannelAtMessageEvent
-                
-                val msgId = currentEvent?.sourceEventEntity?.id
-                if (msgId != null) {
-                    this.msgId = msgId
+        val (messageForSend, fileImage) = MessageParsers.parse(message) {
+            forSending {
+                if (this.msgId == null) {
+                    val currentEvent =
+                        currentCoroutineContext[EventProcessingContext]?.event?.takeIf { it is TcgChannelAtMessageEvent } as? TcgChannelAtMessageEvent
+        
+                    val msgId = currentEvent?.sourceEventEntity?.id
+                    if (msgId != null) {
+                        this.msgId = msgId
+                    }
                 }
             }
         }
-        return MessageSendApi(source.id, messageForSend).requestBy(baseBot).asReceipt()
+        return MessageSendApi(source.id, messageForSend, fileImage).requestBy(baseBot).asReceipt()
     }
     
     override val owner: TencentMember

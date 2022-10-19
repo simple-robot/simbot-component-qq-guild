@@ -17,16 +17,19 @@
 
 package love.forte.simbot.tencentguild.api.message
 
+import com.sun.xml.internal.bind.v2.TODO
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import love.forte.simbot.ID
+import love.forte.simbot.resources.Resource
 import love.forte.simbot.tencentguild.TencentMessage
 
 
 /**
  * 用于发送的普通消息.
  *
- * _content, embed, ark, image 至少需要有一个字段，否则无法下发消息。_
+ * _content, embed, ark, image/file_image, markdown 至少需要有一个字段，否则无法下发消息。_
  */
 @Serializable
 public data class TencentMessageForSending @JvmOverloads constructor(
@@ -56,5 +59,17 @@ public data class TencentMessageForSending @JvmOverloads constructor(
     @SerialName("msg_id")
     @Serializable(ID.AsCharSequenceIDSerializer::class)
     public var msgId: ID? = null,
+
+    /**
+     * 选填，要回复的事件id, 在各事件对象中获取。
+     */
+    @SerialName("event_id")
+    @Serializable(ID.AsCharSequenceIDSerializer::class)
+    public var eventId: ID? = null,
+
+    /**
+     * 选填，markdown 消息
+     */
+    public var markdown: TencentMessage.Markdown? = null,
 )
 

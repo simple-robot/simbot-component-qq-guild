@@ -19,7 +19,7 @@
 <!--日志级别以及优先级排序: OFF > FATAL > ERROR > WARN > INFO > DEBUG > TRACE > ALL -->
 <!--status="WARN" :用于设置log4j2自身内部日志的信息输出级别，默认是OFF-->
 <!--monitorInterval="30"  :间隔秒数,自动检测配置文件的变更和重新配置本身-->
-<configuration status="INFO" monitorInterval="30">
+<configuration status="DEBUG" monitorInterval="30">
     <!--appenders:定义输出内容,输出格式,输出方式,日志保存策略等,常用其下三种标签[console,File,RollingFile]-->
 
     <appenders>
