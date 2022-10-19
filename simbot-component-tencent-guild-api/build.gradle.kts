@@ -52,5 +52,10 @@ dependencies {
     api(libs.ktor.client.contentNegotiation)
     api(libs.ktor.serialization.kotlinxJson)
     api(libs.kotlinx.serialization.json)
+    
+    testImplementation(libs.log4j.api)
+    testImplementation(libs.log4j.core)
+    testImplementation(libs.log4j.slf4jImpl)
+    
 }
 

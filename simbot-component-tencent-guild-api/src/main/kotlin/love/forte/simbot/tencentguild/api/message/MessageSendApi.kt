@@ -128,22 +128,6 @@ public class MessageSendApi private constructor(
     }
     
     
-    override suspend fun doRequest(
-        client: HttpClient,
-        server: Url,
-        token: String,
-        decoder: StringFormat,
-    ): TencentMessage {
-        /*
-            val resp = requestForResponse(client, server, token)
-            checkStatus(resp) { resp.status }
-            // decode
-            return decodeFromHttpResponseViaString(decoder, resp)
-         */
-        return super.doRequest(client, server, token, decoder)
-    }
-    
-    
 }
 
 private fun FormBuilder.appendTencentMessageForSending(json: Json, value: TencentMessageForSending) {
@@ -162,31 +146,36 @@ internal fun TencentMessageForSending?.toMultiPartFormDataContent(
             appendTencentMessageForSending(json, this@toMultiPartFormDataContent)
         }
         
+        val imgHeaders = Headers.build {
+            append(HttpHeaders.ContentDisposition, "filename=\"${fileImage.name}\"")
+        }
+        
         when (fileImage) {
             is FileResource -> {
                 val file = fileImage.file
-                append(key = "file_image", ChannelProvider { file.readChannel() })
+                append(key = "file_image", ChannelProvider { file.readChannel() }, imgHeaders)
             }
             
             is PathResource -> {
                 val path = fileImage.path
-                append(key = "file_image", InputProvider { FileChannel.open(path, StandardOpenOption.READ).asInput() })
+                append(
+                    key = "file_image",
+                    InputProvider { FileChannel.open(path, StandardOpenOption.READ).asInput() },
+                    imgHeaders
+                )
             }
             
             is URLResource -> {
                 val url = fileImage.url
-                append(key = "file_image", InputProvider { url.openStream().asInput() })
+                append(key = "file_image", InputProvider { url.openStream().asInput() }, imgHeaders)
             }
             
             is ByteArrayResource -> {
-                append(key = "file_image", fileImage.bytes)
+                append(key = "file_image", fileImage.bytes, imgHeaders)
             }
             
             else -> {
-                val data = fileImage.openStream().use { it.readBytes() }
-                append(key = "file_image", data, Headers.build {
-                    append(HttpHeaders.ContentDisposition, "filename=\"${fileImage.name}\"")
-                })
+                append(key = "file_image", InputProvider { fileImage.openStream().asInput() }, imgHeaders)
             }
         }
     }
