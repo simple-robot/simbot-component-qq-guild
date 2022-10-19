@@ -21,6 +21,7 @@ import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
+import io.ktor.http.content.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.util.cio.*
 import io.ktor.utils.io.nio.*
@@ -69,7 +70,7 @@ import java.nio.file.StandardOpenOption
  */
 public class MessageSendApi private constructor(
     channelId: ID,
-    override val body: Any,
+    override val body: Any, // TencentMessageForSending || MultiPartFormDataContent
 ) : TencentApi<TencentMessage>() {
     public companion object {
         internal val defaultJson: Json get() = DefaultJson
@@ -100,13 +101,13 @@ public class MessageSendApi private constructor(
     @JvmOverloads
     public constructor(channelId: ID, sendingBody: TencentMessageForSending, fileImage: Resource? = null) : this(
         channelId = channelId,
-        body = if (fileImage != null) sendingBody.toFormData(defaultJson, fileImage) else sendingBody
+        body = if (fileImage != null) sendingBody.toMultiPartFormDataContent(defaultJson, fileImage) else sendingBody
     )
     
     
     public constructor(channelId: ID, fileImage: Resource) : this(
         channelId = channelId,
-        body = null.toFormData(defaultJson, fileImage)
+        body = null.toMultiPartFormDataContent(defaultJson, fileImage)
     )
     
     
@@ -121,7 +122,9 @@ public class MessageSendApi private constructor(
     
     override fun route(builder: RouteInfoBuilder) {
         builder.apiPath = path
-        builder.contentType = ContentType.MultiPart.FormData
+        if (body is MultiPartFormDataContent) {
+            builder.contentType = ContentType.MultiPart.FormData
+        }
     }
     
     
@@ -150,10 +153,13 @@ private fun FormBuilder.appendTencentMessageForSending(json: Json, value: Tencen
     )
 }
 
-private fun TencentMessageForSending?.toFormData(json: Json, fileImage: Resource): Any {
-    formData {
-        if (this@toFormData != null) {
-            appendTencentMessageForSending(json, this@toFormData)
+internal fun TencentMessageForSending?.toMultiPartFormDataContent(
+    json: Json,
+    fileImage: Resource,
+): MultiPartFormDataContent {
+    val formParts = formData {
+        if (this@toMultiPartFormDataContent != null) {
+            appendTencentMessageForSending(json, this@toMultiPartFormDataContent)
         }
         
         when (fileImage) {
@@ -185,7 +191,7 @@ private fun TencentMessageForSending?.toFormData(json: Json, fileImage: Resource
         }
     }
     
-    TODO()
+    return MultiPartFormDataContent(formParts)
 }
 
 

@@ -17,16 +17,19 @@
 
 package love.forte.simbot.tencentguild.api.message.direct
 
+import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
 import love.forte.simbot.ID
 import love.forte.simbot.literal
+import love.forte.simbot.resources.Resource
 import love.forte.simbot.tencentguild.TencentMessage
 import love.forte.simbot.tencentguild.api.RouteInfoBuilder
 import love.forte.simbot.tencentguild.api.TencentApi
 import love.forte.simbot.tencentguild.api.message.MessageSendApi
 import love.forte.simbot.tencentguild.api.message.SendMessageResult
 import love.forte.simbot.tencentguild.api.message.TencentMessageForSending
+import love.forte.simbot.tencentguild.api.message.toMultiPartFormDataContent
 
 /**
  * [发送私信](https://bot.q.qq.com/wiki/develop/api/openapi/dms/post_dms_messages.html)
@@ -52,7 +55,10 @@ import love.forte.simbot.tencentguild.api.message.TencentMessageForSending
  *
  * @author ForteScarlet
  */
-public class DmsSendApi(guildId: ID, override val body: TencentMessageForSending) : TencentApi<TencentMessage>() {
+public class DmsSendApi private constructor(
+    guildId: ID,
+    override val body: Any, // TencentMessageForSending || MultiPartFormDataContent
+) : TencentApi<TencentMessage>() {
     @JvmOverloads
     public constructor(guildId: ID, content: String, msgId: ID? = null) : this(
         guildId,
@@ -71,6 +77,21 @@ public class DmsSendApi(guildId: ID, override val body: TencentMessageForSending
         TencentMessageForSending(ark = ark, msgId = msgId)
     )
     
+    // with 'fileImage'
+    
+    @JvmOverloads
+    public constructor(guildId: ID, sendingBody: TencentMessageForSending, fileImage: Resource? = null) : this(
+        guildId = guildId,
+        body = if (fileImage != null) sendingBody.toMultiPartFormDataContent(MessageSendApi.defaultJson, fileImage) else sendingBody
+    )
+    
+    
+    public constructor(guildId: ID, fileImage: Resource) : this(
+        guildId = guildId,
+        body = null.toMultiPartFormDataContent(MessageSendApi.defaultJson, fileImage)
+    )
+    
+    
     // POST /channels/{channel_id}/messages
     private val path: List<String> = listOf("dms", guildId.literal, "messages")
     
@@ -82,5 +103,8 @@ public class DmsSendApi(guildId: ID, override val body: TencentMessageForSending
     
     override fun route(builder: RouteInfoBuilder) {
         builder.apiPath = path
+        if (body is MultiPartFormDataContent) {
+            builder.contentType = ContentType.MultiPart.FormData
+        }
     }
 }
