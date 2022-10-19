@@ -17,7 +17,8 @@
 
 package love.forte.simbot.component.tencentguild.event
 
-import love.forte.simbot.Api4J
+import love.forte.plugin.suspendtrans.annotation.JvmAsync
+import love.forte.plugin.suspendtrans.annotation.JvmBlocking
 import love.forte.simbot.Timestamp
 import love.forte.simbot.component.tencentguild.TencentGuild
 import love.forte.simbot.component.tencentguild.TencentGuildComponentBot
@@ -40,81 +41,53 @@ public sealed class TcgGuildModifyEvent : TcgEvent<TencentGuildInfo>(),
     ChangedEvent, GuildEvent {
     abstract override val eventSignal: EventSignals.Guilds<TencentGuildInfo>
     override val changedTime: Timestamp = Timestamp.now()
-
+    
     /**
      * 变更源。同 [bot].
      */
-    @JvmSynthetic
+    @JvmBlocking(asProperty = true, suffix = "")
+    @JvmAsync(asProperty = true)
     override suspend fun source(): TencentGuildComponentBot = bot
-
-    /**
-     * 变更源。同 [bot].
-     */
-    @OptIn(Api4J::class)
-    override val source: TencentGuildComponentBot get() = bot
-
-
+    
     /**
      * 可能存在的变更后频道服务器。
      */
-    @OptIn(Api4J::class)
-    abstract override val before: TencentGuild?
-
+    @JvmBlocking(asProperty = true, suffix = "")
+    @JvmAsync(asProperty = true)
+    abstract override suspend fun before(): TencentGuild?
+    
+    
     /**
      * 可能存在的变更后频道服务器。
      */
-    @JvmSynthetic
-    override suspend fun before(): TencentGuild? = before
-
-    /**
-     * 可能存在的变更后频道服务器。
-     */
-    @OptIn(Api4J::class)
-    abstract override val after: TencentGuild?
-
-    /**
-     * 可能存在的变更后频道服务器。
-     */
-    @JvmSynthetic
-    override suspend fun after(): TencentGuild? = after
-
-
+    @JvmBlocking(asProperty = true, suffix = "")
+    @JvmAsync(asProperty = true)
+    abstract override suspend fun after(): TencentGuild?
+    
     /**
      * 涉及到的频道服务器。
      */
-    @OptIn(Api4J::class)
-    abstract override val guild: TencentGuild
-
-
-    /**
-     * 涉及到的频道服务器。
-     */
-    @JvmSynthetic
-    override suspend fun guild(): TencentGuild = guild
-
-
+    @JvmBlocking(asProperty = true, suffix = "")
+    @JvmAsync(asProperty = true)
+    abstract override suspend fun guild(): TencentGuild
+    
     /**
      * 涉及到的频道服务器。同 [guild].
      */
-    @OptIn(Api4J::class)
-    override val organization: TencentGuild get() = guild
-
-    /**
-     * 涉及到的频道服务器。同 [guild].
-     */
-    @JvmSynthetic
+    @JvmBlocking(asProperty = true, suffix = "")
+    @JvmAsync(asProperty = true)
     override suspend fun organization(): TencentGuild = guild()
-
-
+    
+    
     abstract override val key: Event.Key<out TcgGuildModifyEvent>
-
+    
     public companion object Key :
         BaseEventKey<TcgGuildModifyEvent>(
             "tcg.guild_modify", setOf(TcgEvent, ChangedEvent, GuildEvent)
         ) {
         override fun safeCast(value: Any): TcgGuildModifyEvent? = doSafeCast(value)
     }
-
+    
     /**
      * 频道创建事件。
      *
@@ -126,44 +99,29 @@ public sealed class TcgGuildModifyEvent : TcgEvent<TencentGuildInfo>(),
         /**
          * 创建前。始终为null。
          */
-        @OptIn(Api4J::class)
-        override val before: TencentGuild? get() = null
-
-        /**
-         * 创建前。始终为null。
-         */
         @JvmSynthetic
         override suspend fun before(): TencentGuild? = null
-
-        /**
-         * 创建的guild。同 [guild].
-         */
-        @Suppress("UnnecessaryOptInAnnotation")
-        @OptIn(Api4J::class)
-        override val after: TencentGuild
-            get() = guild
-
-
+        
         /**
          * 创建的guild。同 [guild].
          */
         @JvmSynthetic
-        override suspend fun after(): TencentGuild = after
-
+        override suspend fun after(): TencentGuild = guild()
+        
         override val eventSignal: EventSignals.Guilds<TencentGuildInfo>
             get() = EventSignals.Guilds.GuildCreate
-
-
+        
+        
         override val key: Event.Key<out Create> get() = Key
-
-
+        
+        
         public companion object Key : BaseEventKey<Create>(
             "tcg.guild_create", setOf(TcgGuildModifyEvent, StartPointEvent)
         ) {
             override fun safeCast(value: Any): Create? = doSafeCast(value)
         }
     }
-
+    
     /**
      * 频道更新事件。
      * [before] 恒为null。
@@ -173,36 +131,30 @@ public sealed class TcgGuildModifyEvent : TcgEvent<TencentGuildInfo>(),
      * [after] 字段内容为变更后的字段内容
      */
     public abstract class Update : TcgGuildModifyEvent() {
-
+        
         /**
          * 无法得知，始终为null。
          */
-        override val before: TencentGuild?
-            get() = null
-
-        /**
-         * 变更的guild。同 [guild].
-         */
-        override val after: TencentGuild
-            get() = guild
-
+        @JvmSynthetic
+        override suspend fun before(): TencentGuild? = null
+        
         /**
          * 变更的guild。同 [guild].
          */
         @JvmSynthetic
-        override suspend fun after(): TencentGuild = after
-
+        override suspend fun after(): TencentGuild = guild()
+        
         override val eventSignal: EventSignals.Guilds<TencentGuildInfo>
             get() = EventSignals.Guilds.GuildUpdate
-
-
+        
+        
         override val key: Event.Key<out Update> get() = Key
-
+        
         public companion object Key : BaseEventKey<Update>("tcg.guild_update", setOf(TcgGuildModifyEvent)) {
             override fun safeCast(value: Any): Update? = doSafeCast(value)
         }
     }
-
+    
     /**
      * 频道删除事件。
      * [after] 恒为null。
@@ -214,25 +166,25 @@ public sealed class TcgGuildModifyEvent : TcgEvent<TencentGuildInfo>(),
      *
      */
     public abstract class Delete : TcgGuildModifyEvent() {
-
+        
         /**
          * 被删除的guild。同 [guild]。
          */
-        override val before: TencentGuild get() = guild
-
+        @JvmSynthetic
+        override suspend fun before(): TencentGuild? = guild()
+        
         /**
          * 删除后。始终为null。
          */
-        override val after: TencentGuild?
-            get() = null
-
-
+        @JvmSynthetic
+        override suspend fun after(): TencentGuild? = null
+        
         override val eventSignal: EventSignals.Guilds<TencentGuildInfo>
             get() = EventSignals.Guilds.GuildDelete
-
-
+        
+        
         override val key: Event.Key<out Delete> get() = Key
-
+        
         public companion object Key : BaseEventKey<Delete>("tcg.guild_delete", setOf(TcgGuildModifyEvent)) {
             override fun safeCast(value: Any): Delete? = doSafeCast(value)
         }

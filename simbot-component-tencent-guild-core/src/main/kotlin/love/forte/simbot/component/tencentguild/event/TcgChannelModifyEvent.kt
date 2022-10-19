@@ -17,7 +17,8 @@
 
 package love.forte.simbot.component.tencentguild.event
 
-import love.forte.simbot.Api4J
+import love.forte.plugin.suspendtrans.annotation.JvmAsync
+import love.forte.plugin.suspendtrans.annotation.JvmBlocking
 import love.forte.simbot.Timestamp
 import love.forte.simbot.component.tencentguild.TencentChannel
 import love.forte.simbot.event.*
@@ -36,176 +37,116 @@ public sealed class TcgChannelModifyEvent : TcgEvent<TencentChannelInfo>(), Chan
     override val changedTime: Timestamp = Timestamp.now()
     override val timestamp: Timestamp get() = changedTime
     abstract override val eventSignal: EventSignals.Guilds<TencentChannelInfo>
-
+    
+    protected abstract val sourceInternal: TencentChannel
+    
     /**
      * 变更源。即发生变更的频道。
      */
-    @OptIn(Api4J::class)
-    abstract override val source: TencentChannel
-
-    /**
-     * 变更源。即发生变更的频道。
-     */
-    @JvmSynthetic
-    override suspend fun source(): TencentChannel = source
-
+    @JvmBlocking(asProperty = true, suffix = "")
+    @JvmAsync(asProperty = true)
+    override suspend fun source(): TencentChannel = sourceInternal
+    
+    
     /**
      * 变更源。即发生变更的频道。同 [source].
      */
-    @OptIn(Api4J::class)
-    override val channel: TencentChannel get() = source
-
-    /**
-     * 变更源。即发生变更的频道。同 [source].
-     */
-    @JvmSynthetic
-    override suspend fun channel(): TencentChannel = channel
-
-
+    @JvmBlocking(asProperty = true, suffix = "")
+    @JvmAsync(asProperty = true)
+    override suspend fun channel(): TencentChannel = sourceInternal
+    
+    
     /**
      * 事件发生的频道。同 [channel].
      */
-    @Api4J
-    override val organization: TencentChannel
-        get() = channel
-
-    /**
-     * 事件发生的频道。同 [channel].
-     */
-    @JvmSynthetic
-    override suspend fun organization(): TencentChannel = channel()
-
-
+    @JvmBlocking(asProperty = true, suffix = "")
+    @JvmAsync(asProperty = true)
+    override suspend fun organization(): TencentChannel = sourceInternal
+    
+    
     abstract override val key: Event.Key<out TcgChannelModifyEvent>
-
+    
     public companion object Key : BaseEventKey<TcgChannelModifyEvent>(
         "tcg.channel_modify", TcgEvent, ChangedEvent, ChannelEvent
     ) {
         override fun safeCast(value: Any): TcgChannelModifyEvent? = doSafeCast(value)
     }
-
-
+    
+    
     /**
      * 子频道被创建
      */
     public abstract class Create : TcgChannelModifyEvent(), StartPointEvent {
-
-        /**
-         * 被创建的频道。
-         */
-        @Suppress("UnnecessaryOptInAnnotation")
-        @OptIn(Api4J::class)
-        abstract override val source: TencentChannel
-
-
-
         /**
          * 被创建的频道。同 [source]。
          */
-        @OptIn(Api4J::class)
-        override val after: TencentChannel get() = source
-
-        /**
-         * 被创建的频道。同 [source]。
-         */
-        @JvmSynthetic
-        override suspend fun after(): TencentChannel = after
-
-        ////
-
-
+        @JvmBlocking(asProperty = true, suffix = "")
+        @JvmAsync(asProperty = true)
+        override suspend fun after(): TencentChannel = sourceInternal
+        
+        
         override val key: Event.Key<out Create> get() = Key
-
-
+        
+        
         public companion object Key : BaseEventKey<Create>(
             "tcg.channel_create", setOf(TcgChannelModifyEvent, StartPointEvent)
         ) {
             override fun safeCast(value: Any): Create? = doSafeCast(value)
         }
     }
-
+    
     /**
      * 子频道信息变更
      *
      * 无法得知变更前 ([before]) 的信息。
      */
     public abstract class Update : TcgChannelModifyEvent() {
-
-        /**
-         * 更新的频道。
-         */
-        @Suppress("UnnecessaryOptInAnnotation")
-        @OptIn(Api4J::class)
-        abstract override val source: TencentChannel
-
+        
         /**
          * 发生变更的频道。同 [source].
          */
-        @OptIn(Api4J::class)
-        override val after: TencentChannel get() = source
-
-        /**
-         * 发生变更的频道。同 [source].
-         */
-        @JvmSynthetic
-        override suspend fun after(): TencentChannel? = after
-
-
+        @JvmBlocking(asProperty = true, suffix = "")
+        @JvmAsync(asProperty = true)
+        override suspend fun after(): TencentChannel? = sourceInternal
+        
         /**
          * 始终为null。
          */
-        @OptIn(Api4J::class)
-        override val before: Any? get() = null
-
-        /**
-         * 始终为null。
-         */
+        @JvmBlocking(asProperty = true, suffix = "")
+        @JvmAsync(asProperty = true)
         override suspend fun before(): Any? = null
-
+        
         ////
-
+        
         override val key: Event.Key<out Update> get() = Key
-
+        
         public companion object Key : BaseEventKey<Update>(
             "tcg.channel_update", TcgChannelModifyEvent
         ) {
             override fun safeCast(value: Any): Update? = doSafeCast(value)
         }
     }
-
+    
     /**
      * 子频道被删除
      */
     public abstract class Delete : TcgChannelModifyEvent(), EndPointEvent {
-
-        /**
-         * 被删除的频道。
-         */
-        @Suppress("UnnecessaryOptInAnnotation")
-        @OptIn(Api4J::class)
-        abstract override val source: TencentChannel
-
-        /**
-         * 被删除的频道。同 [source]。
-         */
-        @OptIn(Api4J::class)
-        override val before: TencentChannel get() = source
-
         /**
          * 被删除的频道。同 [channel]。
          */
-        @JvmSynthetic
-        override suspend fun before(): TencentChannel = before
-
-
+        @JvmBlocking(asProperty = true, suffix = "")
+        @JvmAsync(asProperty = true)
+        override suspend fun before(): TencentChannel = sourceInternal
+        
+        
         override val key: Event.Key<out Delete> get() = Key
-
+        
         public companion object Key : BaseEventKey<Delete>(
             "tcg.channel_delete", setOf(TcgChannelModifyEvent, EndPointEvent)
         ) {
             override fun safeCast(value: Any): Delete? = doSafeCast(value)
         }
     }
-
-
+    
+    
 }

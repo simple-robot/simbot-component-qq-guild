@@ -17,7 +17,8 @@
 
 package love.forte.simbot.component.tencentguild
 
-import love.forte.simbot.Api4J
+import love.forte.plugin.suspendtrans.annotation.JvmAsync
+import love.forte.plugin.suspendtrans.annotation.JvmBlocking
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.definition.Guild
@@ -25,7 +26,6 @@ import love.forte.simbot.definition.Organization
 import love.forte.simbot.tencentguild.TencentGuildInfo
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.Items.Companion.emptyItems
-import love.forte.simbot.utils.runInBlocking
 
 /**
  *
@@ -56,14 +56,9 @@ public interface TencentGuild : Guild, TencentGuildObjectiveContainer<TencentGui
     /**
      * 获取指定ID的子频道。
      */
-    @OptIn(Api4J::class)
-    override fun getChannel(id: ID): TencentChannel?
-    
-    /**
-     * 获取指定ID的子频道。
-     */
-    @JvmSynthetic
-    override suspend fun channel(id: ID): TencentChannel? = getChannel(id)
+    @JvmBlocking(baseName = "getChannel", suffix = "")
+    @JvmAsync(baseName = "getChannel")
+    override suspend fun channel(id: ID): TencentChannel?
     
     
     /**
@@ -79,36 +74,22 @@ public interface TencentGuild : Guild, TencentGuildObjectiveContainer<TencentGui
      *
      * @see channel
      */
-    @JvmSynthetic
+    @JvmBlocking(baseName = "getChild", suffix = "")
+    @JvmAsync(baseName = "getChild")
     override suspend fun child(id: ID): TencentChannel? = channel(id)
     
     
-    /**
-     * 获取指定ID的子频道。
-     *
-     * @see getChannel
-     */
-    @OptIn(Api4J::class)
-    override fun getChild(id: ID): TencentChannel? = getChannel(id)
+    @JvmBlocking(asProperty = true, suffix = "")
+    @JvmAsync(asProperty = true)
+    override suspend fun owner(): TencentMember
     
-    
-    @JvmSynthetic
-    override suspend fun owner(): TencentMember = owner
-    
-    @OptIn(Api4J::class)
-    override val owner: TencentMember
     
     /**
      * 获取指定成员信息。
      */
-    @JvmSynthetic
+    @JvmBlocking(baseName = "getMember", suffix = "")
+    @JvmAsync(baseName = "getMember")
     override suspend fun member(id: ID): TencentMember?
-    
-    /**
-     * 获取指定成员信息。
-     */
-    @Api4J
-    override fun getMember(id: ID): TencentMember? = runInBlocking { member(id) }
     
     /**
      * 频道无法获取成员列表。
@@ -130,9 +111,4 @@ public interface TencentGuild : Guild, TencentGuildObjectiveContainer<TencentGui
     
     @JvmSynthetic
     override suspend fun previous(): Organization? = null
-    
-    
-    @OptIn(Api4J::class)
-    override val previous: Organization?
-        get() = null
 }

@@ -18,7 +18,8 @@
 package love.forte.simbot.component.tencentguild
 
 import kotlinx.coroutines.isActive
-import love.forte.simbot.Api4J
+import love.forte.plugin.suspendtrans.annotation.JvmAsync
+import love.forte.plugin.suspendtrans.annotation.JvmBlocking
 import love.forte.simbot.ID
 import love.forte.simbot.action.UnsupportedActionException
 import love.forte.simbot.bot.Bot
@@ -70,6 +71,7 @@ public interface TencentGuildComponentBot : Bot {
      * 启动当前bot, 并且初始化此bot的信息。 启动时会通过 [TencentGuildBot.me] 查询当前bot的信息，并为 [isMe] 提供额外id的匹配支持。
      *
      */
+    @JvmSynthetic
     override suspend fun start(): Boolean
     
     /**
@@ -97,25 +99,17 @@ public interface TencentGuildComponentBot : Bot {
     
     //// Impl
     
+    @JvmBlocking
+    @JvmAsync
     override suspend fun resolveImage(id: ID): Image<*> {
         
         // TODO fake remote image?
-        throw UnsupportedActionException("resolveImage(ID)")
+        throw UnsupportedActionException("resolveImage(ID) not support yet.")
     }
     
     
     override val isActive: Boolean
         get() = source.isActive
-    
-    @Api4J
-    override fun cancelBlocking(reason: Throwable?): Boolean {
-        return source.cancelBlocking(reason)
-    }
-    
-    @Api4J
-    override fun startBlocking(): Boolean {
-        return source.startBlocking()
-    }
     
     @Deprecated(
         "Group related APIs are not supported",
@@ -127,12 +121,9 @@ public interface TencentGuildComponentBot : Bot {
     
     override val guilds: Items<TencentGuild>
     
-    @Api4J
-    override fun getGuild(id: ID): TencentGuild?
-    
-    @JvmSynthetic
+    @JvmBlocking(baseName = "getGuild", suffix = "")
+    @JvmAsync(baseName = "getGuild")
     override suspend fun guild(id: ID): TencentGuild?
-    
     
     @Deprecated(
         "Contact related APIs are not supported",
@@ -142,22 +133,12 @@ public interface TencentGuildComponentBot : Bot {
         get() = emptyItems()
     
     @Deprecated("Contact related APIs are not supported", ReplaceWith("null"))
-    
     @JvmSynthetic
     override suspend fun contact(id: ID): Contact? = null
-    
-    @Deprecated("Contact related APIs are not supported", ReplaceWith("null"))
-    @OptIn(Api4J::class)
-    override fun getContact(id: ID): Contact? = null
     
     @Deprecated("Group related APIs are not supported", ReplaceWith("null"))
     @JvmSynthetic
     override suspend fun group(id: ID): Group? = null
-    
-    @Deprecated("Group related APIs are not supported", ReplaceWith("null"))
-    @OptIn(Api4J::class)
-    override fun getGroup(id: ID): Group? = null
-    
 }
 
 
@@ -166,9 +147,5 @@ public interface TencentGuildComponentBot : Bot {
  *
  */
 public interface TencentGuildComponentGuildBot : TencentGuildComponentBot, GuildBot {
-    
     override suspend fun asMember(): TencentMember
-    
-    @Api4J
-    override fun toMember(): TencentMember
 }

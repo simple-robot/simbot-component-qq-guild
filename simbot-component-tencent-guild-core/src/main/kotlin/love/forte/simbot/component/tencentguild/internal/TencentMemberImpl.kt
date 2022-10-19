@@ -23,6 +23,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
+import love.forte.simbot.component.tencentguild.TencentGuild
 import love.forte.simbot.component.tencentguild.TencentMember
 import love.forte.simbot.component.tencentguild.TencentRole
 import love.forte.simbot.component.tencentguild.event.TcgChannelAtMessageEvent
@@ -45,7 +46,7 @@ import love.forte.simbot.utils.item.effectedItemsByFlow
 internal class TencentMemberImpl(
     override val bot: TencentGuildComponentBotImpl,
     override val source: TencentMemberInfo,
-    override val guild: TencentGuildImpl,
+    private val _guild: TencentGuildImpl,
 ) : TencentMember {
     override val joinTime: Timestamp
         get() = source.joinTime
@@ -58,9 +59,12 @@ internal class TencentMemberImpl(
     override val username: String
         get() = source.username
     
+    override suspend fun guild(): TencentGuild = _guild
+    
     private val roleIdSet = source.roleIds.mapTo(mutableSetOf()) { it.literal }
     private lateinit var dms: DirectMessageSession
     private val dmsInitLock = Mutex()
+    
     private suspend fun getDms(): DirectMessageSession {
         if (::dms.isInitialized) {
             return dms
@@ -69,7 +73,7 @@ internal class TencentMemberImpl(
                 if (::dms.isInitialized) {
                     return dms
                 }
-                return CreateDmsApi(id, guild.id).requestBy(bot).also {
+                return CreateDmsApi(id, _guild.id).requestBy(bot).also {
                     dms = it
                 }
             }
@@ -80,7 +84,7 @@ internal class TencentMemberImpl(
         get() {
             
             return bot.effectedItemsByFlow {
-                guild.roles.asFlow().filter { it.id.literal in roleIdSet }
+                _guild.roles.asFlow().filter { it.id.literal in roleIdSet }
             }
             
         }
@@ -96,7 +100,7 @@ internal class TencentMemberImpl(
                 if (this.msgId == null) {
                     val currentEvent =
                         currentCoroutineContext[EventProcessingContext]?.event?.takeIf { it is TcgChannelAtMessageEvent } as? TcgChannelAtMessageEvent
-        
+                    
                     val msgId = currentEvent?.sourceEventEntity?.id
                     if (msgId != null) {
                         this.msgId = msgId
@@ -124,7 +128,7 @@ internal class TencentMemberImpl(
     }
     
     override fun toString(): String {
-        return "TencentMemberImpl(bot=$bot, source=$source, guild=$guild)"
+        return "TencentMemberImpl(bot=$bot, source=$source, guild=$_guild)"
     }
 }
 

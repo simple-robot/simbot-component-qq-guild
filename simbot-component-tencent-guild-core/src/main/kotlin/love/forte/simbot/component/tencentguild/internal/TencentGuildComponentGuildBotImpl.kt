@@ -17,7 +17,6 @@
 
 package love.forte.simbot.component.tencentguild.internal
 
-import love.forte.simbot.Api4J
 import love.forte.simbot.component.tencentguild.TencentGuildComponentBot
 import love.forte.simbot.component.tencentguild.TencentGuildComponentGuildBot
 import love.forte.simbot.component.tencentguild.TencentMember
@@ -31,11 +30,7 @@ internal class TencentGuildComponentGuildBotImpl(
     override val bot: TencentGuildComponentBot,
     private val member: TencentMember,
 ) : TencentGuildComponentGuildBot, TencentGuildComponentBot by bot {
-    
     override suspend fun asMember(): TencentMember = member
-    
-    @Api4J
-    override fun toMember(): TencentMember = member
 }
 
 internal fun TencentGuildComponentBot.asMember(member: TencentMember): TencentGuildComponentGuildBotImpl {

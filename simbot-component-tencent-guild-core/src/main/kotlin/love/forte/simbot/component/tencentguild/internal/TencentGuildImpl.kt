@@ -47,8 +47,8 @@ internal class TencentGuildImpl private constructor(
     private val baseBot: TencentGuildComponentBotImpl,
     @Volatile override var source: TencentGuildInfo,
 ) : TencentGuild {
-    private val logger = LoggerFactory.getLogger("love.forte.simbot.component.tencentguild.internal.TencentGuildImpl[${source.id}]")
-    
+    private val logger =
+        LoggerFactory.getLogger("love.forte.simbot.component.tencentguild.internal.TencentGuildImpl[${source.id}]")
     
     override val maximumChannel: Int
         get() = source.maximumChannel
@@ -136,7 +136,7 @@ internal class TencentGuildImpl private constructor(
     override val channels: Items<TencentChannelImpl>
         get() = internalChannels.values.asItems()
     
-    override fun getChannel(id: ID): TencentChannel? {
+    override suspend fun channel(id: ID): TencentChannel? {
         return internalChannels[id.literal]
     }
     

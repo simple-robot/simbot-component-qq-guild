@@ -24,8 +24,8 @@ repositories {
     gradlePluginPortal()
 }
 
-val kotlinVersion = "1.6.21"
-val dokkaPluginVersion = "1.6.21"
+val kotlinVersion = "1.7.20"
+val dokkaPluginVersion = "1.7.20"
 
 dependencies {
     // kotlin("jvm") apply false
@@ -36,6 +36,8 @@ dependencies {
     
     // see https://github.com/gradle-nexus/publish-plugin
     implementation("io.github.gradle-nexus:publish-plugin:1.1.0")
+    
+    implementation("love.forte.plugin.suspend-transform:suspend-transform-plugin-gradle:0.0.5")
 }
 
 

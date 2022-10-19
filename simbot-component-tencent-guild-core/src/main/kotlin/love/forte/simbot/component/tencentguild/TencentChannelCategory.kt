@@ -17,7 +17,8 @@
 
 package love.forte.simbot.component.tencentguild
 
-import love.forte.simbot.Api4J
+import love.forte.plugin.suspendtrans.annotation.JvmAsync
+import love.forte.plugin.suspendtrans.annotation.JvmBlocking
 import love.forte.simbot.definition.BotContainer
 import love.forte.simbot.definition.Category
 import love.forte.simbot.definition.GuildInfoContainer
@@ -37,12 +38,7 @@ public interface TencentChannelCategory : Category, TencentChannelInfo, BotConta
     /**
      * 获取此分类所属的频道服务器。
      */
-    @OptIn(Api4J::class)
-    override val guild: TencentGuild
-    
-    /**
-     * 获取此分类所属的频道服务器。
-     */
-    @JvmSynthetic
-    override suspend fun guild(): TencentGuild = guild
+    @JvmBlocking(asProperty = true, suffix = "")
+    @JvmAsync(asProperty = true)
+    override suspend fun guild(): TencentGuild
 }
