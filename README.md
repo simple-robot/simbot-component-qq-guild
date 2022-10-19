@@ -51,6 +51,11 @@
 ## 文档
 你可以参考 [语雀说明文档](https://www.yuque.com/simpler-robot) 的 `simbot3` 部分，或者查看simbot3-腾讯频道组件的 [API Doc](https://simple-robot-library.github.io/simbot3-component-tencent-guild-apiDoc/) .
 
+## ⚠ 注意
+
+我们目前正在全力追求 [核心库API](https://github.com/simple-robot/simpler-robot) 的稳定，因此当前仓库可能**暂时**的无法及时发现问题或跟进官方的更新。
+如果你有任何问题或建议，欢迎前往 [社区](https://github.com/orgs/simple-robot/discussions) 讨论，或通过 [PR](https://github.com/simple-robot/simbot-component-tencent-guild/pulls) 协助我们，非常感谢！
+
 
 
 ## 模块简介
