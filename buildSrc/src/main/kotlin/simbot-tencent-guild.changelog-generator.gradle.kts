@@ -17,7 +17,7 @@
 
 
 tasks.create("createChangelog") {
-    group = "build"
+    group = "documentation"
     doFirst {
         val realVersion = P.ComponentTencentGuild.version.fullVersion(false)
         val version = "v$realVersion"
