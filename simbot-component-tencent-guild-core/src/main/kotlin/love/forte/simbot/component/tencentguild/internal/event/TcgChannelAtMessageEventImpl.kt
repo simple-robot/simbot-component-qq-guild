@@ -35,7 +35,7 @@ import love.forte.simbot.tencentguild.api.message.MessageSendApi
 internal class TcgChannelAtMessageEventImpl(
     override val sourceEventEntity: TencentMessage,
     override val bot: TencentGuildComponentBotImpl,
-    override val channel: TencentChannelImpl,
+    override val channelInternal: TencentChannelImpl,
 ) : TcgChannelAtMessageEvent() {
     override val id: ID = sourceEventEntity.id
     override suspend fun reply(message: Message): MessageReceipt {
@@ -47,7 +47,8 @@ internal class TcgChannelAtMessageEventImpl(
     
     override suspend fun send(message: Message): MessageReceipt = reply(message)
     
-    override val author: TencentMemberImpl = TencentMemberImpl(bot, sourceEventEntity.member, channel.guild)
+    override val authorInternal: TencentMemberImpl =
+        TencentMemberImpl(bot, sourceEventEntity.member, channelInternal.guildInternal)
     
     
     override val messageContent: TencentReceiveMessageContentImpl by lazy(LazyThreadSafetyMode.NONE) {

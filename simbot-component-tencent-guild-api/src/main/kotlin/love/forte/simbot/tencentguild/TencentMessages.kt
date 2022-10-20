@@ -17,7 +17,6 @@
 
 package love.forte.simbot.tencentguild
 
-import com.sun.xml.internal.ws.api.message.Attachment
 import kotlinx.serialization.*
 import love.forte.simbot.*
 import love.forte.simbot.tencentguild.internal.*

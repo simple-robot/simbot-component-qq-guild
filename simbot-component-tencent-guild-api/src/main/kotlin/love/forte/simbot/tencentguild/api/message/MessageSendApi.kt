@@ -215,7 +215,6 @@ private class TencentMessageForSendingFormDataDecoder(
         formBuilder.append(name, value)
     }
     
-    @ExperimentalSerializationApi
     override fun encodeInlineElement(descriptor: SerialDescriptor, index: Int): Encoder {
         return this
     }
@@ -288,8 +287,7 @@ private class TencentMessageForSendingFormDataDecoder(
     override fun encodeFloat(value: Float) {
     }
     
-    @ExperimentalSerializationApi
-    override fun encodeInline(inlineDescriptor: SerialDescriptor): Encoder {
+    override fun encodeInline(descriptor: SerialDescriptor): Encoder {
         return this
     }
     

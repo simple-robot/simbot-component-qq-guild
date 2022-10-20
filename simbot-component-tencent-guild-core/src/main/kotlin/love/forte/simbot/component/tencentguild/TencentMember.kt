@@ -17,7 +17,8 @@
 
 package love.forte.simbot.component.tencentguild
 
-import love.forte.simbot.Api4J
+import love.forte.plugin.suspendtrans.annotation.JvmAsync
+import love.forte.plugin.suspendtrans.annotation.JvmBlocking
 import love.forte.simbot.ID
 import love.forte.simbot.bot.Bot
 import love.forte.simbot.component.tencentguild.internal.TencentMessageReceipt
@@ -27,8 +28,6 @@ import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.tencentguild.TencentMemberInfo
 import love.forte.simbot.utils.item.Items
-import love.forte.simbot.utils.runInBlocking
-import java.util.concurrent.TimeUnit
 import kotlin.time.Duration
 
 /**
@@ -44,30 +43,25 @@ public interface TencentMember : GuildMember, MemberInfo, TencentGuildObjectiveC
     
     override val roles: Items<TencentRole>
     
-    
-    @OptIn(Api4J::class)
-    override val guild: TencentGuild
-    
+    @JvmBlocking
+    @JvmAsync
     override suspend fun send(message: Message): TencentMessageReceipt
+    
+    @JvmBlocking
+    @JvmAsync
     override suspend fun send(text: String): TencentMessageReceipt
+    
+    @JvmBlocking
+    @JvmAsync
     override suspend fun send(message: MessageContent): TencentMessageReceipt
     
-    @Api4J
-    override fun sendBlocking(text: String): TencentMessageReceipt = runInBlocking { send(text) }
+    @JvmBlocking(asProperty = true, suffix = "")
+    @JvmAsync(asProperty = true)
+    override suspend fun organization(): TencentGuild = guild()
     
-    @Api4J
-    override fun sendBlocking(message: Message): TencentMessageReceipt = runInBlocking { send(message) }
-    
-    @Api4J
-    override fun sendBlocking(message: MessageContent): TencentMessageReceipt = runInBlocking { send(message) }
-    
-    //// Impl
-    
-    @JvmSynthetic
-    override suspend fun organization(): TencentGuild = guild
-    
-    @JvmSynthetic
-    override suspend fun guild(): TencentGuild = guild
+    @JvmBlocking(asProperty = true, suffix = "")
+    @JvmAsync(asProperty = true)
+    override suspend fun guild(): TencentGuild
     
     
     @Deprecated("子频道不支持禁言", ReplaceWith("false"))
@@ -77,18 +71,4 @@ public interface TencentMember : GuildMember, MemberInfo, TencentGuildObjectiveC
     @Deprecated("子频道不支持禁言", ReplaceWith("false"))
     @JvmSynthetic
     override suspend fun unmute(): Boolean = false
-    
-    @Deprecated("子频道不支持禁言", ReplaceWith("false"))
-    @OptIn(Api4J::class)
-    override fun muteBlocking(time: Long, timeUnit: TimeUnit): Boolean = false
-    
-    @OptIn(Api4J::class)
-    @Deprecated("子频道不支持禁言", ReplaceWith("false"))
-    override fun unmuteBlocking(): Boolean = false
-    
-    
-    @OptIn(Api4J::class)
-    override val organization: TencentGuild get() = guild
-    
-    
 }

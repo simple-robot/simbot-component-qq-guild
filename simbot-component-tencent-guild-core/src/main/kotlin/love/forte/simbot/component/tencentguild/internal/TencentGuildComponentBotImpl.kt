@@ -20,8 +20,8 @@ package love.forte.simbot.component.tencentguild.internal
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import love.forte.simbot.Api4J
+import love.forte.plugin.suspendtrans.annotation.JvmAsync
+import love.forte.plugin.suspendtrans.annotation.JvmBlocking
 import love.forte.simbot.ID
 import love.forte.simbot.LoggerFactory
 import love.forte.simbot.component.tencentguild.TencentGuild
@@ -40,7 +40,6 @@ import love.forte.simbot.tencentguild.api.guild.GetBotGuildListApi
 import love.forte.simbot.tencentguild.requestBy
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.Items.Companion.asItems
-import love.forte.simbot.utils.runInBlocking
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.set
 import kotlin.coroutines.CoroutineContext
@@ -82,12 +81,11 @@ internal class TencentGuildComponentBotImpl(
         get() = internalGuilds.values.asItems()
     
     
+    @JvmBlocking(baseName = "getGuild", suffix = "")
+    @JvmAsync(baseName = "getGuild")
     override suspend fun guild(id: ID): TencentGuild? {
         return internalGuilds[id.literal]
     }
-    
-    @Api4J
-    override fun getGuild(id: ID): TencentGuild? = runInBlocking { guild(id) }
     
     /**
      * 启动当前bot。
@@ -121,11 +119,6 @@ internal class TencentGuildComponentBotImpl(
     
     override suspend fun cancel(reason: Throwable?): Boolean = source.cancel(reason)
     
-    
-    @Api4J
-    override fun cancelBlocking(reason: Throwable?): Boolean {
-        return runBlocking { cancel(reason) }
-    }
     
     override val isStarted: Boolean
         get() = job.isCompleted || job.isActive
@@ -185,10 +178,4 @@ private suspend fun TencentGuildComponentBotImpl.initGuildListData() {
     initDataJob.cancel()
     
     logger.info("{} pieces of guild are initialized.", internalGuilds.size)
-    
-    // for (info in guildInfoList) {
-    //     val guildImpl = tencentGuildImpl(this, info)
-    //     internalGuilds[info.id.literal] = guildImpl
-    // }
-    
 }
