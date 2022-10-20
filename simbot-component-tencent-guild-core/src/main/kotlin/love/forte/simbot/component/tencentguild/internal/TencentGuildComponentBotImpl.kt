@@ -23,7 +23,6 @@ import kotlinx.coroutines.launch
 import love.forte.plugin.suspendtrans.annotation.JvmAsync
 import love.forte.plugin.suspendtrans.annotation.JvmBlocking
 import love.forte.simbot.ID
-import love.forte.simbot.LoggerFactory
 import love.forte.simbot.component.tencentguild.TencentGuild
 import love.forte.simbot.component.tencentguild.TencentGuildBotManager
 import love.forte.simbot.component.tencentguild.TencentGuildComponent
@@ -34,6 +33,7 @@ import love.forte.simbot.component.tencentguild.internal.event.TcgBotStartedEven
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.event.pushIfProcessable
 import love.forte.simbot.literal
+import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.tencentguild.TencentGuildBot
 import love.forte.simbot.tencentguild.TencentGuildInfo
 import love.forte.simbot.tencentguild.api.guild.GetBotGuildListApi

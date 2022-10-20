@@ -18,7 +18,6 @@
 package love.forte.simbot.component.tencentguild.internal
 
 import love.forte.simbot.ID
-import love.forte.simbot.LoggerFactory
 import love.forte.simbot.Timestamp
 import love.forte.simbot.component.tencentguild.TencentChannel
 import love.forte.simbot.component.tencentguild.TencentGuild
@@ -27,6 +26,7 @@ import love.forte.simbot.component.tencentguild.TencentMember
 import love.forte.simbot.component.tencentguild.internal.info.toInternal
 import love.forte.simbot.component.tencentguild.util.requestBy
 import love.forte.simbot.literal
+import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.tencentguild.TencentApiException
 import love.forte.simbot.tencentguild.TencentGuildInfo
 import love.forte.simbot.tencentguild.api.channel.GetGuildChannelListApi

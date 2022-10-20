@@ -21,7 +21,7 @@ tasks.create("createChangelog") {
     doFirst {
         val realVersion = P.ComponentTencentGuild.version.fullVersion(false)
         val version = "v$realVersion"
-        println("Generate change log for $version ...")
+        logger.info("Generate change log for {} ...", version)
         // configurations.runtimeClasspath
         val changelogDir = rootProject.file(".changelog").also {
             it.mkdirs()
