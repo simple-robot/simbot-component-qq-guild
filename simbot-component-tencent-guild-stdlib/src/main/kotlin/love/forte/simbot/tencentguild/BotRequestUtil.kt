@@ -62,7 +62,6 @@ public suspend fun <R> TencentGuildBot.request(api: TencentApi<R>): R = api.requ
  *
  * @throws love.forte.simbot.tencentguild.TencentApiException 如果返回状态码不在 200..300之间。
  */
-@OptIn(InternalSrTcgApi::class)
 @Api4J
 public fun <R> doRequest(bot: TencentGuildBot, api: TencentApi<R>): R = runBlocking {
     api.requestBy(bot)

@@ -17,8 +17,8 @@
 
 package love.forte.simbot.tencentguild
 
-import kotlinx.serialization.*
-import love.forte.simbot.*
+import kotlinx.serialization.Serializable
+import love.forte.simbot.Timestamp
 
 
 /**

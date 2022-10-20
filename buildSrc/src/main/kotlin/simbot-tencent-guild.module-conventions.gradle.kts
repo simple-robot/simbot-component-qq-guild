@@ -15,7 +15,6 @@
  *
  */
 
-import gradle.kotlin.dsl.accessors._6ba260ebea9dbf6a1964f6dc7ffff009.idea
 
 plugins {
     `java-library`

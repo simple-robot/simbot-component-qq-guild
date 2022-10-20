@@ -21,7 +21,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.ID
 import love.forte.simbot.component.tencentguild.internal.SendingMessageParser
-import love.forte.simbot.component.tencentguild.internal.TencentMessageForSendingBuilder
+import love.forte.simbot.component.tencentguild.internal.TencentMessageForSendingForParse
 import love.forte.simbot.component.tencentguild.message.TcgArk.Key.byArk
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.Messages
@@ -71,15 +71,16 @@ public fun TcgArk.toArk(): TencentMessage.Ark = buildArk(templateId) {
 
 
 internal object ArkParser : SendingMessageParser {
-    override fun invoke(
+    override suspend fun invoke(
         index: Int,
         element: Message.Element<*>,
         messages: Messages?,
-        builder: TencentMessageForSendingBuilder
+        builder: TencentMessageForSendingForParse
     ) {
         if (element is TcgArk) {
-            builder.arkAppend {
-                from(element.toRealArk())
+            val realArk = element.toRealArk()
+            builder.forSending {
+                ark = buildArk(realArk.templateId) { from(realArk) }
             }
         }
     }

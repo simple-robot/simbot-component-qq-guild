@@ -20,6 +20,7 @@ package love.forte.simbot.component.tencentguild.internal.event
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.component.tencentguild.TencentGuild
+import love.forte.simbot.component.tencentguild.TencentMember
 import love.forte.simbot.component.tencentguild.event.TcgGuildMemberEvent
 import love.forte.simbot.component.tencentguild.internal.TencentGuildComponentBotImpl
 import love.forte.simbot.component.tencentguild.internal.TencentMemberImpl
@@ -39,15 +40,16 @@ private fun tcgGuildMemberEventId(type: Int, botId: ID, memberId: ID, timestamp:
 internal class TcgGuildMemberIncrease constructor(
     override val bot: TencentGuildComponentBotImpl,
     override val sourceEventEntity: TencentMemberInfo,
-    override val member: TencentMemberImpl,
+    private val _member: TencentMemberImpl,
 ) : TcgGuildMemberEvent.Increase() {
-    override val id: ID = tcgGuildMemberEventId(0, bot.id, member.id, timestamp)
+    override val id: ID = tcgGuildMemberEventId(0, bot.id, _member.id, timestamp)
     override val changedTime: Timestamp = Timestamp.now()
     override val timestamp: Timestamp
         get() = changedTime
     
+    override suspend fun member(): TencentMember = _member
     
-    override suspend fun source(): TencentGuild = member.guild()
+    override suspend fun source(): TencentGuild = _member.guild()
     
     
     internal object Parser : BaseSignalToEvent<TencentMemberInfo>() {
@@ -77,15 +79,16 @@ internal class TcgGuildMemberIncrease constructor(
 internal class TcgGuildMemberDecrease constructor(
     override val bot: TencentGuildComponentBotImpl,
     override val sourceEventEntity: TencentMemberInfo,
-    override val member: TencentMemberImpl,
+    private val _member: TencentMemberImpl,
 ) : TcgGuildMemberEvent.Decrease() {
-    override val id: ID = tcgGuildMemberEventId(2, bot.id, member.id, timestamp)
+    override val id: ID = tcgGuildMemberEventId(2, bot.id, _member.id, timestamp)
     override val changedTime: Timestamp = Timestamp.now()
     override val timestamp: Timestamp
         get() = changedTime
     
-    override suspend fun source() = member.guild()
+    override suspend fun source() = _member.guild()
     
+    override suspend fun member(): TencentMember = _member
     
     internal object Parser : BaseSignalToEvent<TencentMemberInfo>() {
         override val type: EventSignals<TencentMemberInfo>

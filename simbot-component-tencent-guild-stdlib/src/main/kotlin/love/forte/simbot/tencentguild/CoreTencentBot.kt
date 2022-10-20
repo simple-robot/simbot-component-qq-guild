@@ -117,7 +117,7 @@ public class TencentGuildBotConfiguration {
      * 因为需要ws请求，因此你需要 `install(WebSockets)`
      *
      */
-    public var httpClient: HttpClient = HttpClient() {
+    public var httpClient: HttpClient = HttpClient {
         install(ContentNegotiation) {
             json(defaultJson)
         }
@@ -150,3 +150,9 @@ public class TencentGuildBotConfiguration {
     
 }
 
+/**
+ * 使 [TencentGuildBotConfiguration.serverUrl] 为 [TencentGuildApi.SANDBOX_URL]
+ */
+public fun TencentGuildBotConfiguration.useSandboxServerUrl() {
+    serverUrl = TencentGuildApi.SANDBOX_URL
+}

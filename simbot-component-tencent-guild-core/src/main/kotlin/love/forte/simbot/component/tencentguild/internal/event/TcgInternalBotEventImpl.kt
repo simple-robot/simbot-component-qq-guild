@@ -17,9 +17,12 @@
 
 package love.forte.simbot.component.tencentguild.internal.event
 
-import love.forte.simbot.*
-import love.forte.simbot.component.tencentguild.event.*
-import love.forte.simbot.component.tencentguild.internal.*
+import love.forte.simbot.ID
+import love.forte.simbot.Timestamp
+import love.forte.simbot.component.tencentguild.event.TcgBotRegisteredEvent
+import love.forte.simbot.component.tencentguild.event.TcgBotStartedEvent
+import love.forte.simbot.component.tencentguild.internal.TencentGuildComponentBotImpl
+import love.forte.simbot.randomID
 
 
 internal class TcgBotRegisteredEventImpl(override val bot: TencentGuildComponentBotImpl) : TcgBotRegisteredEvent() {

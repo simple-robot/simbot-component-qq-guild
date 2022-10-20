@@ -16,6 +16,7 @@
  */
 
 plugins {
+    `simbot-tcg-suspend-transform-configure`
     id("simbot-tencent-guild.module-conventions")
     id("simbot-tencent-guild.maven-publish")
     kotlin("plugin.serialization")

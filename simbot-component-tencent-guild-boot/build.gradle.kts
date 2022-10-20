@@ -45,6 +45,7 @@ dependencies {
         exclude(P.Simbot.GROUP)
     }
     implementation(simboot("api"))
+    implementation(libs.simbot.logger)
     
     testImplementation(simboot("core"))
     testImplementation(libs.log4j.api)

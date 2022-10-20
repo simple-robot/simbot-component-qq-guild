@@ -20,9 +20,9 @@ package love.forte.simbot.component.tencentguild.message
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.ID
-import love.forte.simbot.LoggerFactory
 import love.forte.simbot.component.tencentguild.internal.SendingMessageParser
-import love.forte.simbot.component.tencentguild.internal.TencentMessageForSendingBuilder
+import love.forte.simbot.component.tencentguild.internal.TencentMessageForSendingForParse
+import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.Messages
 import love.forte.simbot.message.doSafeCast
@@ -57,11 +57,11 @@ public fun TcgAttachmentMessage.toAttachment(): TencentMessage.Attachment = Tenc
 
 internal object AttachmentParser : SendingMessageParser {
     private val logger = LoggerFactory.getLogger(AttachmentParser::class)
-    override fun invoke(
+    override suspend fun invoke(
         index: Int,
         element: Message.Element<*>,
         messages: Messages?,
-        builder: TencentMessageForSendingBuilder,
+        builder: TencentMessageForSendingForParse,
     ) {
         if (element is TcgAttachmentMessage) {
             logger.warn("Attachment message is not yet supported for sending")

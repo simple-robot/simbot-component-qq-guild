@@ -17,7 +17,8 @@
 
 package love.forte.simbot.component.tencentguild
 
-import love.forte.simbot.Api4J
+import love.forte.plugin.suspendtrans.annotation.JvmAsync
+import love.forte.plugin.suspendtrans.annotation.JvmBlocking
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.component.tencentguild.internal.TencentMessageReceipt
@@ -28,8 +29,6 @@ import love.forte.simbot.message.Text
 import love.forte.simbot.tencentguild.TencentChannelInfo
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.Items.Companion.emptyItems
-import love.forte.simbot.utils.runInBlocking
-import java.util.concurrent.TimeUnit
 import kotlin.time.Duration
 
 /**
@@ -56,55 +55,36 @@ public interface TencentChannel : Channel, TencentGuildObjectiveContainer<Tencen
      */
     override val category: TencentChannelCategory
     
-    @OptIn(Api4J::class)
-    override val guild: TencentGuild
+    @JvmBlocking(asProperty = true, suffix = "")
+    @JvmAsync(asProperty = true)
+    override suspend fun guild(): TencentGuild
     
-    
-    @OptIn(Api4J::class)
-    override val owner: TencentMember
-    
-    
-    @OptIn(Api4J::class)
-    override val previous: TencentGuild get() = guild
-    
-    @JvmSynthetic
-    override suspend fun guild(): TencentGuild = guild
-    
-    @JvmSynthetic
-    override suspend fun owner(): TencentMember = owner
+    @JvmBlocking(asProperty = true, suffix = "")
+    @JvmAsync(asProperty = true)
+    override suspend fun owner(): TencentMember
     
     
     override val roles: Items<TencentRole>
     
-    @JvmSynthetic
-    override suspend fun previous(): TencentGuild = guild
+    @JvmBlocking(asProperty = true, suffix = "")
+    @JvmAsync(asProperty = true)
+    override suspend fun previous(): TencentGuild = guild()
     
-    @JvmSynthetic
+    @JvmBlocking
+    @JvmAsync
     override suspend fun send(message: Message): TencentMessageReceipt
     
+    @JvmBlocking
+    @JvmAsync
     override suspend fun send(text: String): TencentMessageReceipt {
         return send(Text.of(text))
     }
     
+    @JvmBlocking
+    @JvmAsync
     override suspend fun send(message: MessageContent): TencentMessageReceipt {
-        return send(message)
+        return send(message.messages)
     }
-    
-    @Api4J
-    override fun sendBlocking(text: String): TencentMessageReceipt {
-        return sendBlocking(text)
-    }
-    
-    @Api4J
-    override fun sendBlocking(message: Message): TencentMessageReceipt {
-        return sendBlocking(message)
-    }
-    
-    @Api4J
-    override fun sendBlocking(message: MessageContent): TencentMessageReceipt {
-        return sendBlocking(message)
-    }
-    
     
     /**
      * 目前无法直接获取成员列表。
@@ -116,7 +96,9 @@ public interface TencentChannel : Channel, TencentGuildObjectiveContainer<Tencen
     override val members: Items<TencentMember>
         get() = emptyItems() // previous.members // TODO
     
-    @JvmSynthetic
+    
+    @JvmBlocking(baseName = "getMember", suffix = "")
+    @JvmAsync(baseName = "getMember")
     override suspend fun member(id: ID): TencentMember? {
         return previous().member(id)
     }
@@ -126,19 +108,7 @@ public interface TencentChannel : Channel, TencentGuildObjectiveContainer<Tencen
     @JvmSynthetic
     override suspend fun mute(duration: Duration): Boolean = false
     
-    @OptIn(Api4J::class)
-    @Deprecated("Mute API is not supported", ReplaceWith("false"))
-    override fun muteBlocking(time: Long, timeUnit: TimeUnit): Boolean = false
-    
     @Deprecated("Mute API is not supported", ReplaceWith("false"))
     @JvmSynthetic
     override suspend fun unmute(): Boolean = false
-    
-    @OptIn(Api4J::class)
-    @Deprecated("Mute API is not supported", ReplaceWith("false"))
-    override fun unmuteBlocking(): Boolean = false
-    
-    
-    @Api4J
-    override fun getMember(id: ID): TencentMember? = runInBlocking { member(id) }
 }

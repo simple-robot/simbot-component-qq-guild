@@ -30,9 +30,9 @@ import love.forte.simbot.tencentguild.TencentChannelInfo
 internal class TcgChannelCreate(
     override val sourceEventEntity: TencentChannelInfo,
     override val bot: TencentGuildComponentBotImpl,
-    override val source: TencentChannelImpl,
+    override val sourceInternal: TencentChannelImpl,
 ) : TcgChannelModifyEvent.Create() {
-    override val id: ID = tcgChannelModifyId(0, bot.id, channel.id, changedTime)
+    override val id: ID = tcgChannelModifyId(0, bot.id, sourceInternal.id, changedTime)
     override val eventSignal: EventSignals.Guilds.ChannelCreate
         get() = EventSignals.Guilds.ChannelCreate
     
@@ -52,9 +52,9 @@ internal class TcgChannelUpdate
 constructor(
     override val sourceEventEntity: TencentChannelInfo,
     override val bot: TencentGuildComponentBotImpl,
-    override val source: TencentChannelImpl,
+    override val sourceInternal: TencentChannelImpl,
 ) : TcgChannelModifyEvent.Update() {
-    override val id: ID = tcgChannelModifyId(1, bot.id, channel.id, changedTime)
+    override val id: ID = tcgChannelModifyId(1, bot.id, sourceInternal.id, changedTime)
     override val eventSignal: EventSignals.Guilds.ChannelUpdate
         get() = EventSignals.Guilds.ChannelUpdate
     
@@ -75,9 +75,9 @@ internal class TcgChannelDelete
 constructor(
     override val sourceEventEntity: TencentChannelInfo,
     override val bot: TencentGuildComponentBotImpl,
-    override val source: TencentChannelImpl,
+    override val sourceInternal: TencentChannelImpl,
 ) : TcgChannelModifyEvent.Delete() {
-    override val id: ID = tcgChannelModifyId(2, bot.id, channel.id, changedTime)
+    override val id: ID = tcgChannelModifyId(2, bot.id, sourceInternal.id, changedTime)
     override val eventSignal: EventSignals.Guilds.ChannelDelete
         get() = EventSignals.Guilds.ChannelDelete
     

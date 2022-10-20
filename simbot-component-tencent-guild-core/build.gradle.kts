@@ -35,6 +35,7 @@ import P.Simbot.simbot
  */
 
 plugins {
+    `simbot-tcg-suspend-transform-configure`
     id("simbot-tencent-guild.module-conventions")
     id("simbot-tencent-guild.maven-publish")
     kotlin("plugin.serialization")
@@ -61,3 +62,4 @@ dependencies {
     testImplementation(libs.charleskorn.kaml)
 
 }
+

@@ -17,9 +17,11 @@
 
 package test
 
-import kotlinx.serialization.json.*
-import love.forte.simbot.tencentguild.*
-import kotlin.test.*
+import kotlinx.serialization.json.Json
+import love.forte.simbot.tencentguild.Intents
+import love.forte.simbot.tencentguild.Shard
+import love.forte.simbot.tencentguild.Signal
+import kotlin.test.Test
 
 
 /**

@@ -26,7 +26,7 @@ import love.forte.simbot.tencentguild.TencentMessage
 /**
  * 用于发送的普通消息.
  *
- * _content, embed, ark, image 至少需要有一个字段，否则无法下发消息。_
+ * _content, embed, ark, image/file_image, markdown 至少需要有一个字段，否则无法下发消息。_
  */
 @Serializable
 public data class TencentMessageForSending @JvmOverloads constructor(
@@ -56,5 +56,17 @@ public data class TencentMessageForSending @JvmOverloads constructor(
     @SerialName("msg_id")
     @Serializable(ID.AsCharSequenceIDSerializer::class)
     public var msgId: ID? = null,
+
+    /**
+     * 选填，要回复的事件id, 在各事件对象中获取。
+     */
+    @SerialName("event_id")
+    @Serializable(ID.AsCharSequenceIDSerializer::class)
+    public var eventId: ID? = null,
+
+    /**
+     * 选填，markdown 消息
+     */
+    public var markdown: TencentMessage.Markdown? = null,
 )
 

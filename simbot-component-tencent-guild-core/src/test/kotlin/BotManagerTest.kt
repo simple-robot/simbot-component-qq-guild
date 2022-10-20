@@ -21,8 +21,7 @@ import love.forte.simbot.component.tencentguild.TencentGuildBotManagerConfigurat
 import love.forte.simbot.component.tencentguild.useTencentGuild
 import love.forte.simbot.core.application.createSimpleApplication
 import love.forte.simbot.core.event.EventInterceptorsGenerator
-import love.forte.simbot.core.event.EventListenersGenerator
-import love.forte.simbot.event.EventResult
+import love.forte.simbot.core.event.EventListenerRegistrationDescriptionsGenerator
 import love.forte.simbot.event.GroupMessageEvent
 import love.forte.simbot.message.At
 import love.forte.simbot.message.Text
@@ -64,7 +63,7 @@ private fun TencentGuildBotManagerConfiguration.tencentGuildConfig() {
     }
 }
 
-private fun EventListenersGenerator.myListeners() {
+private fun EventListenerRegistrationDescriptionsGenerator.myListeners() {
     GroupMessageEvent { event ->
         println(this)
         
@@ -76,7 +75,6 @@ private fun EventListenersGenerator.myListeners() {
         event.group().members.collect { // 函数式为挂起，属性式为非挂起
             println("Member: $it")
         }
-        EventResult.of("abc") // return something?
     }
 }
 

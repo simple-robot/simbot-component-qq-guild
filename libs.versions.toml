@@ -1,13 +1,19 @@
 [versions]
 kotlinx-coroutines = "1.6.2"
 kotlinx-serialization = "1.3.3"
-ktor = "2.0.0"
+ktor = "2.1.2"
 openjdk-jmh = "1.35"
 log4j = "2.14.1"
+simbot = "3.0.0-beta.3"
 
 [libraries]
 # jetbrains-annotation
 jetbrains-annotations = "org.jetbrains:annotations:23.0.0"
+
+# simbot
+simbot-api = { group = "love.forte.simbot", name = "simbot-api", version.ref = "simbot" }
+simbot-core = { group = "love.forte.simbot", name = "simbot-core", version.ref = "simbot" }
+simbot-logger = { group = "love.forte.simbot", name = "simbot-logger", version.ref = "simbot" }
 
 # kotlinx-coroutines
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }

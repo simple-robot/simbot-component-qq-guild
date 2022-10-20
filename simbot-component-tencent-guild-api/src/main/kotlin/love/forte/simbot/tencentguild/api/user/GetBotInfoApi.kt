@@ -17,9 +17,10 @@
 
 package love.forte.simbot.tencentguild.api.user
 
-import kotlinx.serialization.*
-import love.forte.simbot.tencentguild.*
-import love.forte.simbot.tencentguild.api.*
+import kotlinx.serialization.DeserializationStrategy
+import love.forte.simbot.tencentguild.TencentBotInfo
+import love.forte.simbot.tencentguild.api.GetTencentApi
+import love.forte.simbot.tencentguild.api.RouteInfoBuilder
 
 
 /**

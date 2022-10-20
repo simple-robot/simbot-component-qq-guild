@@ -26,7 +26,7 @@ import kotlinx.serialization.StringFormat
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonBuilder
 import love.forte.simbot.Api4J
-import love.forte.simbot.LoggerFactory
+import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.tencentguild.InternalSrTcgApi
 import java.util.function.Consumer
 

@@ -26,7 +26,7 @@ object P {
         
         val version = Version(
             "3", 0, 0,
-            status = VersionStatus.beta(null, null, "M3"),
+            status = VersionStatus.beta(3, null, null),
             isSnapshot = isSnapshot()
         )
         
@@ -56,7 +56,7 @@ object P {
         val version = Version(
             major = "${Simbot.version.major}.${Simbot.version.minor}",
             minor = 0, patch = 0,
-            status = VersionStatus.alpha(1, null),
+            status = VersionStatus.alpha(2, null),
             isSnapshot = Simbot.isSnapshot
         )
         const val GROUP = "${Simbot.GROUP}.component"
@@ -68,7 +68,7 @@ object P {
     
 }
 
-private fun isSnapshot(): Boolean {
+fun isSnapshot(): Boolean {
     val property = System.getProperty("simbot.snapshot")?.toBoolean() ?: false
     val env = System.getenv(Env.IS_SNAPSHOT)?.toBoolean() ?: false
     println("Is snapshot from System.property:  $property")

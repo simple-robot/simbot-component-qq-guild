@@ -17,7 +17,8 @@
 
 package love.forte.simbot.component.tencentguild.event
 
-import love.forte.simbot.Api4J
+import love.forte.plugin.suspendtrans.annotation.JvmAsync
+import love.forte.plugin.suspendtrans.annotation.JvmBlocking
 import love.forte.simbot.Timestamp
 import love.forte.simbot.component.tencentguild.TencentChannel
 import love.forte.simbot.event.BaseEvent
@@ -38,35 +39,23 @@ import love.forte.simbot.tencentguild.TencentAudioAction
  * @see EventSignals.AudioAction.AudioOffMic
  */
 @BaseEvent
+@JvmBlocking(asProperty = true, suffix = "")
+@JvmAsync(asProperty = true)
 public sealed class TcgAudioEvent : TcgEvent<TencentAudioAction>(), ChannelEvent {
     
     override val timestamp: Timestamp = Timestamp.now()
     
-    /**
-     * 事件发生的频道。
-     */
-    @OptIn(Api4J::class)
-    abstract override val channel: TencentChannel
-    
+    protected abstract val channelInternal: TencentChannel
     
     /**
      * 事件发生的频道。
      */
-    @JvmSynthetic
-    override suspend fun channel(): TencentChannel = channel
-    
+    override suspend fun channel(): TencentChannel = channelInternal
     
     /**
      * 事件发生的频道。同 [channel].
      */
-    @Api4J
-    override val organization: TencentChannel get() = channel
-    
-    /**
-     * 事件发生的频道。同 [channel].
-     */
-    @JvmSynthetic
-    override suspend fun organization(): TencentChannel = channel()
+    override suspend fun organization(): TencentChannel = channelInternal
     
     
     abstract override val key: Event.Key<out TcgAudioEvent>

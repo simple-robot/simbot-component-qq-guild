@@ -19,6 +19,7 @@ package love.forte.simbot.component.tencentguild.internal
 
 import love.forte.simbot.ID
 import love.forte.simbot.component.tencentguild.TencentChannelCategory
+import love.forte.simbot.component.tencentguild.TencentGuild
 import love.forte.simbot.component.tencentguild.TencentGuildComponentGuildBot
 import love.forte.simbot.tencentguild.ChannelSubType
 import love.forte.simbot.tencentguild.ChannelType
@@ -30,11 +31,11 @@ import love.forte.simbot.tencentguild.TencentChannelInfo
  */
 internal class TencentChannelCategoryImpl(
     private val baseBot: TencentGuildComponentBotImpl,
-    override val guild: TencentGuildImpl,
+    private val _guild: TencentGuildImpl,
     @Volatile internal var channel: TencentChannelInfo,
 ) : TencentChannelCategory {
     override val bot: TencentGuildComponentGuildBot
-        get() = guild.bot
+        get() = _guild.bot
     override val id: ID
         get() = channel.id
     override val name: String
@@ -51,4 +52,6 @@ internal class TencentChannelCategoryImpl(
         get() = channel.parentId
     override val ownerId: ID
         get() = channel.ownerId
+    
+    override suspend fun guild(): TencentGuild = _guild
 }

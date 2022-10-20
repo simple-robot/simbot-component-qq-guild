@@ -20,6 +20,7 @@ package love.forte.simboot.component.tencentguild
 import love.forte.di.annotation.*
 import love.forte.simbot.*
 import love.forte.simbot.component.tencentguild.*
+import love.forte.simbot.logger.LoggerFactory
 import javax.inject.*
 
 

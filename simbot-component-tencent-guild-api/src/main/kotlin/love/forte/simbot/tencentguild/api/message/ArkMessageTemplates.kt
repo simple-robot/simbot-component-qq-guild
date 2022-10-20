@@ -17,8 +17,9 @@
 
 package love.forte.simbot.tencentguild.api.message
 
-import love.forte.simbot.*
-import love.forte.simbot.tencentguild.*
+import love.forte.simbot.ID
+import love.forte.simbot.tencentguild.TencentMessage
+import love.forte.simbot.tencentguild.buildArk
 
 
 /**

@@ -38,7 +38,7 @@ private fun tcgAudioEventId(
 internal class TcgAudioStart(
     override val bot: TencentGuildComponentBotImpl,
     override val sourceEventEntity: TencentAudioAction,
-    override val channel: TencentChannelImpl,
+    override val channelInternal: TencentChannelImpl,
 ) : TcgAudioEvent.Start() {
     override val id: ID = tcgAudioEventId(0, sourceEventEntity.guildId, sourceEventEntity.channelId, timestamp)
     
@@ -62,7 +62,7 @@ internal class TcgAudioStart(
 internal class TcgAudioFinish(
     override val bot: TencentGuildComponentBotImpl,
     override val sourceEventEntity: TencentAudioAction,
-    override val channel: TencentChannelImpl,
+    override val channelInternal: TencentChannelImpl,
 ) : TcgAudioEvent.Finish() {
     override val id: ID = tcgAudioEventId(1, sourceEventEntity.guildId, sourceEventEntity.channelId, timestamp)
     
@@ -85,7 +85,7 @@ internal class TcgAudioFinish(
 internal class TcgAudioOnMic(
     override val bot: TencentGuildComponentBotImpl,
     override val sourceEventEntity: TencentAudioAction,
-    override val channel: TencentChannelImpl,
+    override val channelInternal: TencentChannelImpl,
 ) : TcgAudioEvent.OnMic() {
     override val id: ID = tcgAudioEventId(2, sourceEventEntity.guildId, sourceEventEntity.channelId, timestamp)
     
@@ -108,7 +108,7 @@ internal class TcgAudioOnMic(
 internal class TcgAudioOffMic(
     override val bot: TencentGuildComponentBotImpl,
     override val sourceEventEntity: TencentAudioAction,
-    override val channel: TencentChannelImpl,
+    override val channelInternal: TencentChannelImpl,
 ) : TcgAudioEvent.OffMic() {
     override val id: ID = tcgAudioEventId(3, sourceEventEntity.guildId, sourceEventEntity.channelId, timestamp)
     

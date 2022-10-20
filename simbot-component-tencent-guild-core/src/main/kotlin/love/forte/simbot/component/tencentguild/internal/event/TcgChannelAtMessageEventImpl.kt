@@ -35,19 +35,20 @@ import love.forte.simbot.tencentguild.api.message.MessageSendApi
 internal class TcgChannelAtMessageEventImpl(
     override val sourceEventEntity: TencentMessage,
     override val bot: TencentGuildComponentBotImpl,
-    override val channel: TencentChannelImpl,
+    override val channelInternal: TencentChannelImpl,
 ) : TcgChannelAtMessageEvent() {
     override val id: ID = sourceEventEntity.id
     override suspend fun reply(message: Message): MessageReceipt {
-        val messageForSend = MessageParsers.parse(message)
+        val (messageForSend, fileImage) = MessageParsers.parse(message)
         messageForSend.msgId = sourceEventEntity.id
         val cid = sourceEventEntity.channelId
-        return MessageSendApi(cid, messageForSend).requestBy(bot).asReceipt()
+        return MessageSendApi(cid, messageForSend, fileImage).requestBy(bot).asReceipt()
     }
     
     override suspend fun send(message: Message): MessageReceipt = reply(message)
     
-    override val author: TencentMemberImpl = TencentMemberImpl(bot, sourceEventEntity.member, channel.guild)
+    override val authorInternal: TencentMemberImpl =
+        TencentMemberImpl(bot, sourceEventEntity.member, channelInternal.guildInternal)
     
     
     override val messageContent: TencentReceiveMessageContentImpl by lazy(LazyThreadSafetyMode.NONE) {
