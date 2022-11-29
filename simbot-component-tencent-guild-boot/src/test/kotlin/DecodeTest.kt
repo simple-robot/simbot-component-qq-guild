@@ -25,9 +25,9 @@ import kotlinx.serialization.properties.*
 @OptIn(ExperimentalSerializationApi::class)
 fun main() {
     val yaml = Yaml(
-        serializersModule = EmptySerializersModule,
+        serializersModule = EmptySerializersModule(),
     )
-    val properties = Properties(EmptySerializersModule)
+    val properties = Properties(EmptySerializersModule())
     val json = Json {
         isLenient = true
     }
@@ -42,7 +42,6 @@ fun main() {
     println(json.decodeFromStream(ser, resourcesJson.openStream()))
     println(yaml.decodeFromStream(ser, resourcesYaml.openStream()))
 
-    @Suppress("SimplifiableCallChain")
     val prop = java.util.Properties().also {
         it.load(resourcesProp.openStream())
     }.map { it.key.toString() to it.value.toString() }.toMap()
