@@ -19,6 +19,7 @@ package love.forte.simbot.component.tencentguild.internal
 
 import love.forte.simbot.ID
 import love.forte.simbot.message.MessageReceipt
+import love.forte.simbot.message.SingleMessageReceipt
 import love.forte.simbot.tencentguild.TencentMessage
 
 
@@ -34,7 +35,7 @@ public interface TencentMessageReceipt : MessageReceipt {
  *
  * @author ForteScarlet
  */
-internal class MessageAsReceipt(override val messageResult: TencentMessage) : TencentMessageReceipt {
+internal class MessageAsReceipt(override val messageResult: TencentMessage) : TencentMessageReceipt, SingleMessageReceipt() {
     override val id: ID
         get() = messageResult.id
 
