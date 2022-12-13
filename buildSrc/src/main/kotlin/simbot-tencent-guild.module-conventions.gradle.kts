@@ -24,8 +24,9 @@ plugins {
     idea
 }
 
+
 group = P.ComponentTencentGuild.GROUP
-version = P.ComponentTencentGuild.VERSION
+version = P.ComponentTencentGuild.versionIfSnap
 description = rootProject.description ?: P.ComponentTencentGuild.DESCRIPTION
 
 repositories {

@@ -15,7 +15,6 @@
  *
  */
 
-import P.Simbot.simbot
 
 /*
  *  Copyright (c) 2022-2022 ForteScarlet <ForteScarlet@163.com>
@@ -44,7 +43,7 @@ plugins {
 
 
 dependencies {
-    api(simbot("api"))
+    api(simbotApi)
     api(kotlin("reflect"))
 
     api(libs.ktor.client.core)
@@ -52,10 +51,10 @@ dependencies {
     api(libs.ktor.client.contentNegotiation)
     api(libs.ktor.serialization.kotlinxJson)
     api(libs.kotlinx.serialization.json)
-    
+
     testImplementation(libs.log4j.api)
     testImplementation(libs.log4j.core)
     testImplementation(libs.log4j.slf4jImpl)
-    
+
 }
 
