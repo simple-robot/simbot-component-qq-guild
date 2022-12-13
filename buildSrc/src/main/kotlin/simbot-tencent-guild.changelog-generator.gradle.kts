@@ -19,7 +19,7 @@
 tasks.create("createChangelog") {
     group = "documentation"
     doFirst {
-        val realVersion = P.ComponentTencentGuild.version.fullVersion(false)
+        val realVersion = P.ComponentTencentGuild.version.toString()
         val version = "v$realVersion"
         logger.info("Generate change log for {} ...", version)
         // configurations.runtimeClasspath
@@ -29,10 +29,16 @@ tasks.create("createChangelog") {
         val file = File(changelogDir, "$version.md")
         if (!file.exists()) {
             file.createNewFile()
-            val coreVersion = P.Simbot.version.fullVersion(false)
+            val coreVersion = simbotVersion
             val autoGenerateText = """
                 > 对应核心版本: [**v$coreVersion**](https://github.com/ForteScarlet/simpler-robot/releases/tag/v$coreVersion)
-               
+                
+                **⚠ 目前版本仍处于 `ALPHA` 阶段，代表仍然可能存在大量[已知问题](https://github.com/simple-robot/simbot-component-tencent-guild/issues)或未知问题，
+                以及未完善的内容和落后于官方更新的内容。**
+                
+                我们欢迎并期望着积极的[反馈](https://github.com/simple-robot/simbot-component-tencent-guild/issues)或[协助](https://github.com/simple-robot/simbot-component-tencent-guild/pulls)，
+                感谢您的贡献与支持！
+                
                 **仓库参考:**
                 
                 | **模块** | **repo1.maven** | **search.maven** |
@@ -43,8 +49,8 @@ tasks.create("createChangelog") {
                 ${repoRow("simbot-tencent-guild-boot", "love.forte.simbot.component", "simbot-component-tencent-guild-boot", realVersion)}
                 
             """.trimIndent()
-            
-            
+
+
             file.writeText(autoGenerateText)
         }
     }

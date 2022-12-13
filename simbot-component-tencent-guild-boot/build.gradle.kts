@@ -15,8 +15,6 @@
  *
  */
 
-import P.Simbot.simboot
-
 /*
  *  Copyright (c) 2022-2022 ForteScarlet <ForteScarlet@163.com>
  *
@@ -46,7 +44,7 @@ dependencies {
     }
     implementation(simboot("api"))
     implementation(libs.simbot.logger)
-    
+
     testImplementation(simboot("core"))
     testImplementation(libs.log4j.api)
     testImplementation(libs.log4j.core)
