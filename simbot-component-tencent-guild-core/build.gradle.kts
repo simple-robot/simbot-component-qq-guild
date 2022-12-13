@@ -15,8 +15,6 @@
  *
  */
 
-import P.Simbot.simbot
-
 /*
  *  Copyright (c) 2022-2022 ForteScarlet <ForteScarlet@163.com>
  *
@@ -47,7 +45,7 @@ dependencies {
         exclude(P.Simbot.GROUP)
     }
     implementation(simbot("core"))
-    
+
     api(libs.ktor.client.core)
     api(libs.ktor.client.cio)
     api(libs.ktor.client.ws)
@@ -55,11 +53,12 @@ dependencies {
     api(libs.ktor.serialization.kotlinxJson)
     api(libs.ktor.serialization.kotlinxJson)
     api(libs.kotlinx.serialization.json)
-    
+
     compileOnly(libs.kotlinx.serialization.properties)
     compileOnly(libs.charleskorn.kaml)
-    
+
     testImplementation(libs.charleskorn.kaml)
+    testImplementation("love.forte.simbot:simbot-logger-slf4j-impl:3.0.0-M5")
 
 }
 

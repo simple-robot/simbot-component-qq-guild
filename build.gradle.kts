@@ -1,3 +1,5 @@
+import love.forte.gradle.common.core.project.setup
+
 /*
  *  Copyright (c) 2022-2022 ForteScarlet <ForteScarlet@163.com>
  *
@@ -22,8 +24,10 @@ plugins {
     id("simbot-tencent-guild.nexus-publish")
 }
 
-group = P.ComponentTencentGuild.GROUP
-version = P.ComponentTencentGuild.VERSION
+setup(P.ComponentTencentGuild)
+
+//group = P.ComponentTencentGuild.GROUP
+//version = P.ComponentTencentGuild.versionIfSnap
 
 println("=== Current version: $version ===")
 
