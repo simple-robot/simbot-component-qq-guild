@@ -25,11 +25,8 @@ plugins {
 
 dependencies {
     api(project(":simbot-component-tencent-guild-api"))
+    api(simbotLoggerSlf4jImpl)
     api(simbotUtilLoop)
     api(libs.ktor.client.ws)
-
-    testImplementation(libs.log4j.api)
-    testImplementation(libs.log4j.core)
-    testImplementation(libs.log4j.slf4jImpl)
 }
 

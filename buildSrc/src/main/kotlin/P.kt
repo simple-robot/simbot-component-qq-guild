@@ -1,4 +1,5 @@
 import love.forte.gradle.common.core.project.ProjectDetail
+import love.forte.gradle.common.core.project.Version
 import love.forte.gradle.common.core.project.minus
 import love.forte.gradle.common.core.project.version as v
 
@@ -26,9 +27,17 @@ fun simboot(name: String, version: String = simbotVersion.toString()): String = 
 
 val simbotApi = simbot("api")
 val simbotCore = simbot("core")
+val simbotLogger = simbot("logger")
+val simbotLoggerJvm = simbot("logger-jvm")
+val simbotLoggerSlf4jImpl = simbot("logger-slf4j-impl")
+
+
+
 val simbootApi = simboot("api")
 val simbootCore = simboot("core")
 val simbotUtilLoop = "love.forte.simbot.util:simbot-util-stage-loop:$simbotVersion"
+
+const val SIMBOT_GROUP = "love.forte.simbot"
 
 /**
  * Project versions.
@@ -57,7 +66,7 @@ object P {
         private val alphaSuffix = v("alpha", 3)
 
         override val version = baseVersion - alphaSuffix
-        val snapshotVersion = baseVersion - (alphaSuffix - love.forte.gradle.common.core.project.Version.SNAPSHOT)
+        val snapshotVersion = baseVersion - (alphaSuffix - Version.SNAPSHOT)
 
         val versionIfSnap get() = (if (isSnapshot()) snapshotVersion else version).toString()
 
@@ -98,12 +107,13 @@ object P {
 
 
 }
+private val _isSnapshot by lazy { initIsSnapshot() }
 
-fun isSnapshot(): Boolean {
-    val property = System.getProperty("simbot.snapshot")?.toBoolean()
-    val env = System.getenv(Env.IS_SNAPSHOT)?.toBoolean()
-    println("Is snapshot from System.property:  $property")
-    println("Is snapshot from System.env:       $env")
+private fun initIsSnapshot(): Boolean {
+    val property = System.getProperty("simbot.snapshot").toBoolean()
+    val env = System.getenv(Env.IS_SNAPSHOT).toBoolean()
 
-    return property ?: env ?: false
+    return property || env
 }
+
+fun isSnapshot(): Boolean = _isSnapshot

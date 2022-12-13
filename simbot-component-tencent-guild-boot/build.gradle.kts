@@ -39,11 +39,8 @@ plugins {
 }
 
 dependencies {
-    api(project(":simbot-component-tencent-guild-core")) {
-        exclude(P.Simbot.GROUP)
-    }
+    api(project(":simbot-component-tencent-guild-core"))
     implementation(simboot("api"))
-    implementation(libs.simbot.logger)
 
     testImplementation(simboot("core"))
     testImplementation(libs.log4j.api)

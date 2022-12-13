@@ -18,11 +18,6 @@ plugins {
     idea
 }
 
-
-group = P.ComponentTencentGuild.GROUP
-version = P.ComponentTencentGuild.VERSION
-description = P.ComponentTencentGuild.DESCRIPTION
-
 idea {
     module.apply {
         isDownloadSources = true

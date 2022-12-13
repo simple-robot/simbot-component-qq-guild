@@ -49,7 +49,9 @@ checkPublishConfigurable {
         artifact(jarSources)
         artifact(jarJavadoc)
 
-        isSnapshot = isSnapshot()
+        isSnapshot = isSnapshot().also {
+            logger.info("jvmConfigPublishing.isSnapshot: {}", it)
+        }
         releasesRepository = ReleaseRepository
         snapshotRepository = SnapshotRepository
         gpg = if (isSnapshot()) null else Gpg.ofSystemPropOrNull()

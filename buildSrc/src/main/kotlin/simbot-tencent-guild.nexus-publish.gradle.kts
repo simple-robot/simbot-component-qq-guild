@@ -15,13 +15,18 @@
  *
  */
 
+import love.forte.gradle.common.core.project.setup
 import love.forte.gradle.common.core.repository.Repositories
 import util.checkPublishConfigurable
-import util.systemProp
 import java.time.Duration
 
 plugins {
     id("io.github.gradle-nexus.publish-plugin")
+}
+
+setup(P.ComponentTencentGuild)
+if (isSnapshot()) {
+    version = P.ComponentTencentGuild.snapshotVersion.toString()
 }
 
 val (isSnapshotOnly, isReleaseOnly, isPublishConfigurable) = checkPublishConfigurable()

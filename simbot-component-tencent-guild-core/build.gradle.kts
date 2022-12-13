@@ -42,15 +42,14 @@ plugins {
 
 dependencies {
     api(project(":simbot-component-tencent-guild-stdlib")) {
-        exclude(P.Simbot.GROUP)
+        exclude(SIMBOT_GROUP, "simbot-logger-slf4j-impl")
     }
-    implementation(simbot("core"))
 
+    implementation(simbotCore)
     api(libs.ktor.client.core)
     api(libs.ktor.client.cio)
     api(libs.ktor.client.ws)
     api(libs.ktor.client.contentNegotiation)
-    api(libs.ktor.serialization.kotlinxJson)
     api(libs.ktor.serialization.kotlinxJson)
     api(libs.kotlinx.serialization.json)
 
