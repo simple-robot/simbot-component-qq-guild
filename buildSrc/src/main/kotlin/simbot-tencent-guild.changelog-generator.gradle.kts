@@ -46,7 +46,6 @@ tasks.create("createChangelog") {
                 ${repoRow("simbot-tencent-guild-api", "love.forte.simbot.component", "simbot-component-tencent-guild-api", realVersion)}
                 ${repoRow("simbot-tencent-guild-stdlib", "love.forte.simbot.component", "simbot-component-tencent-guild-stdlib", realVersion)}
                 ${repoRow("simbot-tencent-guild-core", "love.forte.simbot.component", "simbot-component-tencent-guild-core", realVersion)}
-                ${repoRow("simbot-tencent-guild-boot", "love.forte.simbot.component", "simbot-component-tencent-guild-boot", realVersion)}
                 
             """.trimIndent()
 

@@ -15,6 +15,7 @@
  *
  */
 
+import love.forte.gradle.common.core.repository.Repositories
 import util.checkPublishConfigurable
 import util.systemProp
 import java.time.Duration
@@ -25,42 +26,42 @@ plugins {
 
 val (isSnapshotOnly, isReleaseOnly, isPublishConfigurable) = checkPublishConfigurable()
 
-println("isSnapshotOnly: $isSnapshotOnly")
-println("isReleaseOnly: $isReleaseOnly")
-println("isPublishConfigurable: $isPublishConfigurable")
+logger.info("isSnapshotOnly: {}", isSnapshotOnly)
+logger.info("isReleaseOnly: {}", isReleaseOnly)
+logger.info("isPublishConfigurable: {}", isPublishConfigurable)
 
 
 if (isPublishConfigurable) {
-    val sonatypeUsername: String? = systemProp("OSSRH_USER")
-    val sonatypePassword: String? = systemProp("OSSRH_PASSWORD")
-    
+    val sonatypeUsername: String? = sonatypeUsername
+    val sonatypePassword: String? = sonatypePassword
+
     if (sonatypeUsername == null || sonatypePassword == null) {
-        println("[WARN] - sonatype.username or sonatype.password is null, cannot config nexus publishing.")
+        logger.warn("sonatype.username or sonatype.password is null, cannot config nexus publishing.")
     }
-    
+
     nexusPublishing {
         packageGroup.set(project.group.toString())
-        
+
         useStaging.set(
             project.provider { !project.version.toString().endsWith("SNAPSHOT", ignoreCase = true) }
         )
-        
+
         transitionCheckOptions {
             maxRetries.set(100)
             delayBetween.set(Duration.ofSeconds(5))
         }
-        
+
         repositories {
             sonatype {
-                snapshotRepositoryUrl.set(uri(Sonatype.Snapshot.URL))
+                snapshotRepositoryUrl.set(uri(Repositories.Snapshot.URL))
                 username.set(sonatypeUsername)
                 password.set(sonatypePassword)
             }
         }
     }
-    
-    
-    println("[publishing-configure] - [$name] configured.")
+
+
+    logger.info("[publishing-configure] - [{}] configured.", name)
 }
 
 

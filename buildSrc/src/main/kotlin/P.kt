@@ -100,10 +100,10 @@ object P {
 }
 
 fun isSnapshot(): Boolean {
-    val property = System.getProperty("simbot.snapshot")?.toBoolean() ?: false
-    val env = System.getenv(Env.IS_SNAPSHOT)?.toBoolean() ?: false
+    val property = System.getProperty("simbot.snapshot")?.toBoolean()
+    val env = System.getenv(Env.IS_SNAPSHOT)?.toBoolean()
     println("Is snapshot from System.property:  $property")
     println("Is snapshot from System.env:       $env")
 
-    return property || env
+    return property ?: env ?: false
 }

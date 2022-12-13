@@ -14,6 +14,8 @@
  *
  *
  */
+import love.forte.gradle.common.core.project.setup
+import love.forte.gradle.common.core.repository.Repositories
 
 
 plugins {
@@ -24,16 +26,15 @@ plugins {
     idea
 }
 
-
-group = P.ComponentTencentGuild.GROUP
-version = P.ComponentTencentGuild.versionIfSnap
-description = rootProject.description ?: P.ComponentTencentGuild.DESCRIPTION
+setup(P.ComponentTencentGuild)
+if (isSnapshot()) {
+    version = P.ComponentTencentGuild.snapshotVersion.toString()
+}
 
 repositories {
-    mavenLocal()
     mavenCentral()
     maven {
-        url = uri(Sonatype.Snapshot.URL)
+        url = uri(Repositories.Snapshot.URL)
         mavenContent {
             snapshotsOnly()
         }
@@ -87,8 +88,8 @@ idea {
 
 
 //// show project info
-println("========================================================")
-println("== project.group:   ${group}")
-println("== project.name:    ${name}")
-println("== project.version: ${version}")
-println("========================================================")
+logger.info("========================================================")
+logger.info("== project.group:   ${group}")
+logger.info("== project.name:    ${name}")
+logger.info("== project.version: ${version}")
+logger.info("========================================================")

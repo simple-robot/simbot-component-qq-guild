@@ -10,11 +10,14 @@ on:
       - '**src/main/java/**.java'
 
 env:
-  GPG_KEY_ID: ${{ secrets.SIGN_KEY_ID }}
-  GPG_SECRET_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-  GPG_PASSWORD: ${{ secrets.SIGN_PASS }}
-  OSSRH_USER: ${{ secrets.OSS_USERNAME }}
-  OSSRH_PASSWORD: ${{ secrets.OSS_PASSWORD }}
+  IS_CI: true
+  GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
+  GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
+  GPG_PASSWORD: ${{ secrets.GPG_PASSWORD }}
+  OSSRH_USER: ${{ secrets.SONATYPE_USERNAME }}
+  OSSRH_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+  SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+  SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
   SIMBOT_IS_SNAPSHOT: true
   SIMBOT_SNAPSHOT_ONLY: true
 

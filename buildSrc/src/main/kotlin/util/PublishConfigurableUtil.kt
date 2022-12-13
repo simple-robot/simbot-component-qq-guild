@@ -35,6 +35,14 @@ fun checkPublishConfigurable(): PublishConfigurableResult {
         (System.getProperty("snapshotOnly") ?: System.getenv(Env.SNAPSHOT_ONLY))?.equals("true", true) == true
     val isReleaseOnly =
         (System.getProperty("releaseOnly") ?: System.getenv(Env.RELEASES_ONLY))?.equals("true", true) == true
-    
+
     return PublishConfigurableResult(isSnapshotOnly, isReleaseOnly)
 }
+
+inline fun checkPublishConfigurable(block: PublishConfigurableResult.() -> Unit) {
+    val v = checkPublishConfigurable()
+    if (v.isPublishConfigurable) {
+        v.block()
+    }
+}
+
