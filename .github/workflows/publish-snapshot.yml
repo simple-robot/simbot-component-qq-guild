@@ -43,5 +43,10 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           gradle-version: 7.5.1
-          arguments: clean test publishToSonatype closeAndReleaseStagingRepository
+          arguments: |
+            test 
+            publishToSonatype
+            closeAndReleaseStagingRepository
+            --info
+            --warning-mode all
 
