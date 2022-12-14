@@ -48,7 +48,9 @@ if (isPublishConfigurable) {
         packageGroup.set(project.group.toString())
 
         useStaging.set(
-            project.provider { !project.version.toString().endsWith("SNAPSHOT", ignoreCase = true) }
+            project.provider { !project.version.toString().endsWith("SNAPSHOT", ignoreCase = true).also {
+                logger.info("UseStaging: {} (project version: {})", it, project.version.toString())
+            } }
         )
 
         transitionCheckOptions {
