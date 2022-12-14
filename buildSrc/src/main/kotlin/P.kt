@@ -32,7 +32,6 @@ val simbotLoggerJvm = simbot("logger-jvm")
 val simbotLoggerSlf4jImpl = simbot("logger-slf4j-impl")
 
 
-
 val simbootApi = simboot("api")
 val simbootCore = simboot("core")
 val simbotUtilLoop = "love.forte.simbot.util:simbot-util-stage-loop:$simbotVersion"
