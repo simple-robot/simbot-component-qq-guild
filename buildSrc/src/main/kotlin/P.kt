@@ -44,6 +44,7 @@ const val SIMBOT_GROUP = "love.forte.simbot"
  */
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object P {
+    //
     object Simbot {
         const val GROUP = "love.forte.simbot"
     }
