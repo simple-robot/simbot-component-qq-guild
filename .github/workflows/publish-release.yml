@@ -36,9 +36,8 @@ jobs:
       - name: Gradle Run Test
         uses: gradle/gradle-build-action@v2
         with:
-          gradle-version: 7.5.1
+          gradle-version: 7.6
           arguments: clean build test
-
 
   publish-release:
     name: Publish Release
@@ -60,7 +59,7 @@ jobs:
       - name: Gradle Publish Release
         uses: gradle/gradle-build-action@v2
         with:
-          gradle-version: 7.5.1
+          gradle-version: 7.6
           arguments: |
             publishToSonatype
             closeAndReleaseStagingRepository
@@ -95,7 +94,6 @@ jobs:
           generate_release_notes: true
           prerelease: ${{ contains(github.ref_name, 'preview') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'alpha') }}
 
-
   publish-snapshot:
     name: Publish snapshot
     runs-on: ubuntu-latest
@@ -116,7 +114,7 @@ jobs:
       - name: Gradle publish snapshot
         uses: gradle/gradle-build-action@v2
         with:
-          gradle-version: 7.5.1
+          gradle-version: 7.6
           arguments: publishToSonatype closeAndReleaseStagingRepository
         env:
           SIMBOT_IS_SNAPSHOT: true
@@ -150,8 +148,8 @@ jobs:
       - name: Gradle generate documentation
         uses: gradle/gradle-build-action@v2
         with:
-          gradle-version: 7.5.1
-          arguments: dokkaHtmlMultiModuleAndPost -DisSnapshot=false
+          gradle-version: 7.6
+          arguments: dokkaHtmlMultiModule -DisSnapshot=false
 
       - name: Push to doc repository
         uses: peaceiris/actions-gh-pages@v3
@@ -159,5 +157,5 @@ jobs:
           personal_token: ${{ secrets.PUSH_TOKEN }}
           external_repository: simple-robot-library/simbot3-component-tencent-guild-apiDoc
           publish_branch: gh-pages  # default: gh-pages
-          publish_dir: ./dokka/html
+          publish_dir: ./build/dokka/html
           # full_commit_message: Publish ${{ github.ref_name }} documentation

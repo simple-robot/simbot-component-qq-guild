@@ -15,9 +15,11 @@
  *
  */
 
-
+import org.jetbrains.dokka.base.DokkaBase
+import org.jetbrains.dokka.base.DokkaBaseConfiguration
 import org.gradle.api.plugins.JavaBasePlugin
 import java.io.File
+import java.time.Year
 
 plugins {
     id("org.jetbrains.dokka")
@@ -28,32 +30,18 @@ repositories {
 }
 
 fun org.jetbrains.dokka.gradle.AbstractDokkaTask.configOutput(format: String) {
-    moduleName.set("simple-robot-component-tencent-guild")
-    outputDirectory.set(rootProject.file("dokka/$format/v$version"))
+    moduleName.set("Simple Robot Component Tencent Guild")
+    outputDirectory.set(rootProject.file("build/dokka/$format"))
 }
 
 tasks.named<org.jetbrains.dokka.gradle.DokkaMultiModuleTask>("dokkaHtmlMultiModule") {
     configOutput("html")
-}
-
-tasks.register("dokkaHtmlMultiModuleAndPost") {
-    group = JavaBasePlugin.DOCUMENTATION_GROUP
-    dependsOn("dokkaHtmlMultiModule")
-    doLast {
-        val outDir = rootProject.file("dokka/html")
-        val indexFile = File(outDir, "index.html")
-        indexFile.createNewFile()
-        indexFile.writeText(
-            """
-            <html xmlns="http://www.w3.org/1999/xhtml">
-            <head>
-                <meta http-equiv="refresh" content="0;URL='v$version'" />
-            </head>
-            <body>
-            </body>
-            </html>
-        """.trimIndent()
-        )
-
+    
+    pluginConfiguration<DokkaBase, DokkaBaseConfiguration> {
+        customAssets = listOf(rootProject.file(".simbot/dokka-assets/logo-icon.svg"))
+        customStyleSheets = listOf(rootProject.file(".simbot/dokka-assets/css/kdoc-style.css"))
+        footerMessage = "© 2021-${Year.now().value} <a href='https://github.com/simple-robot'>Simple Robot</a>, <a href='https://github.com/ForteScarlet'>ForteScarlet</a>. All rights reserved."
+        separateInheritedMembers = true
     }
 }
+
