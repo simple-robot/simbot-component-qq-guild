@@ -1,72 +1,12 @@
-# Core
+# stdlib
 
-<div align="center">
-    <img src="../.simbot/logo.png" alt="logo" style="width:230px; height:230px; border-radius:50%; " />
-    <h2>
-        - simple-robot-component : tencent-guild -
-    </h2>
-    <h4>
-        ~ stdlib ~
-    </h4>
-    <br />
-<a href="https://repo1.maven.org/maven2/love/forte/simbot/component/simbot-component-tencent-guild-stdlib" target="_blank">
-  <img alt="release" src="https://img.shields.io/maven-central/v/love.forte.simbot.component/simbot-component-tencent-guild-stdlib" /></a>
-<a href="https://www.yuque.com/simpler-robot/simpler-robot-doc" target="_blank">
-  <img alt="doc" src="https://img.shields.io/badge/doc-yuque-brightgreen" /></a>
-<hr />
-   <img alt="stars" src="https://img.shields.io/github/stars/simple-robot/simbot-component-tencent-guild" />
-   <img alt="forks" src="https://img.shields.io/github/forks/simple-robot/simbot-component-tencent-guild" />
-   <img alt="watchers" src="https://img.shields.io/github/watchers/simple-robot/simbot-component-tencent-guild" />
-   <img alt="repo size" src="https://img.shields.io/github/repo-size/simple-robot/simbot-component-tencent-guild" />
-   <img alt="lines" src="https://img.shields.io/tokei/lines/github/simple-robot/simbot-component-tencent-guild" />
-   <img alt="issues" src="https://img.shields.io/github/issues-closed/simple-robot/simbot-component-tencent-guild?color=green" />
-   <img alt="last commit" src="https://img.shields.io/github/last-commit/simple-robot/simbot-component-tencent-guild" />
-   <a href="../COPYING"><img alt="copying" src="https://img.shields.io/github/license/simple-robot/simbot-component-tencent-guild" /></a>
-
-</div>
-
-
-core模块是针对bot事件监听的简易实现，是一个半 **底层** 库，仅提供最基础的 DSL 事件注册，不提供过多的应用级功能整合（例如依赖注入、自动扫描等等）
-
-如果你想使用更友好更高阶的使用，请关注 [simple-robot](https://github.com/ForteScarlet/simpler-robot)
-框架的3.x版本发布情况。更友好的应用级实现将会通过 `simple-robot` 的组件进行实现与提供。
-
-## 使用
-
-本库，目前仅基于 `simple-robot 3.0.0-preview.x.x` 版本api，从版本可以看出来，simbot 3.x的版本仍然处于极早期的预览阶段， 因此当前模块也相应的仅仅只是一个"预览"版本。
-
-本库将会 `simple-robot` 3.x发布时（或相对较其早的时刻）发布相应的正式版本。主要是因为 `simple-robot 3.x` 仍处于设计开发阶段，可能会出现一些接口变动。
+[模块说明](Module.md)
 
 ## 目前情况
 
 - 测试了基本的 `AT_MESSAGE` 事件接收与对此消息事件通过 `MessageSendApi` 进行回复（测试频道，语料无限制情况下）。
 - 测试了获取bot的guild列表。
 - 测试了一周以上的挂机。
-
-### Maven
-
-版本参考：*见头部图标*
-
-```xml
-
-<dependency>
-    <groupId>love.forte.simbot.component</groupId>
-    <artifactId>simbot-component-tencent-guild-stdlib</artifactId>
-    <version>${version}</version>
-</dependency>
-```
-
-### Gradle groovy
-
-```groovy
-implementation "love.forte.simbot.component:simbot-component-tencent-guild-stdlib:$version"
-```
-
-### Gradle kotlin DSL
-
-```kotlin
-implementation("love.forte.simbot.component:simbot-component-tencent-guild-stdlib:$version")
-```
 
 ## 示例
 

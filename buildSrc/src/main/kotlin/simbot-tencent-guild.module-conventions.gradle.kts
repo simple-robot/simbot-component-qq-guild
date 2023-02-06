@@ -16,6 +16,9 @@
  */
 import love.forte.gradle.common.core.project.setup
 import love.forte.gradle.common.core.repository.Repositories
+import org.jetbrains.dokka.DokkaConfiguration
+import org.jetbrains.dokka.gradle.DokkaTaskPartial
+import java.net.URL
 
 
 plugins {
@@ -93,3 +96,72 @@ logger.info("== project.group:   ${group}")
 logger.info("== project.name:    ${name}")
 logger.info("== project.version: ${version}")
 logger.info("========================================================")
+
+//// Dokka
+
+
+// dokka config
+tasks.withType<DokkaTaskPartial>().configureEach {
+    dokkaSourceSets.configureEach {
+        version = P.ComponentTencentGuild.version.toString()
+        documentedVisibilities.set(listOf(DokkaConfiguration.Visibility.PUBLIC, DokkaConfiguration.Visibility.PROTECTED))
+        fun checkModule(projectFileName: String): Boolean {
+            val moduleMdFile = project.file(projectFileName)
+            if (moduleMdFile.exists()) {
+                val isModuleHead = moduleMdFile.useLines { lines ->
+                    val head = lines.first { it.isNotBlank() }.trim()
+                    if (head == "# Module ${project.name}") {
+                        includes.from(projectFileName)
+                        return true
+                    }
+                }
+            }
+        
+            return false
+        }
+    
+        if (!checkModule("Module.md")) {
+            checkModule("README.md")
+        }
+        
+        // samples
+        samples.from(
+            project.files(),
+            project.files("src/samples/samples"),
+        )
+        
+        sourceLink {
+            localDirectory.set(projectDir.resolve("src"))
+            val relativeTo = projectDir.relativeTo(rootProject.projectDir)
+            remoteUrl.set(URL("${P.ComponentTencentGuild.HOMEPAGE}/tree/main/$relativeTo/src"))
+            remoteLineSuffix.set("#L")
+        }
+        
+        perPackageOption {
+            matchingRegex.set(".*internal.*") // will match all .internal packages and sub-packages
+            suppress.set(true)
+        }
+        
+        
+        
+        fun externalDocumentation(docUrl: URL) {
+            externalDocumentationLink {
+                url.set(docUrl)
+                packageListUrl.set(URL(docUrl, "${docUrl.path}/package-list"))
+            }
+        }
+        
+        // kotlin-coroutines doc
+        externalDocumentation(URL("https://kotlinlang.org/api/kotlinx.coroutines"))
+        
+        // kotlin-serialization doc
+        externalDocumentation(URL("https://kotlinlang.org/api/kotlinx.serialization"))
+    
+        // ktor
+        externalDocumentation(URL("https://api.ktor.io"))
+        
+        // simbot doc
+        externalDocumentation(URL("https://docs.simbot.forte.love/main"))
+        
+    }
+}
