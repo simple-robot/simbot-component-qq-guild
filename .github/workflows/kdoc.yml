@@ -32,6 +32,7 @@ jobs:
           arguments: |
             -Porg.gradle.jvmargs="-Xmx4g -Xms4g -XX:MaxMetaspaceSize=2g -Dfile.encoding=UTF-8" 
             -Porg.gradle.daemon=false
+            -DisSnapshot=false
             --info 
             --warning-mode all
             -x test
