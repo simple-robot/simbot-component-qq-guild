@@ -12,4 +12,3 @@ import TabItem from '@theme/TabItem';
 
 QQ频道组件是基于 [simbot核心库](https://github.com/simple-robot/simpler-robot) API对 [QQ频道机器人](https://bot.q.qq.com/wiki/develop/api/) 的实现。
 
-
