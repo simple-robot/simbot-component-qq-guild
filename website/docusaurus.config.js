@@ -4,7 +4,7 @@
 const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
-const currentVersion = '3.0.0.0-M'
+const currentVersion = '3.0.0.0-ALPHA'
 const firstYear = 2022
 const currentYear = new Date().getFullYear()
 const copyrightYear = currentYear === firstYear ? firstYear : firstYear + '-' + currentYear
