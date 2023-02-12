@@ -22,6 +22,7 @@ import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.ID
+import love.forte.simbot.literal
 import love.forte.simbot.tencentguild.DirectMessageSession
 import love.forte.simbot.tencentguild.api.RouteInfoBuilder
 import love.forte.simbot.tencentguild.api.TencentApi
@@ -46,10 +47,22 @@ import love.forte.simbot.tencentguild.api.TencentApi
  *
  * @author ForteScarlet
  */
-public class CreateDmsApi(
+public class CreateDmsApi internal constructor(
     recipientId: ID,
     sourceGuildId: ID,
 ) : TencentApi<DirectMessageSession>() {
+    public companion object Factory {
+        // POST /users/@me/dms
+        private val path = arrayOf("users", "@me", "dms")
+    
+        /**
+         * 构造 [CreateDmsApi].
+         *
+         */
+        @JvmStatic
+        public fun create(recipientId: ID, sourceGuildId: ID): CreateDmsApi = CreateDmsApi(recipientId, sourceGuildId)
+    }
+    
     override val resultDeserializer: DeserializationStrategy<DirectMessageSession>
         get() = DirectMessageSession.serializer
     
@@ -57,22 +70,17 @@ public class CreateDmsApi(
         get() = HttpMethod.Post
     
     override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = route
+        builder.apiPath = path
         builder.contentType
     }
     
-    private val _body = Body(recipientId, sourceGuildId)
+    private val _body = Body(recipientId.literal, sourceGuildId.literal)
     
     override val body: Any get() = _body
     
     @Serializable
     private data class Body(
-        @Serializable(ID.AsCharSequenceIDSerializer::class) @SerialName("recipient_id") private val recipientId: ID,
-        @Serializable(ID.AsCharSequenceIDSerializer::class) @SerialName("source_guild_id") private val sourceGuildId: ID,
+        @SerialName("recipient_id") private val recipientId: String,
+        @SerialName("source_guild_id") private val sourceGuildId: String,
     )
-    
-    public companion object {
-        // POST /users/@me/dms
-        private val route = listOf("users", "@me", "dms")
-    }
 }

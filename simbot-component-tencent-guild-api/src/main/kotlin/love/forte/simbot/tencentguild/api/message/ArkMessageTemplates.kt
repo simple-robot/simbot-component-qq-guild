@@ -25,7 +25,7 @@ import love.forte.simbot.tencentguild.buildArk
 /**
  * 官方提供的ark消息模板。
  *
- * see https://bot.q.qq.com/wiki/develop/api/openapi/message/message_template.html
+ * [参考文档](https://bot.q.qq.com/wiki/develop/api/openapi/message/message_template.html)
  *
  */
 public sealed class ArkMessageTemplates {
@@ -66,7 +66,6 @@ public sealed class ArkMessageTemplates {
                         }
                     }
                 }
-
             }
         }
 

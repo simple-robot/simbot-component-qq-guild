@@ -73,7 +73,7 @@ internal class TencentMemberImpl(
                 if (::dms.isInitialized) {
                     return dms
                 }
-                return CreateDmsApi(id, _guild.id).requestBy(bot).also {
+                return CreateDmsApi.create(id, _guild.id).requestBy(bot).also {
                     dms = it
                 }
             }
@@ -119,7 +119,7 @@ internal class TencentMemberImpl(
             currentCoroutineContext()[EventProcessingContext]?.event?.takeIf { it is TcgChannelAtMessageEvent } as? TcgChannelAtMessageEvent
         val msgId = currentEvent?.sourceEventEntity?.id
         
-        return DmsSendApi(guildId = dms.guildId, content = text, msgId = msgId).requestBy(bot).asReceipt()
+        return DmsSendApi.create(guildId = dms.guildId, content = text, msgId = msgId).requestBy(bot).asReceipt()
     }
     
     

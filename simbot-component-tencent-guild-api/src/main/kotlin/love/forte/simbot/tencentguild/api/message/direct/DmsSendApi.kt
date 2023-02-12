@@ -59,30 +59,73 @@ public class DmsSendApi private constructor(
     guildId: ID,
     override val body: Any, // TencentMessageForSending || MultiPartFormDataContent
 ) : TencentApi<TencentMessage>() {
-    @JvmOverloads
-    public constructor(guildId: ID, content: String, msgId: ID? = null) : this(
-        guildId,
-        TencentMessageForSending(content = content, msgId = msgId)
-    )
+    public companion object Factory {
+        
+        /**
+         * 构造 [DmsSendApi]
+         */
+        @JvmStatic
+        @JvmOverloads
+        public fun create(guildId: ID, content: String, msgId: ID? = null): DmsSendApi {
+            return DmsSendApi(guildId, TencentMessageForSending(content = content, msgId = msgId))
+        }
+        
+        /**
+         * 构造 [DmsSendApi]
+         */
+        @JvmStatic
+        @JvmOverloads
+        public fun create(guildId: ID, embed: TencentMessage.Embed, msgId: ID? = null): DmsSendApi {
+            return DmsSendApi(guildId, TencentMessageForSending(embed = embed, msgId = msgId))
+        }
+        
+        
+        /**
+         * 构造 [DmsSendApi]
+         */
+        @JvmStatic
+        @JvmOverloads
+        public fun create(guildId: ID, ark: TencentMessage.Ark, msgId: ID? = null): DmsSendApi {
+            return DmsSendApi(guildId, TencentMessageForSending(ark = ark, msgId = msgId))
+        }
+        
+        // with 'fileImage'
+        
+        
+        /**
+         * 构造 [DmsSendApi]
+         */
+        @JvmStatic
+        @JvmOverloads
+        public fun create(guildId: ID, sendingBody: TencentMessageForSending, fileImage: Resource? = null): DmsSendApi =
+            DmsSendApi(
+                guildId = guildId,
+                body = if (fileImage != null) sendingBody.toMultiPartFormDataContent(
+                    MessageSendApi.defaultJson,
+                    fileImage
+                ) else sendingBody
+            )
+        
+        
+        /**
+         * 构造 [DmsSendApi]
+         */
+        @JvmStatic
+        public fun create(guildId: ID, fileImage: Resource): DmsSendApi = DmsSendApi(
+            guildId = guildId,
+            body = null.toMultiPartFormDataContent(MessageSendApi.defaultJson, fileImage)
+        )
+        
+    }
     
-    @JvmOverloads
-    public constructor(guildId: ID, embed: TencentMessage.Embed, msgId: ID? = null) : this(
-        guildId,
-        TencentMessageForSending(embed = embed, msgId = msgId)
-    )
-    
-    @JvmOverloads
-    public constructor(guildId: ID, ark: TencentMessage.Ark, msgId: ID? = null) : this(
-        guildId,
-        TencentMessageForSending(ark = ark, msgId = msgId)
-    )
-    
-    // with 'fileImage'
     
     @JvmOverloads
     public constructor(guildId: ID, sendingBody: TencentMessageForSending, fileImage: Resource? = null) : this(
         guildId = guildId,
-        body = if (fileImage != null) sendingBody.toMultiPartFormDataContent(MessageSendApi.defaultJson, fileImage) else sendingBody
+        body = if (fileImage != null) sendingBody.toMultiPartFormDataContent(
+            MessageSendApi.defaultJson,
+            fileImage
+        ) else sendingBody
     )
     
     
@@ -93,7 +136,7 @@ public class DmsSendApi private constructor(
     
     
     // POST /channels/{channel_id}/messages
-    private val path: List<String> = listOf("dms", guildId.literal, "messages")
+    private val path = arrayOf("dms", guildId.literal, "messages")
     
     override val resultDeserializer: DeserializationStrategy<TencentMessage>
         get() = SendMessageResult.serializer()

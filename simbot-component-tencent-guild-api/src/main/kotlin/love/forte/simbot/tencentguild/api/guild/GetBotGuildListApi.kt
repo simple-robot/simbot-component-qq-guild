@@ -51,7 +51,7 @@ public class GetBotGuildListApi internal constructor(
 ) : TencentApi<List<TencentGuildInfo>>() {
     
     public companion object Factory {
-        private val route = listOf("users", "@me", "guilds")
+        private val route = arrayOf("users", "@me", "guilds")
         private val serializer = ListSerializer(TencentGuildInfo.serializer)
         private const val DEFAULT_LIMIT: Int = 100
         

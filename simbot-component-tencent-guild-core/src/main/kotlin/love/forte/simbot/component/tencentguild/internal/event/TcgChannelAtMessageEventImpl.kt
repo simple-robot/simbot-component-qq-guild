@@ -42,7 +42,7 @@ internal class TcgChannelAtMessageEventImpl(
         val (messageForSend, fileImage) = MessageParsers.parse(message)
         messageForSend.msgId = sourceEventEntity.id
         val cid = sourceEventEntity.channelId
-        return MessageSendApi(cid, messageForSend, fileImage).requestBy(bot).asReceipt()
+        return MessageSendApi.create(cid, messageForSend, fileImage).requestBy(bot).asReceipt()
     }
     
     override suspend fun send(message: Message): MessageReceipt = reply(message)

@@ -64,7 +64,7 @@ suspend fun main() {
     bot.processor(EventSignals.AtMessages.AtMessageCreate) { message ->
         println(message)
 
-        val api = MessageSendApi(channelId = message.channelId, content = "content", msgId = message.id)
+        val api = MessageSendApi.create(channelId = message.channelId, content = "content", msgId = message.id)
         // 发送回复消息
         val result = api.requestBy(bot)
         println(result)

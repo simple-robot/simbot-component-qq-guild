@@ -72,47 +72,79 @@ public class MessageSendApi private constructor(
     channelId: ID,
     override val body: Any, // TencentMessageForSending || MultiPartFormDataContent
 ) : TencentApi<TencentMessage>() {
-    public companion object {
-        internal val defaultJson: Json get() = DefaultJson
+    public companion object Factory {
+        /** 类似于 [io.ktor.serialization.kotlinx.json.DefaultJson] */
+        internal val defaultJson: Json
+            get() = Json {
+                encodeDefaults = true
+                isLenient = true
+                allowSpecialFloatingPointValues = true
+                allowStructuredMapKeys = true
+                prettyPrint = false
+                useArrayPolymorphism = false
+            }
+        
+        /**
+         * 构造 [MessageSendApi]
+         */
+        @JvmStatic
+        @JvmOverloads
+        public fun create(channelId: ID, content: String, msgId: ID? = null): MessageSendApi =
+            MessageSendApi(channelId, TencentMessageForSending(content = content, msgId = msgId))
+        
+        /**
+         * 构造 [MessageSendApi]
+         */
+        @JvmStatic
+        @JvmOverloads
+        public fun create(channelId: ID, embed: TencentMessage.Embed, msgId: ID? = null): MessageSendApi =
+            MessageSendApi(
+                channelId,
+                TencentMessageForSending(embed = embed, msgId = msgId),
+            )
+        
+        /**
+         * 构造 [MessageSendApi]
+         */
+        @JvmStatic
+        @JvmOverloads
+        public fun create(channelId: ID, ark: TencentMessage.Ark, msgId: ID? = null): MessageSendApi = MessageSendApi(
+            channelId,
+            TencentMessageForSending(ark = ark, msgId = msgId),
+        )
+        
+        // with 'fileImage'
+        
+        /**
+         * 构造 [MessageSendApi]
+         */
+        @JvmStatic
+        @JvmOverloads
+        public fun create(
+            channelId: ID,
+            sendingBody: TencentMessageForSending,
+            fileImage: Resource? = null
+        ): MessageSendApi = MessageSendApi(
+            channelId = channelId,
+            body = if (fileImage != null) sendingBody.toMultiPartFormDataContent(
+                defaultJson,
+                fileImage
+            ) else sendingBody
+        )
+        
+        /**
+         * 构造 [MessageSendApi]
+         */
+        @JvmStatic
+        public fun create(channelId: ID, fileImage: Resource): MessageSendApi = MessageSendApi(
+            channelId = channelId,
+            body = null.toMultiPartFormDataContent(defaultJson, fileImage)
+        )
     }
     
     
-    @JvmOverloads
-    public constructor(channelId: ID, content: String, msgId: ID? = null) : this(
-        channelId,
-        TencentMessageForSending(content = content, msgId = msgId),
-    )
-    
-    @JvmOverloads
-    public constructor(channelId: ID, embed: TencentMessage.Embed, msgId: ID? = null) : this(
-        channelId,
-        TencentMessageForSending(embed = embed, msgId = msgId),
-    )
-    
-    @JvmOverloads
-    public constructor(channelId: ID, ark: TencentMessage.Ark, msgId: ID? = null) : this(
-        channelId,
-        TencentMessageForSending(ark = ark, msgId = msgId),
-    )
-    
-    
-    // with 'fileImage'
-    
-    @JvmOverloads
-    public constructor(channelId: ID, sendingBody: TencentMessageForSending, fileImage: Resource? = null) : this(
-        channelId = channelId,
-        body = if (fileImage != null) sendingBody.toMultiPartFormDataContent(defaultJson, fileImage) else sendingBody
-    )
-    
-    
-    public constructor(channelId: ID, fileImage: Resource) : this(
-        channelId = channelId,
-        body = null.toMultiPartFormDataContent(defaultJson, fileImage)
-    )
-    
-    
     // POST /channels/{channel_id}/messages
-    private val path: List<String> = listOf("channels", channelId.literal, "messages")
+    private val path = arrayOf("channels", channelId.literal, "messages")
     
     override val resultDeserializer: DeserializationStrategy<TencentMessage>
         get() = SendMessageResult.serializer()
