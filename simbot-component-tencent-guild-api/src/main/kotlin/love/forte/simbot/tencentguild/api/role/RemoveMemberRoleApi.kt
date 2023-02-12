@@ -28,12 +28,22 @@ import love.forte.simbot.tencentguild.api.TencentApiWithoutResult
  *
  * @author ForteScarlet
  */
-public class RemoveMemberRoleApi(
+public class RemoveMemberRoleApi internal constructor(
     channelId: ID, guildId: ID,
     userId: ID, roleId: ID,
 ) : TencentApiWithoutResult() {
-    
-    private val _body = Body(channelId.toString())
+    public companion object Factory {
+        
+        /**
+         * 构造 [RemoveMemberRoleApi]
+         *
+         */
+        @JvmStatic
+        public fun create(
+            channelId: ID, guildId: ID,
+            userId: ID, roleId: ID,
+        ): RemoveMemberRoleApi = RemoveMemberRoleApi(channelId, guildId, userId, roleId)
+    }
     
     // DELETE /guilds/{guild_id}/members/{user_id}/roles/{role_id}
     private val path = arrayOf(
@@ -52,7 +62,7 @@ public class RemoveMemberRoleApi(
         builder.apiPath = path
     }
     
-    override val body: Any get() = _body
+    override val body: Any = Body(channelId.toString())
     
     /** 接收一个只填充了子频道id字段的对象 */
     @Serializable

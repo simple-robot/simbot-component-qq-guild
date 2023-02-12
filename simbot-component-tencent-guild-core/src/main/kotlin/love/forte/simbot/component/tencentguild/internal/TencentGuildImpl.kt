@@ -115,7 +115,7 @@ internal class TencentGuildImpl private constructor(
     
     
     override suspend fun member(id: ID): TencentMemberImpl? {
-        val member = kotlin.runCatching { GetMemberApi(source.id, id).requestBy(baseBot) }.getOrElse { e ->
+        val member = kotlin.runCatching { GetMemberApi.create(source.id, id).requestBy(baseBot) }.getOrElse { e ->
             if (e is TencentApiException && e.value == 404) return@getOrElse null
             
             throw e
@@ -126,7 +126,7 @@ internal class TencentGuildImpl private constructor(
     
     override val roles: Items<TencentRoleImpl>
         get() = bot.effectedFlowItems {
-            GetGuildRoleListApi(source.id).requestBy(baseBot).roles.forEach { info ->
+            GetGuildRoleListApi.create(source.id).requestBy(baseBot).roles.forEach { info ->
                 val roleImpl = TencentRoleImpl(baseBot, info)
                 emit(roleImpl)
             }
@@ -159,7 +159,7 @@ internal class TencentGuildImpl private constructor(
     
     private suspend fun syncOwner() {
         val ownerId = source.ownerId
-        val ownerInfo = GetMemberApi(source.id, ownerId).requestBy(baseBot)
+        val ownerInfo = GetMemberApi.create(source.id, ownerId).requestBy(baseBot)
         
         ownerInternal = TencentMemberImpl(baseBot, ownerInfo, this)
         logger.debug("Sync guild owner: {}", ownerInfo)
