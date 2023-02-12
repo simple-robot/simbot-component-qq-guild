@@ -44,7 +44,6 @@ plugins {
 
 dependencies {
     api(simbotApi)
-    api(kotlin("reflect"))
 
     api(libs.ktor.client.core)
     api(libs.ktor.client.cio)
