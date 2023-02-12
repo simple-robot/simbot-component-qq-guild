@@ -31,10 +31,19 @@ import love.forte.simbot.tencentguild.api.TencentApiWithoutResult
  *
  * @author ForteScarlet
  */
-public class DeleteAnnouncesApi(
+public class DeleteAnnouncesApi internal constructor(
     channelId: ID,
     messageId: ID,
 ) : TencentApiWithoutResult() {
+    
+    public companion object Factory {
+        
+        /**
+         * 构造 [DeleteAnnouncesApi]
+         */
+        @JvmStatic
+        public fun create(channelId: ID, messageId: ID): DeleteAnnouncesApi = DeleteAnnouncesApi(channelId, messageId)
+    }
     
     // DELETE /channels/{channel_id}/announces/{message_id}
     private val path = listOf("channels", channelId.toString(), "announces", messageId.toString())

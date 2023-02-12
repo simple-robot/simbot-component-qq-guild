@@ -29,16 +29,30 @@ import love.forte.simbot.tencentguild.api.TencentApi
 
 /**
  *
+ * 机器人设置消息为指定子频道公告。
+ *
  * [创建子频道公告](https://bot.q.qq.com/wiki/develop/api/openapi/announces/post_channel_announces.html)
  *
- * 机器人设置消息为指定子频道公告
  *
  * @author ForteScarlet
  */
-public class CreateAnnouncesApi(
+public class CreateAnnouncesApi internal constructor(
     channelId: ID,
     messageId: ID,
 ) : TencentApi<TencentAnnounces>() {
+    
+    public companion object Factory {
+        
+        /**
+         * 构建 [CreateAnnouncesApi]
+         * @param channelId 频道ID
+         * @param messageId 消息ID
+         */
+        @JvmStatic
+        public fun create(channelId: ID, messageId: ID): CreateAnnouncesApi = CreateAnnouncesApi(channelId, messageId)
+        
+    }
+    
     
     // POST /channels/{channel_id}/announces
     private val path = listOf("channels", channelId.toString(), "announces")
@@ -58,9 +72,8 @@ public class CreateAnnouncesApi(
     
     @Serializable
     private data class Body(
-        @SerialName("message_id")
-        @Serializable(ID.AsCharSequenceIDSerializer::class)
-        val messageId: ID,
+        @SerialName("message_id") @Serializable(ID.AsCharSequenceIDSerializer::class) val messageId: ID,
     )
+    
     
 }
