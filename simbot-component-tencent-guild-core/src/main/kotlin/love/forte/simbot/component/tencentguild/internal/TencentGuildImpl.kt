@@ -174,7 +174,7 @@ internal class TencentGuildImpl private constructor(
     
     
     private suspend fun syncChannels() {
-        val channelInfoList = GetGuildChannelListApi(source.id).requestBy(baseBot).sortedBy {
+        val channelInfoList = GetGuildChannelListApi.create(source.id).requestBy(baseBot).sortedBy {
             if (it.channelType.isGrouping) 0 else 1
         }
         

@@ -35,14 +35,6 @@ public class GetGuildChannelListApi internal constructor(guildId: ID) : GetTence
     
     public companion object Factory {
         private val serializer = ListSerializer(TencentChannelInfo.serializer)
-    
-        /**
-         * @suppress hidden
-         */
-        @JvmField
-        @JvmSynthetic
-        @Deprecated("renamed to Factory", level = DeprecationLevel.HIDDEN)
-        public val Companion: Factory = Factory // 二进制兼容..也许?
         
         /**
          * 构造 [GetGuildChannelListApi]

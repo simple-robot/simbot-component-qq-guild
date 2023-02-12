@@ -43,7 +43,15 @@ public class ModifyChannelMemberPermissionsApi internal constructor(
     add: Permissions? = null,
     remove: Permissions? = null,
 ) : TencentApi<TencentChannelPermissionsInfo>() {
+    
     @Api4J
+    @Deprecated(
+        "Use ModifyChannelMemberPermissionsApi.create(...)",
+        ReplaceWith(
+            "ModifyChannelMemberPermissionsApi.create(channelId, memberId, add, remove)",
+            "love.forte.simbot.tencentguild.api.channel.permissions.ModifyChannelMemberPermissionsApi.Factory.create"
+        )
+    )
     public constructor(channelId: ID, memberId: ID, add: Long, remove: Long) : this(
         channelId, memberId, Permissions(add), Permissions(remove)
     )

@@ -30,21 +30,71 @@ import love.forte.simbot.tencentguild.api.TencentApi
  *
  * [guilds](https://bot.q.qq.com/wiki/develop/api/openapi/user/guilds.html)
  */
-public class GetBotGuildListApi(
+public class GetBotGuildListApi internal constructor(
     /**
-     * 读此id之前的数据，before/after 只能带一个
+     * 读此id之前的数据。
+     *
+     * [before] 设置时， 先反序，再分页
      */
-    private val before: ID? = null,
+    public val before: ID?,
     
     /**
-     * 读此id之后的数据，before/after 只能带一个
+     * 读此id之后的数据。
+     *
+     * [after] 和 [before] 同时设置时， after 参数无效
      */
-    private val after: ID? = null,
+    public val after: ID?,
     /**
      * 每次拉取多少条数据	最大不超过100，默认100
      */
-    private val limit: Int = 100,
+    public val limit: Int = DEFAULT_LIMIT,
 ) : TencentApi<List<TencentGuildInfo>>() {
+    
+    public companion object Factory {
+        private val route = listOf("users", "@me", "guilds")
+        private val serializer = ListSerializer(TencentGuildInfo.serializer)
+        private const val DEFAULT_LIMIT: Int = 100
+        
+        /**
+         * 构造 [GetBotGuildListApi]
+         */
+        @JvmStatic
+        @JvmOverloads
+        public fun create(before: ID? = null, after: ID? = null, limit: Int = DEFAULT_LIMIT): GetBotGuildListApi =
+            GetBotGuildListApi(before, after, limit)
+        
+        /**
+         * 构造 [GetBotGuildListApi]
+         */
+        @JvmStatic
+        public fun create(limit: Int): GetBotGuildListApi =
+            GetBotGuildListApi(before = null, after = null, limit)
+        
+        
+        /**
+         * 构造 [GetBotGuildListApi]。提供 [GetBotGuildListApi.before] 属性。
+         *
+         * @param limit [GetBotGuildListApi.limit]
+         */
+        @JvmStatic
+        @JvmOverloads
+        public fun createByBefore(before: ID, limit: Int = DEFAULT_LIMIT): GetBotGuildListApi =
+            create(before = before, after = null, limit)
+        
+        
+        /**
+         * 构造 [GetBotGuildListApi]。提供 [GetBotGuildListApi.after] 属性。
+         *
+         * @param limit [GetBotGuildListApi.limit]
+         */
+        @JvmStatic
+        @JvmOverloads
+        public fun createByAfter(after: ID, limit: Int = DEFAULT_LIMIT): GetBotGuildListApi =
+            create(before = null, after = after, limit)
+        
+        
+    }
+    
     
     override val resultDeserializer: DeserializationStrategy<List<TencentGuildInfo>>
         get() = serializer
@@ -69,10 +119,6 @@ public class GetBotGuildListApi(
     override val body: Any?
         get() = null
     
-    public companion object {
-        private val route = listOf("users", "@me", "guilds")
-        private val serializer = ListSerializer(TencentGuildInfo.serializer)
-    }
 }
 
 

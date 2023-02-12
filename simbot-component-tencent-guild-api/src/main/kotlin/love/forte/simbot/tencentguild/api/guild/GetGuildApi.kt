@@ -27,7 +27,17 @@ import love.forte.simbot.tencentguild.api.TencentApi
 /**
  * 获取指定Guild
  */
-public class GetGuildApi(guildId: ID) : TencentApi<TencentGuildInfo>() {
+public class GetGuildApi internal constructor(guildId: ID) : TencentApi<TencentGuildInfo>() {
+    public companion object Factory {
+        
+        /**
+         * 构造 [GetGuildApi].
+         *
+         */
+        @JvmStatic
+        public fun create(guildId: ID): GetGuildApi = GetGuildApi(guildId)
+    }
+    
     private val path = listOf("guilds", guildId.toString())
     
     override val resultDeserializer: DeserializationStrategy<TencentGuildInfo>
