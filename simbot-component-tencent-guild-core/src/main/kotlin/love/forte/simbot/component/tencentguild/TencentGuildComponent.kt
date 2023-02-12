@@ -27,7 +27,7 @@ import love.forte.simbot.message.Message
 
 
 /**
- * 腾讯频道实现simbot相关组件的基本组件信息，可以用来获取组件ID、组件所用序列化器等等。
+ * QQ频道实现simbot相关组件的基本组件信息，可以用来获取组件ID、组件所用序列化器等等。
  *
  * @author ForteScarlet
  */
@@ -86,7 +86,7 @@ public class TencentGuildComponent : Component {
         }
         
         /**
-         * 腾讯频道组件所使用到的特殊消息类型序列化信息。
+         * QQ频道组件所使用到的特殊消息类型序列化信息。
          */
         @JvmStatic
         public val messageSerializersModule: SerializersModule = SerializersModule {

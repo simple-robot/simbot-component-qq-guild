@@ -16,8 +16,8 @@
  */
 
 import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.runBlocking
 import love.forte.simbot.tencentguild.tencentGuildBot
+import love.forte.simbot.utils.runInNoScopeBlocking
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.thread
@@ -29,7 +29,7 @@ import kotlin.concurrent.thread
 class BotTest {
 
 
-    fun test() = runBlocking {
+    fun test() = runInNoScopeBlocking {
 
         // 直接构建一个BOT
         val bot = tencentGuildBot(

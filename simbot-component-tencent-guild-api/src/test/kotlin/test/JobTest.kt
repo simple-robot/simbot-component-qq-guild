@@ -18,6 +18,7 @@
 package test
 
 import kotlinx.coroutines.*
+import love.forte.simbot.utils.runInNoScopeBlocking
 import kotlin.test.Test
 
 /**
@@ -27,7 +28,7 @@ import kotlin.test.Test
 class JobTest {
 
     @Test
-    fun test(): Unit = runBlocking {
+    fun test(): Unit = runInNoScopeBlocking {
         val pJob = Job()
 
 

@@ -21,57 +21,15 @@ package love.forte.simbot.tencentguild.api
 
 import io.ktor.client.*
 import io.ktor.http.*
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.StringFormat
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonBuilder
 import love.forte.simbot.Api4J
 import love.forte.simbot.logger.LoggerFactory
-import love.forte.simbot.tencentguild.InternalSrTcgApi
+import love.forte.simbot.utils.runInNoScopeBlocking
 import java.util.function.Consumer
 
 internal val logger = LoggerFactory.getLogger("love.forte.simbot.tencentguild.api.request")
-
-// @JvmSynthetic
-// public suspend fun TencentApi<*>.requestForResponse(
-//     client: HttpClient,
-//     server: Url,
-//     token: String,
-// ): HttpResponse {
-//     val api = this
-//
-//     return client.request {
-//         method = api.method
-//
-//         headers {
-//             this[HttpHeaders.Authorization] = token
-//         }
-//
-//         url {
-//             // route builder
-//             val routeBuilder = RouteInfoBuilder { name, value ->
-//                 parameters.append(name, value.toString())
-//             }
-//
-//             api.route(routeBuilder)
-//             api.body?.also { b -> body = b }
-//
-//             protocol = server.protocol
-//             host = server.host
-//             path(routeBuilder.apiPath)
-//             routeBuilder.contentType?.let {
-//                 headers {
-//                     this[HttpHeaders.ContentType] = it.toString()
-//                 }
-//             }
-//             // val contentType = routeBuilder.contentType
-//             // if (contentType != null) {
-//             //     contentType(contentType)
-//             // }
-//         }
-//
-//     }
-// }
 
 /**
  *
@@ -98,7 +56,6 @@ public suspend fun <R> TencentApi<R>.request(
 /**
  * for Java
  */
-@OptIn(InternalSrTcgApi::class)
 @Api4J
 @JvmOverloads
 public fun <R> doRequest(
@@ -107,7 +64,7 @@ public fun <R> doRequest(
     server: String,
     token: String,
     decoder: StringFormat = defaultJson,
-): R = runBlocking {
+): R = runInNoScopeBlocking {
     api.request(client, Url(server), token, decoder)
 }
 

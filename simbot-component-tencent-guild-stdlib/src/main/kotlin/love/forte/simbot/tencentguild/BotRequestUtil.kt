@@ -22,6 +22,7 @@ package love.forte.simbot.tencentguild
 import kotlinx.coroutines.*
 import love.forte.simbot.*
 import love.forte.simbot.tencentguild.api.*
+import love.forte.simbot.utils.runInNoScopeBlocking
 
 
 /**
@@ -63,7 +64,7 @@ public suspend fun <R> TencentGuildBot.request(api: TencentApi<R>): R = api.requ
  * @throws love.forte.simbot.tencentguild.TencentApiException 如果返回状态码不在 200..300之间。
  */
 @Api4J
-public fun <R> doRequest(bot: TencentGuildBot, api: TencentApi<R>): R = runBlocking {
+public fun <R> doRequest(bot: TencentGuildBot, api: TencentApi<R>): R = runInNoScopeBlocking {
     api.requestBy(bot)
 }
 

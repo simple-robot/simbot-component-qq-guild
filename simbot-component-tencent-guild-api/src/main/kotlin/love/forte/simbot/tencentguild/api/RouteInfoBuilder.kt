@@ -19,7 +19,6 @@ package love.forte.simbot.tencentguild.api
 
 import io.ktor.http.*
 
-
 public class RouteInfoBuilder(public val parametersAppender: ParametersAppender) {
     /**
      * 可以设置api路径

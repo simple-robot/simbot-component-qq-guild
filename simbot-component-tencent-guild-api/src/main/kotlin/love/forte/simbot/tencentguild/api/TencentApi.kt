@@ -32,7 +32,7 @@ import love.forte.simbot.tencentguild.err
 
 
 /**
- * 表示为一个腾讯频道的API。
+ * 表示为一个QQ频道的API。
  *
  * 通过 [doRequest] 发起一次请求。
  *

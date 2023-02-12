@@ -28,7 +28,7 @@ import love.forte.simbot.message.doSafeCast
 
 /**
  *
- * 腾讯频道机器人为公域时可能需要指定一个回复消息的目标，通过拼接 [TcgReplyTo] 到当前消息列表中来提供一个回复消息的目标信息。
+ * QQ频道机器人为公域时可能需要指定一个回复消息的目标，通过拼接 [TcgReplyTo] 到当前消息列表中来提供一个回复消息的目标信息。
  *
  * @author ForteScarlet
  */

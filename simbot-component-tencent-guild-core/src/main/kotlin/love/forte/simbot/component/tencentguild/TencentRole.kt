@@ -22,7 +22,7 @@ import love.forte.simbot.definition.Role
 import love.forte.simbot.tencentguild.TencentRoleInfo
 
 /**
- * 腾讯频道中所使用的角色类型。
+ * QQ频道中所使用的角色类型。
  * @author ForteScarlet
  */
 public interface TencentRole : Role, TencentRoleInfo {
