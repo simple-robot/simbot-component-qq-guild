@@ -31,7 +31,26 @@ import love.forte.simbot.tencentguild.api.RouteInfoBuilder
  *
  * @author ForteScarlet
  */
-public class GetGuildChannelListApi(guildId: ID) : GetTencentApi<List<TencentChannelInfo>>() {
+public class GetGuildChannelListApi internal constructor(guildId: ID) : GetTencentApi<List<TencentChannelInfo>>() {
+    
+    public companion object Factory {
+        private val serializer = ListSerializer(TencentChannelInfo.serializer)
+    
+        /**
+         * @suppress hidden
+         */
+        @JvmField
+        @JvmSynthetic
+        @Deprecated("renamed to Factory", level = DeprecationLevel.HIDDEN)
+        public val Companion: Factory = Factory // 二进制兼容..也许?
+        
+        /**
+         * 构造 [GetGuildChannelListApi]
+         */
+        @JvmStatic
+        public fun create(guildId: ID): GetGuildChannelListApi = GetGuildChannelListApi(guildId)
+    }
+    
     // GET /guilds/{guild_id}/channels
     private val path = listOf("guilds", guildId.toString(), "channels")
 
@@ -42,7 +61,4 @@ public class GetGuildChannelListApi(guildId: ID) : GetTencentApi<List<TencentCha
         builder.apiPath = path
     }
 
-    public companion object {
-        private val serializer = ListSerializer(TencentChannelInfo.serializer)
-    }
 }
