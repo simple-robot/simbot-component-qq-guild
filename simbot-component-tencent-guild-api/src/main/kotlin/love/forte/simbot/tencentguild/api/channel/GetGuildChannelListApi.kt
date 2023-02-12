@@ -44,7 +44,7 @@ public class GetGuildChannelListApi internal constructor(guildId: ID) : GetTence
     }
     
     // GET /guilds/{guild_id}/channels
-    private val path = listOf("guilds", guildId.toString(), "channels")
+    private val path = arrayOf("guilds", guildId.toString(), "channels")
 
     override val resultDeserializer: DeserializationStrategy<List<TencentChannelInfo>>
         get() = serializer

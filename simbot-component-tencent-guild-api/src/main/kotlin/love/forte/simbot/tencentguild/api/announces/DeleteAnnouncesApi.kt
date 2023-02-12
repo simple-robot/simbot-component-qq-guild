@@ -46,7 +46,7 @@ public class DeleteAnnouncesApi internal constructor(
     }
     
     // DELETE /channels/{channel_id}/announces/{message_id}
-    private val path = listOf("channels", channelId.toString(), "announces", messageId.toString())
+    private val path = arrayOf("channels", channelId.toString(), "announces", messageId.toString())
     
     override val method: HttpMethod
         get() = HttpMethod.Delete

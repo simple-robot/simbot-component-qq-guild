@@ -35,7 +35,7 @@ public class GetGuildRoleListApi(guildId: ID) : GetTencentApi<GuildRoleList>() {
         builder.apiPath = path
     }
 
-    private val path = listOf("/guilds", guildId.toString(), "roles")
+    private val path = arrayOf("/guilds", guildId.toString(), "roles")
 
     public companion object {
         private val serializer = GuildRoleList.serializer()

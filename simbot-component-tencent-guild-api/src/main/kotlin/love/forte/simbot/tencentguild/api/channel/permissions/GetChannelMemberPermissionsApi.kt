@@ -44,7 +44,7 @@ public class GetChannelMemberPermissionsApi internal constructor(
     }
     
     // GET /channels/{channel_id}/members/{user_id}/permissions
-    private val path = listOf("channels", channelId.toString(), "members", memberId.toString(), "permissions")
+    private val path = arrayOf("channels", channelId.toString(), "members", memberId.toString(), "permissions")
     
     override val resultDeserializer: DeserializationStrategy<TencentChannelPermissionsInfo>
         get() = TencentChannelPermissionsInfo.serializer

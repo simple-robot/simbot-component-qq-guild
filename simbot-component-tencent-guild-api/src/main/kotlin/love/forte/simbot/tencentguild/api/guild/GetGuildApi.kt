@@ -38,7 +38,7 @@ public class GetGuildApi internal constructor(guildId: ID) : TencentApi<TencentG
         public fun create(guildId: ID): GetGuildApi = GetGuildApi(guildId)
     }
     
-    private val path = listOf("guilds", guildId.toString())
+    private val path = arrayOf("guilds", guildId.toString())
     
     override val resultDeserializer: DeserializationStrategy<TencentGuildInfo>
         get() = TencentGuildInfo.serializer

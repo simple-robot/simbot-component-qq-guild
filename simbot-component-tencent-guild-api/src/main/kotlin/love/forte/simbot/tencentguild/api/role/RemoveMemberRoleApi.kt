@@ -36,7 +36,7 @@ public class RemoveMemberRoleApi(
     private val _body = Body(channelId.toString())
     
     // DELETE /guilds/{guild_id}/members/{user_id}/roles/{role_id}
-    private val path = listOf(
+    private val path = arrayOf(
         "guilds",
         guildId.toString(),
         "members",

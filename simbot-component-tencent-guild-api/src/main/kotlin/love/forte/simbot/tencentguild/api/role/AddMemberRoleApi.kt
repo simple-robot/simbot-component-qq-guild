@@ -36,7 +36,7 @@ public class AddMemberRoleApi(
     private val _body = Body(channelId.toString())
     
     // PUT /guilds/{guild_id}/members/{user_id}/roles/{role_id}
-    private val path = listOf(
+    private val path = arrayOf(
         "guilds",
         guildId.toString(),
         "members",

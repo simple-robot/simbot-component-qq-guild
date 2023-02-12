@@ -41,7 +41,7 @@ public class GetChannelApi internal constructor(channelId: ID) : GetTencentApi<T
     }
     
     // GET /channels/{channel_id}
-    private val path = listOf("channels", channelId.toString())
+    private val path = arrayOf("channels", channelId.toString())
 
     override val resultDeserializer: DeserializationStrategy<TencentChannelInfo>
         get() = TencentChannelInfo.serializer

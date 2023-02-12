@@ -31,7 +31,7 @@ import love.forte.simbot.tencentguild.api.RouteInfoBuilder
  */
 public class GetMessageApi(channelId: ID, messageId: ID) : GetTencentApi<TencentMessage>() {
     // GET /channels/{channel_id}/messages/{message_id}
-    private val path = listOf("channels", channelId.toString(), "messages", messageId.toString())
+    private val path = arrayOf("channels", channelId.toString(), "messages", messageId.toString())
 
     override val resultDeserializer: DeserializationStrategy<TencentMessage>
         get() = TencentMessage.serializer

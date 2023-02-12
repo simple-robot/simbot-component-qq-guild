@@ -35,7 +35,7 @@ import love.forte.simbot.tencentguild.api.GatewayApis.Shared
  * @author ForteScarlet
  */
 public sealed class GatewayApis<R : GatewayInfo>(
-    protected val path: List<String>,
+    protected val path: Array<String>,
     override val resultDeserializer: DeserializationStrategy<R>
 ) : GetTencentApi<R>() {
     
@@ -48,7 +48,7 @@ public sealed class GatewayApis<R : GatewayInfo>(
      *
      * > [参考文档](https://bot.q.qq.com/wiki/develop/api/openapi/wss/url_get.html)
      */
-    public object Normal : GatewayApis<Gateway>(listOf("gateway"), Gateway.serializer())
+    public object Normal : GatewayApis<Gateway>(arrayOf("gateway"), Gateway.serializer())
     
     
     /**
@@ -56,7 +56,7 @@ public sealed class GatewayApis<R : GatewayInfo>(
      *
      * > [参考文档](https://bot.q.qq.com/wiki/develop/api/openapi/wss/shard_url_get.html)
      */
-    public object Shared : GatewayApis<GatewayWithShard>(listOf("gateway", "bot"), GatewayWithShard.serializer())
+    public object Shared : GatewayApis<GatewayWithShard>(arrayOf("gateway", "bot"), GatewayWithShard.serializer())
 }
 
 

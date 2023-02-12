@@ -48,7 +48,7 @@ public class ModifyGuildRoleApi private constructor(
         else Body(filter, info)
     )
     
-    private val path = listOf("guilds", guildId.toString(), "roles", roleId.toString())
+    private val path = arrayOf("guilds", guildId.toString(), "roles", roleId.toString())
     
     override val resultDeserializer: DeserializationStrategy<GuildRoleModified>
         get() = serializer

@@ -31,7 +31,7 @@ import love.forte.simbot.tencentguild.api.TencentApiWithoutResult
  * @author ForteScarlet
  */
 public class DeleteGuildRoleApi(guildId: ID, roleId: ID) : TencentApiWithoutResult() {
-    private val path = listOf("guilds", guildId.toString(), "roles", roleId.toString())
+    private val path = arrayOf("guilds", guildId.toString(), "roles", roleId.toString())
     
     override val method: HttpMethod
         get() = HttpMethod.Delete

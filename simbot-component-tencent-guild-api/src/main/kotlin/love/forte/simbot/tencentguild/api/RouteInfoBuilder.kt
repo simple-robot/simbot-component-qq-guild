@@ -19,11 +19,15 @@ package love.forte.simbot.tencentguild.api
 
 import io.ktor.http.*
 
+/**
+ * @suppress internal type
+ */
 public class RouteInfoBuilder(public val parametersAppender: ParametersAppender) {
     /**
      * 可以设置api路径
      */
-    public var apiPath: List<String> = emptyList()
+    public var apiPath: Array<out String>? = null
+    
     
     /**
      * 请求头中的 [ContentType], 绝大多数情况下，此参数默认为 [ContentType.Application.Json].

@@ -49,7 +49,7 @@ public class CreateGuildRoleApi internal constructor(
         else Body(filter, info)
     )
     
-    private val path = listOf("guilds", guildId.toString(), "roles")
+    private val path = arrayOf("guilds", guildId.toString(), "roles")
     
     
     override val resultDeserializer: DeserializationStrategy<GuildRoleCreated> get() = GuildRoleCreated.serializer
