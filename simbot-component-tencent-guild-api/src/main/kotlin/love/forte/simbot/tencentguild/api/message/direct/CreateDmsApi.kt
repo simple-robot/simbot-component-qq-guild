@@ -50,7 +50,7 @@ public class CreateDmsApi(
     recipientId: ID,
     sourceGuildId: ID,
 ) : TencentApi<DirectMessageSession>() {
-    override val resultDeserializer: DeserializationStrategy<out DirectMessageSession>
+    override val resultDeserializer: DeserializationStrategy<DirectMessageSession>
         get() = DirectMessageSession.serializer
     
     override val method: HttpMethod

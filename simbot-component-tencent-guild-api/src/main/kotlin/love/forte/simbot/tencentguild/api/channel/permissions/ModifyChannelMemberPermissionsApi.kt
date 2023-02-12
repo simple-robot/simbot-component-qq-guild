@@ -48,7 +48,7 @@ public class ModifyChannelMemberPermissionsApi(
     // GET /channels/{channel_id}/members/{user_id}/permissions
     private val path = listOf("channels", channelId.toString(), "members", memberId.toString(), "permissions")
     
-    override val resultDeserializer: DeserializationStrategy<out TencentChannelPermissionsInfo>
+    override val resultDeserializer: DeserializationStrategy<TencentChannelPermissionsInfo>
         get() = TencentChannelPermissionsInfo.serializer
     
     override fun route(builder: RouteInfoBuilder) {

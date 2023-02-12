@@ -43,7 +43,7 @@ public class CreateAnnouncesApi(
     // POST /channels/{channel_id}/announces
     private val path = listOf("channels", channelId.toString(), "announces")
     
-    override val resultDeserializer: DeserializationStrategy<out TencentAnnounces>
+    override val resultDeserializer: DeserializationStrategy<TencentAnnounces>
         get() = TencentAnnounces.serializer
     
     override val method: HttpMethod

@@ -50,7 +50,7 @@ public class ModifyGuildRoleApi private constructor(
     
     private val path = listOf("guilds", guildId.toString(), "roles", roleId.toString())
     
-    override val resultDeserializer: DeserializationStrategy<out GuildRoleModified>
+    override val resultDeserializer: DeserializationStrategy<GuildRoleModified>
         get() = serializer
     override val method: HttpMethod
         get() = HttpMethod.Patch

@@ -22,7 +22,7 @@ import kotlinx.serialization.*
 
 public sealed class GatewayApis<R : GatewayInfo>(
     protected val path: List<String>,
-    override val resultDeserializer: DeserializationStrategy<out R>
+    override val resultDeserializer: DeserializationStrategy<R>
 ) : GetTencentApi<R>() {
 
     override fun route(builder: RouteInfoBuilder) {

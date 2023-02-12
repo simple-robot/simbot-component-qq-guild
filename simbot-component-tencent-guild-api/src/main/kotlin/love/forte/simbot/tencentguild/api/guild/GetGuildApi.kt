@@ -30,7 +30,7 @@ import love.forte.simbot.tencentguild.api.TencentApi
 public class GetGuildApi(guildId: ID) : TencentApi<TencentGuildInfo>() {
     private val path = listOf("guilds", guildId.toString())
     
-    override val resultDeserializer: DeserializationStrategy<out TencentGuildInfo>
+    override val resultDeserializer: DeserializationStrategy<TencentGuildInfo>
         get() = TencentGuildInfo.serializer
     
     override val method: HttpMethod

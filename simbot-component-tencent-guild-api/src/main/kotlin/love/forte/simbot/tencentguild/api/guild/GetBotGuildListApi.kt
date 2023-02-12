@@ -46,7 +46,7 @@ public class GetBotGuildListApi(
     private val limit: Int = 100,
 ) : TencentApi<List<TencentGuildInfo>>() {
     
-    override val resultDeserializer: DeserializationStrategy<out List<TencentGuildInfo>>
+    override val resultDeserializer: DeserializationStrategy<List<TencentGuildInfo>>
         get() = serializer
     
     override val method: HttpMethod

@@ -95,7 +95,7 @@ public class DmsSendApi private constructor(
     // POST /channels/{channel_id}/messages
     private val path: List<String> = listOf("dms", guildId.literal, "messages")
     
-    override val resultDeserializer: DeserializationStrategy<out TencentMessage>
+    override val resultDeserializer: DeserializationStrategy<TencentMessage>
         get() = SendMessageResult.serializer()
     
     override val method: HttpMethod
