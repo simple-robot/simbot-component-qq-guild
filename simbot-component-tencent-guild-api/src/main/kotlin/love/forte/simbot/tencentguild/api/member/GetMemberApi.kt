@@ -35,7 +35,7 @@ public class GetMemberApi(
     // GET /guilds/{guild_id}/members/{user_id}
     private val path = listOf("guilds", guildId.toString(), "members", userId.toString())
 
-    override val resultDeserializer: DeserializationStrategy<out TencentMemberInfo>
+    override val resultDeserializer: DeserializationStrategy<TencentMemberInfo>
         get() = TencentMemberInfo.serializer
 
     override fun route(builder: RouteInfoBuilder) {

@@ -43,7 +43,7 @@ public abstract class TencentApi<out R> {
     /**
      * 得到响应值的反序列化器.
      */
-    public abstract val resultDeserializer: DeserializationStrategy<out R>
+    public abstract val resultDeserializer: DeserializationStrategy<R>
     
     
     /**
@@ -146,7 +146,7 @@ private suspend inline fun checkStatus(resp: HttpResponse, status: () -> HttpSta
 }
 
 public abstract class TencentApiWithoutResult : TencentApi<Unit>() {
-    override val resultDeserializer: DeserializationStrategy<out Unit>
+    override val resultDeserializer: DeserializationStrategy<Unit>
         get() = Unit.serializer()
 }
 

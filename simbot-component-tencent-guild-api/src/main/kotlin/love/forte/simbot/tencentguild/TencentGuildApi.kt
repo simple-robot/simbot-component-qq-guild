@@ -53,23 +53,23 @@ public object TencentGuildApi {
     
     public val serializersModule: SerializersModule = SerializersModule {
         // region infos
-        polymorphicDefault(TencentGuildInfo::class) {
+        polymorphicDefaultDeserializer(TencentGuildInfo::class) {
             TencentGuildInfoImpl.serializer()
         }
-        polymorphicDefault(TencentUserInfo::class) {
+        polymorphicDefaultDeserializer(TencentUserInfo::class) {
             TencentUserInfoImpl.serializer()
         }
-        polymorphicDefault(TencentRoleInfo::class) {
+        polymorphicDefaultDeserializer(TencentRoleInfo::class) {
             TencentRoleInfoImpl.serializer()
         }
-        polymorphicDefault(TencentMemberInfo::class) {
+        polymorphicDefaultDeserializer(TencentMemberInfo::class) {
             TencentMemberInfoImpl.serializer()
         }
-        polymorphicDefault(TencentChannelInfo::class) {
+        polymorphicDefaultDeserializer(TencentChannelInfo::class) {
             TencentChannelInfoImpl.serializer()
         }
         // endregion
-        
+    
     }
 }
 

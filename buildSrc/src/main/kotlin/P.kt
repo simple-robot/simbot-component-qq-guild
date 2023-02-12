@@ -20,7 +20,7 @@ import love.forte.gradle.common.core.project.version as v
  *
  */
 
-val simbotVersion = v(3, 0, 0) - v("M5")
+val simbotVersion = v(3, 0, 0) - v("RC", 3)
 
 fun simbot(name: String, version: String = simbotVersion.toString()): String = "love.forte.simbot:simbot-$name:$version"
 fun simboot(name: String, version: String = simbotVersion.toString()): String = "love.forte.simbot.boot:simboot-$name:$version"
@@ -31,9 +31,6 @@ val simbotLogger = simbot("logger")
 val simbotLoggerJvm = simbot("logger-jvm")
 val simbotLoggerSlf4jImpl = simbot("logger-slf4j-impl")
 
-
-val simbootApi = simboot("api")
-val simbootCore = simboot("core")
 val simbotUtilLoop = "love.forte.simbot.util:simbot-util-stage-loop:$simbotVersion"
 
 const val SIMBOT_GROUP = "love.forte.simbot"

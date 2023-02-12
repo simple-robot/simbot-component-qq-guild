@@ -56,7 +56,7 @@ public class DeleteDmsApi @JvmOverloads constructor(
     messageId: ID,
     private val hidetip: Boolean = false,
 ) : TencentApi<Unit>() {
-    override val resultDeserializer: DeserializationStrategy<out Unit>
+    override val resultDeserializer: DeserializationStrategy<Unit>
         get() = Unit.serializer()
     
     override val method: HttpMethod

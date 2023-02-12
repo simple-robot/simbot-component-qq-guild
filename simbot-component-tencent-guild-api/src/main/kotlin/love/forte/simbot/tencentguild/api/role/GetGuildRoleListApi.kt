@@ -29,7 +29,7 @@ import love.forte.simbot.tencentguild.api.*
  */
 public class GetGuildRoleListApi(guildId: ID) : GetTencentApi<GuildRoleList>() {
 
-    override val resultDeserializer: DeserializationStrategy<out GuildRoleList> = serializer
+    override val resultDeserializer: DeserializationStrategy<GuildRoleList> = serializer
 
     override fun route(builder: RouteInfoBuilder) {
         builder.apiPath = path

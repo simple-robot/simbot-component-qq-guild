@@ -33,7 +33,7 @@ public class GetMessageApi(channelId: ID, messageId: ID) : GetTencentApi<Tencent
     // GET /channels/{channel_id}/messages/{message_id}
     private val path = listOf("channels", channelId.toString(), "messages", messageId.toString())
 
-    override val resultDeserializer: DeserializationStrategy<out TencentMessage>
+    override val resultDeserializer: DeserializationStrategy<TencentMessage>
         get() = TencentMessage.serializer
 
     override fun route(builder: RouteInfoBuilder) {

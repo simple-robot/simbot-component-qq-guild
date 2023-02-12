@@ -52,7 +52,7 @@ public class CreateGuildRoleApi internal constructor(
     private val path = listOf("guilds", guildId.toString(), "roles")
     
     
-    override val resultDeserializer: DeserializationStrategy<out GuildRoleCreated> get() = GuildRoleCreated.serializer
+    override val resultDeserializer: DeserializationStrategy<GuildRoleCreated> get() = GuildRoleCreated.serializer
     override val method: HttpMethod get() = HttpMethod.Post
     
     override fun route(builder: RouteInfoBuilder) {
