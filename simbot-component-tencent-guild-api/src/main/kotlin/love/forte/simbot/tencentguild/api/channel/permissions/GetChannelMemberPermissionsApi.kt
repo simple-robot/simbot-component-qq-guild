@@ -28,17 +28,27 @@ import love.forte.simbot.tencentguild.api.RouteInfoBuilder
  * [获取指定子频道的权限](https://bot.q.qq.com/wiki/develop/api/openapi/channel_permissions/get_channel_permissions.html)
  * @author ForteScarlet
  */
-public class GetChannelMemberPermissionsApi(
+public class GetChannelMemberPermissionsApi internal constructor(
     channelId: ID,
     memberId: ID
 ) : GetTencentApi<TencentChannelPermissionsInfo>() {
-
+    
+    public companion object Factory {
+    
+        /**
+         * 构造 [GetChannelMemberPermissionsApi]
+         */
+        @JvmStatic
+        public fun create(channelId: ID, memberId: ID): GetChannelMemberPermissionsApi =
+            GetChannelMemberPermissionsApi(channelId, memberId)
+    }
+    
     // GET /channels/{channel_id}/members/{user_id}/permissions
-    private val path = listOf("channels", channelId.toString(), "members", memberId.toString(), "permissions")
-
+    private val path = arrayOf("channels", channelId.toString(), "members", memberId.toString(), "permissions")
+    
     override val resultDeserializer: DeserializationStrategy<TencentChannelPermissionsInfo>
         get() = TencentChannelPermissionsInfo.serializer
-
+    
     override fun route(builder: RouteInfoBuilder) {
         builder.apiPath = path
     }

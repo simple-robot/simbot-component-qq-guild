@@ -30,7 +30,7 @@ import love.forte.simbot.tencentguild.api.RouteInfoBuilder
  */
 public object GetBotInfoApi : GetTencentApi<TencentBotInfo>() {
     // GET /users/@me
-    private val path = listOf("users", "@me")
+    private val path = arrayOf("users", "@me")
     override val resultDeserializer: DeserializationStrategy<TencentBotInfo> = TencentBotInfo.serializer
     override fun route(builder: RouteInfoBuilder) {
         builder.apiPath = path

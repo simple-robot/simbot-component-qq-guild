@@ -29,13 +29,21 @@ import love.forte.simbot.tencentguild.api.RouteInfoBuilder
  *
  * @author ForteScarlet
  */
-public class GetMessageApi(channelId: ID, messageId: ID) : GetTencentApi<TencentMessage>() {
+public class GetMessageApi internal constructor(channelId: ID, messageId: ID) : GetTencentApi<TencentMessage>() {
+    public companion object Factory {
+        /**
+         * 构造 [GetMessageApi]
+         */
+        @JvmStatic
+        public fun create(channelId: ID, messageId: ID): GetMessageApi = GetMessageApi(channelId, messageId)
+    }
+    
     // GET /channels/{channel_id}/messages/{message_id}
-    private val path = listOf("channels", channelId.toString(), "messages", messageId.toString())
-
+    private val path = arrayOf("channels", channelId.toString(), "messages", messageId.toString())
+    
     override val resultDeserializer: DeserializationStrategy<TencentMessage>
         get() = TencentMessage.serializer
-
+    
     override fun route(builder: RouteInfoBuilder) {
         builder.apiPath = path
     }

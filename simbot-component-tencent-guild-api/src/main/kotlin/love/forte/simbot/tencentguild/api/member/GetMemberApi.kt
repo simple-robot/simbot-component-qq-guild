@@ -28,16 +28,25 @@ import love.forte.simbot.tencentguild.api.RouteInfoBuilder
  * [获取某个成员信息](https://bot.q.qq.com/wiki/develop/api/openapi/member/get_member.html)
  *
  */
-public class GetMemberApi(
+public class GetMemberApi internal constructor(
     guildId: ID,
     userId: ID
 ) : GetTencentApi<TencentMemberInfo>() {
+    public companion object Factory {
+        /**
+         * 构造 [GetMemberApi]
+         *
+         */
+        @JvmStatic
+        public fun create(guildId: ID, userId: ID): GetMemberApi = GetMemberApi(guildId, userId)
+    }
+    
     // GET /guilds/{guild_id}/members/{user_id}
-    private val path = listOf("guilds", guildId.toString(), "members", userId.toString())
-
+    private val path = arrayOf("guilds", guildId.toString(), "members", userId.toString())
+    
     override val resultDeserializer: DeserializationStrategy<TencentMemberInfo>
         get() = TencentMemberInfo.serializer
-
+    
     override fun route(builder: RouteInfoBuilder) {
         builder.apiPath = path
     }

@@ -28,25 +28,68 @@ import love.forte.simbot.tencentguild.api.RouteInfoBuilder
 import love.forte.simbot.tencentguild.api.TencentApi
 
 /**
+ * 用于修改子频道 channel_id 下用户 user_id 的权限。
  *
- * [修改指定子频道的权限](https://bot.q.qq.com/wiki/develop/api/openapi/channel_permissions/put_channel_permissions.html)
+ * > [修改指定子频道的权限](https://bot.q.qq.com/wiki/develop/api/openapi/channel_permissions/put_channel_permissions.html)
+ *
+ * - 要求操作人具有管理子频道的权限，如果是机器人，则需要将机器人设置为管理员。
+ * - 参数包括add和remove两个字段，分别表示授予的权限以及删除的权限。要授予用户权限即把add对应位置 1，删除用户权限即把remove对应位置 1。当两个字段同一位都为 1，表现为删除权限。
+ * - 本接口不支持修改可管理子频道权限。
+ *
  * @author ForteScarlet
  */
-public class ModifyChannelMemberPermissionsApi(
+public class ModifyChannelMemberPermissionsApi internal constructor(
     channelId: ID, memberId: ID,
     add: Permissions? = null,
     remove: Permissions? = null,
 ) : TencentApi<TencentChannelPermissionsInfo>() {
+    
     @Api4J
+    @Deprecated(
+        "Use ModifyChannelMemberPermissionsApi.create(...)",
+        ReplaceWith(
+            "ModifyChannelMemberPermissionsApi.create(channelId, memberId, add, remove)",
+            "love.forte.simbot.tencentguild.api.channel.permissions.ModifyChannelMemberPermissionsApi.Factory.create"
+        )
+    )
     public constructor(channelId: ID, memberId: ID, add: Long, remove: Long) : this(
-        channelId,
-        memberId,
-        Permissions(add),
-        Permissions(remove)
+        channelId, memberId, Permissions(add), Permissions(remove)
     )
     
+    public companion object Factory {
+        
+        /**
+         * 构造 [ModifyChannelMemberPermissionsApi].
+         * @param add 需要追加的权限
+         * @param remove 需要移除的权限
+         */
+        @JvmStatic
+        @JvmSynthetic
+        public fun create(
+            channelId: ID, memberId: ID,
+            add: Permissions? = null,
+            remove: Permissions? = null,
+        ): ModifyChannelMemberPermissionsApi = ModifyChannelMemberPermissionsApi(channelId, memberId, add, remove)
+        
+        /**
+         * 构造 [ModifyChannelMemberPermissionsApi].
+         *
+         * @param add 需要追加的权限
+         * @param remove 需要移除的权限
+         */
+        @JvmStatic
+        @JvmOverloads
+        public fun create(
+            channelId: ID, memberId: ID,
+            add: Long? = null,
+            remove: Long? = null,
+        ): ModifyChannelMemberPermissionsApi =
+            create(channelId, memberId, add?.let(::Permissions), remove?.let(::Permissions))
+        
+    }
+    
     // GET /channels/{channel_id}/members/{user_id}/permissions
-    private val path = listOf("channels", channelId.toString(), "members", memberId.toString(), "permissions")
+    private val path = arrayOf("channels", channelId.toString(), "members", memberId.toString(), "permissions")
     
     override val resultDeserializer: DeserializationStrategy<TencentChannelPermissionsInfo>
         get() = TencentChannelPermissionsInfo.serializer

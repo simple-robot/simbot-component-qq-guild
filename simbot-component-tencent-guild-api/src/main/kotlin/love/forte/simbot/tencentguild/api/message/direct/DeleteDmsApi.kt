@@ -44,18 +44,31 @@ import love.forte.simbot.tencentguild.api.TencentApi
  * * 注意: 开通后需要先将机器人从频道移除，然后重新添加，方可生效。
  *
  *
- *
+ * @param hidetip 是否隐藏提示小灰条，`true` 为隐藏，`false` 为显示。默认为 `false`
  *
  *
  *
  *
  * @author ForteScarlet
  */
-public class DeleteDmsApi @JvmOverloads constructor(
+public class DeleteDmsApi internal constructor(
     guildId: ID,
     messageId: ID,
     private val hidetip: Boolean = false,
 ) : TencentApi<Unit>() {
+    public companion object Factory {
+        
+        /**
+         * 构造 [DeleteDmsApi]
+         *
+         */
+        @JvmStatic
+        @JvmOverloads
+        public fun create(guildId: ID, messageId: ID, hidetip: Boolean = false): DeleteDmsApi =
+            DeleteDmsApi(guildId, messageId, hidetip)
+        
+    }
+    
     override val resultDeserializer: DeserializationStrategy<Unit>
         get() = Unit.serializer()
     
@@ -63,10 +76,10 @@ public class DeleteDmsApi @JvmOverloads constructor(
         get() = HttpMethod.Delete
     
     // /dms/{guild_id}/messages/{message_id}
-    private val route = listOf("dms", guildId.literal, "messages", messageId.literal)
+    private val path = arrayOf("dms", guildId.literal, "messages", messageId.literal)
     
     override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = route
+        builder.apiPath = path
         builder.parametersAppender.append("hidetip", hidetip)
     }
     

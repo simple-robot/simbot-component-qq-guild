@@ -38,19 +38,28 @@ public class CreateGuildRoleApi internal constructor(
     guildId: ID,
     private val _body: Body,
 ) : TencentApi<GuildRoleCreated>() {
-    @JvmOverloads
-    public constructor(
-        guildId: ID,
-        filter: GuildRoleFilter = defBody.filter,
-        info: GuildRoleInfo = defBody.info,
-    ) : this(
-        guildId,
-        if (filter === defBody.filter && info === defBody.info) defBody
-        else Body(filter, info)
-    )
     
-    private val path = listOf("guilds", guildId.toString(), "roles")
+    public companion object Factory {
+        private val defBody = Body(GuildRoleFilter.default, GuildRoleInfo.default)
+        
+        /**
+         * 构造 [CreateGuildRoleApi]
+         *
+         */
+        @JvmStatic
+        @JvmOverloads
+        public fun create(
+            guildId: ID,
+            filter: GuildRoleFilter = defBody.filter,
+            info: GuildRoleInfo = defBody.info
+        ): CreateGuildRoleApi = CreateGuildRoleApi(
+            guildId,
+            if (filter === defBody.filter && info === defBody.info) defBody
+            else Body(filter, info)
+        )
+    }
     
+    private val path = arrayOf("guilds", guildId.toString(), "roles")
     
     override val resultDeserializer: DeserializationStrategy<GuildRoleCreated> get() = GuildRoleCreated.serializer
     override val method: HttpMethod get() = HttpMethod.Post
@@ -60,10 +69,6 @@ public class CreateGuildRoleApi internal constructor(
     }
     
     override val body: Any get() = _body
-    
-    public companion object {
-        private val defBody = Body(GuildRoleFilter.default, GuildRoleInfo.default)
-    }
     
     
     @Serializable

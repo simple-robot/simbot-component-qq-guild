@@ -38,7 +38,7 @@ import love.forte.simbot.utils.item.Items.Companion.emptyItems
  */
 public interface TencentGuildComponentBot : Bot {
     /**
-     * 腾讯频道的 [组件][TencentGuildComponent] 对象实例。
+     * QQ频道的 [组件][TencentGuildComponent] 对象实例。
      */
     override val component: TencentGuildComponent
     
@@ -143,7 +143,7 @@ public interface TencentGuildComponentBot : Bot {
 
 
 /**
- * 腾讯频道组件中 [TencentGuildComponentBot] 对 [GuildBot] 的实现。
+ * QQ频道组件中 [TencentGuildComponentBot] 对 [GuildBot] 的实现。
  *
  */
 public interface TencentGuildComponentGuildBot : TencentGuildComponentBot, GuildBot {

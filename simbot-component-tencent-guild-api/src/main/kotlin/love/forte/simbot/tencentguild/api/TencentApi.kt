@@ -32,7 +32,7 @@ import love.forte.simbot.tencentguild.err
 
 
 /**
- * 表示为一个腾讯频道的API。
+ * 表示为一个QQ频道的API。
  *
  * 通过 [doRequest] 发起一次请求。
  *
@@ -115,7 +115,7 @@ private suspend fun TencentApi<*>.requestForResponse(client: HttpClient, server:
             
             protocol = server.protocol
             host = server.host
-            appendPathSegments(routeBuilder.apiPath)
+            routeBuilder.apiPath?.let { apiPath -> appendPathSegments(components = apiPath) }
             routeBuilder.contentType?.let {
                 headers {
                     this[HttpHeaders.ContentType] = it.toString()

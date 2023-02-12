@@ -29,7 +29,7 @@ import love.forte.simbot.tencentguild.EventSignals
 
 /**
  *
- * 腾讯频道bot的事件总类。
+ * QQ频道bot的事件总类。
  *
  * @param T 此类型代表其真正事件所得到的结果。
  *

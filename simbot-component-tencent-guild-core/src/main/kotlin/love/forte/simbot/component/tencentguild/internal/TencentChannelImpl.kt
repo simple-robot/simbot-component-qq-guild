@@ -63,7 +63,7 @@ internal class TencentChannelImpl internal constructor(
                 }
             }
         }
-        return MessageSendApi(source.id, messageForSend, fileImage).requestBy(baseBot).asReceipt()
+        return MessageSendApi.create(source.id, messageForSend, fileImage).requestBy(baseBot).asReceipt()
     }
     
     

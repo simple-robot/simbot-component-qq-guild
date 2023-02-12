@@ -35,7 +35,7 @@ class ApiTest {
     
     suspend fun run() {
         // 得到一个api请求对象
-        val api = GetBotGuildListApi(before = null, after = null, limit = 10)
+        val api = GetBotGuildListApi.create(before = null, after = null, limit = 10)
         
         val guildList: List<TencentGuildInfo> = api.request(
             client = client,

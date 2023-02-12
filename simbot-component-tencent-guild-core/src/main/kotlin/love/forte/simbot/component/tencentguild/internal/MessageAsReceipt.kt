@@ -25,7 +25,7 @@ import love.forte.simbot.tencentguild.TencentMessage
 
 public interface TencentMessageReceipt : MessageReceipt {
     /**
-     * 腾讯频道消息发送api发送消息后得到的回执，也就是消息对象。
+     * QQ频道消息发送api发送消息后得到的回执，也就是消息对象。
      */
     public val messageResult: TencentMessage
 }

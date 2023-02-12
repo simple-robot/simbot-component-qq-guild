@@ -36,22 +36,29 @@ public class ModifyGuildRoleApi private constructor(
     roleId: ID,
     private val _body: Body,
 ) : TencentApi<GuildRoleModified>() {
-    public constructor(
-        guildId: ID,
-        roleId: ID,
-        filter: GuildRoleFilter,
-        info: GuildRoleInfo,
-    ) : this(
-        guildId,
-        roleId,
-        if (filter === defBody.filter && info === defBody.info) defBody
-        else Body(filter, info)
-    )
     
-    private val path = listOf("guilds", guildId.toString(), "roles", roleId.toString())
+    public companion object Factory {
+        private val serializer = GuildRoleModified.serializer()
+        private val defBody = Body(GuildRoleFilter.default, GuildRoleInfo.default)
+        
+        /**
+         * 构造 [ModifyGuildRoleApi]
+         *
+         */
+        @JvmStatic
+        public fun create(
+            guildId: ID, roleId: ID, filter: GuildRoleFilter, info: GuildRoleInfo
+        ): ModifyGuildRoleApi = ModifyGuildRoleApi(
+            guildId, roleId, if (filter === defBody.filter && info === defBody.info) defBody
+            else Body(filter, info)
+        )
+    }
+    
+    private val path = arrayOf("guilds", guildId.toString(), "roles", roleId.toString())
     
     override val resultDeserializer: DeserializationStrategy<GuildRoleModified>
         get() = serializer
+    
     override val method: HttpMethod
         get() = HttpMethod.Patch
     
@@ -61,10 +68,6 @@ public class ModifyGuildRoleApi private constructor(
     
     override val body: Any get() = _body
     
-    public companion object {
-        private val serializer = GuildRoleModified.serializer()
-        private val defBody = Body(GuildRoleFilter.default, GuildRoleInfo.default)
-    }
     
     @Serializable
     private data class Body(val filter: GuildRoleFilter, val info: GuildRoleInfo)
@@ -75,14 +78,12 @@ public data class GuildRoleModified(
     /**
      * 频道ID
      */
-    @SerialName("guild_id")
-    public val guildId: CharSequenceID,
+    @SerialName("guild_id") public val guildId: CharSequenceID,
     
     /**
      * 身份组ID
      */
-    @SerialName("role_id")
-    public val roleId: CharSequenceID,
+    @SerialName("role_id") public val roleId: CharSequenceID,
     
     /**
      * 修改后的频道身份组对象

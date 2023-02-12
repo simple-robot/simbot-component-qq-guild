@@ -29,14 +29,23 @@ import love.forte.simbot.tencentguild.api.TencentApiWithoutResult
  *
  * @author ForteScarlet
  */
-public class AddMemberRoleApi(
+public class AddMemberRoleApi internal constructor(
     channelId: ID, guildId: ID,
     userId: ID, roleId: ID,
 ) : TencentApiWithoutResult() {
-    private val _body = Body(channelId.toString())
+    public companion object Factory {
+        
+        /**
+         * 构造 [AddMemberRoleApi]
+         *
+         */
+        @JvmStatic
+        public fun create(channelId: ID, guildId: ID, userId: ID, roleId: ID): AddMemberRoleApi =
+            AddMemberRoleApi(channelId, guildId, userId, roleId)
+    }
     
     // PUT /guilds/{guild_id}/members/{user_id}/roles/{role_id}
-    private val path = listOf(
+    private val path = arrayOf(
         "guilds",
         guildId.toString(),
         "members",
@@ -52,7 +61,7 @@ public class AddMemberRoleApi(
         builder.apiPath = path
     }
     
-    override val body: Any get() = _body
+    override val body: Any = Body(channelId.toString())
     
     /** 接收一个只填充了子频道id字段的对象 */
     @Serializable

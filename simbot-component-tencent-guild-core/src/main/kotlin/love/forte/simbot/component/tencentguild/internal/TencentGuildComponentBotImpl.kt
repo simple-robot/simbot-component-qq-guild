@@ -142,7 +142,7 @@ private suspend fun TencentGuildComponentBotImpl.initGuildListData() {
     var times = 1
     val guildInfoList = mutableListOf<TencentGuildInfo>()
     while (true) {
-        val list = GetBotGuildListApi(after = lastId).requestBy(source)
+        val list = GetBotGuildListApi.create(after = lastId).requestBy(source)
         if (list.isEmpty()) break
         
         logger.debug(

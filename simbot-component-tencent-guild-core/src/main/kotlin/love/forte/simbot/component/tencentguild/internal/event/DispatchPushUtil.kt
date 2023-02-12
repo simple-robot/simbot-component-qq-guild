@@ -88,14 +88,14 @@ internal val eventSignalParsers =
 internal suspend fun TencentGuildComponentBotImpl.createGuildImpl(
     guildId: ID,
 ): TencentGuildImpl {
-    val guild = GetGuildApi(guildId).requestBy(source)
+    val guild = GetGuildApi.create(guildId).requestBy(source)
     return tencentGuildImpl(this, guild)
 }
 
 internal suspend fun TencentGuildComponentBotImpl.createChannelImpl(
     guild: TencentGuildImpl, channelId: ID,
 ): TencentChannelImpl {
-    val channel = GetChannelApi(channelId).requestBy(source)
+    val channel = GetChannelApi.create(channelId).requestBy(source)
     val category = resolveCategory(guild, channel.parentId.ID)
     return TencentChannelImpl(this, channel, guild, category)
 }
@@ -106,7 +106,7 @@ internal suspend fun TencentGuildComponentBotImpl.resolveCategory(
 ): TencentChannelCategoryImpl {
     val idValue = id.literal
     return guild.internalChannelCategories[idValue] ?: run {
-        val categoryInfo = GetChannelApi(id).requestBy(source)
+        val categoryInfo = GetChannelApi.create(id).requestBy(source)
         guild.internalChannelCategories.compute(id.literal) { _, current ->
             current?.also {
                 it.channel = categoryInfo
