@@ -25,5 +25,5 @@ plugins {
 //group = P.ComponentTencentGuild.GROUP
 //version = P.ComponentTencentGuild.versionIfSnap
 
-logger.info("=== Current version: $version ===")
+logger.info("=== Current version: {} ===", version)
 
