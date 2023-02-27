@@ -17,5 +17,5 @@
 
 package love.forte.simbot.tencentguild
 
-public object Core {
-}
+@Deprecated("What is this for?", level = DeprecationLevel.HIDDEN)
+public object Core
