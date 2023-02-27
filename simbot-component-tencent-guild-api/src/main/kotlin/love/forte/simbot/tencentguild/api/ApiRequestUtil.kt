@@ -54,7 +54,7 @@ public suspend fun <R> TencentApi<R>.request(
 
 
 /**
- * for Java
+ * [request] for Java
  */
 @Api4J
 @JvmOverloads

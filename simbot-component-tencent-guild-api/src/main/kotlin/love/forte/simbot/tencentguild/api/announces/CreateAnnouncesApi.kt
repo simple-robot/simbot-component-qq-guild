@@ -21,10 +21,9 @@ import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import love.forte.simbot.ID
-import love.forte.simbot.tencentguild.TencentAnnounces
 import love.forte.simbot.tencentguild.api.RouteInfoBuilder
 import love.forte.simbot.tencentguild.api.TencentApi
+import love.forte.simbot.tencentguild.model.Announces
 
 
 /**
@@ -37,43 +36,44 @@ import love.forte.simbot.tencentguild.api.TencentApi
  * @author ForteScarlet
  */
 public class CreateAnnouncesApi internal constructor(
-    channelId: ID,
-    messageId: ID,
-) : TencentApi<TencentAnnounces>() {
-    
+    channelId: String,
+    messageId: String,
+) : TencentApi<Announces>() {
+
     public companion object Factory {
-        
+
         /**
          * 构建 [CreateAnnouncesApi]
          * @param channelId 频道ID
          * @param messageId 消息ID
          */
         @JvmStatic
-        public fun create(channelId: ID, messageId: ID): CreateAnnouncesApi = CreateAnnouncesApi(channelId, messageId)
-        
+        public fun create(channelId: String, messageId: String): CreateAnnouncesApi =
+            CreateAnnouncesApi(channelId, messageId)
+
     }
-    
-    
+
+
     // POST /channels/{channel_id}/announces
-    private val path = arrayOf("channels", channelId.toString(), "announces")
-    
-    override val resultDeserializer: DeserializationStrategy<TencentAnnounces>
-        get() = TencentAnnounces.serializer
-    
+    private val path = arrayOf("channels", channelId, "announces")
+
+    override val resultDeserializer: DeserializationStrategy<Announces>
+        get() = Announces.serializer()
+
     override val method: HttpMethod
         get() = HttpMethod.Post
-    
+
     override fun route(builder: RouteInfoBuilder) {
         builder.apiPath = path
     }
-    
+
     override val body: Any = Body(messageId)
-    
-    
+
+
     @Serializable
     private data class Body(
-        @SerialName("message_id") @Serializable(ID.AsCharSequenceIDSerializer::class) val messageId: ID,
+        @SerialName("message_id") val messageId: String,
     )
-    
-    
+
+
 }

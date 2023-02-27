@@ -18,7 +18,6 @@
 package love.forte.simbot.tencentguild.api.announces
 
 import io.ktor.http.*
-import love.forte.simbot.ID
 import love.forte.simbot.tencentguild.api.RouteInfoBuilder
 import love.forte.simbot.tencentguild.api.TencentApiWithoutResult
 
@@ -32,28 +31,29 @@ import love.forte.simbot.tencentguild.api.TencentApiWithoutResult
  * @author ForteScarlet
  */
 public class DeleteAnnouncesApi internal constructor(
-    channelId: ID,
-    messageId: ID,
+    channelId: String,
+    messageId: String,
 ) : TencentApiWithoutResult() {
-    
+
     public companion object Factory {
-        
+
         /**
          * 构造 [DeleteAnnouncesApi]
          */
         @JvmStatic
-        public fun create(channelId: ID, messageId: ID): DeleteAnnouncesApi = DeleteAnnouncesApi(channelId, messageId)
+        public fun create(channelId: String, messageId: String): DeleteAnnouncesApi =
+            DeleteAnnouncesApi(channelId, messageId)
     }
-    
+
     // DELETE /channels/{channel_id}/announces/{message_id}
-    private val path = arrayOf("channels", channelId.toString(), "announces", messageId.toString())
-    
+    private val path = arrayOf("channels", channelId, "announces", messageId)
+
     override val method: HttpMethod
         get() = HttpMethod.Delete
-    
+
     override fun route(builder: RouteInfoBuilder) {
         builder.apiPath = path
     }
-    
+
     override val body: Any? = null
 }
