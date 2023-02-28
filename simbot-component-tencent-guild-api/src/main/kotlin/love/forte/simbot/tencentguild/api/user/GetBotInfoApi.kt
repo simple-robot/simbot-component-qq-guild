@@ -18,20 +18,23 @@
 package love.forte.simbot.tencentguild.api.user
 
 import kotlinx.serialization.DeserializationStrategy
-import love.forte.simbot.tencentguild.TencentBotInfo
 import love.forte.simbot.tencentguild.api.GetTencentApi
 import love.forte.simbot.tencentguild.api.RouteInfoBuilder
+import love.forte.simbot.tencentguild.model.User
 
 
 /**
  *
- * [获取当前用户信息](https://bot.q.qq.com/wiki/develop/api/openapi/user/me.html)
+ * [获取用户详情](https://bot.q.qq.com/wiki/develop/api/openapi/user/me.html)
+ *
+ * 用于获取当前用户（机器人）详情。
+ *
  * @author ForteScarlet
  */
-public object GetBotInfoApi : GetTencentApi<TencentBotInfo>() {
+public object GetBotInfoApi : GetTencentApi<User>() {
     // GET /users/@me
     private val path = arrayOf("users", "@me")
-    override val resultDeserializer: DeserializationStrategy<TencentBotInfo> = TencentBotInfo.serializer
+    override val resultDeserializer: DeserializationStrategy<User> = User.serializer()
     override fun route(builder: RouteInfoBuilder) {
         builder.apiPath = path
     }

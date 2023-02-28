@@ -1,6 +1,8 @@
 package love.forte.simbot.tencentguild.model
 
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import love.forte.simbot.tencentguild.ApiModel
 
 /**
  * [用户对象](https://bot.q.qq.com/wiki/develop/api/openapi/user/model.html#user)
@@ -12,6 +14,8 @@ import kotlinx.serialization.SerialName
  * [unionOpenid] 与 [unionUserAccount] 只有在单独拉取 `member` 信息的时候才会提供，在其他的事件中所携带的 `user` 对象，均无这两个字段的内容。
  *
  */
+@ApiModel
+@Serializable
 public data class User(
     /** 用户 id */
     val id: String,
