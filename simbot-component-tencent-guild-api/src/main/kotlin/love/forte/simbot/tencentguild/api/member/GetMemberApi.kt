@@ -18,35 +18,36 @@
 package love.forte.simbot.tencentguild.api.member
 
 import kotlinx.serialization.DeserializationStrategy
-import love.forte.simbot.ID
-import love.forte.simbot.tencentguild.TencentMemberInfo
 import love.forte.simbot.tencentguild.api.GetTencentApi
 import love.forte.simbot.tencentguild.api.RouteInfoBuilder
+import love.forte.simbot.tencentguild.model.Member
 
 
 /**
  * [获取某个成员信息](https://bot.q.qq.com/wiki/develop/api/openapi/member/get_member.html)
  *
+ * 用于获取 `guild_id` 指定的频道中 `user_id` 对应成员的详细信息。
+ *
+ * @author ForteScarlet
  */
-public class GetMemberApi internal constructor(
-    guildId: ID,
-    userId: ID
-) : GetTencentApi<TencentMemberInfo>() {
+public class GetMemberApi private constructor(
+    guildId: String, userId: String
+) : GetTencentApi<Member>() {
     public companion object Factory {
         /**
          * 构造 [GetMemberApi]
          *
          */
         @JvmStatic
-        public fun create(guildId: ID, userId: ID): GetMemberApi = GetMemberApi(guildId, userId)
+        public fun create(guildId: String, userId: String): GetMemberApi = GetMemberApi(guildId, userId)
     }
-    
+
     // GET /guilds/{guild_id}/members/{user_id}
-    private val path = arrayOf("guilds", guildId.toString(), "members", userId.toString())
-    
-    override val resultDeserializer: DeserializationStrategy<TencentMemberInfo>
-        get() = TencentMemberInfo.serializer
-    
+    private val path = arrayOf("guilds", guildId, "members", userId)
+
+    override val resultDeserializer: DeserializationStrategy<Member>
+        get() = Member.serializer()
+
     override fun route(builder: RouteInfoBuilder) {
         builder.apiPath = path
     }

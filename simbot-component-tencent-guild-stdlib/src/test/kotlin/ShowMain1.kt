@@ -19,6 +19,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import love.forte.simbot.tencentguild.*
 import love.forte.simbot.tencentguild.api.message.MessageSendApi
+import love.forte.simbot.tencentguild.model.Message
 
 suspend fun main() {
     val bot = tencentGuildBot(
@@ -34,7 +35,7 @@ suspend fun main() {
     bot.processor { _, decoded ->
         val dispatch: Signal.Dispatch = this
         if (dispatch.type == "AT_MESSAGE_CREATE") {
-            val message: TencentMessage = decoded() as TencentMessage
+            val message: Message = decoded() as Message
             // decoder.decodeFromJsonElement(EventSignals.AtMessages.AtMessageCreate.decoder, jsonElement)
 
             println(message)
@@ -45,7 +46,7 @@ suspend fun main() {
     // 指定监听事件名称1
     bot.processor("AT_MESSAGE_CREATE") { decoder, decoded ->
         val dispatch: Signal.Dispatch = this
-        val message: TencentMessage = decoded() as TencentMessage
+        val message: Message = decoded() as Message
         // decoder.decodeFromJsonElement(EventSignals.AtMessages.AtMessageCreate.decoder, dispatch.data)
 
         println(message)
@@ -54,7 +55,7 @@ suspend fun main() {
     // 指定监听事件名称2
     bot.processor(EventSignals.AtMessages.AtMessageCreate.type) { decoder, decoded ->
         val dispatch: Signal.Dispatch = this
-        val message: TencentMessage = decoded() as TencentMessage
+        val message: Message = decoded() as Message
         // decoder.decodeFromJsonElement(EventSignals.AtMessages.AtMessageCreate.decoder, dispatch.data)
 
         println(message)

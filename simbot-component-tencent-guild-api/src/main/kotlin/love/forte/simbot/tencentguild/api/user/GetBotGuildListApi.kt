@@ -15,7 +15,7 @@
  *
  */
 
-package love.forte.simbot.tencentguild.api.guild
+package love.forte.simbot.tencentguild.api.user
 
 import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
@@ -34,7 +34,7 @@ import love.forte.simbot.tencentguild.model.Guild
  * 当 `HTTP Authorization` 中填入 `Bot Token` 是获取机器人的数据，填入 `Bearer Token` 则获取用户的数据。
  *
  */
-public class GetBotGuildListApi internal constructor(
+public class GetBotGuildListApi private constructor(
     /**
      * 读此id之前的数据。
      *

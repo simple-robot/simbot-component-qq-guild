@@ -157,3 +157,9 @@ public abstract class GetTencentApi<R> : TencentApi<R>() {
     override val body: Any?
         get() = null
 }
+
+public abstract class PostTencentApi<R> : TencentApi<R>() {
+    override val method: HttpMethod
+        get() = HttpMethod.Post
+
+}

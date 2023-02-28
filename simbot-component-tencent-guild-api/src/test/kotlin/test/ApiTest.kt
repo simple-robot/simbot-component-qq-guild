@@ -20,9 +20,8 @@ package test
 import io.ktor.client.*
 import io.ktor.http.*
 import kotlinx.serialization.json.Json
-import love.forte.simbot.tencentguild.TencentGuildInfo
-import love.forte.simbot.tencentguild.api.guild.GetBotGuildListApi
 import love.forte.simbot.tencentguild.api.request
+import love.forte.simbot.tencentguild.api.user.GetBotGuildListApi
 
 
 /**
@@ -37,7 +36,7 @@ class ApiTest {
         // 得到一个api请求对象
         val api = GetBotGuildListApi.create(before = null, after = null, limit = 10)
         
-        val guildList: List<TencentGuildInfo> = api.request(
+        val guildList = api.request(
             client = client,
             server = Url("https://sandbox.api.sgroup.qq.com"), // 请求server地址
             token = token,

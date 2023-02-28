@@ -9,7 +9,7 @@ import love.forte.simbot.tencentguild.TencentGuildObjective
  *
  * @author ForteScarlet
  */
-public interface TencentGuildObjectiveContainer<T : TencentGuildObjective> {
+public interface TencentGuildObjectiveContainer<T> {
     // TODO 尚未完善
     
     /**

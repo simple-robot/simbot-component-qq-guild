@@ -22,6 +22,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.serializer
 import love.forte.simbot.CharSequenceID
+import love.forte.simbot.tencentguild.model.Message
 
 /**
  * [intents](https://bot.q.qq.com/wiki/develop/api/gateway/intents.html#intents)
@@ -200,7 +201,7 @@ public sealed class EventSignals<out D : Any>(
         EventSignals<D>(t, decoder) {
         /** 当收到用户发给机器人的私信消息时 */
         public object DirectMessageCreate :
-            DirectMessage<TencentMessage>("DIRECT_MESSAGE_CREATE", TencentMessage.serializer)
+            DirectMessage<Message>("DIRECT_MESSAGE_CREATE", Message.serializer)
 
         public companion object {
             @JvmSynthetic
@@ -238,7 +239,7 @@ public sealed class EventSignals<out D : Any>(
     public sealed class AtMessages<D : Any>(t: String, decoder: DeserializationStrategy<D>) :
         EventSignals<D>(t, decoder) {
         /** 当收到@机器人的消息时 */
-        public object AtMessageCreate : AtMessages<TencentMessage>("AT_MESSAGE_CREATE", TencentMessage.serializer)
+        public object AtMessageCreate : AtMessages<Message>("AT_MESSAGE_CREATE", Message.serializer)
 
         // 文档内暂无描述，因此暂时不支持解析
         public object PublicMessageDelete : AtMessages<Unit>("PUBLIC_MESSAGE_DELETE", Unit.serializer())

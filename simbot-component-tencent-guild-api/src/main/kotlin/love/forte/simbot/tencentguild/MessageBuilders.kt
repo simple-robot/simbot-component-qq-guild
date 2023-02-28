@@ -20,12 +20,13 @@
 package love.forte.simbot.tencentguild
 
 import love.forte.simbot.*
+import love.forte.simbot.tencentguild.model.Message
 import java.time.*
 
 
 /**
  *
- * DSL 构建 [TencentMessage.Ark].
+ * DSL 构建 [Message.Ark].
  *
  *
  * ```
@@ -46,12 +47,12 @@ import java.time.*
  * ```
  *
  */
-public inline fun buildArk(templateId: ID, builder: ArkBuilder.() -> Unit): TencentMessage.Ark {
+public inline fun buildArk(templateId: ID, builder: ArkBuilder.() -> Unit): Message.Ark {
     return ArkBuilder(templateId).also(builder).build()
 }
 
-public fun buildArk(templateId: ID): TencentMessage.Ark {
-    return TencentMessage.Ark(templateId)
+public fun buildArk(templateId: ID): Message.Ark {
+    return Message.Ark(templateId)
 }
 
 
@@ -63,16 +64,16 @@ internal annotation class ArkBuilderDSL
 @ArkBuilderDSL
 public class ArkBuilder(public var templateId: ID) {
 
-    public fun from(ark: TencentMessage.Ark): ArkBuilder = also {
+    public fun from(ark: Message.Ark): ArkBuilder = also {
         templateId = ark.templateId
         kvs = ark.kv.toMutableList()
     }
 
     @ArkBuilderDSL
-    public var kvs: MutableList<TencentMessage.Ark.Kv> = mutableListOf()
+    public var kvs: MutableList<Message.Ark.Kv> = mutableListOf()
 
     public fun kv(key: String, value: String): ArkBuilder = also {
-        kvs.add(TencentMessage.Ark.Kv(key, value))
+        kvs.add(Message.Ark.Kv(key, value))
     }
 
     @ArkBuilderDSL
@@ -81,8 +82,8 @@ public class ArkBuilder(public var templateId: ID) {
     }
 
 
-    public fun build(): TencentMessage.Ark {
-        return TencentMessage.Ark(templateId, kvs.toList())
+    public fun build(): Message.Ark {
+        return Message.Ark(templateId, kvs.toList())
     }
 }
 
@@ -95,20 +96,20 @@ internal annotation class ArkKvBuilderDSL
 @ArkKvBuilderDSL
 public class ArkKvListBuilder {
     @ArkKvBuilderDSL
-    public var arkKvs: MutableList<TencentMessage.Ark.Kv> = mutableListOf()
+    public var arkKvs: MutableList<Message.Ark.Kv> = mutableListOf()
 
     @ArkKvBuilderDSL
     public fun kv(key: String, value: String): ArkKvListBuilder = also {
-        arkKvs.add(TencentMessage.Ark.Kv(key, value))
+        arkKvs.add(Message.Ark.Kv(key, value))
     }
 
     @ArkKvBuilderDSL
     @JvmOverloads
     public fun kv(key: String, value: String? = null, build: ArkObjListBuilder.() -> Unit): ArkKvListBuilder = also {
-        arkKvs.add(TencentMessage.Ark.Kv(key, value, ArkObjListBuilder().also(build).build()))
+        arkKvs.add(Message.Ark.Kv(key, value, ArkObjListBuilder().also(build).build()))
     }
 
-    public fun build(): List<TencentMessage.Ark.Kv> = arkKvs.toList()
+    public fun build(): List<Message.Ark.Kv> = arkKvs.toList()
 }
 
 
@@ -120,19 +121,19 @@ internal annotation class ArkObjBuilderDSL
 @ArkObjBuilderDSL
 public class ArkObjListBuilder {
     @ArkObjBuilderDSL
-    public var objList: MutableList<TencentMessage.Ark.Obj> = mutableListOf()
+    public var objList: MutableList<Message.Ark.Obj> = mutableListOf()
 
     @ArkObjBuilderDSL
     public fun obj(): ArkObjListBuilder = also {
-        objList.add(TencentMessage.Ark.Obj())
+        objList.add(Message.Ark.Obj())
     }
 
     @ArkObjBuilderDSL
     public fun obj(block: ArkObjKvListBuilder.() -> Unit): ArkObjListBuilder = also {
-        objList.add(TencentMessage.Ark.Obj(ArkObjKvListBuilder().also(block).build()))
+        objList.add(Message.Ark.Obj(ArkObjKvListBuilder().also(block).build()))
     }
 
-    public fun build(): List<TencentMessage.Ark.Obj> = objList.toList()
+    public fun build(): List<Message.Ark.Obj> = objList.toList()
 }
 
 
@@ -145,14 +146,14 @@ internal annotation class ArkObjKvBuilderDSL
 public class ArkObjKvListBuilder {
 
     @ArkObjKvBuilderDSL
-    public var objKvs: MutableList<TencentMessage.Ark.Obj.Kv> = mutableListOf()
+    public var objKvs: MutableList<Message.Ark.Obj.Kv> = mutableListOf()
 
     @ArkObjKvBuilderDSL
     public fun kv(key: String, value: String): ArkObjKvListBuilder = also {
-        objKvs.add(TencentMessage.Ark.Obj.Kv(key, value))
+        objKvs.add(Message.Ark.Obj.Kv(key, value))
     }
 
-    public fun build(): List<TencentMessage.Ark.Obj.Kv> = objKvs.toList()
+    public fun build(): List<Message.Ark.Obj.Kv> = objKvs.toList()
 }
 
 
@@ -181,16 +182,16 @@ public class EmbedBuilder {
     /**
      * MessageEmbedField 对象数组	字段信息
      */
-    public var fields: MutableList<TencentMessage.Embed.Field> = mutableListOf()
+    public var fields: MutableList<Message.Embed.Field> = mutableListOf()
 
 
     public fun addField(name: String, value: String) {
-        fields.add(TencentMessage.Embed.Field(name, value))
+        fields.add(Message.Embed.Field(name, value))
     }
 
 
-    public fun build(): TencentMessage.Embed {
-        return TencentMessage.Embed(title, description, prompt, Instant.now().toTimestamp(), fields.toList())
+    public fun build(): Message.Embed {
+        return Message.Embed(title, description, prompt, Instant.now().toTimestamp(), fields.toList())
     }
 }
 

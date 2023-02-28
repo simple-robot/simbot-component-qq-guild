@@ -10,8 +10,8 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import love.forte.simbot.Timestamp
-import love.forte.simbot.tencentguild.TencentMessage
 import love.forte.simbot.tencentguild.api.message.TencentMessageForSending
+import love.forte.simbot.tencentguild.model.Message
 import kotlin.test.Test
 
 
@@ -26,7 +26,7 @@ class TencentMessageForSendingToFormDataTest {
         val param = TencentMessageForSending(
             "content",
             image = "image",
-            embed = TencentMessage.Embed("title", "desc", "prompt", Timestamp.now(), emptyList())
+            embed = Message.Embed("title", "desc", "prompt", Timestamp.now(), emptyList())
         )
         
         val json = Json {

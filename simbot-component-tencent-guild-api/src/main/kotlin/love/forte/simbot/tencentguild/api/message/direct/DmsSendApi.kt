@@ -23,13 +23,13 @@ import kotlinx.serialization.DeserializationStrategy
 import love.forte.simbot.ID
 import love.forte.simbot.literal
 import love.forte.simbot.resources.Resource
-import love.forte.simbot.tencentguild.TencentMessage
 import love.forte.simbot.tencentguild.api.RouteInfoBuilder
 import love.forte.simbot.tencentguild.api.TencentApi
 import love.forte.simbot.tencentguild.api.message.MessageSendApi
 import love.forte.simbot.tencentguild.api.message.SendMessageResult
 import love.forte.simbot.tencentguild.api.message.TencentMessageForSending
 import love.forte.simbot.tencentguild.api.message.toMultiPartFormDataContent
+import love.forte.simbot.tencentguild.model.Message
 
 /**
  * [发送私信](https://bot.q.qq.com/wiki/develop/api/openapi/dms/post_dms_messages.html)
@@ -58,7 +58,7 @@ import love.forte.simbot.tencentguild.api.message.toMultiPartFormDataContent
 public class DmsSendApi private constructor(
     guildId: ID,
     override val body: Any, // TencentMessageForSending || MultiPartFormDataContent
-) : TencentApi<TencentMessage>() {
+) : TencentApi<Message>() {
     public companion object Factory {
         
         /**
@@ -75,7 +75,7 @@ public class DmsSendApi private constructor(
          */
         @JvmStatic
         @JvmOverloads
-        public fun create(guildId: ID, embed: TencentMessage.Embed, msgId: ID? = null): DmsSendApi {
+        public fun create(guildId: ID, embed: Message.Embed, msgId: ID? = null): DmsSendApi {
             return DmsSendApi(guildId, TencentMessageForSending(embed = embed, msgId = msgId))
         }
         
@@ -85,7 +85,7 @@ public class DmsSendApi private constructor(
          */
         @JvmStatic
         @JvmOverloads
-        public fun create(guildId: ID, ark: TencentMessage.Ark, msgId: ID? = null): DmsSendApi {
+        public fun create(guildId: ID, ark: Message.Ark, msgId: ID? = null): DmsSendApi {
             return DmsSendApi(guildId, TencentMessageForSending(ark = ark, msgId = msgId))
         }
         
@@ -138,7 +138,7 @@ public class DmsSendApi private constructor(
     // POST /channels/{channel_id}/messages
     private val path = arrayOf("dms", guildId.literal, "messages")
     
-    override val resultDeserializer: DeserializationStrategy<TencentMessage>
+    override val resultDeserializer: DeserializationStrategy<Message>
         get() = SendMessageResult.serializer()
     
     override val method: HttpMethod

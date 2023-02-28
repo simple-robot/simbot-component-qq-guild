@@ -30,7 +30,7 @@ import love.forte.simbot.tencentguild.api.TencentApiWithoutResult
  *
  * @author ForteScarlet
  */
-public class DeleteAnnouncesApi internal constructor(
+public class DeleteAnnouncesApi private constructor(
     channelId: String,
     messageId: String,
 ) : TencentApiWithoutResult() {

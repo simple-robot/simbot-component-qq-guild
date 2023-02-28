@@ -35,8 +35,8 @@ import love.forte.simbot.event.pushIfProcessable
 import love.forte.simbot.literal
 import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.tencentguild.TencentGuildBot
-import love.forte.simbot.tencentguild.TencentGuildInfo
-import love.forte.simbot.tencentguild.api.guild.GetBotGuildListApi
+import love.forte.simbot.tencentguild.api.user.GetBotGuildListApi
+import love.forte.simbot.tencentguild.model.Guild
 import love.forte.simbot.tencentguild.requestBy
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.Items.Companion.asItems
@@ -138,9 +138,9 @@ internal class TencentGuildComponentBotImpl(
 }
 
 private suspend fun TencentGuildComponentBotImpl.initGuildListData() {
-    var lastId: ID? = null
+    var lastId: String? = null
     var times = 1
-    val guildInfoList = mutableListOf<TencentGuildInfo>()
+    val guildInfoList = mutableListOf<Guild>()
     while (true) {
         val list = GetBotGuildListApi.create(after = lastId).requestBy(source)
         if (list.isEmpty()) break
@@ -167,7 +167,7 @@ private suspend fun TencentGuildComponentBotImpl.initGuildListData() {
         launch(initDataJob) {
             val guildImpl = tencentGuildImpl(this@initGuildListData, info)
             // 基本不会出现重复，初始化阶段直接覆盖。
-            internalGuilds[info.id.literal] = guildImpl
+            internalGuilds[info.id] = guildImpl
         }
     }
     

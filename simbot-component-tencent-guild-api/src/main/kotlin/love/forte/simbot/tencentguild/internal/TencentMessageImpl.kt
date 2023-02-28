@@ -21,8 +21,8 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.CharSequenceID
 import love.forte.simbot.Timestamp
-import love.forte.simbot.tencentguild.TencentMessage
 import love.forte.simbot.tencentguild.TimestampISO8601Serializer
+import love.forte.simbot.tencentguild.model.Message
 
 @Serializable
 internal data class TencentMessageImpl(
@@ -39,13 +39,13 @@ internal data class TencentMessageImpl(
     @SerialName("mention_everyone")
     override val mentionEveryone: Boolean = false,
     override val author: TencentUserInfoImpl,
-    override val attachments: List<TencentMessage.Attachment> = emptyList(),
-    override val embeds: List<TencentMessage.Embed> = emptyList(),
+    override val attachments: List<Attachment> = emptyList(),
+    override val embeds: List<Embed> = emptyList(),
     override val mentions: List<TencentUserInfoImpl> = emptyList(),
     override val member: TencentMemberInfoImplForMessage,
-    override val ark: TencentMessage.Ark? = null,
+    override val ark: Ark? = null,
     override val seqInChannel: String? = null,
-) : TencentMessage {
+) : Message {
     init {
         if (member.guildId == null) {
             member.guildId = guildId

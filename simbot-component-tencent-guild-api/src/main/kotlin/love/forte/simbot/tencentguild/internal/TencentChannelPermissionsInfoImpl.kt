@@ -20,6 +20,7 @@ package love.forte.simbot.tencentguild.internal
 import kotlinx.serialization.*
 import love.forte.simbot.*
 import love.forte.simbot.tencentguild.*
+import love.forte.simbot.tencentguild.model.Permissions
 
 /**
  *

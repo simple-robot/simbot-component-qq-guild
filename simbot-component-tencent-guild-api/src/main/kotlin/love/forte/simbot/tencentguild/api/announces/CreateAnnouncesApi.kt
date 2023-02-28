@@ -21,8 +21,8 @@ import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import love.forte.simbot.tencentguild.api.PostTencentApi
 import love.forte.simbot.tencentguild.api.RouteInfoBuilder
-import love.forte.simbot.tencentguild.api.TencentApi
 import love.forte.simbot.tencentguild.model.Announces
 
 
@@ -35,10 +35,10 @@ import love.forte.simbot.tencentguild.model.Announces
  *
  * @author ForteScarlet
  */
-public class CreateAnnouncesApi internal constructor(
+public class CreateAnnouncesApi private constructor(
     channelId: String,
     messageId: String,
-) : TencentApi<Announces>() {
+) : PostTencentApi<Announces>() {
 
     public companion object Factory {
 
@@ -59,9 +59,6 @@ public class CreateAnnouncesApi internal constructor(
 
     override val resultDeserializer: DeserializationStrategy<Announces>
         get() = Announces.serializer()
-
-    override val method: HttpMethod
-        get() = HttpMethod.Post
 
     override fun route(builder: RouteInfoBuilder) {
         builder.apiPath = path

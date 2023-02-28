@@ -25,15 +25,15 @@ import love.forte.simbot.event.Event
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageReceipt
 import love.forte.simbot.tencentguild.EventSignals
-import love.forte.simbot.tencentguild.TencentMessage
 import love.forte.simbot.tencentguild.api.message.MessageSendApi
+import love.forte.simbot.tencentguild.model.Message
 
 /**
  *
  * @author ForteScarlet
  */
 internal class TcgChannelAtMessageEventImpl(
-    override val sourceEventEntity: TencentMessage,
+    override val sourceEventEntity: love.forte.simbot.tencentguild.model.Message,
     override val bot: TencentGuildComponentBotImpl,
     override val channelInternal: TencentChannelImpl,
 ) : TcgChannelAtMessageEvent() {
@@ -56,12 +56,12 @@ internal class TcgChannelAtMessageEventImpl(
     }
     
     
-    internal object Parser : BaseSignalToEvent<TencentMessage>() {
+    internal object Parser : BaseSignalToEvent<love.forte.simbot.tencentguild.model.Message>() {
         override val key = Key
-        override val type: EventSignals<TencentMessage>
+        override val type: EventSignals<love.forte.simbot.tencentguild.model.Message>
             get() = EventSignals.AtMessages.AtMessageCreate
         
-        override suspend fun doParser(data: TencentMessage, bot: TencentGuildComponentBotImpl): Event {
+        override suspend fun doParser(data: love.forte.simbot.tencentguild.model.Message, bot: TencentGuildComponentBotImpl): Event {
             val channel = bot.findOrCreateChannelImpl(data.guildId, data.channelId)
             return TcgChannelAtMessageEventImpl(data, bot, channel)
         }

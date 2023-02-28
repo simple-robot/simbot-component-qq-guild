@@ -19,8 +19,7 @@ package love.forte.simbot.tencentguild.api.message
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import love.forte.simbot.ID
-import love.forte.simbot.tencentguild.TencentMessage
+import love.forte.simbot.tencentguild.model.Message
 
 
 /**
@@ -38,12 +37,12 @@ public data class TencentMessageForSending @JvmOverloads constructor(
     /**
      * MessageEmbed	embed 消息，一种特殊的 ark
      */
-    public var embed: TencentMessage.Embed? = null,
+    public var embed: Message.Embed? = null,
 
     /**
      * ark消息对象	ark 消息
      */
-    public var ark: TencentMessage.Ark? = null,
+    public var ark: Message.Ark? = null,
 
     /**
      * 图片url地址
@@ -54,19 +53,17 @@ public data class TencentMessageForSending @JvmOverloads constructor(
      * 要回复的消息id(Message.id), 在 CREATE_MESSAGE 事件中获取。带了 msg_id 视为被动回复消息，否则视为主动推送消息
      */
     @SerialName("msg_id")
-    @Serializable(ID.AsCharSequenceIDSerializer::class)
-    public var msgId: ID? = null,
+    public var msgId: String? = null,
 
     /**
      * 选填，要回复的事件id, 在各事件对象中获取。
      */
     @SerialName("event_id")
-    @Serializable(ID.AsCharSequenceIDSerializer::class)
-    public var eventId: ID? = null,
+    public var eventId: String? = null,
 
     /**
      * 选填，markdown 消息
      */
-    public var markdown: TencentMessage.Markdown? = null,
+    public var markdown: Message.Markdown? = null,
 )
 

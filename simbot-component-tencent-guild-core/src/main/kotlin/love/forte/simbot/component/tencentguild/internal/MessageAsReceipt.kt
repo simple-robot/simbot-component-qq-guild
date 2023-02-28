@@ -20,14 +20,14 @@ package love.forte.simbot.component.tencentguild.internal
 import love.forte.simbot.ID
 import love.forte.simbot.message.MessageReceipt
 import love.forte.simbot.message.SingleMessageReceipt
-import love.forte.simbot.tencentguild.TencentMessage
+import love.forte.simbot.tencentguild.model.Message
 
 
 public interface TencentMessageReceipt : MessageReceipt {
     /**
      * QQ频道消息发送api发送消息后得到的回执，也就是消息对象。
      */
-    public val messageResult: TencentMessage
+    public val messageResult: Message
 }
 
 
@@ -35,7 +35,7 @@ public interface TencentMessageReceipt : MessageReceipt {
  *
  * @author ForteScarlet
  */
-internal class MessageAsReceipt(override val messageResult: TencentMessage) : TencentMessageReceipt, SingleMessageReceipt() {
+internal class MessageAsReceipt(override val messageResult: Message) : TencentMessageReceipt, SingleMessageReceipt() {
     override val id: ID
         get() = messageResult.id
 
@@ -48,5 +48,5 @@ internal class MessageAsReceipt(override val messageResult: TencentMessage) : Te
     override suspend fun delete(): Boolean = false
 }
 
-internal fun TencentMessage.asReceipt(): TencentMessageReceipt = MessageAsReceipt(this)
+internal fun Message.asReceipt(): TencentMessageReceipt = MessageAsReceipt(this)
 

@@ -18,10 +18,9 @@
 package love.forte.simbot.tencentguild.api.channel
 
 import kotlinx.serialization.DeserializationStrategy
-import love.forte.simbot.ID
-import love.forte.simbot.tencentguild.TencentChannelInfo
 import love.forte.simbot.tencentguild.api.GetTencentApi
 import love.forte.simbot.tencentguild.api.RouteInfoBuilder
+import love.forte.simbot.tencentguild.model.Channel
 
 /**
  *
@@ -29,22 +28,22 @@ import love.forte.simbot.tencentguild.api.RouteInfoBuilder
  *
  * @author ForteScarlet
  */
-public class GetChannelApi internal constructor(channelId: ID) : GetTencentApi<TencentChannelInfo>() {
-    
+public class GetChannelApi private constructor(channelId: String) : GetTencentApi<Channel>() {
+
     public companion object Factory {
-    
+
         /**
          * 构造 [GetChannelApi]
          */
         @JvmStatic
-        public fun create(channelId: ID): GetChannelApi = GetChannelApi(channelId)
+        public fun create(channelId: String): GetChannelApi = GetChannelApi(channelId)
     }
-    
-    // GET /channels/{channel_id}
-    private val path = arrayOf("channels", channelId.toString())
 
-    override val resultDeserializer: DeserializationStrategy<TencentChannelInfo>
-        get() = TencentChannelInfo.serializer
+    // GET /channels/{channel_id}
+    private val path = arrayOf("channels", channelId)
+
+    override val resultDeserializer: DeserializationStrategy<Channel>
+        get() = Channel.serializer()
 
     override fun route(builder: RouteInfoBuilder) {
         builder.apiPath = path

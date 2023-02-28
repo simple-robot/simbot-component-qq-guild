@@ -17,17 +17,20 @@
 
 package love.forte.simbot.component.tencentguild.internal
 
+import love.forte.simbot.ID
 import love.forte.simbot.component.tencentguild.message.toMessage
 import love.forte.simbot.message.*
-import love.forte.simbot.tencentguild.TencentMessage
+import love.forte.simbot.tencentguild.api.message.MessageSendApi
+import love.forte.simbot.tencentguild.model.Message
+import love.forte.simbot.message.Message as SimbotMessage
 
 
 internal object ContentParser : SendingMessageParser {
     override suspend fun invoke(
         index: Int,
-        element: Message.Element<*>,
+        element: SimbotMessage.Element<*>,
         messages: Messages?,
-        builder: TencentMessageForSendingForParse
+        builder: MessageSendApi.Body.Builder
     ) {
         if (element is PlainText<*>) {
             builder.contentAppend(element.text)
@@ -39,8 +42,8 @@ internal object ContentParser : SendingMessageParser {
 internal object TencentMessageParser : ReceivingMessageParser {
     // private val mentionRegex = Regex("<@!(?<uid>\\d+)>|<#!(?<cid>\\d+)>")
 
-    override fun invoke(tencentMessage: TencentMessage, messages: Messages): Messages {
-        val messageList = mutableListOf<Message.Element<*>>()
+    override fun invoke(tencentMessage: Message, messages: Messages): Messages {
+        val messageList = mutableListOf<SimbotMessage.Element<*>>()
 
         // at and text
         val content = tencentMessage.content
@@ -53,7 +56,7 @@ internal object TencentMessageParser : ReceivingMessageParser {
         }
 
         tencentMessage.mentions.takeIf { it.isNotEmpty() }?.also {
-            messageList.addAll(it.map { u -> At(u.id) })
+            messageList.addAll(it.map { u -> At(u.id.ID) })
         }
 
         // if (content.isEmpty()) {
@@ -82,7 +85,7 @@ internal object TencentMessageParser : ReceivingMessageParser {
         }
 
         tencentMessage.attachments.takeIf { it.isNotEmpty() }
-            ?.map(TencentMessage.Attachment::toMessage)
+            ?.map(Message.Attachment::toMessage)
             ?.also {
                 messageList.addAll(it)
             }

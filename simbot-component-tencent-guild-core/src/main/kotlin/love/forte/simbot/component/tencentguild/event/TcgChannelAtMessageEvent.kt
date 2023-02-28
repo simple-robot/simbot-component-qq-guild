@@ -31,7 +31,7 @@ import love.forte.simbot.message.MessageReceipt
 import love.forte.simbot.message.ReceivedMessageContent
 import love.forte.simbot.message.doSafeCast
 import love.forte.simbot.tencentguild.EventSignals
-import love.forte.simbot.tencentguild.TencentMessage
+import love.forte.simbot.tencentguild.model.Message
 
 /**
  *
@@ -44,10 +44,10 @@ import love.forte.simbot.tencentguild.TencentMessage
  *
  * @author ForteScarlet
  */
-public abstract class TcgChannelAtMessageEvent : TcgEvent<TencentMessage>(), ChannelMessageEvent, ReplySupport,
+public abstract class TcgChannelAtMessageEvent : TcgEvent<love.forte.simbot.tencentguild.model.Message>(), ChannelMessageEvent, ReplySupport,
     SendSupport {
-    abstract override val sourceEventEntity: TencentMessage
-    override val eventSignal: EventSignals<TencentMessage> get() = EventSignals.AtMessages.AtMessageCreate
+    abstract override val sourceEventEntity: love.forte.simbot.tencentguild.model.Message
+    override val eventSignal: EventSignals<love.forte.simbot.tencentguild.model.Message> get() = EventSignals.AtMessages.AtMessageCreate
     
     
     protected abstract val authorInternal: TencentMember

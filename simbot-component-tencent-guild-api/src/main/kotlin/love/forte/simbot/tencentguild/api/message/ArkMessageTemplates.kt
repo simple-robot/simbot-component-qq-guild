@@ -18,8 +18,8 @@
 package love.forte.simbot.tencentguild.api.message
 
 import love.forte.simbot.ID
-import love.forte.simbot.tencentguild.TencentMessage
 import love.forte.simbot.tencentguild.buildArk
+import love.forte.simbot.tencentguild.model.Message
 
 
 /**
@@ -30,7 +30,7 @@ import love.forte.simbot.tencentguild.buildArk
  */
 public sealed class ArkMessageTemplates {
 
-    public abstract val ark: TencentMessage.Ark
+    public abstract val ark: Message.Ark
 
     /**
      * ## 23 链接+文本列表模板
@@ -50,7 +50,7 @@ public sealed class ArkMessageTemplates {
             val ID = 23.ID
         }
 
-        override val ark: TencentMessage.Ark = buildArk(ID) {
+        override val ark: Message.Ark = buildArk(ID) {
             kvs {
                 kv("#DESC#", desc)
                 kv("#PROMPT#", prompt)
@@ -99,7 +99,7 @@ public sealed class ArkMessageTemplates {
             val ID = 24.ID
         }
 
-        override val ark: TencentMessage.Ark = buildArk(ID) {
+        override val ark: Message.Ark = buildArk(ID) {
             kv("#DESC#", desc)
             kv("#PROMPT#", prompt)
             kv("#TITLE#", title)
@@ -133,7 +133,7 @@ public sealed class ArkMessageTemplates {
             val ID = 37.ID
         }
 
-        override val ark: TencentMessage.Ark = buildArk(ID) {
+        override val ark: Message.Ark = buildArk(ID) {
             kv("#PROMPT#", prompt)
             kv("#METATITLE#", metaTitle)
             kv("#METASUBTITLE#", metaSubtitle)

@@ -1,12 +1,16 @@
 package love.forte.simbot.component.tencentguild.message
 
+import io.ktor.client.request.forms.*
+import io.ktor.utils.io.streams.*
 import love.forte.simbot.component.tencentguild.internal.SendingMessageParser
-import love.forte.simbot.component.tencentguild.internal.TencentMessageForSendingForParse
-import love.forte.simbot.literal
 import love.forte.simbot.message.Image
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.Messages
-import love.forte.simbot.message.ResourceImage
+import love.forte.simbot.resources.ByteArrayResource
+import love.forte.simbot.resources.FileResource
+import love.forte.simbot.resources.PathResource
+import love.forte.simbot.resources.URLResource
+import love.forte.simbot.tencentguild.api.message.MessageSendApi
 
 
 /**
@@ -18,15 +22,30 @@ public object ImageParser : SendingMessageParser {
         index: Int,
         element: Message.Element<*>,
         messages: Messages?,
-        builder: TencentMessageForSendingForParse,
+        builder: MessageSendApi.Body.Builder,
     ) {
         when (element) {
-            is ResourceImage -> {
-                builder.fileImage = element.resource()
-            }
             is Image -> {
-                builder.forSending.image = element.id.literal
+                when (val resource = element.resource()) {
+                    is FileResource -> {
+                        builder.setFileImage(resource.file)
+                    }
+                    is PathResource -> {
+                        builder.setFileImage(resource.path)
+                    }
+                    is ByteArrayResource -> {
+                        builder.setFileImage(resource.bytes)
+                    }
+                    is URLResource -> {
+                        builder.image = resource.url.toString()
+                    }
+                    else -> {
+                        builder.setFileImage(InputProvider { resource.openStream().asInput() })
+                    }
+                }
             }
+
+            // TODO more image type support for file_image
         }
     }
 }

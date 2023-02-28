@@ -33,11 +33,13 @@ import love.forte.simbot.tencentguild.api.channel.GetGuildChannelListApi
 import love.forte.simbot.tencentguild.api.member.GetMemberApi
 import love.forte.simbot.tencentguild.api.role.GetGuildRoleListApi
 import love.forte.simbot.tencentguild.isGrouping
+import love.forte.simbot.toTimestamp
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.Items.Companion.asItems
 import love.forte.simbot.utils.item.effectedFlowItems
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.time.Duration
+import love.forte.simbot.tencentguild.model.Guild as GuildModel
 
 
 /**
@@ -46,29 +48,29 @@ import kotlin.time.Duration
  */
 internal class TencentGuildImpl private constructor(
     private val baseBot: TencentGuildComponentBotImpl,
-    @Volatile override var source: TencentGuildInfo,
+    @Volatile override var source: GuildModel,
 ) : TencentGuild {
     private val logger =
         LoggerFactory.getLogger("love.forte.simbot.component.tencentguild.internal.TencentGuildImpl[${source.id}]")
     
     override val maximumChannel: Int
-        get() = source.maximumChannel
+        get() = -1
     override val createTime: Timestamp
-        get() = source.createTime
+        get() = source.joinedAt.toTimestamp()
     override val currentMember: Int
-        get() = source.currentMember
+        get() = source.memberCount
     override val description: String
         get() = source.description
     override val icon: String
         get() = source.icon
     override val id: ID
-        get() = source.id
+        get() = source.id.ID
     override val maximumMember: Int
-        get() = source.maximumMember
+        get() = source.maxMembers
     override val name: String
         get() = source.name
     override val ownerId: ID
-        get() = source.ownerId
+        get() = source.ownerId.ID
     
     internal val internalChannels = ConcurrentHashMap<String, TencentChannelImpl>()
     internal val internalChannelCategories = ConcurrentHashMap<String, TencentChannelCategoryImpl>()

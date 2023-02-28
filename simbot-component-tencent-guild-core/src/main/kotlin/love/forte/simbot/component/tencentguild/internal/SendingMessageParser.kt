@@ -23,15 +23,17 @@ import love.forte.simbot.message.*
 import love.forte.simbot.resources.Resource
 import love.forte.simbot.tencentguild.*
 import love.forte.simbot.tencentguild.api.message.*
+import love.forte.simbot.tencentguild.model.Message
 import java.util.*
 import java.util.concurrent.*
+import love.forte.simbot.message.Message as SimbotMessage
 
 
 /**
  * 通过消息体和message builder, 以责任链的形式构建消息体。
  */
 public fun interface SendingMessageParser :
-    suspend (Int, Message.Element<*>, Messages?, TencentMessageForSendingForParse) -> Unit {
+    suspend (Int, SimbotMessage.Element<*>, Messages?, MessageSendApi.Body.Builder) -> Unit {
     /**
      * 将 [Message.Element] 拼接到 [TencentMessageForSendingBuilder] 中。
      *
@@ -39,28 +41,28 @@ public fun interface SendingMessageParser :
      */
     override suspend fun invoke(
         index: Int,
-        element: Message.Element<*>,
+        element: SimbotMessage.Element<*>,
         messages: Messages?,
-        builder: TencentMessageForSendingForParse,
+        builder: MessageSendApi.Body.Builder,
     )
 }
 
 /**
- * 将一个 [TencentMessage] 转化为 [Message].
+ * 将一个 [Message] 转化为 [Message].
  */
-public fun interface ReceivingMessageParser : (TencentMessage, Messages) -> Messages {
-    
+public fun interface ReceivingMessageParser : (Message, Messages) -> Messages {
+
     /**
-     * 将一个 [TencentMessage] 接入到 [Messages] 中，并在最后作为 [ReceivedMessageContent] 输出至事件。
+     * 将一个 [Message] 接入到 [Messages] 中，并在最后作为 [ReceivedMessageContent] 输出至事件。
      * 对于第一个转化器来讲，[messages] 是一个 [EmptyMessages].
      *
      */
-    override fun invoke(tencentMessage: TencentMessage, messages: Messages): Messages
+    override fun invoke(tencentMessage: Message, messages: Messages): Messages
 }
 
 
 /**
- * 将一个 [Message.Element] 拼接到 [TencentMessageForSendingBuilder] 中，或者将一个 [TencentMessage] 转化为 [Message].
+ * 将一个 [Message.Element] 拼接到 [TencentMessageForSendingBuilder] 中，或者将一个 [Message] 转化为 [Message].
  */
 public object MessageParsers {
     @ExperimentalSimbotApi
@@ -72,38 +74,38 @@ public object MessageParsers {
         add(ReplyToParser)
         add(ImageParser)
     }
-    
+
     @ExperimentalSimbotApi
     public val receivingParsers: Queue<ReceivingMessageParser> = ConcurrentLinkedQueue<ReceivingMessageParser>().apply {
         add(TencentMessageParser)
     }
-    
-    
+
+
     @ExperimentalSimbotApi
     public fun addParser(parser: SendingMessageParser) {
         sendingParsers.add(parser)
     }
-    
+
     @ExperimentalSimbotApi
     public fun addParser(parser: ReceivingMessageParser) {
         receivingParsers.add(parser)
     }
-    
+
     @OptIn(ExperimentalSimbotApi::class)
     @JvmOverloads
     public suspend fun parse(
-        message: Message,
-        builderInit: TencentMessageForSendingForParse.() -> Unit = {},
-    ): TencentMessageForSendingForParse {
-        val builder = TencentMessageForSendingForParse().also(builderInit)
-        
+        message: SimbotMessage,
+        builderInit: MessageSendApi.Body.Builder.() -> Unit = {},
+    ): MessageSendApi.Body.Builder {
+        val builder = MessageSendApi.Body.Builder().also(builderInit)
+
         when (message) {
-            is Message.Element<*> -> {
+            is SimbotMessage.Element<*> -> {
                 for (parser in sendingParsers) {
                     parser(0, message, null, builder)
                 }
             }
-            
+
             is Messages -> {
                 message.forEachIndexed { index, element ->
                     for (parser in sendingParsers) {
@@ -112,41 +114,41 @@ public object MessageParsers {
                 }
             }
         }
-        
+
         return builder
     }
-    
-    
+
+
     @OptIn(ExperimentalSimbotApi::class)
     @JvmOverloads
     public fun parse(
-        message: TencentMessage,
+        message: Message,
         messagesInit: Messages = emptyMessages(),
     ): Messages {
         return receivingParsers.fold(messagesInit) { messages, parser ->
             parser(message, messages)
         }
     }
-    
+
 }
 
 public class TencentMessageForSendingForParse internal constructor() {
-    public var forSending: TencentMessageForSending = TencentMessageForSending()
-    
+    public var sendBodyBuilder: MessageSendApi.Body.Builder = MessageSendApi.Body.Builder()
+
     /**
      * 通过 form-data上传图片的 `file_image` 参数。
      * 目前支持使用的类型：
      * - [Resource]
      */
-    public var fileImage: Resource? = null
-    
-    
+//    public var fileImage: Resource? = null
+
+
     @TmfsDsl
-    public inline fun forSending(block: TencentMessageForSending.() -> Unit) {
-        forSending.block()
+    public inline fun forSending(block: MessageSendApi.Body.Builder.() -> Unit) {
+        sendBodyBuilder.block()
     }
-    
-    
+
+
     public fun contentAppend(contentText: String) {
         forSending {
             if (content == null) {
@@ -156,11 +158,11 @@ public class TencentMessageForSendingForParse internal constructor() {
             }
         }
     }
-    
+
 }
 
-internal operator fun TencentMessageForSendingForParse.component1(): TencentMessageForSending = forSending
-internal operator fun TencentMessageForSendingForParse.component2(): Resource? = fileImage
+//internal operator fun TencentMessageForSendingForParse.component1(): MessageSendApi.Body.Builder = sendBodyBuilder
+//internal operator fun TencentMessageForSendingForParse.component2(): Resource? = fileImage
 
 
 @Retention(AnnotationRetention.BINARY)

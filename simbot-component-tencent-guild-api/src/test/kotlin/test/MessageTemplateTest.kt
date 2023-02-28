@@ -18,8 +18,8 @@
 package test
 
 import kotlinx.serialization.json.Json
-import love.forte.simbot.tencentguild.TencentMessage
 import love.forte.simbot.tencentguild.api.message.ArkMessageTemplates
+import love.forte.simbot.tencentguild.model.Message
 import kotlin.test.Test
 
 /**
@@ -38,7 +38,7 @@ class MessageTemplateTest {
                 ArkMessageTemplates.TextLinkList.Desc("DESC", "https://sss")
             )
         )
-        println(Json { prettyPrint = true }.encodeToString(TencentMessage.Ark.serializer(), t23.ark))
+        println(Json { prettyPrint = true }.encodeToString(Message.Ark.serializer(), t23.ark))
 
 
     }

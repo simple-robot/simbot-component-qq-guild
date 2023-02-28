@@ -18,32 +18,33 @@
 package love.forte.simbot.tencentguild.api.message
 
 import kotlinx.serialization.DeserializationStrategy
-import love.forte.simbot.ID
-import love.forte.simbot.tencentguild.TencentMessage
 import love.forte.simbot.tencentguild.api.GetTencentApi
 import love.forte.simbot.tencentguild.api.RouteInfoBuilder
+import love.forte.simbot.tencentguild.model.Message
 
 
 /**
  * [获取指定消息](https://bot.q.qq.com/wiki/develop/api/openapi/message/get_message_of_id.html)
  *
+ * 用于获取子频道 `channel_id` 下的消息 `message_id` 的详情。
+ *
  * @author ForteScarlet
  */
-public class GetMessageApi internal constructor(channelId: ID, messageId: ID) : GetTencentApi<TencentMessage>() {
+public class GetMessageApi private constructor(channelId: String, messageId: String) : GetTencentApi<Message>() {
     public companion object Factory {
         /**
          * 构造 [GetMessageApi]
          */
         @JvmStatic
-        public fun create(channelId: ID, messageId: ID): GetMessageApi = GetMessageApi(channelId, messageId)
+        public fun create(channelId: String, messageId: String): GetMessageApi = GetMessageApi(channelId, messageId)
     }
-    
+
     // GET /channels/{channel_id}/messages/{message_id}
-    private val path = arrayOf("channels", channelId.toString(), "messages", messageId.toString())
-    
-    override val resultDeserializer: DeserializationStrategy<TencentMessage>
-        get() = TencentMessage.serializer
-    
+    private val path = arrayOf("channels", channelId, "messages", messageId)
+
+    override val resultDeserializer: DeserializationStrategy<Message>
+        get() = Message.serializer()
+
     override fun route(builder: RouteInfoBuilder) {
         builder.apiPath = path
     }

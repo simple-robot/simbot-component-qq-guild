@@ -19,7 +19,6 @@ package love.forte.simbot.tencentguild.api.role
 
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
-import love.forte.simbot.ID
 import love.forte.simbot.tencentguild.api.RouteInfoBuilder
 import love.forte.simbot.tencentguild.api.TencentApiWithoutResult
 
@@ -27,45 +26,59 @@ import love.forte.simbot.tencentguild.api.TencentApiWithoutResult
  *
  * [增加频道身份组成员](https://bot.q.qq.com/wiki/develop/api/openapi/guild/put_guild_member_role.html)
  *
+ * 用于将频道 `guild_id` 下的用户 `user_id` 添加到身份组 `role_id` 。
+ *
+ * - 需要使用的 `token` 对应的用户具备增加身份组成员权限。如果是机器人，要求被添加为管理员。
+ * - 如果要增加的身份组 `ID` 是 [`5-子频道管理员`][love.forte.simbot.tencentguild.model.Role.DEFAULT_ID_CHANNEL_ADMIN]，
+ * 需要增加 `channel` 对象来指定具体是哪个子频道。
+ *
  * @author ForteScarlet
  */
-public class AddMemberRoleApi internal constructor(
-    channelId: ID, guildId: ID,
-    userId: ID, roleId: ID,
+public class AddMemberRoleApi private constructor(
+    guildId: String,
+    userId: String,
+    roleId: String,
+    channelId: String?,
 ) : TencentApiWithoutResult() {
     public companion object Factory {
-        
+
         /**
          * 构造 [AddMemberRoleApi]
          *
+         * @param channelId 如果要增加的身份组 [roleId] 是 [`5-子频道管理员`][love.forte.simbot.tencentguild.model.Role.DEFAULT_ID_CHANNEL_ADMIN]，
+         * 需要增加 `channel` 对象来指定具体是哪个子频道。
          */
         @JvmStatic
-        public fun create(channelId: ID, guildId: ID, userId: ID, roleId: ID): AddMemberRoleApi =
-            AddMemberRoleApi(channelId, guildId, userId, roleId)
+        @JvmOverloads
+        public fun create(
+            guildId: String,
+            userId: String,
+            roleId: String,
+            channelId: String? = null
+        ): AddMemberRoleApi =
+            AddMemberRoleApi(guildId, userId, roleId, channelId)
     }
-    
+
     // PUT /guilds/{guild_id}/members/{user_id}/roles/{role_id}
     private val path = arrayOf(
-        "guilds",
-        guildId.toString(),
-        "members",
-        userId.toString(),
-        "roles",
-        roleId.toString(),
+        "guilds", guildId,
+        "members", userId,
+        "roles", roleId,
     )
-    
+
     override val method: HttpMethod
         get() = HttpMethod.Put
-    
+
     override fun route(builder: RouteInfoBuilder) {
         builder.apiPath = path
     }
-    
-    override val body: Any = Body(channelId.toString())
-    
-    /** 接收一个只填充了子频道id字段的对象 */
+
+    override val body: Any? = channelId?.let { cid -> Body(ChannelId(cid)) }
+
     @Serializable
-    private data class Body(val id: String)
-    
-    
+    private data class Body(val channel: ChannelId)
+
+    @Serializable
+    private data class ChannelId(val id: String)
+
 }

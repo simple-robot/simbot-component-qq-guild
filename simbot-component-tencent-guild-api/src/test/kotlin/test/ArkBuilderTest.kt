@@ -19,8 +19,8 @@ package test
 
 import kotlinx.serialization.json.Json
 import love.forte.simbot.ID
-import love.forte.simbot.tencentguild.TencentMessage
 import love.forte.simbot.tencentguild.buildArk
+import love.forte.simbot.tencentguild.model.Message
 import kotlin.test.Test
 
 
@@ -52,7 +52,7 @@ class ArkBuilderTest {
             prettyPrint = true
         }
 
-        val jsonStr = j.encodeToString(TencentMessage.Ark.serializer(), ark)
+        val jsonStr = j.encodeToString(Message.Ark.serializer(), ark)
 
         println(jsonStr)
     }
@@ -114,8 +114,8 @@ class ArkBuilderTest {
             isLenient = true
         }
 
-        val ark = j.decodeFromString(TencentMessage.Ark.serializer(), jsonStr)
-        val ark2 = j.decodeFromString(TencentMessage.Ark.serializer(), jsonStr)
+        val ark = j.decodeFromString(Message.Ark.serializer(), jsonStr)
+        val ark2 = j.decodeFromString(Message.Ark.serializer(), jsonStr)
 
         println(ark)
         println(ark2)

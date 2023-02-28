@@ -51,7 +51,7 @@ import love.forte.simbot.tencentguild.api.TencentApi
  *
  * @author ForteScarlet
  */
-public class DeleteDmsApi internal constructor(
+public class DeleteDmsApi private constructor(
     guildId: ID,
     messageId: ID,
     private val hidetip: Boolean = false,

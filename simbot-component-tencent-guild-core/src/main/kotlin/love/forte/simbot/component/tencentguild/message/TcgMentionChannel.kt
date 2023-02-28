@@ -21,11 +21,11 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.ID
 import love.forte.simbot.component.tencentguild.internal.SendingMessageParser
-import love.forte.simbot.component.tencentguild.internal.TencentMessageForSendingForParse
 import love.forte.simbot.message.At
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.Messages
 import love.forte.simbot.message.doSafeCast
+import love.forte.simbot.tencentguild.api.message.MessageSendApi
 
 
 @SerialName("tcg.mentionChannel") // tencentguild.channel.mention
@@ -48,7 +48,7 @@ internal object MentionParser : SendingMessageParser {
         index: Int,
         element: Message.Element<*>,
         messages: Messages?,
-        builder: TencentMessageForSendingForParse
+        builder: MessageSendApi.Body.Builder
     ) {
         if (element is At) {
             if (element.type == "channel") {

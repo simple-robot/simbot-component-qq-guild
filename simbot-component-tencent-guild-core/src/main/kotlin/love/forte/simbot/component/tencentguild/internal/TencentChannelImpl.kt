@@ -24,6 +24,7 @@ import love.forte.simbot.component.tencentguild.*
 import love.forte.simbot.component.tencentguild.event.TcgChannelAtMessageEvent
 import love.forte.simbot.component.tencentguild.util.requestBy
 import love.forte.simbot.event.EventProcessingContext
+import love.forte.simbot.literal
 import love.forte.simbot.message.Message
 import love.forte.simbot.tencentguild.TencentChannelInfo
 import love.forte.simbot.tencentguild.api.message.MessageSendApi
@@ -50,20 +51,23 @@ internal class TencentChannelImpl internal constructor(
         val currentCoroutineContext = currentCoroutineContext()
         
         
-        val (messageForSend, fileImage) = MessageParsers.parse(message) {
-            forSending {
+        val builder = MessageParsers.parse(message) {
                 if (this.msgId == null) {
                     val currentEvent =
                         currentCoroutineContext[EventProcessingContext]?.event?.takeIf { it is TcgChannelAtMessageEvent } as? TcgChannelAtMessageEvent
-                    
+
                     val msgId = currentEvent?.sourceEventEntity?.id
                     if (msgId != null) {
                         this.msgId = msgId
                     }
                 }
-            }
+//            forSending {
+//            }
         }
-        return MessageSendApi.create(source.id, messageForSend, fileImage).requestBy(baseBot).asReceipt()
+
+        return MessageSendApi.create(source.id.literal,builder.build()).requestBy(baseBot).asReceipt()
+
+//        return MessageSendApi.create(source.id, builder, fileImage).requestBy(baseBot).asReceipt()
     }
     
     

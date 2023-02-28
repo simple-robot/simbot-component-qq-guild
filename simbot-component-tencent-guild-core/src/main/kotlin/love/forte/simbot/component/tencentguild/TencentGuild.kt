@@ -23,7 +23,6 @@ import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.definition.Guild
 import love.forte.simbot.definition.Organization
-import love.forte.simbot.tencentguild.TencentGuildInfo
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.Items.Companion.emptyItems
 
@@ -31,7 +30,7 @@ import love.forte.simbot.utils.item.Items.Companion.emptyItems
  *
  * @author ForteScarlet
  */
-public interface TencentGuild : Guild, TencentGuildObjectiveContainer<TencentGuildInfo> {
+public interface TencentGuild : Guild {
     override val bot: TencentGuildComponentGuildBot
     override val createTime: Timestamp
     override val currentMember: Int
@@ -41,7 +40,9 @@ public interface TencentGuild : Guild, TencentGuildObjectiveContainer<TencentGui
     override val maximumMember: Int
     override val name: String
     override val ownerId: ID
-    
+
+    public val source: love.forte.simbot.tencentguild.model.Guild
+
     /**
      * 得到此频道服务器下的所有子频道。
      */

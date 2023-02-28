@@ -19,37 +19,39 @@ package love.forte.simbot.tencentguild.api.guild
 
 import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
-import love.forte.simbot.ID
-import love.forte.simbot.tencentguild.TencentGuildInfo
 import love.forte.simbot.tencentguild.api.RouteInfoBuilder
 import love.forte.simbot.tencentguild.api.TencentApi
+import love.forte.simbot.tencentguild.model.Guild
 
 /**
- * 获取指定Guild
+ * [获取频道详情](https://bot.q.qq.com/wiki/develop/api/openapi/guild/model.html)
+ *
+ * 用于获取 `guildId` 指定的频道的详情。
+ *
  */
-public class GetGuildApi internal constructor(guildId: ID) : TencentApi<TencentGuildInfo>() {
+public class GetGuildApi private constructor(guildId: String) : TencentApi<Guild>() {
     public companion object Factory {
-        
+
         /**
          * 构造 [GetGuildApi].
          *
          */
         @JvmStatic
-        public fun create(guildId: ID): GetGuildApi = GetGuildApi(guildId)
+        public fun create(guildId: String): GetGuildApi = GetGuildApi(guildId)
     }
-    
-    private val path = arrayOf("guilds", guildId.toString())
-    
-    override val resultDeserializer: DeserializationStrategy<TencentGuildInfo>
-        get() = TencentGuildInfo.serializer
-    
+
+    private val path = arrayOf("guilds", guildId)
+
+    override val resultDeserializer: DeserializationStrategy<Guild>
+        get() = Guild.serializer()
+
     override val method: HttpMethod
         get() = HttpMethod.Get
-    
+
     override fun route(builder: RouteInfoBuilder) {
         builder.apiPath = path
     }
-    
+
     override val body: Any? get() = null
-    
+
 }

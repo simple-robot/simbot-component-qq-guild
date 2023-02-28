@@ -21,16 +21,16 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.ID
 import love.forte.simbot.component.tencentguild.internal.SendingMessageParser
-import love.forte.simbot.component.tencentguild.internal.TencentMessageForSendingForParse
 import love.forte.simbot.logger.LoggerFactory
-import love.forte.simbot.message.Message
 import love.forte.simbot.message.Messages
 import love.forte.simbot.message.doSafeCast
-import love.forte.simbot.tencentguild.TencentMessage
+import love.forte.simbot.tencentguild.api.message.MessageSendApi
+import love.forte.simbot.tencentguild.model.Message
+import love.forte.simbot.message.Message as SimbotMessage
 
 
 /**
- * 附件的 [Message.Element] 实现，
+ * 附件的 [SimbotMessage.Element] 实现，
  * 仅支持在 接收的消息中。
  *
  * @author ForteScarlet
@@ -38,34 +38,34 @@ import love.forte.simbot.tencentguild.TencentMessage
 @SerialName("tcg.attachment")
 @Serializable
 public data class TcgAttachmentMessage(public val url: String) : TcgMessageElement<TcgAttachmentMessage> {
-    
+
     @Deprecated("Just get url", ReplaceWith("url.ID", "love.forte.simbot.ID"))
     public val id: ID get() = url.ID
-    
-    override val key: Message.Key<TcgAttachmentMessage>
+
+    override val key: SimbotMessage.Key<TcgAttachmentMessage>
         get() = Key
-    
-    public companion object Key : Message.Key<TcgAttachmentMessage> {
+
+    public companion object Key : SimbotMessage.Key<TcgAttachmentMessage> {
         override fun safeCast(value: Any): TcgAttachmentMessage? = doSafeCast(value)
     }
 }
 
 
-public fun TencentMessage.Attachment.toMessage(): TcgAttachmentMessage = TcgAttachmentMessage(url)
-public fun TcgAttachmentMessage.toAttachment(): TencentMessage.Attachment = TencentMessage.Attachment(url)
+public fun Message.Attachment.toMessage(): TcgAttachmentMessage = TcgAttachmentMessage(url)
+public fun TcgAttachmentMessage.toAttachment(): Message.Attachment = Message.Attachment(url)
 
 
 internal object AttachmentParser : SendingMessageParser {
     private val logger = LoggerFactory.getLogger(AttachmentParser::class)
     override suspend fun invoke(
         index: Int,
-        element: Message.Element<*>,
+        element: SimbotMessage.Element<*>,
         messages: Messages?,
-        builder: TencentMessageForSendingForParse,
+        builder: MessageSendApi.Body.Builder,
     ) {
         if (element is TcgAttachmentMessage) {
             logger.warn("Attachment message is not yet supported for sending")
         }
     }
-    
+
 }

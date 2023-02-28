@@ -47,7 +47,7 @@ import love.forte.simbot.tencentguild.api.TencentApi
  *
  * @author ForteScarlet
  */
-public class CreateDmsApi internal constructor(
+public class CreateDmsApi private constructor(
     recipientId: ID,
     sourceGuildId: ID,
 ) : TencentApi<DirectMessageSession>() {
