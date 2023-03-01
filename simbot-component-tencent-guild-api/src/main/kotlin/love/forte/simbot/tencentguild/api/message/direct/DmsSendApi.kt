@@ -15,15 +15,10 @@ package love.forte.simbot.tencentguild.api.message.direct
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
-import love.forte.simbot.ID
-import love.forte.simbot.literal
-import love.forte.simbot.resources.Resource
+import love.forte.simbot.tencentguild.api.PostTencentApi
 import love.forte.simbot.tencentguild.api.RouteInfoBuilder
-import love.forte.simbot.tencentguild.api.TencentApi
 import love.forte.simbot.tencentguild.api.message.MessageSendApi
-import love.forte.simbot.tencentguild.api.message.SendMessageResult
-import love.forte.simbot.tencentguild.api.message.TencentMessageForSending
-import love.forte.simbot.tencentguild.api.message.toMultiPartFormDataContent
+import love.forte.simbot.tencentguild.api.message.toRealBody
 import love.forte.simbot.tencentguild.model.Message
 
 /**
@@ -51,94 +46,85 @@ import love.forte.simbot.tencentguild.model.Message
  * @author ForteScarlet
  */
 public class DmsSendApi private constructor(
-    guildId: ID,
-    override val body: Any, // TencentMessageForSending || MultiPartFormDataContent
-) : TencentApi<Message>() {
+    guildId: String,
+    body: MessageSendApi.Body, // TencentMessageForSending || MultiPartFormDataContent
+) : PostTencentApi<Message>() {
     public companion object Factory {
-        
+
         /**
-         * 构造 [DmsSendApi]
+         * 构造 [CreateDmsApi]
          */
         @JvmStatic
-        @JvmOverloads
-        public fun create(guildId: ID, content: String, msgId: ID? = null): DmsSendApi {
-            return DmsSendApi(guildId, TencentMessageForSending(content = content, msgId = msgId))
-        }
-        
-        /**
-         * 构造 [DmsSendApi]
-         */
-        @JvmStatic
-        @JvmOverloads
-        public fun create(guildId: ID, embed: Message.Embed, msgId: ID? = null): DmsSendApi {
-            return DmsSendApi(guildId, TencentMessageForSending(embed = embed, msgId = msgId))
-        }
-        
-        
-        /**
-         * 构造 [DmsSendApi]
-         */
-        @JvmStatic
-        @JvmOverloads
-        public fun create(guildId: ID, ark: Message.Ark, msgId: ID? = null): DmsSendApi {
-            return DmsSendApi(guildId, TencentMessageForSending(ark = ark, msgId = msgId))
-        }
-        
-        // with 'fileImage'
-        
-        
-        /**
-         * 构造 [DmsSendApi]
-         */
-        @JvmStatic
-        @JvmOverloads
-        public fun create(guildId: ID, sendingBody: TencentMessageForSending, fileImage: Resource? = null): DmsSendApi =
-            DmsSendApi(
-                guildId = guildId,
-                body = if (fileImage != null) sendingBody.toMultiPartFormDataContent(
-                    MessageSendApi.defaultJson,
-                    fileImage
-                ) else sendingBody
-            )
-        
-        
-        /**
-         * 构造 [DmsSendApi]
-         */
-        @JvmStatic
-        public fun create(guildId: ID, fileImage: Resource): DmsSendApi = DmsSendApi(
-            guildId = guildId,
-            body = null.toMultiPartFormDataContent(MessageSendApi.defaultJson, fileImage)
-        )
-        
+        public fun create(channelId: String, body: MessageSendApi.Body): DmsSendApi = DmsSendApi(channelId, body)
+//
+//        /**
+//         * 构造 [DmsSendApi]
+//         */
+//        @JvmStatic
+//        @JvmOverloads
+//        public fun create(guildId: ID, content: String, msgId: ID? = null): DmsSendApi {
+//            return DmsSendApi(guildId, TencentMessageForSending(content = content, msgId = msgId))
+//        }
+//
+//        /**
+//         * 构造 [DmsSendApi]
+//         */
+//        @JvmStatic
+//        @JvmOverloads
+//        public fun create(guildId: ID, embed: Message.Embed, msgId: ID? = null): DmsSendApi {
+//            return DmsSendApi(guildId, TencentMessageForSending(embed = embed, msgId = msgId))
+//        }
+//
+//
+//        /**
+//         * 构造 [DmsSendApi]
+//         */
+//        @JvmStatic
+//        @JvmOverloads
+//        public fun create(guildId: ID, ark: Message.Ark, msgId: ID? = null): DmsSendApi {
+//            return DmsSendApi(guildId, TencentMessageForSending(ark = ark, msgId = msgId))
+//        }
+//
+//        // with 'fileImage'
+//
+//
+//        /**
+//         * 构造 [DmsSendApi]
+//         */
+//        @JvmStatic
+//        @JvmOverloads
+//        public fun create(guildId: ID, sendingBody: TencentMessageForSending, fileImage: Resource? = null): DmsSendApi =
+//            DmsSendApi(
+//                guildId = guildId,
+//                body = if (fileImage != null) sendingBody.toMultiPartFormDataContent(
+//                    MessageSendApi.defaultJson,
+//                    fileImage
+//                ) else sendingBody
+//            )
+//
+//
+//        /**
+//         * 构造 [DmsSendApi]
+//         */
+//        @JvmStatic
+//        public fun create(guildId: ID, fileImage: Resource): DmsSendApi = DmsSendApi(
+//            guildId = guildId,
+//            body = null.toMultiPartFormDataContent(MessageSendApi.defaultJson, fileImage)
+//        )
+
     }
-    
-    
-    @JvmOverloads
-    public constructor(guildId: ID, sendingBody: TencentMessageForSending, fileImage: Resource? = null) : this(
-        guildId = guildId,
-        body = if (fileImage != null) sendingBody.toMultiPartFormDataContent(
-            MessageSendApi.defaultJson,
-            fileImage
-        ) else sendingBody
-    )
-    
-    
-    public constructor(guildId: ID, fileImage: Resource) : this(
-        guildId = guildId,
-        body = null.toMultiPartFormDataContent(MessageSendApi.defaultJson, fileImage)
-    )
-    
-    
+
+    override val body: Any = body.toRealBody(MessageSendApi.defaultJson)
+
     // POST /channels/{channel_id}/messages
-    private val path = arrayOf("dms", guildId.literal, "messages")
-    
+    private val path = arrayOf("dms", guildId, "messages")
+
     override val resultDeserializer: DeserializationStrategy<Message>
-        get() = SendMessageResult.serializer()
-    
+        get() = Message.serializer()
+
     override val method: HttpMethod
         get() = HttpMethod.Post
-    
+
     override fun route(builder: RouteInfoBuilder) {
         builder.apiPath = path
         if (body is MultiPartFormDataContent) {

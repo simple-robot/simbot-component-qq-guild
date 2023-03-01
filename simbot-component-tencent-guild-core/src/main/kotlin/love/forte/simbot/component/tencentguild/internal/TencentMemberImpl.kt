@@ -105,7 +105,7 @@ internal class TencentMemberImpl(
         }
         
         
-        return DmsSendApi(dms.guildId, messageForSend, fileImage).requestBy(bot).asReceipt()
+        return DmsSendApi.create(dms.guildId, messageForSend, fileImage).requestBy(bot).asReceipt()
     }
     
     override suspend fun send(text: String): TencentMessageReceipt {

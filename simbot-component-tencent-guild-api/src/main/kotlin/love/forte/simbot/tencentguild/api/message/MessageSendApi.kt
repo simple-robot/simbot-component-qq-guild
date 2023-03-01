@@ -61,18 +61,66 @@ import kotlin.io.path.name
  *
  * <hr />
  *
- * 主动消息与被动消息
+ * ## 主动消息与被动消息
  * - 主动消息：发送消息时，未填充 `msg_id/event_id` 字段的消息。
  * - 被动消息：发送消息时，填充了 `msg_id/event_id` 字段的消息。`msg_id` 和 `event_id` 两个字段任意填一个即为被动消息。
  * 接口使用此 `msg_id/event_id` 拉取用户的消息或事件，同时判断用户消息或事件的发送时间，如果超过被动消息回复时效，将会不允许发送该消息。
  *
  * 更多参考 [文档](https://bot.q.qq.com/wiki/develop/api/openapi/message/post_messages.html#%E4%B8%BB%E5%8A%A8%E6%B6%88%E6%81%AF%E4%B8%8E%E8%A2%AB%E5%8A%A8%E6%B6%88%E6%81%AF)
  *
+ * ## 发送 ARK 模板消息
+ * 通过指定 `ark` 字段发送模板消息。
+ *
+ * - 要求操作人在该子频道具有发送消息和 对应 `ARK 模板` 的权限。
+ * - 调用前需要先申请消息模板，这一步会得到一个模板 `id`，在请求时填在 `ark.template_id` 上。
+ * - 发送成功之后，会触发一个创建消息的事件。
+ * - 可用模板参考[可用模板](https://bot.q.qq.com/wiki/develop/api/openapi/message/message_template.html)。
+ *
+ * 更多参考 [文档](https://bot.q.qq.com/wiki/develop/api/openapi/message/post_ark_messages.html)
+ *
+ * ## 发送引用消息
+ *
+ * - 只支持引用机器人自己发送到的消息以及用户@机器人产生的消息。
+ * - 发送成功之后，会触发一个创建消息的事件。
+ *
+ * 不能单独发送引用消息，引用消息需要和其他消息类型组合发送，参数请见[发送消息](https://bot.q.qq.com/wiki/develop/api/openapi/message/post_messages.html)。
+ *
+ * 更多参考 [文档](https://bot.q.qq.com/wiki/develop/api/openapi/message/post_messages_reference.html)
+ *
+ * ## 发送含有消息按钮组件的消息
+ *
+ * 通过指定 `keyboard` 字段发送带按钮的消息，支持 `keyboard 模版` 和 `自定义 keyboard` 两种请求格式。
+ *
+ * - 要求操作人在该子频道具有 `发送消息` 和 `对应消息按钮组件` 的权限。
+ * - 请求参数 `keyboard 模版` 和 `自定义 keyboard` 只能单一传值。
+ * - `keyboard 模版`
+ *     - 调用前需要先申请消息按钮组件模板，这一步会得到一个模板 id，在请求时填在 `keyboard` 字段上。
+ *     - 申请消息按钮组件模板需要提供响应的 json，具体格式参考 [InlineKeyboard](https://bot.q.qq.com/wiki/develop/api/openapi/message/message_keyboard.html#inlinekeyboard)。
+ * - 仅 `markdown` 消息支持消息按钮。
+ *
+ * 更多参考 [文档](https://bot.q.qq.com/wiki/develop/api/openapi/message/post_keyboard_messages.html)
+ *
+ * ## 内嵌格式
+ * 利用 `content` 字段发送内嵌格式的消息。
+ *
+ * - 内嵌格式仅在 `content` 中会生效，在 `Ark` 和 `Embed` 中不生效。
+ * - 为了区分是文本还是内嵌格式，消息抄送和发送会对消息内容进行相关的转义。
+ *
+ * ### 转义内容
+ *
+ * | **源字符** | **转义后** |
+ * |----------|----------|
+ * | `&` | `&amp;` |
+ * | `<` | `&lt;` |
+ * | `>` | `&gt;` |
+ *
+ * 更多参考 [文档](https://bot.q.qq.com/wiki/develop/api/openapi/message/message_format.html)
+ *
  * @author ForteScarlet
  */
 public class MessageSendApi private constructor(
     channelId: String,
-    private val _body: Body, // TencentMessageForSending || MultiPartFormDataContent
+    body: Body, // TencentMessageForSending || MultiPartFormDataContent
 ) : TencentApi<Message>() {
     public companion object Factory {
         /** 类似于 [io.ktor.serialization.kotlinx.json.DefaultJson] */
@@ -150,7 +198,7 @@ public class MessageSendApi private constructor(
 //        )
     }
 
-    override val body: Any = _body.toRealBody(defaultJson)
+    override val body: Any = body.toRealBody(defaultJson)
 
     // POST /channels/{channel_id}/messages
     private val path = arrayOf("channels", channelId, "messages")
@@ -299,9 +347,9 @@ public class MessageSendApi private constructor(
 // // TencentMessageForSending || MultiPartFormDataContent
 /**
  *
- * @return MessageSendApi.Body || MultiPartFormDataContent
+ * @return [MessageSendApi.Body] or [MultiPartFormDataContent]
  */
-private fun MessageSendApi.Body.toRealBody(json: Json): Any {
+internal fun MessageSendApi.Body.toRealBody(json: Json): Any {
     if (fileImage == null) {
         return this
     }
@@ -398,60 +446,6 @@ private fun FormBuilder.appendFileImage(fileImage: Any?) {
         }
     }
 
-}
-
-
-private fun FormBuilder.appendTencentMessageForSending(json: Json, value: TencentMessageForSending) {
-    TencentMessageForSending.serializer().serialize(
-        FormDataDecoder(json.serializersModule, json, this),
-        value
-    )
-}
-
-internal fun TencentMessageForSending?.toMultiPartFormDataContent(
-    json: Json,
-    fileImage: Resource,
-): MultiPartFormDataContent {
-    val formParts = formData {
-        if (this@toMultiPartFormDataContent != null) {
-            appendTencentMessageForSending(json, this@toMultiPartFormDataContent)
-        }
-
-        val imgHeaders = Headers.build {
-            append(HttpHeaders.ContentDisposition, "filename=\"${fileImage.name}\"")
-        }
-
-        when (fileImage) {
-            is FileResource -> {
-                val file = fileImage.file
-                append(key = "file_image", ChannelProvider { file.readChannel() }, imgHeaders)
-            }
-
-            is PathResource -> {
-                val path = fileImage.path
-                append(
-                    key = "file_image",
-                    InputProvider { FileChannel.open(path, StandardOpenOption.READ).asInput() },
-                    imgHeaders
-                )
-            }
-
-            is URLResource -> {
-                val url = fileImage.url
-                append(key = "file_image", InputProvider { url.openStream().asInput() }, imgHeaders)
-            }
-
-            is ByteArrayResource -> {
-                append(key = "file_image", fileImage.bytes, imgHeaders)
-            }
-
-            else -> {
-                append(key = "file_image", InputProvider { fileImage.openStream().asInput() }, imgHeaders)
-            }
-        }
-    }
-
-    return MultiPartFormDataContent(formParts)
 }
 
 
@@ -579,39 +573,3 @@ private class FormDataDecoder(
     }
 }
 
-
-//@Serializable
-//internal data class SendMessageResult(
-//    override val id: CharSequenceID,
-//    @SerialName("channel_id")
-//    override val channelId: CharSequenceID,
-//    @SerialName("guild_id")
-//    override val guildId: CharSequenceID,
-//    override val content: String,
-//    @Serializable(TimestampISO8601Serializer::class)
-//    override val timestamp: Timestamp,
-//    @SerialName("edited_timestamp")
-//    override val editedTimestamp: Timestamp = Timestamp.NotSupport,
-//    @SerialName("mention_everyone")
-//    override val mentionEveryone: Boolean = false,
-//    override val author: TencentUserInfoImpl,
-//    override val attachments: List<Message.Attachment> = emptyList(),
-//    override val embeds: List<Message.Embed> = emptyList(),
-//    override val mentions: List<TencentUserInfoImpl> = emptyList(),
-//    override val ark: Message.Ark? = null,
-//    override val seqInChannel: String? = null,
-//) : Message {
-//    @Transient
-//    override val member: AuthorAsMember = AuthorAsMember(guildId, author)
-//}
-//
-//internal data class AuthorAsMember(
-//    override val guildId: String?,
-//    private val author: TencentUserInfoImpl,
-//) : TencentMemberInfo {
-//    override val user: TencentUserInfo get() = author
-//    override val nick: String get() = ""
-//    override val roleIds: List<ID> = listOf(TencentRoleInfo.DefaultRole.ALL_MEMBER.code.ID)
-//    override val joinedAt: Timestamp
-//        get() = Timestamp.NotSupport
-//}

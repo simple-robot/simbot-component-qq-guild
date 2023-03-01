@@ -16,19 +16,14 @@ import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import love.forte.simbot.ID
-import love.forte.simbot.literal
-import love.forte.simbot.tencentguild.DirectMessageSession
+import love.forte.simbot.tencentguild.api.PostTencentApi
 import love.forte.simbot.tencentguild.api.RouteInfoBuilder
-import love.forte.simbot.tencentguild.api.TencentApi
+import love.forte.simbot.tencentguild.model.DirectMessageSession
 
 /**
  * [创建私信会话](https://bot.q.qq.com/wiki/develop/api/openapi/dms/post_dms.html)
- * ## 接口
- * `POST /users/@me/dms`
  *
- * ## 功能描述
- * 用于机器人和在同一个频道内的成员创建私信会话。
+ *  用于机器人和在同一个频道内的成员创建私信会话。
  *
  * 机器人和用户存在共同频道才能创建私信会话。
  * 创建成功后，返回创建成功的频道 `id` ，子频道 `id` 和创建时间。
@@ -43,36 +38,35 @@ import love.forte.simbot.tencentguild.api.TencentApi
  * @author ForteScarlet
  */
 public class CreateDmsApi private constructor(
-    recipientId: ID,
-    sourceGuildId: ID,
-) : TencentApi<DirectMessageSession>() {
+    recipientId: String,
+    sourceGuildId: String,
+) : PostTencentApi<DirectMessageSession>() {
     public companion object Factory {
         // POST /users/@me/dms
         private val path = arrayOf("users", "@me", "dms")
-    
+
         /**
          * 构造 [CreateDmsApi].
          *
+         * @param recipientId 接收者 id
+         * @param sourceGuildId 源频道 id
+         *
          */
         @JvmStatic
-        public fun create(recipientId: ID, sourceGuildId: ID): CreateDmsApi = CreateDmsApi(recipientId, sourceGuildId)
+        public fun create(recipientId: String, sourceGuildId: String): CreateDmsApi =
+            CreateDmsApi(recipientId, sourceGuildId)
     }
-    
+
     override val resultDeserializer: DeserializationStrategy<DirectMessageSession>
-        get() = DirectMessageSession.serializer
-    
-    override val method: HttpMethod
-        get() = HttpMethod.Post
-    
+        get() = DirectMessageSession.serializer()
+
     override fun route(builder: RouteInfoBuilder) {
         builder.apiPath = path
         builder.contentType
     }
-    
-    private val _body = Body(recipientId.literal, sourceGuildId.literal)
-    
-    override val body: Any get() = _body
-    
+
+    override val body: Any = Body(recipientId, sourceGuildId)
+
     @Serializable
     private data class Body(
         @SerialName("recipient_id") private val recipientId: String,
