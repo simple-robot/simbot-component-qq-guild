@@ -60,3 +60,16 @@ KDoc(JavaDoc): [文档引导站点](https://docs.simbot.forte.love) 中的 [QQ�
 我们目前正在全力追求 [核心库API](https://github.com/simple-robot/simpler-robot) 的稳定，因此当前仓库可能**暂时**的无法及时发现问题或跟进官方的更新。
 如果你有任何问题或建议，欢迎前往 [社区](https://github.com/orgs/simple-robot/discussions) 讨论，或通过 [PR](https://github.com/simple-robot/simbot-component-tencent-guild/pulls) 协助我们，非常感谢！
 
+
+## License
+
+`simbot-component-tencent-guild` 使用 `LGPLv3` 许可证开源。
+
+```
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
+```
+
