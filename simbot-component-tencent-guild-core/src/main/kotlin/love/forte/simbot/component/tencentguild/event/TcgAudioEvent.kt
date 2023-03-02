@@ -21,8 +21,8 @@ import love.forte.simbot.event.BaseEventKey
 import love.forte.simbot.event.ChannelEvent
 import love.forte.simbot.event.Event
 import love.forte.simbot.message.doSafeCast
-import love.forte.simbot.tencentguild.EventSignals
-import love.forte.simbot.tencentguild.TencentAudioAction
+import love.forte.simbot.qguild.TencentAudioAction
+import love.forte.simbot.qguild.event.EventSignals
 
 
 /**

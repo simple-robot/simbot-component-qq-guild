@@ -36,7 +36,7 @@ public interface TencentGuild : Guild {
     override val name: String
     override val ownerId: ID
 
-    public val source: love.forte.simbot.tencentguild.model.Guild
+    public val source: love.forte.simbot.qguild.model.SimpleGuild
 
     /**
      * 得到此频道服务器下的所有子频道。

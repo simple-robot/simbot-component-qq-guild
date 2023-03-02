@@ -21,7 +21,7 @@ import love.forte.simbot.definition.Channel
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.message.Text
-import love.forte.simbot.tencentguild.TencentChannelInfo
+import love.forte.simbot.qguild.TencentChannelInfo
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.Items.Companion.emptyItems
 import kotlin.time.Duration

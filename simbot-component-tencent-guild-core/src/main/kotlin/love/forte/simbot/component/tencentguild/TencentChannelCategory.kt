@@ -17,8 +17,8 @@ import love.forte.plugin.suspendtrans.annotation.JvmBlocking
 import love.forte.simbot.definition.BotContainer
 import love.forte.simbot.definition.Category
 import love.forte.simbot.definition.GuildInfoContainer
-import love.forte.simbot.tencentguild.CHANNEL_TYPE_GROUPING
-import love.forte.simbot.tencentguild.TencentChannelInfo
+import love.forte.simbot.qguild.CHANNEL_TYPE_GROUPING
+import love.forte.simbot.qguild.TencentChannelInfo
 
 /**
  *

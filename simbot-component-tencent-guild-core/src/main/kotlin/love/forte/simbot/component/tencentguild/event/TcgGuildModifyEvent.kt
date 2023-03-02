@@ -19,8 +19,8 @@ import love.forte.simbot.component.tencentguild.TencentGuild
 import love.forte.simbot.component.tencentguild.TencentGuildComponentBot
 import love.forte.simbot.event.*
 import love.forte.simbot.message.doSafeCast
-import love.forte.simbot.tencentguild.EventSignals
-import love.forte.simbot.tencentguild.TencentGuildInfo
+import love.forte.simbot.qguild.TencentGuildInfo
+import love.forte.simbot.qguild.event.EventSignals
 
 /**
  *

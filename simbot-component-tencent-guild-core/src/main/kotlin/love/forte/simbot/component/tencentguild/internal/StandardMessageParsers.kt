@@ -15,8 +15,8 @@ package love.forte.simbot.component.tencentguild.internal
 import love.forte.simbot.ID
 import love.forte.simbot.component.tencentguild.message.toMessage
 import love.forte.simbot.message.*
-import love.forte.simbot.tencentguild.api.message.MessageSendApi
-import love.forte.simbot.tencentguild.model.Message
+import love.forte.simbot.qguild.api.message.MessageSendApi
+import love.forte.simbot.qguild.model.Message
 import love.forte.simbot.message.Message as SimbotMessage
 
 

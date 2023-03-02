@@ -24,8 +24,8 @@ import love.forte.simbot.component.tencentguild.internal.event.TcgBotRegisteredE
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.event.pushIfProcessable
 import love.forte.simbot.logger.LoggerFactory
-import love.forte.simbot.tencentguild.TencentGuildBotConfiguration
-import love.forte.simbot.tencentguild.tencentGuildBot
+import love.forte.simbot.qguild.BotConfiguration
+import love.forte.simbot.qguild.tencentGuildBot
 import org.slf4j.Logger
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -126,7 +126,7 @@ internal class TencentGuildBotManagerImpl(
         appId: String,
         appKey: String,
         token: String,
-        block: TencentGuildBotConfiguration.() -> Unit,
+        block: BotConfiguration.() -> Unit,
     ): TencentGuildComponentBot {
         val configure = configuration.botConfigure
         lock.write {

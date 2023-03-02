@@ -18,11 +18,11 @@ import love.forte.simbot.component.tencentguild.internal.SendingMessageParser
 import love.forte.simbot.message.Image
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.Messages
+import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.resources.ByteArrayResource
 import love.forte.simbot.resources.FileResource
 import love.forte.simbot.resources.PathResource
 import love.forte.simbot.resources.URLResource
-import love.forte.simbot.tencentguild.api.message.MessageSendApi
 
 
 /**

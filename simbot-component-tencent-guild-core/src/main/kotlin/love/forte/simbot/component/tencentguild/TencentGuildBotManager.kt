@@ -23,10 +23,10 @@ import love.forte.simbot.bot.BotVerifyInfo
 import love.forte.simbot.bot.ComponentMismatchException
 import love.forte.simbot.component.tencentguild.internal.TencentGuildBotManagerImpl
 import love.forte.simbot.event.EventProcessor
-import love.forte.simbot.tencentguild.EventSignals
-import love.forte.simbot.tencentguild.Intents
-import love.forte.simbot.tencentguild.TencentGuildApi
-import love.forte.simbot.tencentguild.TencentGuildBotConfiguration
+import love.forte.simbot.qguild.BotConfiguration
+import love.forte.simbot.qguild.QGuildApi
+import love.forte.simbot.qguild.event.EventSignals
+import love.forte.simbot.qguild.event.Intents
 import org.slf4j.Logger
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
@@ -78,7 +78,7 @@ public abstract class TencentGuildBotManager : BotManager<TencentGuildComponentB
         appId: String,
         appKey: String,
         token: String,
-        block: TencentGuildBotConfiguration.() -> Unit = {},
+        block: BotConfiguration.() -> Unit = {},
     ): TencentGuildComponentBot
     
     /**
@@ -154,7 +154,7 @@ public interface TencentGuildBotManagerConfiguration {
      * botConfigure = { appId, appKey, token -> /* ... */ }
      * ```
      */
-    public var botConfigure: TencentGuildBotConfiguration.(appId: String, appKey: String, token: String) -> Unit
+    public var botConfigure: BotConfiguration.(appId: String, appKey: String, token: String) -> Unit
     
     /**
      * 对所有bot的配置信息进行统一处理的函数。
@@ -168,7 +168,7 @@ public interface TencentGuildBotManagerConfiguration {
      * ```
      */
     @TencentGuildBotManagerConfigurationDsl
-    public fun botConfigure(configure: TencentGuildBotConfiguration.(appId: String, appKey: String, token: String) -> Unit)
+    public fun botConfigure(configure: BotConfiguration.(appId: String, appKey: String, token: String) -> Unit)
     
     /**
      * 当前botManager使用的协程上下文。初始值为 [ApplicationConfiguration] 所提供的上下文。
@@ -185,7 +185,7 @@ public interface TencentGuildBotManagerConfiguration {
     @TencentGuildBotManagerConfigurationDsl
     public fun register(
         appId: String, appKey: String, token: String,
-        botConfiguration: TencentGuildBotConfiguration.() -> Unit = {},
+        botConfiguration: BotConfiguration.() -> Unit = {},
         onBot: suspend (TencentGuildComponentBot) -> Unit,
     )
     
@@ -209,10 +209,10 @@ public class TencentGuildBotManagerAutoRegistrarFactory :
 private class TencentGuildBotManagerConfigurationImpl : TencentGuildBotManagerConfiguration {
     override var parentCoroutineContext: CoroutineContext = EmptyCoroutineContext
     
-    override var botConfigure: TencentGuildBotConfiguration.(appId: String, appKey: String, token: String) -> Unit =
+    override var botConfigure: BotConfiguration.(appId: String, appKey: String, token: String) -> Unit =
         { _, _, _ -> }
     
-    override fun botConfigure(configure: TencentGuildBotConfiguration.(appId: String, appKey: String, token: String) -> Unit) {
+    override fun botConfigure(configure: BotConfiguration.(appId: String, appKey: String, token: String) -> Unit) {
         botConfigure.also { old ->
             botConfigure = { appId, appKey, token ->
                 old(appId, appKey, token)
@@ -237,7 +237,7 @@ private class TencentGuildBotManagerConfigurationImpl : TencentGuildBotManagerCo
         appId: String,
         appKey: String,
         token: String,
-        botConfiguration: TencentGuildBotConfiguration.() -> Unit,
+        botConfiguration: BotConfiguration.() -> Unit,
         onBot: suspend (TencentGuildComponentBot) -> Unit,
     ) {
         addBotManagerConfig { manager ->
@@ -263,42 +263,42 @@ public data class TencentBotViaBotFileConfiguration(
      * app id.
      */
     val appId: String,
-    
+
     /**
      * app key.
      */
     val appKey: String,
-    
+
     /**
      * token.
      */
     val token: String,
-    
-    
+
+
     /**
      * 分片总数。
-     * @see [TencentGuildBotConfiguration.totalShard]
+     * @see [BotConfiguration.totalShard]
      */
     val totalShard: Int? = null,
-    
+
     /**
      * 分片策略。key为分片值，
      * value为对应分片下所需的 intent.
      *
      */
     val intentValues: Map<Int, Int> = emptyMap(),
-    
+
     /**
      * 默认的 [Intents]. 如果对应分片下 [intentValues] 无法找到指定的 intent, 则使用此默认值。
      */
     val defaultIntents: List<String> = EventSignals.intents.keys.toList(),
-    
+
     /**
      * 服务器路径地址。
-     * @see TencentGuildApi.URL_STRING
+     * @see QGuildApi.URL_STRING
      */
     val serverUrl: String? = null,
-    
+
     ) {
     
     internal val defaultIntentsValue: Intents
@@ -318,7 +318,7 @@ public data class TencentBotViaBotFileConfiguration(
         }
     
     
-    internal fun includeConfig(configuration: TencentGuildBotConfiguration) {
+    internal fun includeConfig(configuration: BotConfiguration) {
         if (totalShard != null) {
             configuration.totalShard = totalShard
         }

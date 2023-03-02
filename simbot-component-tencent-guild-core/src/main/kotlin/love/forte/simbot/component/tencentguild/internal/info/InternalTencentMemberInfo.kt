@@ -14,8 +14,8 @@ package love.forte.simbot.component.tencentguild.internal.info
 
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
-import love.forte.simbot.tencentguild.TencentMemberInfo
-import love.forte.simbot.tencentguild.TencentUserInfo
+import love.forte.simbot.qguild.TencentMemberInfo
+import love.forte.simbot.qguild.TencentUserInfo
 
 /**
  *

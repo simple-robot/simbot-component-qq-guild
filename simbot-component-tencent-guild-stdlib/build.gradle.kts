@@ -23,5 +23,7 @@ dependencies {
     api(simbotLoggerSlf4jImpl)
     api(simbotUtilLoop)
     api(libs.ktor.client.ws)
+//    implementation("io.ktor:ktor-client-content-negotiation:2.2.3")
+//    implementation("io.ktor:ktor-serialization-jackson:2.2.3")
 }
 

@@ -21,7 +21,7 @@ import love.forte.simbot.definition.GuildMember
 import love.forte.simbot.definition.MemberInfo
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
-import love.forte.simbot.tencentguild.TencentMemberInfo
+import love.forte.simbot.qguild.TencentMemberInfo
 import love.forte.simbot.utils.item.Items
 import kotlin.time.Duration
 

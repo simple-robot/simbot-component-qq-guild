@@ -23,7 +23,7 @@ import love.forte.simbot.definition.Group
 import love.forte.simbot.definition.GuildBot
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.message.Image
-import love.forte.simbot.tencentguild.TencentGuildBot
+import love.forte.simbot.qguild.Bot
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.Items.Companion.emptyItems
 
@@ -46,10 +46,10 @@ public interface TencentGuildComponentBot : Bot {
     /**
      * 在 stdlib 模块下的原始Bot类型。
      */
-    public val source: TencentGuildBot
+    public val source: love.forte.simbot.qguild.Bot
     
     @Deprecated("Use 'source'", ReplaceWith("source"))
-    public val sourceBot: TencentGuildBot get() = source
+    public val sourceBot: love.forte.simbot.qguild.Bot get() = source
     
     override val id: ID
         get() = source.ticket.appId.ID
@@ -63,7 +63,7 @@ public interface TencentGuildComponentBot : Bot {
     override fun isMe(id: ID): Boolean
     
     /**
-     * 启动当前bot, 并且初始化此bot的信息。 启动时会通过 [TencentGuildBot.me] 查询当前bot的信息，并为 [isMe] 提供额外id的匹配支持。
+     * 启动当前bot, 并且初始化此bot的信息。 启动时会通过 [Bot.me] 查询当前bot的信息，并为 [isMe] 提供额外id的匹配支持。
      *
      */
     @JvmSynthetic

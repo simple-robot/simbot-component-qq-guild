@@ -18,7 +18,7 @@ import love.forte.simbot.ID
 import love.forte.simbot.component.tencentguild.*
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.message.Image
-import love.forte.simbot.tencentguild.TencentGuildBot
+import love.forte.simbot.qguild.Bot
 import love.forte.simbot.utils.item.Items
 import org.slf4j.Logger
 import kotlin.coroutines.CoroutineContext
@@ -52,7 +52,7 @@ internal class TencentGuildComponentGuildBotImpl(
     override suspend fun join() = bot.join()
     
     override val component: TencentGuildComponent get() = bot.component
-    override val source: TencentGuildBot get() = bot.source
+    override val source: Bot get() = bot.source
     
     override fun isMe(id: ID): Boolean = bot.isMe(id)
     

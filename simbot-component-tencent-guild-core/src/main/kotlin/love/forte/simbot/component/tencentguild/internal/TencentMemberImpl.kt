@@ -27,10 +27,10 @@ import love.forte.simbot.event.EventProcessingContext
 import love.forte.simbot.literal
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
-import love.forte.simbot.tencentguild.DirectMessageSession
-import love.forte.simbot.tencentguild.TencentMemberInfo
-import love.forte.simbot.tencentguild.api.message.direct.CreateDmsApi
-import love.forte.simbot.tencentguild.api.message.direct.DmsSendApi
+import love.forte.simbot.qguild.DirectMessageSession
+import love.forte.simbot.qguild.TencentMemberInfo
+import love.forte.simbot.qguild.api.message.direct.CreateDmsApi
+import love.forte.simbot.qguild.api.message.direct.DmsSendApi
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.effectedItemsByFlow
 

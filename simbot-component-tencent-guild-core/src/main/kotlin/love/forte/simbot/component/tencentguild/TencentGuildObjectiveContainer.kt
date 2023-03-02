@@ -12,7 +12,7 @@
 
 package love.forte.simbot.component.tencentguild
 
-import love.forte.simbot.tencentguild.TencentGuildObjective
+import love.forte.simbot.qguild.TencentGuildObjective
 
 
 /**

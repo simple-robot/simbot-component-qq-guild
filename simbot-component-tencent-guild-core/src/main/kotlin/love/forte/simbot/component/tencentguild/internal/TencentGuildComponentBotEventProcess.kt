@@ -17,10 +17,10 @@ import love.forte.simbot.component.tencentguild.internal.event.eventSignalParser
 import love.forte.simbot.component.tencentguild.internal.event.findOrCreateGuildImpl
 import love.forte.simbot.event.pushIfProcessable
 import love.forte.simbot.literal
-import love.forte.simbot.tencentguild.EventSignals
-import love.forte.simbot.tencentguild.TencentChannelInfo
-import love.forte.simbot.tencentguild.TencentGuildInfo
-import love.forte.simbot.tencentguild.isGrouping
+import love.forte.simbot.qguild.TencentChannelInfo
+import love.forte.simbot.qguild.TencentGuildInfo
+import love.forte.simbot.qguild.event.EventSignals
+import love.forte.simbot.qguild.isGrouping
 
 
 internal fun TencentGuildComponentBotImpl.registerEventProcessor() {
@@ -32,7 +32,7 @@ internal fun TencentGuildComponentBotImpl.registerEventProcessor() {
  * 注册预处理事件，用于监听各类'变化'事件并同步数据。
  */
 private fun TencentGuildComponentBotImpl.registerEventPreProcessor() {
-    source.preProcessor { _, decoded ->
+    source.registerPreProcessor { _, decoded ->
         when (type) {
             EventSignals.Guilds.GuildCreate.type -> onGuildCreate(decoded)
             EventSignals.Guilds.GuildUpdate.type -> onGuildUpdate(decoded)
@@ -188,7 +188,7 @@ private fun TencentGuildComponentBotImpl.onMemberRemove(decoded: () -> Any) {
  */
 private fun TencentGuildComponentBotImpl.registerNormalEventProcessor() {
     // process event.
-    source.processor { json, decoded ->
+    source.registerProcessor { json, decoded ->
         // event processor
         logger.trace("EventSignals.events[{}]: {}", type, EventSignals.events[type])
         EventSignals.events[this.type]?.let { signals ->

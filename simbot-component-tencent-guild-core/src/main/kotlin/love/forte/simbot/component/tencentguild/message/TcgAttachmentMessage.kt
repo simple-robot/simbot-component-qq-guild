@@ -19,8 +19,8 @@ import love.forte.simbot.component.tencentguild.internal.SendingMessageParser
 import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.message.Messages
 import love.forte.simbot.message.doSafeCast
-import love.forte.simbot.tencentguild.api.message.MessageSendApi
-import love.forte.simbot.tencentguild.model.Message
+import love.forte.simbot.qguild.api.message.MessageSendApi
+import love.forte.simbot.qguild.model.Message
 import love.forte.simbot.message.Message as SimbotMessage
 
 

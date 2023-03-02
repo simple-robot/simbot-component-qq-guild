@@ -13,9 +13,9 @@
 package love.forte.simbot.component.tencentguild.internal.info
 
 import love.forte.simbot.ID
-import love.forte.simbot.tencentguild.ChannelSubType
-import love.forte.simbot.tencentguild.ChannelType
-import love.forte.simbot.tencentguild.TencentChannelInfo
+import love.forte.simbot.qguild.ChannelSubType
+import love.forte.simbot.qguild.ChannelType
+import love.forte.simbot.qguild.TencentChannelInfo
 
 internal data class InternalTencentChannelInfo(
     override var id: ID,

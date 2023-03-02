@@ -20,8 +20,8 @@ import love.forte.simbot.component.tencentguild.internal.TencentGuildComponentBo
 import love.forte.simbot.component.tencentguild.internal.TencentGuildImpl
 import love.forte.simbot.component.tencentguild.internal.TencentGuildImpl.Companion.tencentGuildImpl
 import love.forte.simbot.literal
-import love.forte.simbot.tencentguild.EventSignals
-import love.forte.simbot.tencentguild.TencentGuildInfo
+import love.forte.simbot.qguild.TencentGuildInfo
+import love.forte.simbot.qguild.event.EventSignals
 
 private suspend fun TencentGuildComponentBotImpl.findOrCreateGuild(data: TencentGuildInfo): TencentGuildImpl {
     return getInternalGuild(data.id) ?: tencentGuildImpl(this, data).also {

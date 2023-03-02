@@ -31,12 +31,12 @@ implementation 'love.forte.simbot.component:simbot-component-tencent-guild-api:$
 ```
 
 
-# Package love.forte.simbot.tencentguild.api
+# Package love.forte.simbot.qguild.api
 
 与[QQ频道开发者文档](https://bot.q.qq.com/wiki/develop/api/)中定义的API进行对照实现的模块。
 
 
-# Package love.forte.simbot.tencentguild.model
+# Package love.forte.simbot.qguild.model
 
 用于存放QQ频道中各API的**响应数据模型**定义。
 

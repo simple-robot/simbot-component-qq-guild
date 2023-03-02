@@ -15,15 +15,15 @@
 package love.forte.simbot.component.tencentguild.util
 
 import love.forte.simbot.component.tencentguild.TencentGuildComponentBot
-import love.forte.simbot.tencentguild.api.TencentApi
-import love.forte.simbot.tencentguild.request
-import love.forte.simbot.tencentguild.requestBy
+import love.forte.simbot.qguild.api.TencentApi
+import love.forte.simbot.qguild.request
+import love.forte.simbot.qguild.requestBy
 
 
 /**
  * 直接通过bot进行请求。
  *
- * @throws love.forte.simbot.tencentguild.TencentApiException 如果返回状态码不在 200..300之间。
+ * @throws love.forte.simbot.qguild.TencentApiException 如果返回状态码不在 200..300之间。
  */
 @JvmSynthetic
 @Deprecated("使用更符合语义的Api.requestBy(Bot) 或 Bot.request(Api)", ReplaceWith("requestBy(bot)"))
@@ -32,7 +32,7 @@ public suspend inline fun <R> TencentApi<R>.request(bot: TencentGuildComponentBo
 /**
  * 直接通过bot进行请求。
  *
- * @throws love.forte.simbot.tencentguild.TencentApiException 如果返回状态码不在 200..300之间。
+ * @throws love.forte.simbot.qguild.TencentApiException 如果返回状态码不在 200..300之间。
  */
 @JvmSynthetic
 public suspend inline fun <R> TencentApi<R>.requestBy(bot: TencentGuildComponentBot): R {
@@ -42,7 +42,7 @@ public suspend inline fun <R> TencentApi<R>.requestBy(bot: TencentGuildComponent
 /**
  * 直接通过bot进行请求。
  *
- * @throws love.forte.simbot.tencentguild.TencentApiException 如果返回状态码不在 200..300之间。
+ * @throws love.forte.simbot.qguild.TencentApiException 如果返回状态码不在 200..300之间。
  */
 @JvmSynthetic
 public suspend inline fun <R> TencentGuildComponentBot.request(api: TencentApi<R>): R {

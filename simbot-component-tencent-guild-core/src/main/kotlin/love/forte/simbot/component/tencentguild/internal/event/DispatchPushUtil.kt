@@ -22,11 +22,11 @@ import love.forte.simbot.component.tencentguild.internal.TencentGuildImpl
 import love.forte.simbot.component.tencentguild.internal.TencentGuildImpl.Companion.tencentGuildImpl
 import love.forte.simbot.event.Event
 import love.forte.simbot.literal
-import love.forte.simbot.tencentguild.EventSignals
-import love.forte.simbot.tencentguild.Signal
-import love.forte.simbot.tencentguild.api.channel.GetChannelApi
-import love.forte.simbot.tencentguild.api.guild.GetGuildApi
-import love.forte.simbot.tencentguild.requestBy
+import love.forte.simbot.qguild.api.channel.GetChannelApi
+import love.forte.simbot.qguild.api.guild.GetGuildApi
+import love.forte.simbot.qguild.event.EventSignals
+import love.forte.simbot.qguild.event.Signal
+import love.forte.simbot.qguild.requestBy
 
 
 internal interface SignalToEvent {

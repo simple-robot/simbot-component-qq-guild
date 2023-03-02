@@ -1,25 +1,22 @@
 /*
- *  Copyright (c) 2022-2022 ForteScarlet <ForteScarlet@163.com>
+ * Copyright (c) 2022-2023. ForteScarlet.
  *
- *  本文件是 simbot-component-tencent-guild 的一部分。
+ * This file is part of simbot-component-tencent-guild.
  *
- *  simbot-component-tencent-guild 是自由软件：你可以再分发之和/或依照由自由软件基金会发布的 GNU 通用公共许可证修改之，无论是版本 3 许可证，还是（按你的决定）任何以后版都可以。
+ * simbot-component-tencent-guild is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  *
- *  发布 simbot-component-tencent-guild 是希望它能有用，但是并无保障;甚至连可销售和符合某个特定的目的都不保证。请参看 GNU 通用公共许可证，了解详情。
+ * simbot-component-tencent-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
  *
- *  你应该随程序获得一份 GNU 通用公共许可证的复本。如果没有，请看:
- *  https://www.gnu.org/licenses
- *  https://www.gnu.org/licenses/gpl-3.0-standalone.html
- *  https://www.gnu.org/licenses/lgpl-3.0-standalone.html
- *
- *
+ * You should have received a copy of the GNU Lesser General Public License along with simbot-component-tencent-guild. If not, see <https://www.gnu.org/licenses/>.
  */
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import love.forte.simbot.tencentguild.*
-import love.forte.simbot.tencentguild.api.message.MessageSendApi
-import love.forte.simbot.tencentguild.model.Message
+import love.forte.simbot.qguild.*
+import love.forte.simbot.qguild.api.message.MessageSendApi
+import love.forte.simbot.qguild.event.EventSignals
+import love.forte.simbot.qguild.event.Signal
+import love.forte.simbot.qguild.model.Message
 
 suspend fun main() {
     val bot = tencentGuildBot(
@@ -32,7 +29,7 @@ suspend fun main() {
     bot.start()
 
     // 添加事件1
-    bot.processor { _, decoded ->
+    bot.registerProcessor { _, decoded ->
         val dispatch: Signal.Dispatch = this
         if (dispatch.type == "AT_MESSAGE_CREATE") {
             val message: Message = decoded() as Message
@@ -44,7 +41,7 @@ suspend fun main() {
     }
 
     // 指定监听事件名称1
-    bot.processor("AT_MESSAGE_CREATE") { decoder, decoded ->
+    bot.registerProcessor("AT_MESSAGE_CREATE") { decoder, decoded ->
         val dispatch: Signal.Dispatch = this
         val message: Message = decoded() as Message
         // decoder.decodeFromJsonElement(EventSignals.AtMessages.AtMessageCreate.decoder, dispatch.data)
@@ -53,7 +50,7 @@ suspend fun main() {
     }
 
     // 指定监听事件名称2
-    bot.processor(EventSignals.AtMessages.AtMessageCreate.type) { decoder, decoded ->
+    bot.registerProcessor(EventSignals.AtMessages.AtMessageCreate.type) { decoder, decoded ->
         val dispatch: Signal.Dispatch = this
         val message: Message = decoded() as Message
         // decoder.decodeFromJsonElement(EventSignals.AtMessages.AtMessageCreate.decoder, dispatch.data)
@@ -62,7 +59,7 @@ suspend fun main() {
     }
 
     // 指定监听事件类型1
-    bot.processor(EventSignals.AtMessages.AtMessageCreate) { message ->
+    bot.registerProcessor(EventSignals.AtMessages.AtMessageCreate) { message ->
         println(message)
 
         val api = MessageSendApi.create(channelId = message.channelId, content = "content", msgId = message.id)

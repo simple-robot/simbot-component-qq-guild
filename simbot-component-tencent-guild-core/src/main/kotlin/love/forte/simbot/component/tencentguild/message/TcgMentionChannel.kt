@@ -20,7 +20,7 @@ import love.forte.simbot.message.At
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.Messages
 import love.forte.simbot.message.doSafeCast
-import love.forte.simbot.tencentguild.api.message.MessageSendApi
+import love.forte.simbot.qguild.api.message.MessageSendApi
 
 
 @SerialName("tcg.mentionChannel") // tencentguild.channel.mention

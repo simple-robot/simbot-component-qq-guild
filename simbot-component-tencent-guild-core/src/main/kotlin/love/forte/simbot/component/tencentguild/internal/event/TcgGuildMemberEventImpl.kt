@@ -20,8 +20,8 @@ import love.forte.simbot.component.tencentguild.event.TcgGuildMemberEvent
 import love.forte.simbot.component.tencentguild.internal.TencentGuildComponentBotImpl
 import love.forte.simbot.component.tencentguild.internal.TencentMemberImpl
 import love.forte.simbot.event.Event
-import love.forte.simbot.tencentguild.EventSignals
-import love.forte.simbot.tencentguild.TencentMemberInfo
+import love.forte.simbot.qguild.TencentMemberInfo
+import love.forte.simbot.qguild.event.EventSignals
 
 
 private fun tcgGuildMemberEventId(type: Int, botId: ID, memberId: ID, timestamp: Timestamp): ID =

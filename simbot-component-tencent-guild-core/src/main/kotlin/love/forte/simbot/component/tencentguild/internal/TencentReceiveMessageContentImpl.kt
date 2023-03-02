@@ -15,7 +15,7 @@ package love.forte.simbot.component.tencentguild.internal
 import love.forte.simbot.ID
 import love.forte.simbot.component.tencentguild.message.TencentReceiveMessageContent
 import love.forte.simbot.message.Messages
-import love.forte.simbot.tencentguild.model.Message
+import love.forte.simbot.qguild.model.Message
 
 /**
  *

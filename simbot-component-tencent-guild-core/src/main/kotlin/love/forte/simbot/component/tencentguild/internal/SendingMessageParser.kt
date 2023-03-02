@@ -15,10 +15,10 @@ package love.forte.simbot.component.tencentguild.internal
 import love.forte.simbot.*
 import love.forte.simbot.component.tencentguild.message.*
 import love.forte.simbot.message.*
+import love.forte.simbot.qguild.*
+import love.forte.simbot.qguild.api.message.*
+import love.forte.simbot.qguild.model.Message
 import love.forte.simbot.resources.Resource
-import love.forte.simbot.tencentguild.*
-import love.forte.simbot.tencentguild.api.message.*
-import love.forte.simbot.tencentguild.model.Message
 import java.util.*
 import java.util.concurrent.*
 import love.forte.simbot.message.Message as SimbotMessage

@@ -13,7 +13,7 @@
 package love.forte.simbot.component.tencentguild.internal
 
 import love.forte.simbot.component.tencentguild.TencentRole
-import love.forte.simbot.tencentguild.TencentRoleInfo
+import love.forte.simbot.qguild.TencentRoleInfo
 
 /**
  *

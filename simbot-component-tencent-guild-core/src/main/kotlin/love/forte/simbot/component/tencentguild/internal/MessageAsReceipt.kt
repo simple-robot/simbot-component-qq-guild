@@ -15,7 +15,7 @@ package love.forte.simbot.component.tencentguild.internal
 import love.forte.simbot.ID
 import love.forte.simbot.message.MessageReceipt
 import love.forte.simbot.message.SingleMessageReceipt
-import love.forte.simbot.tencentguild.model.Message
+import love.forte.simbot.qguild.model.Message
 
 
 public interface TencentMessageReceipt : MessageReceipt {

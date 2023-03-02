@@ -29,10 +29,10 @@ import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.event.pushIfProcessable
 import love.forte.simbot.literal
 import love.forte.simbot.logger.LoggerFactory
-import love.forte.simbot.tencentguild.TencentGuildBot
-import love.forte.simbot.tencentguild.api.user.GetBotGuildListApi
-import love.forte.simbot.tencentguild.model.Guild
-import love.forte.simbot.tencentguild.requestBy
+import love.forte.simbot.qguild.Bot
+import love.forte.simbot.qguild.api.user.GetBotGuildListApi
+import love.forte.simbot.qguild.model.SimpleGuild
+import love.forte.simbot.qguild.requestBy
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.Items.Companion.asItems
 import java.util.concurrent.ConcurrentHashMap
@@ -44,7 +44,7 @@ import kotlin.coroutines.CoroutineContext
  * @author ForteScarlet
  */
 internal class TencentGuildComponentBotImpl(
-    override val source: TencentGuildBot,
+    override val source: Bot,
     override val manager: TencentGuildBotManager,
     override val eventProcessor: EventProcessor,
     override val component: TencentGuildComponent,
@@ -57,7 +57,7 @@ internal class TencentGuildComponentBotImpl(
         get() = source.coroutineContext[Job]!!
     
     override val logger =
-        LoggerFactory.getLogger("love.forte.simbot.component.tencentguild.bot.${source.ticket.appKey}")
+        LoggerFactory.getLogger("love.forte.simbot.component.tencentguild.bot.${source.ticket.secret}")
     
     @Volatile
     private lateinit var meId: ID
@@ -135,7 +135,7 @@ internal class TencentGuildComponentBotImpl(
 private suspend fun TencentGuildComponentBotImpl.initGuildListData() {
     var lastId: String? = null
     var times = 1
-    val guildInfoList = mutableListOf<Guild>()
+    val guildInfoList = mutableListOf<SimpleGuild>()
     while (true) {
         val list = GetBotGuildListApi.create(after = lastId).requestBy(source)
         if (list.isEmpty()) break

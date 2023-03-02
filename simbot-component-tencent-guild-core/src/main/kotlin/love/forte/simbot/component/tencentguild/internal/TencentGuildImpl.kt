@@ -22,19 +22,19 @@ import love.forte.simbot.component.tencentguild.internal.info.toInternal
 import love.forte.simbot.component.tencentguild.util.requestBy
 import love.forte.simbot.literal
 import love.forte.simbot.logger.LoggerFactory
-import love.forte.simbot.tencentguild.TencentApiException
-import love.forte.simbot.tencentguild.TencentGuildInfo
-import love.forte.simbot.tencentguild.api.channel.GetGuildChannelListApi
-import love.forte.simbot.tencentguild.api.member.GetMemberApi
-import love.forte.simbot.tencentguild.api.role.GetGuildRoleListApi
-import love.forte.simbot.tencentguild.isGrouping
+import love.forte.simbot.qguild.TencentApiException
+import love.forte.simbot.qguild.TencentGuildInfo
+import love.forte.simbot.qguild.api.channel.GetGuildChannelListApi
+import love.forte.simbot.qguild.api.member.GetMemberApi
+import love.forte.simbot.qguild.api.role.GetGuildRoleListApi
+import love.forte.simbot.qguild.isGrouping
 import love.forte.simbot.toTimestamp
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.Items.Companion.asItems
 import love.forte.simbot.utils.item.effectedFlowItems
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.time.Duration
-import love.forte.simbot.tencentguild.model.Guild as GuildModel
+import love.forte.simbot.qguild.model.SimpleGuild as GuildModel
 
 
 /**

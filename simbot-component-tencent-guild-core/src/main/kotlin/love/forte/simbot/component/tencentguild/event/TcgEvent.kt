@@ -20,7 +20,7 @@ import love.forte.simbot.event.BaseEvent
 import love.forte.simbot.event.BaseEventKey
 import love.forte.simbot.event.Event
 import love.forte.simbot.message.doSafeCast
-import love.forte.simbot.tencentguild.EventSignals
+import love.forte.simbot.qguild.event.EventSignals
 
 /**
  *
