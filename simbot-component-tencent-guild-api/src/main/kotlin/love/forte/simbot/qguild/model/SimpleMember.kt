@@ -66,7 +66,7 @@ public data class SimpleMember(
     /**
      * 用户的频道基础信息，只有成员相关接口中会填充此信息
      */
-    val user: User,
+    val user: User? = null,
     /**
      * 用户的昵称
      */
@@ -78,7 +78,7 @@ public data class SimpleMember(
     /**
      * 用户加入频道的时间
      */
-    @SerialName("join_at") override val joinedAt: Instant
+    @SerialName("joined_at") override val joinedAt: Instant
 ) : Member
 
 /**

@@ -34,7 +34,7 @@ public data class User(
     /** 用户名 */
     val username: String,
     /** 用户头像地址 */
-    val avatar: String,
+    val avatar: String = "",
     /** 是否是机器人 */
     @SerialName("bot") val isBot: Boolean = false,
     /** 特殊关联应用的 `openid`，需要特殊申请并配置后才会返回。如需申请，请联系平台运营人员。 */

@@ -20,6 +20,7 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -43,6 +44,7 @@ import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.max
 import kotlin.random.Random
+import kotlin.time.Duration.Companion.milliseconds
 
 
 internal fun checkResumeCode(code: Short): Boolean {
@@ -141,9 +143,12 @@ internal class BotImpl(
 
         loop.appendStage(Connect(shard, gatewayInfo))
 
+        // TODO supervisor? or normal?
         val stageLoopJob = launch(SupervisorJob(parentJob)) {
             loop.loop { e ->
-                logger.error("Loop error: {}", e.localizedMessage, e)
+                // TODO just throw?
+//                logger.error("Loop error: {}", e.localizedMessage, e)
+                throw e
             }
         }
 
@@ -358,7 +363,11 @@ internal class BotImpl(
             return session.launch(CoroutineName("bot.${ticket.appId}.heartbeat")) {
                 val serializer = Signal.Heartbeat.serializer()
                 while (isActive) {
-                    delay(getHelloInterval())
+                    val timeMillis = getHelloInterval()
+                    if (logger.isTraceEnabled) {
+                        logger.trace("Heartbeat next delay interval: {}", timeMillis.milliseconds.toString())
+                    }
+                    delay(timeMillis)
                     val hb = Signal.Heartbeat(seq.get().takeIf { it >= 0 })
                     session.send(wsDecoder.encodeToString(serializer, hb))
                 }
@@ -455,6 +464,8 @@ internal class BotImpl(
         val client: ClientImpl,
         val eventSharedFlow: MutableSharedFlow<EventData>,
     ) : Stage() {
+        // TODO session.incoming buffer
+
         override suspend fun invoke(loop: StageLoop<Stage>) {
             val session = client.wsSession
             val seq = client.sessionInfo.seq
@@ -467,7 +478,21 @@ internal class BotImpl(
 
             // TODO catch CancellationException?
 
+
             logger.trace("Receiving next frame ...")
+            try {
+                session.incoming.receive()
+            } catch (e: ClosedReceiveChannelException) {
+                val reason = session.closeReason.await()
+                logger.debug("Session closed. reason: $reason", e)
+                // try resume
+                loop.appendStage(Resume(client))
+
+            } catch (e: CancellationException) {
+                logger.error("Session cancellation.", e)
+                // try resume
+                loop.appendStage(Resume(client))
+            }
             val frame = session.incoming.receive()
             logger.trace("Received next frame: {}", frame)
             val raw = (frame as? Frame.Text)?.readText() ?: run {
@@ -475,6 +500,7 @@ internal class BotImpl(
                 loop.appendStage(this) // next: this
                 return
             }
+            logger.debug("Received next text frame raw: {}", raw)
             val json = wsDecoder.parseToJsonElement(raw)
             when (val opcode = json.getOpcode()) {
                 Opcodes.Dispatch -> {
@@ -499,7 +525,7 @@ internal class BotImpl(
                 }
 
                 else -> {
-                    logger.debug("Received other opcode: {}", opcode)
+                    logger.debug("Received other signal with opcode: {}, raw: {}", opcode, raw)
                 }
             }
 

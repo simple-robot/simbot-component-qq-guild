@@ -441,8 +441,8 @@ public data class Ready(override val s: Long, @SerialName("d") override val data
     @Serializable
     public data class Data(
         val version: String,
-        val sessionId: String,
-        val user: User,
+        @SerialName("session_id") val sessionId: String,
+        val user: User, // TODO 'avatar' is required,  but it was missing
         val shard: Shard
     )
 }

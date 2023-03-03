@@ -20,6 +20,7 @@ import love.forte.simbot.qguild.ApiModel
 import love.forte.simbot.qguild.utils.InstantISO8601Serializer
 import java.time.Instant
 
+// TODO Fields [edited_timestamp, mention_everyone, attachments, embeds, ark, src_guild_id]
 
 /**
  * [消息对象(Message)](https://bot.q.qq.com/wiki/develop/api/openapi/message/model.html)
@@ -58,12 +59,12 @@ public data class Message(
     /**
      * ISO8601 timestamp	消息编辑时间
      */
-    @SerialName("edited_timestamp") public val editedTimestamp: Instant,
+    @SerialName("edited_timestamp") public val editedTimestamp: Instant? = null,
 
     /**
      * 是否是@全员消息
      */
-    @SerialName("mention_everyone") public val mentionEveryone: Boolean,
+    @SerialName("mention_everyone") public val mentionEveryone: Boolean = false,
 
     /**
      * 消息创建者
@@ -73,17 +74,17 @@ public data class Message(
     /**
      * MessageAttachment 对象数组	附件
      */
-    public val attachments: List<Attachment>,
+    public val attachments: List<Attachment> = emptyList(),
 
     /**
      * embeds	MessageEmbed 对象数组	embed
      */
-    public val embeds: List<Embed>,
+    public val embeds: List<Embed> = emptyList(),
 
     /**
      * User 对象数组	消息中@的人
      */
-    public val mentions: List<User>,
+    public val mentions: List<User> = emptyList(),
 
     /**
      * Member 对象	消息创建者的member信息
@@ -93,21 +94,21 @@ public data class Message(
     /**
      * ark消息对象	ark消息
      */
-    public val ark: Ark?,
+    public val ark: Ark? = null,
 
     /**
      * `seq_in_channel` string
      *
      * 子频道消息 seq，用于消息间的排序，seq 在同一子频道中按从先到后的顺序递增，不同的子频道之间消息无法排序
      */
-    @SerialName("seq_in_channel") public val seqInChannel: String?,
+    @SerialName("seq_in_channel") public val seqInChannel: Long,
 
     // TODO message_reference
 
     /**
      * 用于私信场景下识别真实的来源频道id
      */
-    @SerialName("src_guild_id") val srcGuildId: String?
+    @SerialName("src_guild_id") val srcGuildId: String? = null
 
 ) {
 
