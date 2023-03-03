@@ -16,9 +16,6 @@ import love.forte.simbot.ID
 import love.forte.simbot.component.tencentguild.TencentChannelCategory
 import love.forte.simbot.component.tencentguild.TencentGuild
 import love.forte.simbot.component.tencentguild.TencentGuildComponentGuildBot
-import love.forte.simbot.qguild.ChannelSubType
-import love.forte.simbot.qguild.ChannelType
-import love.forte.simbot.qguild.TencentChannelInfo
 import love.forte.simbot.qguild.model.ChannelSubType
 import love.forte.simbot.qguild.model.ChannelType
 

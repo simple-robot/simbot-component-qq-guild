@@ -18,7 +18,6 @@ import love.forte.simbot.component.tencentguild.event.TcgChannelModifyEvent
 import love.forte.simbot.component.tencentguild.internal.TencentChannelImpl
 import love.forte.simbot.component.tencentguild.internal.TencentGuildComponentBotImpl
 import love.forte.simbot.event.Event
-import love.forte.simbot.qguild.TencentChannelInfo
 import love.forte.simbot.qguild.event.EventSignals
 
 

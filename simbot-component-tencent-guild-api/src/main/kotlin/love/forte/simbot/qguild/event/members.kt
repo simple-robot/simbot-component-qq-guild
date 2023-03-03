@@ -27,7 +27,7 @@ import java.time.Instant
  */
 @Serializable
 @SerialName(EventIntents.GuildMembers.GUILD_MEMBER_ADD_TYPE)
-public class GuildMemberAdd(override val s: Long, @SerialName("d") override val data: EventMember) : Signal.Dispatch()
+public data class GuildMemberAdd(override val s: Long, @SerialName("d") override val data: EventMember) : Signal.Dispatch()
 
 /**
  * [`GUILD_MEMBER_UPDATE`](https://bot.q.qq.com/wiki/develop/api/gateway/guild_member.html#guild-member-update)
@@ -36,7 +36,7 @@ public class GuildMemberAdd(override val s: Long, @SerialName("d") override val 
  */
 @Serializable
 @SerialName(EventIntents.GuildMembers.GUILD_MEMBER_UPDATE_TYPE)
-public class GuildMemberUpdate(override val s: Long, @SerialName("d") override val data: EventMember) : Signal.Dispatch()
+public data class GuildMemberUpdate(override val s: Long, @SerialName("d") override val data: EventMember) : Signal.Dispatch()
 
 /**
  * [`GUILD_MEMBER_REMOVE`](https://bot.q.qq.com/wiki/develop/api/gateway/guild_member.html#guild-member-remove)
@@ -45,7 +45,7 @@ public class GuildMemberUpdate(override val s: Long, @SerialName("d") override v
  */
 @Serializable
 @SerialName(EventIntents.GuildMembers.GUILD_MEMBER_REMOVE_TYPE)
-public class GuildMemberRemove(override val s: Long, @SerialName("d") override val data: EventMember) : Signal.Dispatch()
+public data class GuildMemberRemove(override val s: Long, @SerialName("d") override val data: EventMember) : Signal.Dispatch()
 
 
 /**

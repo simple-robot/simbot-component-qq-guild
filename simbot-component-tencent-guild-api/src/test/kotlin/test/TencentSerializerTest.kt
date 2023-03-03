@@ -16,7 +16,6 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.plus
 import love.forte.simbot.qguild.QGuildApi
-import love.forte.simbot.qguild.TencentMemberInfo
 import love.forte.simbot.qguild.api.role.GuildRoleList
 
 /**

@@ -188,11 +188,11 @@ public interface Bot : CoroutineScope {
     /**
      * 此Bot中的连接信息。
      *
-     * 如果当前处于重连、重启的状态，得到的 [client] 中 [client.isActive][Client.isActive] 可能为 `false`。
+     * 如果当前处于重连、重启的状态，得到的 [client] 中 [client.isActive][Client.isActive] 可能为 `false`，也可能不存在。
      *
-     * @throws IllegalStateException 如果尚未启动过当前bot
+     * @return 当前bot持有的连接。如果当前正处于连接中、重连中或尚未启动，则可能得到null
      */
-    public val client: Client
+    public val client: Client?
 
 
     /**

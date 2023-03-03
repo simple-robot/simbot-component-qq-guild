@@ -28,7 +28,6 @@ import love.forte.simbot.literal
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.qguild.DirectMessageSession
-import love.forte.simbot.qguild.TencentMemberInfo
 import love.forte.simbot.qguild.api.message.direct.CreateDmsApi
 import love.forte.simbot.qguild.api.message.direct.DmsSendApi
 import love.forte.simbot.utils.item.Items

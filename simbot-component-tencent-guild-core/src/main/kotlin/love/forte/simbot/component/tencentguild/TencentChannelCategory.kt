@@ -18,7 +18,6 @@ import love.forte.simbot.definition.BotContainer
 import love.forte.simbot.definition.Category
 import love.forte.simbot.definition.GuildInfoContainer
 import love.forte.simbot.qguild.CHANNEL_TYPE_GROUPING
-import love.forte.simbot.qguild.TencentChannelInfo
 
 /**
  *

@@ -23,7 +23,6 @@ import love.forte.simbot.component.tencentguild.util.requestBy
 import love.forte.simbot.literal
 import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.qguild.TencentApiException
-import love.forte.simbot.qguild.TencentGuildInfo
 import love.forte.simbot.qguild.api.channel.GetGuildChannelListApi
 import love.forte.simbot.qguild.api.member.GetMemberApi
 import love.forte.simbot.qguild.api.role.GetGuildRoleListApi

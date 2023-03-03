@@ -30,7 +30,7 @@ import love.forte.simbot.qguild.model.MessageAudited
  */
 @Serializable
 @SerialName(EventIntents.PublicGuildMessages.AT_MESSAGE_CREATE_TYPE)
-public class AtMessageCreate(override val s: Long, @SerialName("d") override val data: Message) : Signal.Dispatch()
+public data class AtMessageCreate(override val s: Long, @SerialName("d") override val data: Message) : Signal.Dispatch()
 
 /**
  * 消息审核事件
@@ -41,8 +41,8 @@ public class AtMessageCreate(override val s: Long, @SerialName("d") override val
  *
  */
 @Serializable
-@SerialName(EventIntents.PublicGuildMessages.AT_MESSAGE_CREATE_TYPE)
-public class MessageAuditPass(override val s: Long, @SerialName("d") override val data: MessageAudited) : Signal.Dispatch()
+@SerialName(EventIntents.MessageAudit.MESSAGE_AUDIT_PASS_TYPE)
+public data class MessageAuditPass(override val s: Long, @SerialName("d") override val data: MessageAudited) : Signal.Dispatch()
 
 /**
  * 消息审核事件
@@ -53,8 +53,8 @@ public class MessageAuditPass(override val s: Long, @SerialName("d") override va
  *
  */
 @Serializable
-@SerialName(EventIntents.PublicGuildMessages.AT_MESSAGE_CREATE_TYPE)
-public class MessageAuditReject(override val s: Long, @SerialName("d") override val data: MessageAudited) : Signal.Dispatch()
+@SerialName(EventIntents.MessageAudit.MESSAGE_AUDIT_REJECT_TYPE)
+public data class MessageAuditReject(override val s: Long, @SerialName("d") override val data: MessageAudited) : Signal.Dispatch()
 
 /**
  * 私信消息事件
@@ -66,4 +66,4 @@ public class MessageAuditReject(override val s: Long, @SerialName("d") override 
  */
 @Serializable
 @SerialName(EventIntents.DirectMessage.DIRECT_MESSAGE_CREATE_TYPE)
-public class DirectMessageCreate(override val s: Long, @SerialName("d") override val data: Message) : Signal.Dispatch()
+public data class DirectMessageCreate(override val s: Long, @SerialName("d") override val data: Message) : Signal.Dispatch()

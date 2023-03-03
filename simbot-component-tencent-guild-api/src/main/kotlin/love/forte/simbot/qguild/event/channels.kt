@@ -27,7 +27,7 @@ import love.forte.simbot.qguild.model.ChannelType
  */
 @Serializable
 @SerialName(EventIntents.Guilds.CHANNEL_CREATE_TYPE)
-public class ChannelCreate(override val s: Long, @SerialName("d") override val data: EventChannel) : Signal.Dispatch()
+public data class ChannelCreate(override val s: Long, @SerialName("d") override val data: EventChannel) : Signal.Dispatch()
 
 /**
  * 子频道事件 [CHANNEL_UPDATE](https://bot.q.qq.com/wiki/develop/api/gateway/channel.html#channel-update)
@@ -37,7 +37,7 @@ public class ChannelCreate(override val s: Long, @SerialName("d") override val d
  */
 @Serializable
 @SerialName(EventIntents.Guilds.CHANNEL_UPDATE_TYPE)
-public class ChannelUpdate(override val s: Long, @SerialName("d") override val data: EventChannel) : Signal.Dispatch()
+public data class ChannelUpdate(override val s: Long, @SerialName("d") override val data: EventChannel) : Signal.Dispatch()
 
 /**
  * 子频道事件 [CHANNEL_DELETE](https://bot.q.qq.com/wiki/develop/api/gateway/channel.html#channel-delete)
@@ -47,7 +47,7 @@ public class ChannelUpdate(override val s: Long, @SerialName("d") override val d
  */
 @Serializable
 @SerialName(EventIntents.Guilds.CHANNEL_DELETE_TYPE)
-public class ChannelDelete(override val s: Long, @SerialName("d") override val data: EventChannel) : Signal.Dispatch()
+public data class ChannelDelete(override val s: Long, @SerialName("d") override val data: EventChannel) : Signal.Dispatch()
 
 
 /**
@@ -77,27 +77,4 @@ public data class EventChannel(
     @SerialName("owner_id") val ownerId: String,
     /** 操作人 */
     @SerialName("op_user_id") val opUserId: String,
-//    /**
-//     * 排序值，具体请参考 有[关 position 的说明](https://bot.q.qq.com/wiki/develop/api/openapi/channel/model.html#%E6%9C%89%E5%85%B3-position-%E7%9A%84%E8%AF%B4%E6%98%8E)
-//     *
-//     * - position 从 1 开始
-//     * - 当子频道类型为 子频道分组（ChannelType=4）时，由于 position 1 被未分组占用，所以 position 只能从 2 开始
-//     * - 如果不传默认追加到分组下最后一个
-//     * - 如果填写一个已经存在的值，那么会插入在原来的元素之前
-//     * - 如果填写一个较大值，与不填是相同的表现，同时存储的值会根据真实的 position 进行重新计算，并不会直接使用传入的值
-//     *
-//     */
-//    val position: Int,
-//    /** 所属分组 id，仅对子频道有效，对 子频道分组（ChannelType=4） 无效 */
-//    @SerialName("parent_id") val parentId: String,
-//    /** 子频道私密类型 [PrivateType] */
-//    @SerialName("private_type") val privateType: PrivateType,
-//    /** 子频道发言权限 [SpeakPermission] */
-//    @SerialName("speak_permission") val speakPermission: SpeakPermission,
-//    /** 用于标识应用子频道应用类型，仅应用子频道时会使用该字段，具体定义请参考 [应用子频道的应用类型](https://bot.q.qq.com/wiki/develop/api/openapi/channel/model.html#%E5%BA%94%E7%94%A8%E5%AD%90%E9%A2%91%E9%81%93%E7%9A%84%E5%BA%94%E7%94%A8%E7%B1%BB%E5%9E%8B) */
-//    @SerialName("application_id") val applicationId: String,
-//    /** 用户拥有的子频道权限 [Permissions] */
-//    @get:JvmSynthetic
-//    val permissions: Permissions,
-
 )

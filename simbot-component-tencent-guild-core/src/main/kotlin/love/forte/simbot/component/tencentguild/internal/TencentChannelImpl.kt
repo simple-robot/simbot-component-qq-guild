@@ -21,7 +21,6 @@ import love.forte.simbot.component.tencentguild.util.requestBy
 import love.forte.simbot.event.EventProcessingContext
 import love.forte.simbot.literal
 import love.forte.simbot.message.Message
-import love.forte.simbot.qguild.TencentChannelInfo
 import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.utils.item.Items
 

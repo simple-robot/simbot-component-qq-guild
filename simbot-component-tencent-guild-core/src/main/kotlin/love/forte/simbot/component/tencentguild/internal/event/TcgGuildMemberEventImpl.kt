@@ -20,7 +20,6 @@ import love.forte.simbot.component.tencentguild.event.TcgGuildMemberEvent
 import love.forte.simbot.component.tencentguild.internal.TencentGuildComponentBotImpl
 import love.forte.simbot.component.tencentguild.internal.TencentMemberImpl
 import love.forte.simbot.event.Event
-import love.forte.simbot.qguild.TencentMemberInfo
 import love.forte.simbot.qguild.event.EventSignals
 
 

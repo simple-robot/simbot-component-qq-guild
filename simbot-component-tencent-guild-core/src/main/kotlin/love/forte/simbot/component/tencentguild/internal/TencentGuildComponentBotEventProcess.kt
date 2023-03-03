@@ -17,8 +17,6 @@ import love.forte.simbot.component.tencentguild.internal.event.eventSignalParser
 import love.forte.simbot.component.tencentguild.internal.event.findOrCreateGuildImpl
 import love.forte.simbot.event.pushIfProcessable
 import love.forte.simbot.literal
-import love.forte.simbot.qguild.TencentChannelInfo
-import love.forte.simbot.qguild.TencentGuildInfo
 import love.forte.simbot.qguild.event.EventSignals
 import love.forte.simbot.qguild.isGrouping
 

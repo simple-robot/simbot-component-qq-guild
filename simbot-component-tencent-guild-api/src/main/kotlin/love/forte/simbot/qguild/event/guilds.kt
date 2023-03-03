@@ -30,7 +30,7 @@ import java.time.Instant
  */
 @Serializable
 @SerialName(EventIntents.Guilds.GUILD_CREATE_TYPE)
-public class GuildCreate(override val s: Long, @SerialName("d") override val data: EventGuild) : Signal.Dispatch()
+public data class GuildCreate(override val s: Long, @SerialName("d") override val data: EventGuild) : Signal.Dispatch()
 
 /**
  *
@@ -42,7 +42,7 @@ public class GuildCreate(override val s: Long, @SerialName("d") override val dat
  */
 @Serializable
 @SerialName(EventIntents.Guilds.GUILD_UPDATE_TYPE)
-public class GuildUpdate(override val s: Long, @SerialName("d") override val data: EventGuild) :
+public data class GuildUpdate(override val s: Long, @SerialName("d") override val data: EventGuild) :
     Signal.Dispatch()
 
 /**
@@ -56,7 +56,7 @@ public class GuildUpdate(override val s: Long, @SerialName("d") override val dat
  */
 @Serializable
 @SerialName(EventIntents.Guilds.GUILD_DELETE_TYPE)
-public class GuildDelete(override val s: Long, @SerialName("d") override val data: EventGuild) :
+public data class GuildDelete(override val s: Long, @SerialName("d") override val data: EventGuild) :
     Signal.Dispatch()
 
 

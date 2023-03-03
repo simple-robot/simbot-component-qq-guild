@@ -136,10 +136,13 @@ public sealed class Signal<D>(@Serializable(Opcode.SerializerByCode::class) publ
     /**
      * 推送的事件。
      *
+     * 具体的事件类型参考其各实现类。
+     *
+     * @see love.forte.simbot.qguild.event
+     *
      */
     @Serializable
-    @JsonClassDiscriminator("t")
-    public sealed class Dispatch : Signal<Any>(Opcode.Dispatch) {
+    public sealed class Dispatch : Signal<@Contextual Any>(Opcode.Dispatch) {
 
         /**
          * 事件序列
@@ -154,6 +157,7 @@ public sealed class Signal<D>(@Serializable(Opcode.SerializerByCode::class) publ
         /**
          * 此事件的实际本体
          */
+        @SerialName("d")
         public abstract override val data: Any
 
 

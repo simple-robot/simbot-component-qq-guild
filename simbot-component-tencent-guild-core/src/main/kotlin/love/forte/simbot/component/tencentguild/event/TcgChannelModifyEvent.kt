@@ -18,7 +18,6 @@ import love.forte.simbot.Timestamp
 import love.forte.simbot.component.tencentguild.TencentChannel
 import love.forte.simbot.event.*
 import love.forte.simbot.message.doSafeCast
-import love.forte.simbot.qguild.TencentChannelInfo
 import love.forte.simbot.qguild.event.EventSignals
 
 /**

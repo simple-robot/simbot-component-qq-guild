@@ -17,8 +17,6 @@ package love.forte.simbot.qguild.model
 import kotlinx.serialization.*
 import love.forte.simbot.*
 import love.forte.simbot.qguild.ApiModel
-import love.forte.simbot.qguild.TencentUserInfo
-import love.forte.simbot.qguild.internal.*
 import love.forte.simbot.qguild.utils.InstantISO8601Serializer
 import java.time.Instant
 
@@ -70,7 +68,7 @@ public data class Message(
     /**
      * 消息创建者
      */
-    public val author: TencentUserInfo,
+    public val author: User,
 
     /**
      * MessageAttachment 对象数组	附件

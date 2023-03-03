@@ -44,3 +44,11 @@ public annotation class ApiModel
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
 public annotation class PrivateDomainOnly
+
+/**
+ * 部的simbot-tencent-guild-API，不面向外界使用，可能会随时变更。
+ */
+@RequiresOptIn("internal qq guild api", level = RequiresOptIn.Level.WARNING)
+@Retention(AnnotationRetention.BINARY)
+@MustBeDocumented
+public annotation class InternalSrTcgApi

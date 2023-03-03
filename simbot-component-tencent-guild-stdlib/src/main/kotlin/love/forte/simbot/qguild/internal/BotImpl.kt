@@ -39,6 +39,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicLong
+import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.max
 import kotlin.random.Random
@@ -107,8 +108,6 @@ internal class BotImpl(
     private val processorQueue: ConcurrentLinkedQueue<EventProcessor> = ConcurrentLinkedQueue()
     private val preProcessorQueue: ConcurrentLinkedQueue<EventProcessor> = ConcurrentLinkedQueue()
 
-    @Volatile
-    private var stageLoopJob: Job? = null
 
     override fun registerPreProcessor(processor: EventProcessor) {
         preProcessorQueue.add(processor)
@@ -118,22 +117,20 @@ internal class BotImpl(
         processorQueue.add(processor)
     }
 
-    private val startLock = Mutex()
+    /**
+     * 用于 [start] 或内部重新连接的锁。
+     */
+    private val connectLock = Mutex()
+
+    private val stageLoopJob = AtomicReference<Job>(null)
+    private val _client = AtomicReference<ClientImpl?>(null)
+
+    override val client: Bot.Client?
+        get() = _client.get()
 
     override suspend fun start(): Boolean = start(GatewayApis.Normal.requestBy(this))
 
-    override suspend fun start(gateway: GatewayInfo): Boolean = startLock.withLock {
-        _client?.also {
-            logger.debug("Restarting, cancel a client that already exists {}", it)
-            it.cancelAndJoin()
-        }
-
-        stageLoopJob?.also {
-            logger.debug("Restarting, cancel a stage loop job that already exists {}", it)
-            it.cancelAndJoin()
-            stageLoopJob = null
-        }
-
+    override suspend fun start(gateway: GatewayInfo): Boolean = connectLock.withLock {
         val gatewayInfo: GatewayInfo = GatewayApis.Normal.requestBy(this)
 
         logger.debug("Request gateway {} by shard {}", gatewayInfo, shard)
@@ -144,28 +141,35 @@ internal class BotImpl(
 
         loop.appendStage(Connect(shard, gatewayInfo))
 
-        var next: Stage? = loop.poll()
-        while (next != null && next !is ReceiveEvent) {
-            // 还没到接收事件的阶段
-            loop(next)
-            next = loop.poll()
-        }
-
-        logger.debug("Loop on stage 'ReceiveEvent'")
-
-        val currentClient = (next as ReceiveEvent).client
-
-        logger.debug("Current client: {}", currentClient)
-
-        _client = currentClient
-
-        stageLoopJob = launch(SupervisorJob(parentJob)) {
+        val stageLoopJob = launch(SupervisorJob(parentJob)) {
             loop.loop { e ->
                 logger.error("Loop error: {}", e.localizedMessage, e)
             }
         }
 
+        this.stageLoopJob.getAndUpdate { old ->
+            old?.cancel()
+            stageLoopJob
+        }
+
+//        var next: Stage? = loop.poll()
+//        while (next != null && next !is ReceiveEvent) {
+//            // 还没到接收事件的阶段
+//            loop(next)
+//            next = loop.poll()
+//        }
+
+//        logger.debug("Loop on stage 'ReceiveEvent'")
 //
+//        val currentClient = (next as ReceiveEvent).client
+//
+//        logger.debug("Current client: {}", currentClient)
+//
+//        _client.getAndUpdate { old ->
+//            old?.cancel()
+//            currentClient
+//        }
+
         return true
     }
 
@@ -181,292 +185,34 @@ internal class BotImpl(
         parentJob.join()
     }
 
-    @Volatile
-    private var _client: ClientImpl? = null
-
-    override val client: Bot.Client
-        get() {
-            return _client ?: throw IllegalStateException("The client has not been initialized")
-        }
 
     private inner class ClientImpl(
-        private val readyData: Ready.Data,
-        private val heartbeatJob: Job,
-        private val processingJob: Job,
-        private val _seq: AtomicLong,
-        private val session: DefaultClientWebSocketSession,
+        val readyData: Ready.Data,
+        val sessionInfo: SessionInfo,
+//        private val processingJob: Job,
+        val wsSession: DefaultClientWebSocketSession,
     ) : Bot.Client {
         override val bot: Bot get() = this@BotImpl
-        override val seq: Long get() = _seq.get()
-        override val isActive: Boolean get() = session.isActive
-
-//        private var resumeJob = launch {
-//            val closed = session.closeReason.await()
-//            resume(closed)
-//        }
+        override val seq: Long get() = sessionInfo.seq.get()
+        override val isActive: Boolean get() = wsSession.isActive
 
         suspend fun cancelAndJoin(reason: Throwable? = null) {
             val cancel = reason?.let { CancellationException(it.localizedMessage, it) }
-            val sessionJob = session.coroutineContext[Job]!!
+            val sessionJob = wsSession.coroutineContext[Job]!!
             sessionJob.cancel(cancel)
             sessionJob.join()
         }
 
-        override fun toString(): String {
-            return "TencentBot.Client(shard=$shard, session=$readyData, seq=${_seq.get()})"
+        fun cancel(reason: Throwable? = null) {
+            val cancel = reason?.let { CancellationException(it.localizedMessage, it) }
+            val sessionJob = wsSession.coroutineContext[Job]!!
+            sessionJob.cancel(cancel)
         }
 
-//        /**
-//         * 重新连接。
-//         * // TODO 增加日志
-//         */
-//        private suspend fun resume(closeReason: CloseReason?) {
-//            if (closeReason == null) {
-//                logger.error("Client {} was closed, but no reason. stop this client without any action, including resuming.", this)
-//                return
-//            }
-//
-//            val code = closeReason.code
-//            if (!checkResumeCode(code)) {
-//                logger.debug("Not resume code: {}, try to close and restart.", code)
-//                launch { start() }
-//                return
-//            }
-//
-//            while (!_resuming.compareAndSet(false, true)) {
-//                logger.info("In resuming now, delay 100ms")
-//                delay(100)
-//            }
-//
-//            logger.info("Resume. reason: {}", closeReason)
-//
-//            try {
-//                heartbeatJob.cancel()
-//                processingJob.cancel()
-//                heartbeatJob.join()
-//                processingJob.join()
-//
-//                val gatewayInfo = GatewayApis.Normal.requestBy(this@BotImpl)
-//
-//                val resumeSession = resumeSession(gatewayInfo, readyData, _seq, logger)
-//                val (session, _, heartbeatJob, _, _) = resumeSession
-//                this.session = session
-//                this.heartbeatJob = heartbeatJob
-//                val processingJob = processEvent(resumeSession)
-//                this.processingJob = processingJob
-//                this.resumeJob = launch {
-//                    val closed = session.closeReason.await()
-//                    resume(closed)
-//                }
-//            } finally {
-//                _resuming.compareAndSet(true, false)
-//            }
-//
-//        }
-
-
+        override fun toString(): String {
+            return "TencentBot.Client(shard=$shard, session=$readyData, seq=$seq)"
+        }
     }
-
-//    /**
-//     * https://bot.q.qq.com/wiki/develop/api/gateway/reference.html
-//     */
-//    private suspend fun createSession(shard: Shard, gatewayInfo: GatewayInfo): SessionInfo {
-//        val requestToken = botToken
-//
-//        val logger = LoggerFactory.getLogger("love.forte.simbot.tencentguild.bot.${ticket.appId}.$shard")
-//
-//        val identify = Signal.Identify(
-//            data = Signal.Identify.Data(
-//                token = requestToken,
-//                intents = intents,
-//                shard = shard,
-//                properties = prop,
-//            )
-//        )
-//
-//
-//
-////        val seq = AtomicLong(-1)
-////
-////        val session = wsClient.ws { gatewayInfo }
-////
-////        kotlin.runCatching {
-////
-////            // receive Hello
-////            val hello = session.waitHello()
-////
-////            logger.debug("Received Hello: {}", hello)
-////            // 鉴权
-////            // see https://bot.q.qq.com/wiki/develop/api/gateway/reference.html#%E9%89%B4%E6%9D%83ß
-////            session.send(decoder.encodeToString(Signal.Identify.serializer(), identify))
-////
-////            // wait for Ready event
-////            var readyEventData: EventSignals.Other.ReadyEvent.Data? = null
-////            while (session.isActive) {
-////                val ready = waitForReady(decoder) { session.incoming.receive() }
-////                logger.debug("ready: $ready")
-////                if (ready != null) {
-////                    readyEventData = ready
-////                    break
-////                }
-////            }
-////            if (readyEventData == null) {
-////                logger.trace("readyEventData was null, canceled and waiting closeReason.")
-////                session.closeReason.await().err()
-////            }
-////            logger.debug("Ready Event data: {}", readyEventData)
-////
-////            val heartbeatJob = session.heartbeatJob(hello, seq)
-////
-////            return SessionInfo(session, seq, heartbeatJob, logger, readyEventData)
-////        }.getOrElse {
-////            // logger.error(it.localizedMessage, it)
-////            session.closeReason.await().err(it)
-////
-////        }
-//
-//    }
-
-//    private suspend fun resumeSession(
-//        gatewayInfo: GatewayInfo,
-//        sessionData: EventSignals.Other.ReadyEvent.Data,
-//        seq: AtomicLong,
-//        logger: Logger,
-//    ): SessionInfo {
-//        val requestToken = ticket.botToken
-//
-//        val resume = Signal.Resume(
-//            Signal.Resume.Data(
-//                token = requestToken,
-//                sessionId = sessionData.sessionId,
-//                seq = seq.get()
-//            )
-//        )
-//
-//        val session = wsClient.ws { gatewayInfo }
-//
-//        val hello = session.waitHello()
-//
-//        logger.debug("Received Hello: {}", hello)
-//
-//        // 重连
-//        // see https://bot.q.qq.com/wiki/develop/api/gateway/reference.html#%E9%89%B4%E6%9D%83ß
-//        session.send(decoder.encodeToString(Signal.Resume.serializer(), resume))
-//
-//        val heartbeatJob = session.heartbeatJob(hello, seq)
-//
-//        return SessionInfo(session, seq, heartbeatJob, logger, sessionData)
-//    }
-//
-//    /**
-//     * 新建一个 client。
-//     */
-//    private suspend fun createClient(shard: Shard, gatewayInfo: GatewayInfo): ClientImpl {
-//        val sessionInfo = createSession(shard, gatewayInfo)
-//        val (session, seq, heartbeatJob, logger, sessionData) = sessionInfo
-//
-//        val processingJob = processEvent(sessionInfo)
-//
-//        return ClientImpl(shard, sessionData, heartbeatJob, processingJob, seq, session, logger)
-//    }
-//
-//
-//    private suspend fun processEvent(sessionInfo: SessionInfo): Job {
-//        val dispatchSerializer = Signal.Dispatch.serializer()
-//        val logger = sessionInfo.logger
-//        val seq = sessionInfo.seq
-//
-//        return sessionInfo.session.incoming.receiveAsFlow().mapNotNull {
-//            when (it) {
-//
-//                is Frame.Text -> {
-//                    val eventString = it.readText()
-//                    val jsonElement = decoder.parseToJsonElement(eventString)
-//                    // maybe op 11: heartbeat ack
-//                    val op = jsonElement.jsonObject["op"]?.jsonPrimitive?.int ?: return@mapNotNull null
-//                    when (op) {
-//                        Opcode.HeartbeatACK.code -> null
-//                        Opcode.Dispatch.code -> {
-//                            // is dispatch
-//                            decoder.decodeFromJsonElement(dispatchSerializer, jsonElement)
-//                        }
-//
-//                        else -> null
-//                    }
-//                }
-//
-//                is Frame.Binary -> {
-//                    logger.debug("Frame.Binary: {}", it)
-//                    null
-//                }
-//                // is Frame.Close -> {
-//                //     // closed. 不需要处理，大概
-//                //     logger.trace("Frame.Close: {}", it)
-//                //     null
-//                // }
-//                // is Frame.Ping -> {
-//                //     // nothing
-//                //     logger.trace("Frame.Ping: {}", it)
-//                //     null
-//                // }
-//                // is Frame.Pong -> {
-//                //     // nothing
-//                //     logger.trace("Frame.Pong: {}", it)
-//                //     null
-//                // }
-//                else -> {
-//                    logger.trace("Other frame: {}", it)
-//                    null
-//                }
-//            }
-//        }.onEach { dispatch ->
-//            val nowSeq = dispatch.seq
-//            if (processorQueue.isNotEmpty() || preProcessorQueue.isNotEmpty()) {
-//                logger.debug("On dispatch and processors or pre processors is not empty. dispatch: $dispatch")
-//                val eventType = dispatch.type
-//                val signal = EventSignals.events[eventType] ?: run {
-//                    val e = SimbotIllegalStateException("Unknown event type: $eventType. data: $dispatch")
-//                    e.process(logger) { "Event receiving" }
-//                    return@onEach
-//                }
-//
-//                val lazy = lazy { decoder.decodeFromJsonElement(signal.decoder, dispatch.data) }
-//                val lazyDecoded = lazy::value
-//                preProcessorQueue.forEach { preProcessor ->
-//                    try {
-//                        preProcessor(dispatch, decoder, lazyDecoded)
-//                    } catch (e: Throwable) {
-//                        e.process(logger) { "Pre processing" }
-//                    }
-//                }
-//
-//
-//                launch {
-//                    processorQueue.forEach { processor ->
-//                        try {
-//                            processor(dispatch, decoder, lazyDecoded)
-//                        } catch (e: Throwable) {
-//                            e.process(logger) { "Processing" }
-//                        }
-//                    }
-//                }
-//            } else {
-//                // 但是 processors 和 pre processors 都是空的
-//                logger.debug("On dispatch, but the processors and pre processors are empty, skip. dispatch: $dispatch")
-//            }
-//
-//            // 留下最大的值。
-//            val currentSeq = seq.updateAndGet { prev -> max(prev, nowSeq) }
-//            logger.debug("Current seq: {}", currentSeq)
-//        }.onCompletion { cause ->
-//            if (logger.isDebugEnabled) {
-//                logger.debug("Session flow completion. cause: {}", cause.toString())
-//            }
-//        }
-//            .catch { cause -> logger.error("Session flow on catch: ${cause.localizedMessage}", cause) }
-//            .launchIn(this)
-//    }
-
 
     private abstract inner class Stage : love.forte.simbot.util.stageloop.Stage<Stage>()
 
@@ -494,7 +240,9 @@ internal class BotImpl(
             val session = wsClient.ws { gateway }
 
             // next: receive Hello
-            loop.appendStage(WaitingHello(identify, session))
+            loop.appendStage(WaitingHello(session) { hello ->
+                WaitingReadyEvent(identify, hello.data, session)
+            })
         }
     }
 
@@ -504,8 +252,10 @@ internal class BotImpl(
      * [2.鉴权连接](https://bot.q.qq.com/wiki/develop/api/gateway/reference.html#_2-%E9%89%B4%E6%9D%83%E8%BF%9E%E6%8E%A5)
      *
      */
-    private inner class WaitingHello(val identify: Signal.Identify, val session: DefaultClientWebSocketSession) :
-        Stage() {
+    private inner class WaitingHello(
+        val session: DefaultClientWebSocketSession,
+        val next: WaitingHello.(Signal.Hello) -> Stage?
+    ) : Stage() {
         override suspend fun invoke(loop: StageLoop<Stage>) {
             var hello: Signal.Hello? = null
             while (session.isActive) {
@@ -528,7 +278,7 @@ internal class BotImpl(
             logger.debug("Received Hello: {}", h)
 
             // 下一个阶段
-            loop.appendStage(WaitingReadyEvent(identify, h.data, session))
+            next(this, h)?.also { loop.appendStage(it) }
         }
     }
 
@@ -571,14 +321,14 @@ internal class BotImpl(
             logger.debug("Received Ready event: {}", r)
 
             // next: session
-            loop.appendStage(HeartbeatJob(hello, r, session))
+            loop.appendStage(HeartbeatJob(hello, r.data, session))
         }
     }
 
 
     private inner class HeartbeatJob(
         val hello: Signal.Hello.Data,
-        val ready: Ready,
+        val readyData: Ready.Data,
         val session: DefaultClientWebSocketSession
     ) : Stage() {
         override suspend fun invoke(loop: StageLoop<Stage>) {
@@ -587,7 +337,7 @@ internal class BotImpl(
             // 创建心跳任务
             val heartbeatJob = createHeartbeatJob(seq)
 
-            val sessionInfo = SessionInfo(session, seq, heartbeatJob, logger, ready.data)
+            val sessionInfo = SessionInfo(session, seq, heartbeatJob, logger, readyData)
 
             // next: process event
             loop.appendStage(CreateClient(sessionInfo, session))
@@ -627,18 +377,24 @@ internal class BotImpl(
         override suspend fun invoke(loop: StageLoop<Stage>) {
             // TODO capacity configurable?
             val sharedFlow = MutableSharedFlow<EventData>(extraBufferCapacity = 16)
-            val processJob = launchEventProcessJob(sharedFlow)
+            launchEventProcessJob(sharedFlow)
 
             val client = ClientImpl(
                 botClientSession.readyData,
-                botClientSession.heartbeatJob,
-                processJob,
-                botClientSession.seq,
+                botClientSession,
                 session
             )
 
+            logger.debug("Current client: {}", client)
+
+            // store client
+            this@BotImpl._client.getAndUpdate { old ->
+                old?.cancel()
+                client
+            }
+
             // next: receive events
-            loop.appendStage(ReceiveEvent(client, botClientSession, sharedFlow, session))
+            loop.appendStage(ReceiveEvent(client, sharedFlow))
         }
 
         private fun launchEventProcessJob(flow: SharedFlow<EventData>): Job {
@@ -661,7 +417,7 @@ internal class BotImpl(
                     // 然后异步地正常处理
                     // TODO 同步异步 configurable?
                     // bot launch or session launch?
-                    launch {
+                    this@BotImpl.launch {
                         processorQueue.forEach { processor ->
                             runCatching {
                                 event.apply { processor.apply { invoke(raw) } }
@@ -693,20 +449,19 @@ internal class BotImpl(
     }
 
     /**
-     * 从 [session] 中尝试接收并处理下一个事件。
+     * 从 [session][ClientImpl.wsSession] 中尝试接收并处理下一个事件。
      */
     private inner class ReceiveEvent(
         val client: ClientImpl,
-        val sessionInfo: SessionInfo,
         val eventSharedFlow: MutableSharedFlow<EventData>,
-        val session: DefaultClientWebSocketSession
     ) : Stage() {
         override suspend fun invoke(loop: StageLoop<Stage>) {
-            val seq = sessionInfo.seq
+            val session = client.wsSession
+            val seq = client.sessionInfo.seq
             if (!session.isActive) {
                 val reason = session.closeReason.await()
-                // TODO reconnect?
-                logger.error("Session is closed. reason: {}.", reason)
+                logger.error("Session is closed. reason: {}. Try to resume", reason)
+                loop.appendStage(Resume(client))
                 return
             }
 
@@ -737,7 +492,10 @@ internal class BotImpl(
                 }
 
                 Opcodes.Reconnect -> {
-                    // TODO 重新连接
+                    // 重新连接
+                    logger.debug("Received reconnect signal. Do Resume.")
+                    loop.appendStage(Resume(client))
+                    return
                 }
 
                 else -> {
@@ -751,69 +509,48 @@ internal class BotImpl(
     }
 
 
-    private suspend inline fun Throwable.process(logger: Logger, msg: () -> String) {
-        val processor = configuration.exceptionHandler
-        val m = msg()
-        processor?.also { exProcess ->
-            try {
-                exProcess.process(this)
-            } catch (pe: Throwable) {
-                logger.error("$m failed, exception processing also failed.")
-                logger.error("$m exception: ${this.localizedMessage}", this)
-                logger.error("exception processing exception: ${pe.localizedMessage}", pe)
+    /**
+     * [4. 恢复连接](https://bot.q.qq.com/wiki/develop/api/gateway/reference.html#_4-%E6%81%A2%E5%A4%8D%E8%BF%9E%E6%8E%A5)
+     *
+     * 有很多原因都会导致连接断开，断开之后短时间内重连会补发中间遗漏的事件，以保障业务逻辑的正确性。
+     * 断开重连不需要发送Identify请求。在连接到 Gateway 之后，需要发送 Opcode 6 Resume消息
+     *
+     */
+    private inner class Resume(
+        val client: ClientImpl,
+    ) : Stage() {
+        override suspend fun invoke(loop: StageLoop<Stage>) {
+            val newSession = connectLock.withLock {
+                // 关闭当前连接
+                client.cancelAndJoin()
+                val gateway = GatewayApis.Normal.requestBy(this@BotImpl)
+                wsClient.ws { gateway }.apply {
+                    // 发送 Opcode6
+                    val resumeSignal =
+                        Signal.Resume(Signal.Resume.Data(this@BotImpl.botToken, client.readyData.sessionId, client.seq))
+                    send(wsDecoder.encodeToString(Signal.Resume.serializer(), resumeSignal))
+                }
             }
-        } ?: run {
-            logger.error("$m failed.", this)
+
+            val nextStage = WaitingHello(newSession) { hello ->
+                // 跳过 wait ready, 直接HeartbeatJob
+                HeartbeatJob(hello.data, client.readyData, session)
+            }
+            loop.appendStage(nextStage)
+
         }
     }
+
 
     private suspend inline fun HttpClient.ws(crossinline gatewayInfo: () -> GatewayInfo): DefaultClientWebSocketSession {
         return webSocketSession { url(gatewayInfo().url) }
     }
-
-//    private suspend inline fun DefaultClientWebSocketSession.waitHello(): Signal.Hello {
-//        // receive Hello
-//        var hello: Signal.Hello? = null
-//        while (isActive) {
-//            val h = waitForHello(decoder) { incoming.receive() }
-//            if (h != null) {
-//                hello = h
-//                break
-//            }
-//        }
-//        if (hello == null) {
-//            closeReason.await().err()
-//        }
-//        return hello
-//    }
-//
-//    private suspend inline fun DefaultClientWebSocketSession.heartbeatJob(hello: Signal.Hello, seq: AtomicLong): Job {
-//        val heartbeatInterval = hello.data.heartbeatInterval
-//        val helloIntervalFactory: () -> Long = {
-//            val r = ThreadLocalRandom.current().nextLong(5000)
-//            if (r > heartbeatInterval) 0 else heartbeatInterval - r
-//        }
-//
-//        // heartbeat Job
-//        val heartbeatJob = this.launch {
-//            val serializer = Signal.Heartbeat.serializer()
-//            while (this.isActive) {
-//                delay(helloIntervalFactory())
-//                val hb = Signal.Heartbeat(seq.get().takeIf { it >= 0 })
-//                send(decoder.encodeToString(serializer, hb))
-//            }
-//        }
-//
-//        return heartbeatJob
-//    }
-
 
     //// self api
 
     override suspend fun me(): User {
         return GetBotInfoApi.requestBy(this)
     }
-
 
 }
 
@@ -829,58 +566,3 @@ private data class SessionInfo(
 private data class EventData(val raw: String, val event: Signal.Dispatch)
 
 
-//private inline fun waitForHello(decoder: Json, frameBlock: () -> Frame): Signal.Hello? {
-//    val frame = frameBlock()
-//    var hello: Signal.Hello? = null
-//    // for hello
-//    if (frame is Frame.Text) {
-//        val json = decoder.parseToJsonElement(frame.readText())
-//        if (json.jsonObject["op"]?.jsonPrimitive?.int == Opcode.Hello.code) {
-//            hello = decoder.decodeFromJsonElement(Signal.Hello.serializer(), json)
-//        }
-//    }
-//    return hello
-//}
-//
-//
-//private inline fun waitForReady(decoder: Json, frameBlock: () -> Frame): EventSignals.Other.ReadyEvent.Data? {
-//    val frame = frameBlock()
-//    var readyEvent: EventSignals.Other.ReadyEvent.Data? = null
-//    // for hello
-//    if (frame is Frame.Text) {
-//        val json = decoder.parseToJsonElement(frame.readText())
-//
-//        // TODO log
-//
-//        if (json.jsonObject["op"]?.jsonPrimitive?.int == Opcode.Dispatch.code) {
-//            val dis = decoder.decodeFromJsonElement(Signal.Dispatch.serializer(), json)
-//            if (dis.type == EventSignals.Other.ReadyEvent.type) {
-//                readyEvent = decoder.decodeFromJsonElement(EventSignals.Other.ReadyEvent.decoder, dis.data)
-//            }
-//        }
-//    }
-//    return readyEvent
-//}
-
-
-//@Serializable
-//internal data class TicketImpl(
-//    @SerialName("app_id")
-//    override val appId: String,
-//    @SerialName("app_key")
-//    override val secret: String,
-//    override val token: String,
-//) : Bot.Ticket {
-//    @Transient
-//    override val botToken: String = "Bot $appId.$token"
-//
-//    override fun toString(): String {
-//        return "TicketImpl(appId=$appId, appKey=${secret.hide()}, token=${token.hide()})"
-//    }
-//}
-//
-//private fun String.hide(size: Int = 3, hide: String = "********"): String {
-//    return if (length <= size) hide
-//    else "${substring(0, 3)}$hide${substring(lastIndex - 2, length)}"
-//
-//}

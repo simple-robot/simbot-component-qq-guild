@@ -14,7 +14,6 @@ package love.forte.simbot.component.tencentguild
 
 import love.forte.simbot.ID
 import love.forte.simbot.definition.Role
-import love.forte.simbot.qguild.TencentRoleInfo
 
 /**
  * QQ频道中所使用的角色类型。

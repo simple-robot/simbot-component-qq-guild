@@ -12,7 +12,6 @@
 
 package love.forte.simbot.qguild.api.message
 
-import love.forte.simbot.ID
 import love.forte.simbot.qguild.buildArk
 import love.forte.simbot.qguild.model.Message
 
@@ -42,7 +41,7 @@ public sealed class ArkMessageTemplates {
         list: List<Desc> = emptyList()
     ) : ArkMessageTemplates() {
         private companion object {
-            val ID = 23.ID
+            const val ID = "23"
         }
 
         override val ark: Message.Ark = buildArk(ID) {
@@ -91,7 +90,7 @@ public sealed class ArkMessageTemplates {
         subtitle: String,
     ) : ArkMessageTemplates() {
         private companion object {
-            val ID = 24.ID
+            const val ID = "24"
         }
 
         override val ark: Message.Ark = buildArk(ID) {
@@ -125,7 +124,7 @@ public sealed class ArkMessageTemplates {
         metaUrl: String,
     ) : ArkMessageTemplates() {
         private companion object {
-            val ID = 37.ID
+            const val ID = "37"
         }
 
         override val ark: Message.Ark = buildArk(ID) {

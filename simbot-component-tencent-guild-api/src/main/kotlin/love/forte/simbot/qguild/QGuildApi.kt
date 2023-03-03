@@ -19,10 +19,8 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.modules.SerializersModule
 import love.forte.simbot.Timestamp
 import love.forte.simbot.instantValue
-import love.forte.simbot.qguild.internal.*
 import love.forte.simbot.toTimestamp
 import java.time.Instant
 import java.time.OffsetDateTime
@@ -46,26 +44,26 @@ public object QGuildApi {
     @JvmField
     public val SANDBOX_URL: Url = Url(SANDBOX_URL_STRING)
     
-    public val serializersModule: SerializersModule = SerializersModule {
-        // region infos
-        polymorphicDefaultDeserializer(TencentGuildInfo::class) {
-            TencentGuildInfoImpl.serializer()
-        }
-        polymorphicDefaultDeserializer(TencentUserInfo::class) {
-            TencentUserInfoImpl.serializer()
-        }
-        polymorphicDefaultDeserializer(TencentRoleInfo::class) {
-            TencentRoleInfoImpl.serializer()
-        }
-        polymorphicDefaultDeserializer(TencentMemberInfo::class) {
-            TencentMemberInfoImpl.serializer()
-        }
-        polymorphicDefaultDeserializer(TencentChannelInfo::class) {
-            TencentChannelInfoImpl.serializer()
-        }
-        // endregion
-    
-    }
+//    public val serializersModule: SerializersModule = SerializersModule {
+//        // region infos
+//        polymorphicDefaultDeserializer(TencentGuildInfo::class) {
+//            TencentGuildInfoImpl.serializer()
+//        }
+//        polymorphicDefaultDeserializer(TencentUserInfo::class) {
+//            TencentUserInfoImpl.serializer()
+//        }
+//        polymorphicDefaultDeserializer(TencentRoleInfo::class) {
+//            TencentRoleInfoImpl.serializer()
+//        }
+//        polymorphicDefaultDeserializer(TencentMemberInfo::class) {
+//            TencentMemberInfoImpl.serializer()
+//        }
+//        polymorphicDefaultDeserializer(TencentChannelInfo::class) {
+//            TencentChannelInfoImpl.serializer()
+//        }
+//        // endregion
+//
+//    }
 }
 
 

@@ -13,7 +13,6 @@
 package love.forte.simbot.component.tencentguild.internal.info
 
 import love.forte.simbot.ID
-import love.forte.simbot.qguild.TencentUserInfo
 
 /**
  *
