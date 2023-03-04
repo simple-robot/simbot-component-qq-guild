@@ -15,6 +15,7 @@ package love.forte.simbot.qguild
 import io.ktor.client.*
 import io.ktor.http.*
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DisposableHandle
 import kotlinx.coroutines.cancel
 import kotlinx.serialization.json.Json
 import love.forte.plugin.suspendtrans.annotation.JvmAsync
@@ -74,22 +75,22 @@ public interface Bot : CoroutineScope {
      * @param processor 用于处理事件的函数类型
      */
     @JvmSynthetic
-    public fun registerPreProcessor(processor: EventProcessor)
+    public fun registerPreProcessor(processor: EventProcessor): DisposableHandle
 
     /**
      * 添加一个事件处理器。
      *
      */
     @JvmSynthetic
-    public fun registerProcessor(processor: EventProcessor)
+    public fun registerProcessor(processor: EventProcessor): DisposableHandle
 
 
     /**
      * [registerProcessor] for java
      */
     @Api4J
-    public fun registerBlockingProcessor(processor: BlockingEventProcessor) {
-        registerProcessor(processor.parse())
+    public fun registerBlockingProcessor(processor: BlockingEventProcessor): DisposableHandle {
+        return registerProcessor(processor.parse())
     }
 
     /**
@@ -99,8 +100,8 @@ public interface Bot : CoroutineScope {
     public fun <E : Signal.Dispatch> registerBlockingProcessor(
         eventType: Class<out E>,
         processor: BiConsumer<E, String>
-    ) {
-        registerProcessor { raw ->
+    ): DisposableHandle {
+        return registerProcessor { raw ->
             if (eventType.isInstance(this)) {
                 val event = eventType.cast(this)
                 processor.accept(event, raw)
@@ -257,3 +258,5 @@ public fun interface BlockingEventProcessor {
 }
 
 internal fun BlockingEventProcessor.parse(): EventProcessor = EventProcessor { raw -> invoke(this, raw) }
+
+

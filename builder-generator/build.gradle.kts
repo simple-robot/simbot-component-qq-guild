@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2023. ForteScarlet.
  *
  * This file is part of simbot-component-tencent-guild.
  *
@@ -10,18 +10,37 @@
  * You should have received a copy of the GNU Lesser General Public License along with simbot-component-tencent-guild. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package love.forte.simbot.qguild
+plugins {
+    kotlin("jvm")
+}
 
-import kotlinx.coroutines.DisposableHandle
-import love.forte.simbot.qguild.event.Signal
+repositories {
+    mavenCentral()
+}
 
+//buildscript {
+//    dependencies {
+//        classpath(kotlin("gradle-plugin"))
+//    }
+//}
 
-public inline fun <reified E : Signal.Dispatch> Bot.registerProcessor(
-    crossinline block: suspend E.(raw: String) -> Unit
-): DisposableHandle {
-    return registerProcessor { raw ->
-        if (this is E) {
-            block(raw)
-        }
+dependencies {
+    api("com.google.devtools.ksp:symbol-processing-api:1.8.0-1.0.8")
+    api("com.squareup:kotlinpoet:1.12.0")
+    api("com.squareup:kotlinpoet-ksp:1.12.0")
+
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions {
+        javaParameters = true
+        jvmTarget = "1.8"
+        freeCompilerArgs = freeCompilerArgs + listOf("-Xjvm-default=all")
     }
+}
+
+tasks.withType<JavaCompile> {
+    sourceCompatibility = "1.8"
+    targetCompatibility = "1.8"
+    options.encoding = "UTF-8"
 }

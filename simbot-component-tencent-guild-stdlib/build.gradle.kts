@@ -15,7 +15,11 @@ plugins {
     id("simbot-tencent-guild.module-conventions")
     id("simbot-tencent-guild.maven-publish")
     kotlin("plugin.serialization")
+    id("com.google.devtools.ksp") version "1.8.0-1.0.8"
+}
 
+repositories {
+    mavenCentral()
 }
 
 dependencies {
@@ -23,6 +27,10 @@ dependencies {
     api(simbotLoggerSlf4jImpl)
     api(simbotUtilLoop)
     api(libs.ktor.client.ws)
+//    implementation(project(":builder-generator"))
+//    ksp(project(":builder-generator"))
+    testCompileOnly(project(":builder-generator"))
+    kspTest(project(":builder-generator"))
 //    implementation("io.ktor:ktor-client-content-negotiation:2.2.3")
 //    implementation("io.ktor:ktor-serialization-jackson:2.2.3")
 }

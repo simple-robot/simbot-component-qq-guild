@@ -56,6 +56,12 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
     }
 }
 
+tasks.withType<JavaCompile> {
+    sourceCompatibility = "1.8"
+    targetCompatibility = "1.8"
+    options.encoding = "UTF-8"
+}
+
 kotlin {
     explicitApi()
     this.sourceSets.configureEach {
@@ -63,12 +69,6 @@ kotlin {
             optIn("kotlin.RequiresOptIn")
         }
     }
-}
-
-tasks.withType<JavaCompile> {
-    sourceCompatibility = "1.8"
-    targetCompatibility = "1.8"
-    options.encoding = "UTF-8"
 }
 
 configurations.all {

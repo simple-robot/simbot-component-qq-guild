@@ -13,6 +13,7 @@
 package love.forte.simbot.qguild.internal
 
 import io.ktor.client.*
+import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
@@ -38,7 +39,9 @@ import love.forte.simbot.util.stageloop.StageLoop
 import love.forte.simbot.util.stageloop.loop
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.lang.ref.WeakReference
 import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater
 import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.CoroutineContext
@@ -98,6 +101,9 @@ internal class BotImpl(
         install(ContentNegotiation) {
             json()
         }
+        install(HttpTimeout) {
+            requestTimeoutMillis = 5000 // TODO configurable
+        }
     }
 
     override val apiServer: Url = configuration.serverUrl
@@ -111,12 +117,46 @@ internal class BotImpl(
     private val preProcessorQueue: ConcurrentLinkedQueue<EventProcessor> = ConcurrentLinkedQueue()
 
 
-    override fun registerPreProcessor(processor: EventProcessor) {
+    override fun registerPreProcessor(processor: EventProcessor): DisposableHandle {
         preProcessorQueue.add(processor)
+        return DisposableHandleImpl(preProcessorQueue, processor)
     }
 
-    override fun registerProcessor(processor: EventProcessor) {
+    override fun registerProcessor(processor: EventProcessor): DisposableHandle {
         processorQueue.add(processor)
+        return DisposableHandleImpl(processorQueue, processor)
+    }
+
+    private class DisposableHandleImpl(queue: ConcurrentLinkedQueue<EventProcessor>, subject: EventProcessor) :
+        DisposableHandle {
+        private var disposed = 0
+        @Volatile
+        private var queueRef: WeakReference<ConcurrentLinkedQueue<EventProcessor>>? = WeakReference(queue)
+        @Volatile
+        private var subjectRef: WeakReference<EventProcessor>? = WeakReference(subject)
+        override fun dispose() {
+            if (!atomicDisposed.compareAndSet(this, 0, 1)) {
+                return
+            }
+
+            val queue = queueRef?.get().also {
+                queueRef = null
+            }
+            val subject = subjectRef?.get().also {
+                subjectRef = null
+            }
+            if (queue == null || subject == null) {
+                return
+            }
+
+            queue.remove(subject)
+        }
+
+        private companion object {
+            @JvmStatic
+            private val atomicDisposed =
+                AtomicIntegerFieldUpdater.newUpdater(DisposableHandleImpl::class.java, "disposed")
+        }
     }
 
     /**
@@ -590,5 +630,3 @@ private data class SessionInfo(
 )
 
 private data class EventData(val raw: String, val event: Signal.Dispatch)
-
-

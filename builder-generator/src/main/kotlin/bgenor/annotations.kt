@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2023. ForteScarlet.
  *
  * This file is part of simbot-component-tencent-guild.
  *
@@ -10,18 +10,9 @@
  * You should have received a copy of the GNU Lesser General Public License along with simbot-component-tencent-guild. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package love.forte.simbot.qguild
-
-import kotlinx.coroutines.DisposableHandle
-import love.forte.simbot.qguild.event.Signal
+package bgenor
 
 
-public inline fun <reified E : Signal.Dispatch> Bot.registerProcessor(
-    crossinline block: suspend E.(raw: String) -> Unit
-): DisposableHandle {
-    return registerProcessor { raw ->
-        if (this is E) {
-            block(raw)
-        }
-    }
-}
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.BINARY)
+annotation class GenerateBuilder()

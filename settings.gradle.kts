@@ -13,8 +13,9 @@
 rootProject.name = "tencent-guild"
 
 
+include(":builder-generator")
 include(":simbot-component-tencent-guild-api")
 include(":simbot-component-tencent-guild-stdlib")
-include(":simbot-component-tencent-guild-core")
+//include(":simbot-component-tencent-guild-core")
 
 
