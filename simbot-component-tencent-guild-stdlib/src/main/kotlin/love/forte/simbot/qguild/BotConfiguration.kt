@@ -1,13 +1,18 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ *  Copyright (c) 2022-2023 ForteScarlet <ForteScarlet@163.com>
  *
- * This file is part of simbot-component-tencent-guild.
+ *  本文件是 simbot-component-tencent-guild 的一部分。
  *
- * simbot-component-tencent-guild is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ *  simbot-component-tencent-guild 是自由软件：你可以再分发之和/或依照由自由软件基金会发布的 GNU 通用公共许可证修改之，无论是版本 3 许可证，还是（按你的决定）任何以后版都可以。
  *
- * simbot-component-tencent-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ *  发布 simbot-component-tencent-guild 是希望它能有用，但是并无保障;甚至连可销售和符合某个特定的目的都不保证。请参看 GNU 通用公共许可证，了解详情。
  *
- * You should have received a copy of the GNU Lesser General Public License along with simbot-component-tencent-guild. If not, see <https://www.gnu.org/licenses/>.
+ *  你应该随程序获得一份 GNU 通用公共许可证的复本。如果没有，请看:
+ *  https://www.gnu.org/licenses
+ *  https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *  https://www.gnu.org/licenses/lgpl-3.0-standalone.html
+ *
+ *
  */
 
 package love.forte.simbot.qguild
@@ -52,6 +57,82 @@ public object BotFactory {
         val configuration = BotConfiguration().also(config)
         return BotImpl(ticket, configuration)
     }
+
+}
+
+
+public interface BotConfiguration0 {
+
+
+    /**
+     * Context.
+     *
+     * 如果存在Job，则会被作为parentJob。
+     */
+    public val coroutineContext: CoroutineContext
+
+    /**
+     * 此bot建立的链接所使用的 shard。默认情况下使用 [Shard.FULL].
+     */
+    public val shard: Shard
+
+    /**
+     * bot需要订阅的事件 [Intents]. 默认为0，即不订阅任何事件。
+     */
+    @get:JvmSynthetic
+    public val intents: Intents
+
+    /**
+     * @see intents
+     */
+    public val intentsValue: Int get() = intents.value
+
+    /**
+     * 异常处理器。
+     * TODO
+     */
+    public val exceptionHandler: ExceptionProcessor<Unit>?
+
+    /**
+     * 用作 [Signal.Identify.Data.properties] 中的参数。
+     *
+     */
+    public val clientProperties: Map<String, String>
+
+    /**
+     * 请求的服务器地址。默认为 [QGuildApi.URL]. 即正式地址。
+     */
+    public val serverUrl: Url
+
+
+    /**
+     * 用于API请求的 [HttpClient].
+     *
+     * 如果为null则会构建一个默认的 client:
+     * ```kotlin
+     * HttpClient {
+     *     install(ContentNegotiation) {
+     *         json()
+     *     }
+     * }
+     * ```
+     *
+     */
+    public val apiClient: HttpClient?
+
+    /**
+     * 用于API请求结果反序列化的 [Json].
+     *
+     * 如果为null则会使用一个默认的 Json:
+     * ```kotlin
+     * Json {
+     *     isLenient = true
+     *     ignoreUnknownKeys = true
+     * }
+     * ```
+     *
+     */
+    public val apiDecoder: Json
 
 }
 
