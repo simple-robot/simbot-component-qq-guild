@@ -129,13 +129,16 @@ internal class BotImpl(
 
     private class DisposableHandleImpl(queue: ConcurrentLinkedQueue<EventProcessor>, subject: EventProcessor) :
         DisposableHandle {
+        @Suppress("unused")
         private var disposed = 0
+
         @Volatile
         private var queueRef: WeakReference<ConcurrentLinkedQueue<EventProcessor>>? = WeakReference(queue)
+
         @Volatile
         private var subjectRef: WeakReference<EventProcessor>? = WeakReference(subject)
         override fun dispose() {
-            if (!atomicDisposed.compareAndSet(this, 0, 1)) {
+            if (!atomicDisposedUpdater.compareAndSet(this, 0, 1)) {
                 return
             }
 
@@ -154,7 +157,7 @@ internal class BotImpl(
 
         private companion object {
             @JvmStatic
-            private val atomicDisposed =
+            private val atomicDisposedUpdater =
                 AtomicIntegerFieldUpdater.newUpdater(DisposableHandleImpl::class.java, "disposed")
         }
     }

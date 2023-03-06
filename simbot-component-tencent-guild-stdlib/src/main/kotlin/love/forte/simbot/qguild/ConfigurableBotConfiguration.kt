@@ -25,65 +25,48 @@ import love.forte.simbot.qguild.event.Signal
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
-//@JvmName("newBot")
-//@JvmOverloads
-//public fun newBot(
-//    appId: String,
-//    appKey: String,
-//    token: String,
-//    configBlock: BotConfiguration.() -> Unit = {},
-//): Bot {
-//    val ticket = TicketImpl(appId, appKey, token)
-//    val config = BotConfiguration().also(configBlock)
-//
-//
-//    return BotImpl(ticket, config)
-//}
-
-
 
 /**
  * 对于一个Bot的配置信息。
  * 如果在配置bot之后对内容进行后续修改，可能会影响到当前bot的使用。
  */
 @Suppress("MemberVisibilityCanBePrivate")
-public class BotConfigurationBuilder {
+public class ConfigurableBotConfiguration : BotConfiguration {
 
     /**
      * Context.
      *
      * 如果存在Job，则会被作为parentJob。
      */
-    public var coroutineContext: CoroutineContext = EmptyCoroutineContext
+    override var coroutineContext: CoroutineContext = EmptyCoroutineContext
 
     /**
      * 此bot建立的链接所使用的 shard。默认情况下使用 [Shard.FULL].
      */
-    public var shard: Shard = Shard.FULL
+    override var shard: Shard = Shard.FULL
 
     /**
      * bot需要订阅的事件 [Intents]. 默认为0，即不订阅任何事件。
      */
-    @get:JvmName("getIntents")
-    @set:JvmName("setIntents")
-    public var intents: Intents = Intents(0)
+    @get:JvmSynthetic
+    override var intents: Intents = Intents(0)
 
     /**
      * 异常处理器。
      * TODO
      */
-    public var exceptionHandler: ExceptionProcessor<Unit>? = null
+    override var exceptionHandler: ExceptionProcessor<Unit>? = null
 
     /**
      * 用作 [Signal.Identify.Data.properties] 中的参数。
      *
      */
-    public var clientProperties: Map<String, String> = emptyMap()
+    override var clientProperties: Map<String, String> = emptyMap()
 
     /**
      * 请求的服务器地址。默认为 [QGuildApi.URL]. 即正式地址。
      */
-    public var serverUrl: Url = QGuildApi.URL
+    override var serverUrl: Url = QGuildApi.URL
 
     /**
      * 使 [BotConfiguration.serverUrl] 为 [QGuildApi.SANDBOX_URL]
@@ -105,7 +88,7 @@ public class BotConfigurationBuilder {
      * ```
      *
      */
-    public var apiClient: HttpClient? = null
+    override var apiClient: HttpClient? = null
 
     /**
      * 用于API请求结果反序列化的 [Json].
@@ -119,7 +102,8 @@ public class BotConfigurationBuilder {
      * ```
      *
      */
-    public var apiDecoder: Json = defaultJson
+    override var apiDecoder: Json = defaultJson
+
 
     public companion object {
         private val defaultJson = Json {
@@ -128,5 +112,26 @@ public class BotConfigurationBuilder {
         }
     }
 
+
+    internal fun release(): BotConfiguration = BotConfigurationImpl(
+        coroutineContext = coroutineContext,
+        shard = shard,
+        intents = intents,
+        exceptionHandler = exceptionHandler,
+        clientProperties = clientProperties,
+        serverUrl = serverUrl,
+        apiClient = apiClient,
+        apiDecoder = apiDecoder,
+    )
 }
 
+internal class BotConfigurationImpl(
+    override val coroutineContext: CoroutineContext,
+    override val shard: Shard,
+    override val intents: Intents,
+    override val exceptionHandler: ExceptionProcessor<Unit>?,
+    override val clientProperties: Map<String, String>,
+    override val serverUrl: Url,
+    override val apiClient: HttpClient?,
+    override val apiDecoder: Json
+) : BotConfiguration
