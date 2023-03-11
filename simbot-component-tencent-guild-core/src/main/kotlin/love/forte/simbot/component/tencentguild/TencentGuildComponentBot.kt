@@ -23,9 +23,9 @@ import love.forte.simbot.definition.Group
 import love.forte.simbot.definition.GuildBot
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.message.Image
-import love.forte.simbot.qguild.Bot
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.Items.Companion.emptyItems
+import love.forte.simbot.qguild.Bot as QGuildBot
 
 /**
  * 一个tencent频道BOT的接口实例。
@@ -36,24 +36,24 @@ public interface TencentGuildComponentBot : Bot {
      * QQ频道的 [组件][TencentGuildComponent] 对象实例。
      */
     override val component: TencentGuildComponent
-    
+
     /**
      * 得到自己。
      */
     override val bot: TencentGuildComponentBot
         get() = this
-    
+
     /**
      * 在 stdlib 模块下的原始Bot类型。
      */
-    public val source: love.forte.simbot.qguild.Bot
-    
+    public val source: QGuildBot
+
     @Deprecated("Use 'source'", ReplaceWith("source"))
     public val sourceBot: love.forte.simbot.qguild.Bot get() = source
-    
+
     override val id: ID
         get() = source.ticket.appId.ID
-    
+
     /**
      * 腾讯机器人有两个可能的唯一标识：作为bot的clientId以及在系统中作为用户的 user id.
      *
@@ -61,76 +61,76 @@ public interface TencentGuildComponentBot : Bot {
      *
      */
     override fun isMe(id: ID): Boolean
-    
+
     /**
-     * 启动当前bot, 并且初始化此bot的信息。 启动时会通过 [Bot.me] 查询当前bot的信息，并为 [isMe] 提供额外id的匹配支持。
+     * 启动当前bot, 并且初始化此bot的信息。
+     *
+     * 启动时会通过 [Bot.me()][QGuildBot.me] 查询当前bot的信息，并为 [isMe] 提供额外id的匹配支持。
      *
      */
     @JvmSynthetic
     override suspend fun start(): Boolean
-    
+
     /**
      * bot的用户名
      */
     override val username: String
-        get() = source.botInfo.username
-    
+
     /**
      * bot的头像
      */
     override val avatar: String
-        get() = source.botInfo.avatar
     
     /**
      * bot所属的bot管理器
      */
     override val manager: TencentGuildBotManager
-    
+
     /**
      * bot所属的事件处理器。
      */
     override val eventProcessor: EventProcessor
-    
-    
+
+
     //// Impl
-    
+
     @JvmBlocking
     @JvmAsync
     override suspend fun resolveImage(id: ID): Image<*> {
-        
+
         // TODO fake remote image?
         throw UnsupportedActionException("resolveImage(ID) not support yet.")
     }
-    
-    
+
+
     override val isActive: Boolean
         get() = source.isActive
-    
+
     @Deprecated(
         "Group related APIs are not supported",
         ReplaceWith("emptyItems()", "love.forte.simbot.utils.item.Items.Companion.emptyItems")
     )
     override val groups: Items<Group>
         get() = emptyItems()
-    
-    
+
+
     override val guilds: Items<TencentGuild>
-    
+
     @JvmBlocking(baseName = "getGuild", suffix = "")
     @JvmAsync(baseName = "getGuild")
     override suspend fun guild(id: ID): TencentGuild?
-    
+
     @Deprecated(
         "Contact related APIs are not supported",
         ReplaceWith("emptyItems()", "love.forte.simbot.utils.item.Items.Companion.emptyItems")
     )
     override val contacts: Items<Contact>
         get() = emptyItems()
-    
+
     @Deprecated("Contact related APIs are not supported", ReplaceWith("null"))
     @JvmSynthetic
     override suspend fun contact(id: ID): Contact? = null
-    
+
     @Deprecated("Group related APIs are not supported", ReplaceWith("null"))
     @JvmSynthetic
     override suspend fun group(id: ID): Group? = null
@@ -144,7 +144,7 @@ public interface TencentGuildComponentBot : Bot {
 public interface TencentGuildComponentGuildBot : TencentGuildComponentBot, GuildBot {
     override suspend fun asMember(): TencentMember
     override val guilds: Items<TencentGuild>
-    
+
     @JvmBlocking(baseName = "getGuild", suffix = "")
     @JvmAsync(baseName = "getGuild")
     override suspend fun guild(id: ID): TencentGuild?

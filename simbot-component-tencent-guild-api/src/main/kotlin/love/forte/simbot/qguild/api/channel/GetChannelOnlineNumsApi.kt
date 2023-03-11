@@ -21,6 +21,7 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import love.forte.simbot.qguild.api.GetTencentApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
+import love.forte.simbot.qguild.api.SimpleGetApiDescription
 
 
 /**
@@ -31,7 +32,9 @@ import love.forte.simbot.qguild.api.RouteInfoBuilder
  * @author ForteScarlet
  */
 public class GetChannelOnlineNumsApi(channelId: String) : GetTencentApi<Int>() {
-    public companion object Factory {
+    public companion object Factory : SimpleGetApiDescription(
+        "/channels/{channel_id}/online_nums"
+    ) {
 
         /**
          * 构造 [GetChannelOnlineNumsApi]
@@ -40,7 +43,6 @@ public class GetChannelOnlineNumsApi(channelId: String) : GetTencentApi<Int>() {
         public fun create(channelId: String): GetChannelOnlineNumsApi = GetChannelOnlineNumsApi(channelId)
     }
 
-    // GET /channels/{channel_id}/online_nums
     private val path = arrayOf("channels", channelId, "online_nums")
 
     override val resultDeserializer: DeserializationStrategy<Int>

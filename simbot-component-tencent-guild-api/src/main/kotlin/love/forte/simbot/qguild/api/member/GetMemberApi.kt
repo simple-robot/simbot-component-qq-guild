@@ -15,6 +15,7 @@ package love.forte.simbot.qguild.api.member
 import kotlinx.serialization.DeserializationStrategy
 import love.forte.simbot.qguild.api.GetTencentApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
+import love.forte.simbot.qguild.api.SimpleGetApiDescription
 import love.forte.simbot.qguild.model.SimpleMember
 
 
@@ -28,7 +29,9 @@ import love.forte.simbot.qguild.model.SimpleMember
 public class GetMemberApi private constructor(
     guildId: String, userId: String
 ) : GetTencentApi<SimpleMember>() {
-    public companion object Factory {
+    public companion object Factory : SimpleGetApiDescription(
+        "/guilds/{guild_id}/members/{user_id}"
+    ) {
         /**
          * 构造 [GetMemberApi]
          *
@@ -37,7 +40,6 @@ public class GetMemberApi private constructor(
         public fun create(guildId: String, userId: String): GetMemberApi = GetMemberApi(guildId, userId)
     }
 
-    // GET /guilds/{guild_id}/members/{user_id}
     private val path = arrayOf("guilds", guildId, "members", userId)
 
     override val resultDeserializer: DeserializationStrategy<SimpleMember>

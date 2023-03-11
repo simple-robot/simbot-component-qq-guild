@@ -13,8 +13,11 @@
 package love.forte.simbot.qguild.api.user
 
 import kotlinx.serialization.DeserializationStrategy
+import love.forte.simbot.qguild.api.ApiDescription
 import love.forte.simbot.qguild.api.GetTencentApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
+import love.forte.simbot.qguild.api.SimpleGetApiDescription
+import love.forte.simbot.qguild.api.user.GetBotInfoApi.Description
 import love.forte.simbot.qguild.model.User
 
 
@@ -24,13 +27,20 @@ import love.forte.simbot.qguild.model.User
  *
  * 用于获取当前用户（机器人）详情。
  *
+ * 由于 [GetBotInfoApi] 本身为 `object` 类型, 因此 [ApiDescription] 由内部对象 [Description] 提供而不是伴生对象。
+ *
  * @author ForteScarlet
  */
 public object GetBotInfoApi : GetTencentApi<User>() {
-    // GET /users/@me
-    private val path = arrayOf("users", "@me")
+    /**
+     * [GetBotInfoApi] 的 [ApiDescription] 实现。
+     */
+    public object Description : SimpleGetApiDescription("/users/@me")
+
+    private val pathSec = arrayOf("users", "@me")
     override val resultDeserializer: DeserializationStrategy<User> = User.serializer()
+
     override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
+        builder.apiPath = pathSec
     }
 }

@@ -15,6 +15,7 @@ package love.forte.simbot.qguild.api.channel.permissions
 import kotlinx.serialization.DeserializationStrategy
 import love.forte.simbot.qguild.api.GetTencentApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
+import love.forte.simbot.qguild.api.SimpleGetApiDescription
 import love.forte.simbot.qguild.model.ChannelPermissions
 
 /**
@@ -31,7 +32,9 @@ import love.forte.simbot.qguild.model.ChannelPermissions
 public class GetChannelMemberPermissionsApi private constructor(
     channelId: String, memberId: String
 ) : GetTencentApi<ChannelPermissions>() {
-    public companion object Factory {
+    public companion object Factory : SimpleGetApiDescription(
+        "/channels/{channel_id}/members/{user_id}/permissions"
+    ) {
         /**
          * 构造 [GetChannelMemberPermissionsApi]
          */
@@ -40,7 +43,6 @@ public class GetChannelMemberPermissionsApi private constructor(
             GetChannelMemberPermissionsApi(channelId, memberId)
     }
 
-    // GET /channels/{channel_id}/members/{user_id}/permissions
     private val path = arrayOf("channels", channelId, "members", memberId, "permissions")
 
     override val resultDeserializer: DeserializationStrategy<ChannelPermissions>

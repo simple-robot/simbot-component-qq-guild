@@ -14,6 +14,7 @@ package love.forte.simbot.qguild.api.guild.mute
 
 import io.ktor.http.*
 import love.forte.simbot.qguild.api.RouteInfoBuilder
+import love.forte.simbot.qguild.api.SimpleApiDescription
 import love.forte.simbot.qguild.api.TencentApiWithoutResult
 import java.time.Duration
 import java.time.Instant
@@ -32,7 +33,9 @@ import java.util.concurrent.TimeUnit
  */
 public class MuteMemberApi private constructor(guildId: String, userId: String, body: MuteBody) :
     TencentApiWithoutResult() {
-    public companion object Factory {
+    public companion object Factory : SimpleApiDescription(
+        HttpMethod.Patch, "/guilds/{guild_id}/members/{user_id}/mute"
+    ) {
         /**
          * 使用 `mute_end_timestamp` 的方式构建 [MuteMemberApi]
          * @param muteEndTimestamp 禁言到期时间戳，绝对时间戳。
@@ -84,7 +87,6 @@ public class MuteMemberApi private constructor(guildId: String, userId: String, 
         }
     }
 
-    // PATCH /guilds/{guild_id}/members/{user_id}/mute
     private val path = arrayOf("guilds", guildId, "members", userId, "mute")
 
     override val method: HttpMethod

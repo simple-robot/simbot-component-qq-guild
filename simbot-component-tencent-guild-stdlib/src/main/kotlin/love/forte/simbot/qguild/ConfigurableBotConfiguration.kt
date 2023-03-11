@@ -125,7 +125,7 @@ public class ConfigurableBotConfiguration : BotConfiguration {
     )
 }
 
-internal class BotConfigurationImpl(
+private class BotConfigurationImpl(
     override val coroutineContext: CoroutineContext,
     override val shard: Shard,
     override val intents: Intents,

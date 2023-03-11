@@ -73,13 +73,13 @@ internal class BotImpl(
 
     // private val parentJob: Job
     override val coroutineContext: CoroutineContext
-    private val parentJob: Job
+    private val supervisorJob: Job
 
     init {
         val configContext = configuration.coroutineContext
         val configJob = configContext[Job]
-        parentJob = SupervisorJob(configJob)
-        coroutineContext = configContext + parentJob + CoroutineName("QGBot.${ticket.appId}")
+        supervisorJob = SupervisorJob(configJob)
+        coroutineContext = configContext + supervisorJob + CoroutineName("QGBot.${ticket.appId}")
     }
 
     private val wsDecoder = Signal.Dispatch.dispatchJson {
@@ -187,7 +187,7 @@ internal class BotImpl(
         loop.appendStage(Connect(shard, gatewayInfo))
 
         // TODO supervisor? or normal?
-        val stageLoopJob = launch(SupervisorJob(parentJob)) {
+        val stageLoopJob = launch(SupervisorJob(supervisorJob)) {
             loop.loop { e ->
                 // TODO just throw?
 //                logger.error("Loop error: {}", e.localizedMessage, e)
@@ -200,37 +200,19 @@ internal class BotImpl(
             stageLoopJob
         }
 
-//        var next: Stage? = loop.poll()
-//        while (next != null && next !is ReceiveEvent) {
-//            // 还没到接收事件的阶段
-//            loop(next)
-//            next = loop.poll()
-//        }
-
-//        logger.debug("Loop on stage 'ReceiveEvent'")
-//
-//        val currentClient = (next as ReceiveEvent).client
-//
-//        logger.debug("Current client: {}", currentClient)
-//
-//        _client.getAndUpdate { old ->
-//            old?.cancel()
-//            currentClient
-//        }
-
         return true
     }
 
     override suspend fun cancel(reason: Throwable?): Boolean {
-        if (parentJob.isCancelled) return false
+        if (supervisorJob.isCancelled) return false
 
-        parentJob.cancel(reason?.let { CancellationException(it.localizedMessage, it) })
-        parentJob.join()
+        supervisorJob.cancel(reason?.let { CancellationException(it.localizedMessage, it) })
+        supervisorJob.join()
         return true
     }
 
     override suspend fun join() {
-        parentJob.join()
+        supervisorJob.join()
     }
 
 

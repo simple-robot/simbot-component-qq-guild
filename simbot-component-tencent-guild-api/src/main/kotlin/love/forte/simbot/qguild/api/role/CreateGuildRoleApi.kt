@@ -17,8 +17,9 @@ import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.ApiModel
+import love.forte.simbot.qguild.api.PostTencentApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
-import love.forte.simbot.qguild.api.TencentApi
+import love.forte.simbot.qguild.api.SimplePostApiDescription
 import love.forte.simbot.qguild.model.Role
 
 /**
@@ -35,8 +36,10 @@ import love.forte.simbot.qguild.model.Role
 public class CreateGuildRoleApi private constructor(
     guildId: String,
     private val _body: NewBody,
-) : TencentApi<GuildRoleCreated>() {
-    public companion object Factory {
+) : PostTencentApi<GuildRoleCreated>() {
+    public companion object Factory : SimplePostApiDescription(
+        "/guilds/{guild_id}/roles"
+    ) {
 
         /**
          * 构造 [CreateGuildRoleApi].
@@ -61,7 +64,6 @@ public class CreateGuildRoleApi private constructor(
     private val path = arrayOf("guilds", guildId, "roles")
 
     override val resultDeserializer: DeserializationStrategy<GuildRoleCreated> get() = GuildRoleCreated.serializer()
-    override val method: HttpMethod get() = HttpMethod.Post
 
     override fun route(builder: RouteInfoBuilder) {
         builder.apiPath = path

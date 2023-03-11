@@ -16,6 +16,7 @@ import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.builtins.serializer
 import love.forte.simbot.qguild.api.RouteInfoBuilder
+import love.forte.simbot.qguild.api.SimpleApiDescription
 import love.forte.simbot.qguild.api.TencentApi
 import java.time.Duration
 import java.time.Instant
@@ -35,7 +36,9 @@ import java.util.concurrent.TimeUnit
  * @author ForteScarlet
  */
 public class MuteAllApi private constructor(guildId: String, body: MuteBody) : TencentApi<Unit>() {
-    public companion object Factory {
+    public companion object Factory : SimpleApiDescription(
+        HttpMethod.Patch, "/guilds/{guild_id}/mute"
+    ) {
         /**
          * 使用 `mute_end_timestamp` 的方式构建 [MuteAllApi]
          * @param muteEndTimestamp 禁言到期时间戳，绝对时间戳。
@@ -90,7 +93,6 @@ public class MuteAllApi private constructor(guildId: String, body: MuteBody) : T
     override val method: HttpMethod
         get() = HttpMethod.Patch
 
-    // PATCH /guilds/{guild_id}/mute
     private val path = arrayOf("guilds", guildId, "mute")
 
     override val resultDeserializer: DeserializationStrategy<Unit>

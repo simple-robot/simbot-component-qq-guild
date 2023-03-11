@@ -15,6 +15,7 @@ package love.forte.simbot.qguild.api.message.setting
 import kotlinx.serialization.DeserializationStrategy
 import love.forte.simbot.qguild.api.GetTencentApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
+import love.forte.simbot.qguild.api.SimpleGetApiDescription
 import love.forte.simbot.qguild.model.MessageSetting
 
 
@@ -25,7 +26,9 @@ import love.forte.simbot.qguild.model.MessageSetting
  * @author ForteScarlet
  */
 public class GetMessageSettingApi private constructor(guildId: String) : GetTencentApi<MessageSetting>() {
-    public companion object Factory {
+    public companion object Factory : SimpleGetApiDescription(
+        "/guilds/{guild_id}/message/setting"
+    ) {
         /**
          * 构造 [GetMessageSettingApi]
          *
@@ -34,7 +37,6 @@ public class GetMessageSettingApi private constructor(guildId: String) : GetTenc
         public fun create(guildId: String): GetMessageSettingApi = GetMessageSettingApi(guildId)
     }
 
-    // GET /guilds/{guild_id}/message/setting
     private val path = arrayOf("guilds", guildId, "message", "setting")
 
     override val resultDeserializer: DeserializationStrategy<MessageSetting>

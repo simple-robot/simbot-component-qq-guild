@@ -24,8 +24,8 @@ import love.forte.simbot.component.tencentguild.internal.event.TcgBotRegisteredE
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.event.pushIfProcessable
 import love.forte.simbot.logger.LoggerFactory
-import love.forte.simbot.qguild.BotConfiguration
-import love.forte.simbot.qguild.tencentGuildBot
+import love.forte.simbot.qguild.BotFactory
+import love.forte.simbot.qguild.ConfigurableBotConfiguration
 import org.slf4j.Logger
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -45,50 +45,50 @@ internal class TencentGuildBotManagerImpl(
     companion object {
         private val LOGGER = LoggerFactory.getLogger(TencentGuildBotManagerImpl::class)
     }
-    
+
     private val completableJob: CompletableJob
     override val coroutineContext: CoroutineContext
-    
+
     init {
         val parentContext = configuration.parentCoroutineContext
         val parentJob = parentContext[Job]
         completableJob = SupervisorJob(parentJob)
         coroutineContext = parentContext.minusKey(Job) + completableJob
     }
-    
+
     override val logger: Logger
         get() = LOGGER
-    
-    
+
+
     // private val isCanceled = AtomicBoolean(false)
-    
+
     private val lock = ReentrantReadWriteLock()
-    
+
     override val isActive: Boolean
         get() = completableJob.isActive
-    
+
     override val isCancelled: Boolean
         get() = completableJob.isCancelled
-    
+
     override val isStarted: Boolean
         get() = completableJob.isActive
-    
+
     override fun invokeOnCompletion(handler: CompletionHandler) {
         completableJob.invokeOnCompletion(handler)
     }
-    
+
     override suspend fun join() {
         completableJob.join()
     }
-    
+
     // nothing to start
     override suspend fun start(): Boolean {
         return !completableJob.isCompleted
     }
-    
+
     private var botMap = ConcurrentHashMap<String, TencentGuildComponentBotImpl>()
-    
-    
+
+
     override suspend fun doCancel(reason: Throwable?): Boolean {
         lock.write {
             val cancelled = completableJob.isCancelled
@@ -98,7 +98,7 @@ internal class TencentGuildBotManagerImpl(
             if (cancelled) {
                 return false
             }
-            
+
             if (reason != null) {
                 completableJob.cancel(reason.localizedMessage, reason)
             } else {
@@ -108,29 +108,29 @@ internal class TencentGuildBotManagerImpl(
             return true
         }
     }
-    
+
     override fun get(id: ID): TencentGuildComponentBot? {
         lock.read {
             if (completableJob.isCancelled) throw IllegalStateException("This manager has already cancelled.")
-            
+
             return botMap[id.toString()]
         }
     }
-    
+
     override fun all(): List<TencentGuildComponentBot> {
         return botMap.values.toList()
     }
-    
-    
+
+
     override fun register(
         appId: String,
         appKey: String,
         token: String,
-        block: BotConfiguration.() -> Unit,
+        block: ConfigurableBotConfiguration.() -> Unit,
     ): TencentGuildComponentBot {
         val configure = configuration.botConfigure
         lock.write {
-            val sourceBot = tencentGuildBot(appId, appKey, token) {
+            val sourceBot = BotFactory.create(appId, appKey, token) {
                 configure(appId, appKey, token)
                 block()
                 if (coroutineContext[Job] == null) {
@@ -138,10 +138,10 @@ internal class TencentGuildBotManagerImpl(
                 }
             }
             // check botInfo
-            logger.info("Registered bot info: {}", sourceBot.botInfo)
+            logger.info("Registered bot appId: {}", sourceBot.ticket.appId)
             return botMap.compute(appId) { key, old ->
                 if (old != null) throw BotAlreadyRegisteredException(key)
-                
+
                 TencentGuildComponentBotImpl(sourceBot, this, eventProcessor, component).apply {
                     coroutineContext[Job]!!.invokeOnCompletion {
                         // remove self on completion

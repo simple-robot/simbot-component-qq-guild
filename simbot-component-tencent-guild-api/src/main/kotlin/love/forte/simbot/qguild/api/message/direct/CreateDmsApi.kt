@@ -18,6 +18,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.api.PostTencentApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
+import love.forte.simbot.qguild.api.SimplePostApiDescription
 import love.forte.simbot.qguild.model.DirectMessageSession
 
 /**
@@ -41,9 +42,11 @@ public class CreateDmsApi private constructor(
     recipientId: String,
     sourceGuildId: String,
 ) : PostTencentApi<DirectMessageSession>() {
-    public companion object Factory {
+    public companion object Factory : SimplePostApiDescription(
+        "/users/@me/dms"
+    ) {
         // POST /users/@me/dms
-        private val path = arrayOf("users", "@me", "dms")
+        private val pathSegments = arrayOf("users", "@me", "dms")
 
         /**
          * 构造 [CreateDmsApi].
@@ -61,7 +64,7 @@ public class CreateDmsApi private constructor(
         get() = DirectMessageSession.serializer()
 
     override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
+        builder.apiPath = pathSegments
         builder.contentType
     }
 

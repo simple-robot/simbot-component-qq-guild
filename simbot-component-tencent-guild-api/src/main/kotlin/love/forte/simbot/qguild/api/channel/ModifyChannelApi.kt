@@ -18,6 +18,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.PrivateDomainOnly
 import love.forte.simbot.qguild.api.RouteInfoBuilder
+import love.forte.simbot.qguild.api.SimpleApiDescription
 import love.forte.simbot.qguild.api.TencentApi
 import love.forte.simbot.qguild.model.PrivateType
 import love.forte.simbot.qguild.model.SimpleChannel
@@ -38,7 +39,9 @@ import love.forte.simbot.qguild.model.SpeakPermission
 public class ModifyChannelApi private constructor(
     channelId: String, override val body: Body
 ) : TencentApi<SimpleChannel>() {
-    public companion object Factory {
+    public companion object Factory : SimpleApiDescription(
+        HttpMethod.Patch, "/channels/{channel_id}"
+    ) {
 
         /**
          * 构造 [ModifyChannelApi].
@@ -49,7 +52,6 @@ public class ModifyChannelApi private constructor(
 
     }
 
-    // PATCH /channels/{channel_id}
     private val path = arrayOf("channels", channelId)
 
     override val resultDeserializer: DeserializationStrategy<SimpleChannel>

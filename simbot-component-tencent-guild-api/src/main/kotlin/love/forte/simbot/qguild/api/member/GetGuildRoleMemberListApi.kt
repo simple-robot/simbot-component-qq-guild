@@ -18,6 +18,7 @@ import love.forte.simbot.qguild.ApiModel
 import love.forte.simbot.qguild.PrivateDomainOnly
 import love.forte.simbot.qguild.api.GetTencentApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
+import love.forte.simbot.qguild.api.SimpleGetApiDescription
 import love.forte.simbot.qguild.model.SimpleMember
 import org.slf4j.LoggerFactory
 
@@ -53,7 +54,9 @@ public class GetGuildRoleMemberListApi private constructor(
         }
     }
 
-    public companion object Factory {
+    public companion object Factory : SimpleGetApiDescription(
+        "/guilds/{guild_id}/roles/{role_id}/members"
+    ) {
         private val logger = LoggerFactory.getLogger(GetGuildRoleMemberListApi::class.java)
 
         /**
@@ -74,7 +77,6 @@ public class GetGuildRoleMemberListApi private constructor(
         ): GetGuildRoleMemberListApi = GetGuildRoleMemberListApi(guildId, roleId, null, limit)
     }
 
-    // GET /guilds/{guild_id}/roles/{role_id}/members
     private val path = arrayOf("guilds", guildId, "roles", roleId, "members")
 
     override val resultDeserializer: DeserializationStrategy<GuildRoleMemberList>

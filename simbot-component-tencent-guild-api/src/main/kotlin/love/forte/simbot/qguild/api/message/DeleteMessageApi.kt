@@ -15,6 +15,7 @@ package love.forte.simbot.qguild.api.message
 import io.ktor.http.*
 import love.forte.simbot.qguild.PrivateDomainOnly
 import love.forte.simbot.qguild.api.RouteInfoBuilder
+import love.forte.simbot.qguild.api.SimpleApiDescription
 import love.forte.simbot.qguild.api.TencentApiWithoutResult
 
 /**
@@ -31,7 +32,9 @@ import love.forte.simbot.qguild.api.TencentApiWithoutResult
 public class DeleteMessageApi private constructor(
     channelId: String, messageId: String, private val hidetip: Boolean? = null
 ) : TencentApiWithoutResult() {
-    public companion object Factory {
+    public companion object Factory : SimpleApiDescription(
+        HttpMethod.Delete, "/channels/{channel_id}/messages/{message_id}"
+    ) {
 
         /**
          * 构建 [DeleteMessageApi]
@@ -47,7 +50,7 @@ public class DeleteMessageApi private constructor(
     override val method: HttpMethod
         get() = HttpMethod.Delete
 
-    // DELETE /channels/{channel_id}/messages/{message_id}?hidetip=false
+    // /channels/{channel_id}/messages/{message_id}?hidetip=false
     private val path = arrayOf("channels", channelId, "messages", messageId)
 
     override fun route(builder: RouteInfoBuilder) {

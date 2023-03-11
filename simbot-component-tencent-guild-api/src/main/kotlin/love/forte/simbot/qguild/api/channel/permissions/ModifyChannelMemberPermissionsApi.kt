@@ -15,6 +15,7 @@ package love.forte.simbot.qguild.api.channel.permissions
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.api.RouteInfoBuilder
+import love.forte.simbot.qguild.api.SimpleApiDescription
 import love.forte.simbot.qguild.api.TencentApiWithoutResult
 import love.forte.simbot.qguild.model.Permissions
 
@@ -34,7 +35,9 @@ public class ModifyChannelMemberPermissionsApi private constructor(
     channelId: String, memberId: String,
     private val _body: Body
 ) : TencentApiWithoutResult() {
-    public companion object Factory {
+    public companion object Factory : SimpleApiDescription(
+        HttpMethod.Put, "/channels/{channel_id}/members/{user_id}/permissions"
+    ) {
         /**
          * 构造 [ModifyChannelMemberPermissionsApi].
          * @param add 需要追加的权限的位图
@@ -71,7 +74,6 @@ public class ModifyChannelMemberPermissionsApi private constructor(
     }
 
 
-    // GET /channels/{channel_id}/members/{user_id}/permissions
     private val path = arrayOf("channels", channelId, "members", memberId, "permissions")
 
     override fun route(builder: RouteInfoBuilder) {

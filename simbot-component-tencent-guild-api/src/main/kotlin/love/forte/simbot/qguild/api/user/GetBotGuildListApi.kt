@@ -12,11 +12,11 @@
 
 package love.forte.simbot.qguild.api.user
 
-import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.builtins.ListSerializer
+import love.forte.simbot.qguild.api.GetTencentApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
-import love.forte.simbot.qguild.api.TencentApi
+import love.forte.simbot.qguild.api.SimpleGetApiDescription
 import love.forte.simbot.qguild.model.SimpleGuild
 
 
@@ -47,9 +47,11 @@ public class GetBotGuildListApi private constructor(
      * 每次拉取多少条数据	最大不超过100，默认100
      */
     public val limit: Int = DEFAULT_LIMIT,
-) : TencentApi<List<SimpleGuild>>() {
+) : GetTencentApi<List<SimpleGuild>>() {
 
-    public companion object Factory {
+    public companion object Factory : SimpleGetApiDescription(
+        "/users/@me/guilds"
+    ) {
         private val route = arrayOf("users", "@me", "guilds")
         private val serializer = ListSerializer(SimpleGuild.serializer())
         private const val DEFAULT_LIMIT: Int = 100
@@ -101,9 +103,6 @@ public class GetBotGuildListApi private constructor(
 
     override val resultDeserializer: DeserializationStrategy<List<SimpleGuild>>
         get() = serializer
-
-    override val method: HttpMethod
-        get() = HttpMethod.Get
 
     override fun route(builder: RouteInfoBuilder) {
         builder.apiPath = route

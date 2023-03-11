@@ -15,6 +15,7 @@ package love.forte.simbot.qguild.api.channel.permissions
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.api.RouteInfoBuilder
+import love.forte.simbot.qguild.api.SimpleApiDescription
 import love.forte.simbot.qguild.api.TencentApiWithoutResult
 import love.forte.simbot.qguild.model.Permissions
 
@@ -35,7 +36,9 @@ public class ModifyChannelRolePermissionsApi private constructor(
     channelId: String, roleId: String,
     private val _body: Body
 ) : TencentApiWithoutResult() {
-    public companion object Factory {
+    public companion object Factory : SimpleApiDescription(
+        HttpMethod.Put, "/channels/{channel_id}/roles/{role_id}/permissions"
+    ) {
 
         /**
          * 构造 [ModifyChannelRolePermissionsApi]
@@ -72,7 +75,6 @@ public class ModifyChannelRolePermissionsApi private constructor(
         ): ModifyChannelRolePermissionsApi = create(channelId, memberId, remove = remove)
     }
 
-    // PUT /channels/{channel_id}/roles/{role_id}/permissions
     private val path = arrayOf("channels", channelId, "roles", roleId, "permissions")
 
     override fun route(builder: RouteInfoBuilder) {

@@ -18,6 +18,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.api.PostTencentApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
+import love.forte.simbot.qguild.api.SimplePostApiDescription
 import love.forte.simbot.qguild.model.Announces
 
 
@@ -35,7 +36,9 @@ public class CreateAnnouncesApi private constructor(
     messageId: String,
 ) : PostTencentApi<Announces>() {
 
-    public companion object Factory {
+    public companion object Factory : SimplePostApiDescription(
+        "/channels/{channel_id}/announces"
+    ) {
 
         /**
          * 构建 [CreateAnnouncesApi]

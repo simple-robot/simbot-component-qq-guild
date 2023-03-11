@@ -16,6 +16,7 @@ import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.builtins.ListSerializer
 import love.forte.simbot.qguild.api.GetTencentApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
+import love.forte.simbot.qguild.api.SimpleGetApiDescription
 import love.forte.simbot.qguild.model.SimpleChannel
 
 
@@ -28,7 +29,9 @@ import love.forte.simbot.qguild.model.SimpleChannel
  * @author ForteScarlet
  */
 public class GetGuildChannelListApi private constructor(guildId: String) : GetTencentApi<List<SimpleChannel>>() {
-    public companion object Factory {
+    public companion object Factory : SimpleGetApiDescription(
+        "/guilds/{guild_id}/channels"
+    ) {
         private val serializer = ListSerializer(SimpleChannel.serializer())
 
         /**
@@ -38,7 +41,6 @@ public class GetGuildChannelListApi private constructor(guildId: String) : GetTe
         public fun create(guildId: String): GetGuildChannelListApi = GetGuildChannelListApi(guildId)
     }
 
-    // GET /guilds/{guild_id}/channels
     private val path = arrayOf("guilds", guildId, "channels")
 
     override val resultDeserializer: DeserializationStrategy<List<SimpleChannel>>

@@ -17,6 +17,7 @@ import kotlinx.serialization.builtins.ListSerializer
 import love.forte.simbot.qguild.PrivateDomainOnly
 import love.forte.simbot.qguild.api.GetTencentApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
+import love.forte.simbot.qguild.api.SimpleGetApiDescription
 import love.forte.simbot.qguild.model.SimpleMember
 import org.slf4j.LoggerFactory
 
@@ -56,7 +57,9 @@ public class GetGuildMemberListApi private constructor(
         }
     }
 
-    public companion object Factory {
+    public companion object Factory : SimpleGetApiDescription(
+        "/guilds/{guild_id}/members"
+    ) {
         private val deserializer = ListSerializer(SimpleMember.serializer())
         private val logger = LoggerFactory.getLogger(GetGuildMemberListApi::class.java)
 
@@ -78,7 +81,6 @@ public class GetGuildMemberListApi private constructor(
             GetGuildMemberListApi(guildId, null, limit)
     }
 
-    // GET /guilds/{guild_id}/members
     private val path = arrayOf("guilds", guildId, "members")
 
     override val resultDeserializer: DeserializationStrategy<List<SimpleMember>>

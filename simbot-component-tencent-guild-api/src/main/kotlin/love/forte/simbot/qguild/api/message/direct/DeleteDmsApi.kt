@@ -17,6 +17,7 @@ import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.builtins.serializer
 import love.forte.simbot.qguild.PrivateDomainOnly
 import love.forte.simbot.qguild.api.RouteInfoBuilder
+import love.forte.simbot.qguild.api.SimpleApiDescription
 import love.forte.simbot.qguild.api.TencentApi
 
 /**
@@ -34,7 +35,9 @@ public class DeleteDmsApi private constructor(
     messageId: String,
     private val hidetip: Boolean? = null,
 ) : TencentApi<Unit>() {
-    public companion object Factory {
+    public companion object Factory : SimpleApiDescription(
+        HttpMethod.Delete, "/dms/{guild_id}/messages/{message_id}"
+    ) {
 
         /**
          * 构造 [DeleteDmsApi]
@@ -55,7 +58,6 @@ public class DeleteDmsApi private constructor(
     override val method: HttpMethod
         get() = HttpMethod.Delete
 
-    // /dms/{guild_id}/messages/{message_id}
     private val path = arrayOf("dms", guildId, "messages", messageId)
 
     override fun route(builder: RouteInfoBuilder) {

@@ -30,6 +30,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import love.forte.simbot.qguild.*
 import love.forte.simbot.qguild.api.RouteInfoBuilder
+import love.forte.simbot.qguild.api.SimplePostApiDescription
 import love.forte.simbot.qguild.api.TencentApi
 import love.forte.simbot.qguild.api.message.MessageSendApi.Body.Builder
 import love.forte.simbot.qguild.model.Message
@@ -122,7 +123,9 @@ public class MessageSendApi private constructor(
     channelId: String,
     body: Body, // TencentMessageForSending || MultiPartFormDataContent
 ) : TencentApi<Message>() {
-    public companion object Factory {
+    public companion object Factory : SimplePostApiDescription(
+        "/channels/{channel_id}/messages"
+    ) {
         /** 类似于 [io.ktor.serialization.kotlinx.json.DefaultJson] */
         internal val defaultJson: Json
             get() = Json {
@@ -139,68 +142,10 @@ public class MessageSendApi private constructor(
          */
         @JvmStatic
         public fun create(channelId: String, body: Body): MessageSendApi = MessageSendApi(channelId, body)
-//
-//        /**
-//         * 构造 [MessageSendApi]
-//         */
-//        @JvmStatic
-//        @JvmOverloads
-//        public fun create(channelId: String, content: String, msgId: String? = null): MessageSendApi =
-//            MessageSendApi(channelId, TencentMessageForSending(content = content, msgId = msgId))
-//
-//        /**
-//         * 构造 [MessageSendApi]
-//         */
-//        @JvmStatic
-//        @JvmOverloads
-//        public fun create(channelId: String, embed: Message.Embed, msgId: String? = null): MessageSendApi =
-//            MessageSendApi(
-//                channelId,
-//                TencentMessageForSending(embed = embed, msgId = msgId),
-//            )
-//
-//        /**
-//         * 构造 [MessageSendApi]
-//         */
-//        @JvmStatic
-//        @JvmOverloads
-//        public fun create(channelId: String, ark: Message.Ark, msgId: String? = null): MessageSendApi = MessageSendApi(
-//            channelId,
-//            TencentMessageForSending(ark = ark, msgId = msgId),
-//        )
-//
-//        // with 'fileImage'
-//
-//        /**
-//         * 构造 [MessageSendApi]
-//         */
-//        @JvmStatic
-//        @JvmOverloads
-//        public fun create(
-//            channelId: String,
-//            sendingBody: TencentMessageForSending,
-//            fileImage: Resource? = null
-//        ): MessageSendApi = MessageSendApi(
-//            channelId = channelId,
-//            body = if (fileImage != null) sendingBody.toMultiPartFormDataContent(
-//                defaultJson,
-//                fileImage
-//            ) else sendingBody
-//        )
-//
-//        /**
-//         * 构造 [MessageSendApi]
-//         */
-//        @JvmStatic
-//        public fun create(channelId: String, fileImage: Resource): MessageSendApi = MessageSendApi(
-//            channelId = channelId,
-//            body = null.toMultiPartFormDataContent(defaultJson, fileImage)
-//        )
     }
 
     override val body: Any = body.toRealBody(defaultJson)
 
-    // POST /channels/{channel_id}/messages
     private val path = arrayOf("channels", channelId, "messages")
 
     override val resultDeserializer: DeserializationStrategy<Message>

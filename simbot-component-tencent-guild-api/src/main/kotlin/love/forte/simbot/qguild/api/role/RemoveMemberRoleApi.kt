@@ -15,6 +15,7 @@ package love.forte.simbot.qguild.api.role
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.api.RouteInfoBuilder
+import love.forte.simbot.qguild.api.SimpleApiDescription
 import love.forte.simbot.qguild.api.TencentApiWithoutResult
 
 /**
@@ -34,7 +35,9 @@ public class RemoveMemberRoleApi private constructor(
     roleId: String,
     channelId: String?,
 ) : TencentApiWithoutResult() {
-    public companion object Factory {
+    public companion object Factory : SimpleApiDescription(
+        HttpMethod.Delete, "/guilds/{guild_id}/members/{user_id}/roles/{role_id}"
+    ) {
         
         /**
          * 构造 [RemoveMemberRoleApi]
@@ -52,14 +55,13 @@ public class RemoveMemberRoleApi private constructor(
         ): RemoveMemberRoleApi = RemoveMemberRoleApi(guildId, userId, roleId, channelId)
     }
     
-    // DELETE /guilds/{guild_id}/members/{user_id}/roles/{role_id}
     private val path = arrayOf(
         "guilds",
-        guildId.toString(),
+        guildId,
         "members",
-        userId.toString(),
+        userId,
         "roles",
-        roleId.toString(),
+        roleId,
     )
     
     override val method: HttpMethod

@@ -24,8 +24,8 @@ import love.forte.simbot.bot.ComponentMismatchException
 import love.forte.simbot.component.tencentguild.internal.TencentGuildBotManagerImpl
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.qguild.BotConfiguration
+import love.forte.simbot.qguild.ConfigurableBotConfiguration
 import love.forte.simbot.qguild.QGuildApi
-import love.forte.simbot.qguild.event.EventSignals
 import love.forte.simbot.qguild.event.Intents
 import org.slf4j.Logger
 import kotlin.coroutines.CoroutineContext
@@ -78,7 +78,7 @@ public abstract class TencentGuildBotManager : BotManager<TencentGuildComponentB
         appId: String,
         appKey: String,
         token: String,
-        block: BotConfiguration.() -> Unit = {},
+        block: ConfigurableBotConfiguration.() -> Unit = {},
     ): TencentGuildComponentBot
     
     /**
@@ -255,6 +255,8 @@ private class TencentGuildBotManagerConfigurationImpl : TencentGuildBotManagerCo
  * bot配置文件所对应的配置类，
  *
  * 通过由配置文件读取而来的信息来对指定Bot进行信息配置。
+ *
+ * _**Note: 仅用于配置文件反序列化使用**_
  */
 @Suppress("MemberVisibilityCanBePrivate")
 @Serializable
@@ -274,7 +276,6 @@ public data class TencentBotViaBotFileConfiguration(
      */
     val token: String,
 
-
     /**
      * 分片总数。
      * @see [BotConfiguration.totalShard]
@@ -291,7 +292,7 @@ public data class TencentBotViaBotFileConfiguration(
     /**
      * 默认的 [Intents]. 如果对应分片下 [intentValues] 无法找到指定的 intent, 则使用此默认值。
      */
-    val defaultIntents: List<String> = EventSignals.intents.keys.toList(),
+    val defaultIntents: List<String> = TODO(), // EventIntents.intents.keys.toList(),
 
     /**
      * 服务器路径地址。
@@ -318,12 +319,14 @@ public data class TencentBotViaBotFileConfiguration(
         }
     
     
-    internal fun includeConfig(configuration: BotConfiguration) {
+    internal fun includeConfig(configuration: ConfigurableBotConfiguration) {
         if (totalShard != null) {
-            configuration.totalShard = totalShard
+            TODO()
+//            configuration.totalShard = totalShard
         }
-        configuration.intentsForShardFactory =
-            { shard -> intentValues[shard]?.let { Intents(it) } ?: defaultIntentsValue }
+        // TODO
+//        configuration.intentsForShardFactory =
+//            { shard -> intentValues[shard]?.let { Intents(it) } ?: defaultIntentsValue }
         if (serverUrl != null) {
             configuration.serverUrl = Url(serverUrl)
         }
