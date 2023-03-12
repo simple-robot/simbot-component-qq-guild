@@ -20,6 +20,7 @@ import love.forte.simbot.qguild.api.GetTencentApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleGetApiDescription
 import love.forte.simbot.qguild.model.ApiPermission
+import love.forte.simbot.qguild.model.isAuthorized
 
 /**
  * [获取频道可用权限列表](https://bot.q.qq.com/wiki/develop/api/openapi/api_permissions/get_guild_api_permission.html)
@@ -60,23 +61,33 @@ public class GetApiPermissionListApi private constructor(
  */
 @ApiModel
 @Serializable
-public class ApiPermissions(public val apis: List<ApiPermission>) : List<ApiPermission> by apis {
+public class ApiPermissions(public val apis: List<ApiPermission>) : Iterable<ApiPermission> by apis {
+    private val apisMap by lazy(LazyThreadSafetyMode.PUBLICATION) { apis.groupBy { it.path } }
 
     /**
      * 在当前权限列表中寻找是否与 [description] 描述相同的权限.
      */
-    public operator fun contains(description: ApiDescription): Boolean {
-        return apis.any { p ->
-            description.method == p.method
-                    && description.path == p.path
-        }
-    }
+    public operator fun contains(description: ApiDescription): Boolean =
+        apisMap[description.path]?.any { it.method == description.method } ?: false
 
     /**
      * 在当前权限列表中寻找与 [description] 描述相同的权限.
      */
-    public fun find(description: ApiDescription): ApiPermission? = apis.find { p ->
-        description.method == p.method
-                && description.path == p.path
-    }
+    public fun find(description: ApiDescription): ApiPermission? =
+        apisMap[description.path]?.find { it.method == description.method }
+
+    /**
+     * 尝试获取某个 [ApiDescription] 下的所有相关API权限.
+     */
+    public operator fun get(description: ApiDescription): List<ApiPermission> =
+        apisMap[description.path] ?: emptyList()
 }
+
+/**
+ * 判断在 [ApiDescription] 中是否存在 [ApiPermission.isAuthorized] == `true` 的权限.
+ *
+ * @see ApiPermissions
+ * @see ApiPermission.isAuthorized
+ */
+public infix fun ApiPermissions.hasAuth(description: ApiDescription): Boolean =
+    find(description)?.isAuthorized ?: false

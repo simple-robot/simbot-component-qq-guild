@@ -126,8 +126,8 @@ private suspend fun <R> TencentApi<R>.decodeFromHttpResponseViaString(
     decoder: StringFormat, response: HttpResponse,
 ): R {
     val remainingText = response.bodyAsText()
-    
-    logger.trace("api: {}, resp: {}", this, remainingText)
+
+    logger.debug("api: {}, resp: {}", this, remainingText)
 
     return decoder.decodeFromString(resultDeserializer, remainingText)
 }

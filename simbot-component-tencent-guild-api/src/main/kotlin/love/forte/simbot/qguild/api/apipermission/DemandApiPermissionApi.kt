@@ -14,6 +14,7 @@ package love.forte.simbot.qguild.api.apipermission
 
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.api.ApiDescription
 import love.forte.simbot.qguild.api.PostTencentApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
@@ -86,6 +87,7 @@ public class DemandApiPermissionApi private constructor(
     /**
      * 用于在 [DemandApiPermissionApi] 中进行请求的
      */
+    @Serializable
     public data class Body(
         /**
          * 授权链接发送的子频道 id

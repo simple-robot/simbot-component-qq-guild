@@ -66,22 +66,22 @@ public interface Channel : Comparable<SimpleChannel> {
     public val ownerId: String
 
     /** 子频道私密类型 [PrivateType] */
-    public val privateType: PrivateType
+    public val privateType: PrivateType?
 
     /** 子频道发言权限 [SpeakPermission] */
-    public val speakPermission: SpeakPermission
+    public val speakPermission: SpeakPermission?
 
     /** 用于标识应用子频道应用类型，仅应用子频道时会使用该字段，具体定义请参考 [应用子频道的应用类型](https://bot.q.qq.com/wiki/develop/api/openapi/channel/model.html#%E5%BA%94%E7%94%A8%E5%AD%90%E9%A2%91%E9%81%93%E7%9A%84%E5%BA%94%E7%94%A8%E7%B1%BB%E5%9E%8B) */
-    public val applicationId: String
+    public val applicationId: String?
 
     /** 用户拥有的子频道权限 [Permissions] */
     @get:JvmSynthetic
-    public val permissions: Permissions
+    public val permissions: Permissions?
 
     /**
      * api for Java.
      */
-    public val permissionsValue: Long get() = permissions.value
+    public val permissionsValue: Long? get() = permissions?.value
 
     override fun compareTo(other: SimpleChannel): Int = position.compareTo(other.position)
 }
@@ -120,14 +120,14 @@ public data class SimpleChannel(
     /** 创建人 id */
     @SerialName("owner_id") override val ownerId: String,
     /** 子频道私密类型 [PrivateType] */
-    @SerialName("private_type") override val privateType: PrivateType,
+    @SerialName("private_type") override val privateType: PrivateType? = null,
     /** 子频道发言权限 [SpeakPermission] */
-    @SerialName("speak_permission") override val speakPermission: SpeakPermission,
+    @SerialName("speak_permission") override val speakPermission: SpeakPermission? = null,
     /** 用于标识应用子频道应用类型，仅应用子频道时会使用该字段，具体定义请参考 [应用子频道的应用类型](https://bot.q.qq.com/wiki/develop/api/openapi/channel/model.html#%E5%BA%94%E7%94%A8%E5%AD%90%E9%A2%91%E9%81%93%E7%9A%84%E5%BA%94%E7%94%A8%E7%B1%BB%E5%9E%8B) */
-    @SerialName("application_id") override val applicationId: String,
+    @SerialName("application_id") override val applicationId: String? = null,
     /** 用户拥有的子频道权限 [Permissions] */
     @get:JvmSynthetic
-    override val permissions: Permissions
+    override val permissions: Permissions? = null
 ) : Channel
 
 
