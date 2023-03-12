@@ -24,7 +24,6 @@ import love.forte.simbot.component.tencentguild.event.TcgBotStartedEvent
 import love.forte.simbot.component.tencentguild.internal.TencentGuildImpl.Companion.tencentGuildImpl
 import love.forte.simbot.component.tencentguild.internal.event.TcgBotStartedEventImpl
 import love.forte.simbot.event.EventProcessor
-import love.forte.simbot.event.pushIfProcessable
 import love.forte.simbot.literal
 import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.qguild.Bot
@@ -57,6 +56,16 @@ internal class TencentGuildComponentBotImpl(
 
     @Volatile
     private lateinit var botSelf: QGUser
+
+    override val userId: ID
+        get() {
+            if (!::botSelf.isInitialized) {
+                throw UninitializedPropertyAccessException("information of bot has not been initialized. Please execute the `start()` method at least once first")
+            }
+
+            return botSelf.id.ID
+        }
+
 
     override fun isMe(id: ID): Boolean {
         if (id == this.id) return true
@@ -93,8 +102,10 @@ internal class TencentGuildComponentBotImpl(
         }
 
         suspend fun pushStartedEvent() {
-            eventProcessor.pushIfProcessable(TcgBotStartedEvent) {
-                TcgBotStartedEventImpl(this)
+            if (eventProcessor.isProcessable(TcgBotStartedEvent)) {
+                launch {
+                    eventProcessor.push(TcgBotStartedEventImpl(this@TencentGuildComponentBotImpl))
+                }
             }
         }
 

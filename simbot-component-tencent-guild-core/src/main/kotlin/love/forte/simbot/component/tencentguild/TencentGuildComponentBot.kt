@@ -51,8 +51,24 @@ public interface TencentGuildComponentBot : Bot {
     @Deprecated("Use 'source'", ReplaceWith("source"))
     public val sourceBot: love.forte.simbot.qguild.Bot get() = source
 
+    /**
+     * 当前bot的 **appId** 。
+     *
+     * 如果希望获取当前bot的**用户**ID，
+     * 使用 [asUser]
+     */
     override val id: ID
         get() = source.ticket.appId.ID
+
+    /**
+     * 得到当前bot的用户ID。
+     *
+     * [userId] 是当前bot的用户id，需要至少执行一次 [start] 来初始化，
+     * 否则会导致 [UninitializedPropertyAccessException] 异常。
+     *
+     * @throws UninitializedPropertyAccessException bot没有通过 [start] 初始化用户信息.
+     */
+    public val userId: ID
 
     /**
      * 腾讯机器人有两个可能的唯一标识：作为bot的clientId以及在系统中作为用户的 user id.

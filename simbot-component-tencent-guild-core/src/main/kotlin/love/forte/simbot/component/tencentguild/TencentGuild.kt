@@ -12,20 +12,24 @@
 
 package love.forte.simbot.component.tencentguild
 
+import kotlinx.coroutines.CoroutineScope
 import love.forte.plugin.suspendtrans.annotation.JvmAsync
 import love.forte.plugin.suspendtrans.annotation.JvmBlocking
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.definition.Guild
 import love.forte.simbot.definition.Organization
+import love.forte.simbot.qguild.api.apipermission.ApiPermissions
+import love.forte.simbot.qguild.api.member.GetGuildMemberListApi
 import love.forte.simbot.utils.item.Items
-import love.forte.simbot.utils.item.Items.Companion.emptyItems
+import kotlin.time.Duration
 
 /**
+ * 一个QQ频道服务器.
  *
  * @author ForteScarlet
  */
-public interface TencentGuild : Guild {
+public interface TencentGuild : Guild, CoroutineScope {
     override val bot: TencentGuildComponentGuildBot
     override val createTime: Timestamp
     override val currentMember: Int
@@ -36,7 +40,13 @@ public interface TencentGuild : Guild {
     override val name: String
     override val ownerId: ID
 
-    public val source: love.forte.simbot.qguild.model.SimpleGuild
+    public val source: love.forte.simbot.qguild.model.Guild
+
+    /**
+     * 当前bot在频道服务器中拥有的API权限集, 在 [TencentGUild] 被构建时初始化，
+     * 并可能会周期性更新。
+     */
+    public val permissions: ApiPermissions
 
     /**
      * 得到此频道服务器下的所有子频道。
@@ -58,7 +68,7 @@ public interface TencentGuild : Guild {
     
     
     /**
-     * 得到此频道服务器下的所有子频道。
+     * 得到此频道服务器下的所有子频道。同 [channels]。
      *
      * @see channels
      */
@@ -73,38 +83,59 @@ public interface TencentGuild : Guild {
     @JvmBlocking(baseName = "getChild", suffix = "")
     @JvmAsync(baseName = "getChild")
     override suspend fun child(id: ID): TencentChannel? = channel(id)
-    
-    
+
+    /**
+     * 当前频道服务器的所属人。
+     *
+     * 也可理解为频道主、创建者等。
+     */
     @JvmBlocking(asProperty = true, suffix = "")
     @JvmAsync(asProperty = true)
     override suspend fun owner(): TencentMember
     
     
     /**
-     * 获取指定成员信息。
+     * 获取指定成员的信息。
      */
     @JvmBlocking(baseName = "getMember", suffix = "")
     @JvmAsync(baseName = "getMember")
     override suspend fun member(id: ID): TencentMember?
     
     /**
-     * 频道无法获取成员列表。
+     * 频道所有成员列表。
+     *
+     * 只有当bot拥有使用 [获取成员列表][GetGuildMemberListApi] 的权限时
+     * [members] 才会得到有效结果，否则将会始终返回 [空的Items][Items.emptyItems].
+     *
+     * 可以通过 [permissions] 手动检查是否存在 [GetGuildMemberListApi] 的权限。
+     * 通常情况下此权限仅限私域类型的BOT。
+     *
      */
-    @Deprecated(
-        "Get member list is not supported",
-        ReplaceWith("emptyItems()", "love.forte.simbot.utils.item.Items.Companion.emptyItems")
-    )
     override val members: Items<TencentMember>
-        get() = emptyItems()
-    
-    
+
+
+    /**
+     * 当前频道中的角色。
+     */
     override val roles: Items<TencentRole>
     
     //// Impls
-    
+
+    /**
+     * 频道服务器没有全频道禁言/取消禁言
+     */
     @JvmSynthetic
     override suspend fun unmute(): Boolean = false
-    
+
+    /**
+     * 频道服务器没有全频道禁言/取消禁言
+     */
+    @JvmSynthetic
+    override suspend fun mute(duration: Duration): Boolean = false
+
+    /**
+     * 频道服务器没有上级概念。
+     */
     @JvmSynthetic
     override suspend fun previous(): Organization? = null
 }

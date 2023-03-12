@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2023. ForteScarlet.
  *
  * This file is part of simbot-component-tencent-guild.
  *
@@ -10,12 +10,12 @@
  * You should have received a copy of the GNU Lesser General Public License along with simbot-component-tencent-guild. If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = "tencent-guild"
+package love.forte.simbot.component.tencentguild.internal
 
+/**
+ * 当前频道服务器中部分权限信息。
+ */
+public interface GuildApiPermissions {
 
-include(":builder-generator")
-include(":simbot-component-tencent-guild-api")
-include(":simbot-component-tencent-guild-stdlib")
-include(":simbot-component-tencent-guild-core")
-
+}
 
