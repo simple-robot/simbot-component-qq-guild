@@ -106,6 +106,9 @@ public interface TencentGuildComponentBot : Bot {
     override val isActive: Boolean
         get() = source.isActive
 
+    /**
+     * QQ频道BOT没有'群'概念
+     */
     @Deprecated(
         "Group related APIs are not supported",
         ReplaceWith("emptyItems()", "love.forte.simbot.utils.item.Items.Companion.emptyItems")
@@ -113,13 +116,21 @@ public interface TencentGuildComponentBot : Bot {
     override val groups: Items<Group>
         get() = emptyItems()
 
-
+    /**
+     *
+     */
     override val guilds: Items<TencentGuild>
 
+    /**
+     *
+     */
     @JvmBlocking(baseName = "getGuild", suffix = "")
     @JvmAsync(baseName = "getGuild")
     override suspend fun guild(id: ID): TencentGuild?
 
+    /**
+     * QQ频道BOT不存在'联系人'列表
+     */
     @Deprecated(
         "Contact related APIs are not supported",
         ReplaceWith("emptyItems()", "love.forte.simbot.utils.item.Items.Companion.emptyItems")

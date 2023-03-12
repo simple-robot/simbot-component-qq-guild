@@ -65,7 +65,6 @@ public class CreateDmsApi private constructor(
 
     override fun route(builder: RouteInfoBuilder) {
         builder.apiPath = pathSegments
-        builder.contentType
     }
 
     override val body: Any = Body(recipientId, sourceGuildId)

@@ -15,6 +15,7 @@ package love.forte.simbot.qguild.model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.ApiModel
+import love.forte.simbot.qguild.api.ApiDescription
 
 /**
  * [接口权限对象](https://bot.q.qq.com/wiki/develop/api/openapi/api_permissions/model.html)
@@ -88,7 +89,6 @@ public data class ApiPermissionDemand(
 /**
  * [接口权限需求标识对象（APIPermissionDemandIdentify）](https://bot.q.qq.com/wiki/develop/api/openapi/api_permissions/model.html#%E6%8E%A5%E5%8F%A3%E6%9D%83%E9%99%90%E9%9C%80%E6%B1%82%E6%A0%87%E8%AF%86%E5%AF%B9%E8%B1%A1-apipermissiondemandidentify)
  */
-@ApiModel
 @Serializable
 public data class ApiPermissionDemandIdentify(
     /**
@@ -100,4 +100,14 @@ public data class ApiPermissionDemandIdentify(
      * 请求方法，例如 `GET`
      */
     val method: String,
-)
+) {
+    public companion object {
+        /**
+         * 通过 [ApiPermission] 构建一个 [ApiPermissionDemandIdentify].
+         */
+        @JvmStatic
+        @JvmName("of")
+        public fun ApiDescription.toIdentify(): ApiPermissionDemandIdentify =
+            ApiPermissionDemandIdentify(path, method)
+    }
+}
