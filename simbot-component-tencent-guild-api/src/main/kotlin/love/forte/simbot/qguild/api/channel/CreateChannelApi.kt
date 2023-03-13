@@ -16,7 +16,7 @@ import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.PrivateDomainOnly
-import love.forte.simbot.qguild.api.PostTencentApi
+import love.forte.simbot.qguild.api.PostQQGuildApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimplePostApiDescription
 import love.forte.simbot.qguild.model.*
@@ -36,7 +36,7 @@ import love.forte.simbot.qguild.model.*
 public class CreateChannelApi private constructor(
     guildId: String,
     override val body: Body
-) : PostTencentApi<SimpleChannel>() {
+) : PostQQGuildApi<SimpleChannel>() {
     public companion object Factory : SimplePostApiDescription(
         "/guilds/{guild_id}/channels"
     ) {

@@ -26,7 +26,7 @@ import love.forte.simbot.qguild.model.Role
  *
  * @author ForteScarlet
  */
-public class GetGuildRoleListApi private constructor(guildId: String) : GetTencentApi<GuildRoleList>() {
+public class GetGuildRoleListApi private constructor(guildId: String) : GetQQGuildApi<GuildRoleList>() {
     public companion object Factory : SimpleGetApiDescription(
         "/guilds/{guild_id}/roles"
     ) {

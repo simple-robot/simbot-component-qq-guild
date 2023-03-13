@@ -28,7 +28,7 @@ import love.forte.simbot.utils.runInNoScopeBlocking
  */
 @JvmSynthetic
 @Deprecated("使用更符合语义的Api.requestBy(Bot) 或 Bot.request(Api)", ReplaceWith("requestBy(bot)"))
-public suspend fun <R> TencentApi<R>.request(bot: Bot): R = requestBy(bot)
+public suspend fun <R> QQGuildApi<R>.request(bot: Bot): R = requestBy(bot)
 
 
 /**
@@ -37,7 +37,7 @@ public suspend fun <R> TencentApi<R>.request(bot: Bot): R = requestBy(bot)
  * @throws love.forte.simbot.qguild.TencentApiException 如果返回状态码不在 200..300之间。
  */
 @JvmSynthetic
-public suspend fun <R> TencentApi<R>.requestBy(bot: Bot): R {
+public suspend fun <R> QQGuildApi<R>.requestBy(bot: Bot): R {
     val botToken = if (bot is BotImpl) bot.botToken else "Bot ${bot.ticket.appId}.${bot.ticket.token}"
     return request(
         client = bot.apiClient,
@@ -53,7 +53,7 @@ public suspend fun <R> TencentApi<R>.requestBy(bot: Bot): R {
  * @throws love.forte.simbot.qguild.TencentApiException 如果返回状态码不在 200..300之间。
  */
 @JvmSynthetic
-public suspend fun <R> Bot.request(api: TencentApi<R>): R = api.requestBy(this)
+public suspend fun <R> Bot.request(api: QQGuildApi<R>): R = api.requestBy(this)
 
 
 /**
@@ -62,7 +62,7 @@ public suspend fun <R> Bot.request(api: TencentApi<R>): R = api.requestBy(this)
  * @throws love.forte.simbot.qguild.TencentApiException 如果返回状态码不在 200..300之间。
  */
 @Api4J
-public fun <R> doRequest(bot: Bot, api: TencentApi<R>): R = runInNoScopeBlocking {
+public fun <R> doRequest(bot: Bot, api: QQGuildApi<R>): R = runInNoScopeBlocking {
     api.requestBy(bot)
 }
 

@@ -14,9 +14,9 @@ package love.forte.simbot.qguild.api.message
 
 import io.ktor.http.*
 import love.forte.simbot.qguild.PrivateDomainOnly
+import love.forte.simbot.qguild.api.QQGuildApiWithoutResult
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleApiDescription
-import love.forte.simbot.qguild.api.TencentApiWithoutResult
 
 /**
  * [撤回消息](https://bot.q.qq.com/wiki/develop/api/openapi/message/delete_message.html)
@@ -31,7 +31,7 @@ import love.forte.simbot.qguild.api.TencentApiWithoutResult
 @PrivateDomainOnly
 public class DeleteMessageApi private constructor(
     channelId: String, messageId: String, private val hidetip: Boolean? = null
-) : TencentApiWithoutResult() {
+) : QQGuildApiWithoutResult() {
     public companion object Factory : SimpleApiDescription(
         HttpMethod.Delete, "/channels/{channel_id}/messages/{message_id}"
     ) {

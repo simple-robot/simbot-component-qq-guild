@@ -14,7 +14,7 @@ package love.forte.simbot.qguild.api.channel
 
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.builtins.ListSerializer
-import love.forte.simbot.qguild.api.GetTencentApi
+import love.forte.simbot.qguild.api.GetQQGuildApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleGetApiDescription
 import love.forte.simbot.qguild.model.SimpleChannel
@@ -28,7 +28,7 @@ import love.forte.simbot.qguild.model.SimpleChannel
  *
  * @author ForteScarlet
  */
-public class GetGuildChannelListApi private constructor(guildId: String) : GetTencentApi<List<SimpleChannel>>() {
+public class GetGuildChannelListApi private constructor(guildId: String) : GetQQGuildApi<List<SimpleChannel>>() {
     public companion object Factory : SimpleGetApiDescription(
         "/guilds/{guild_id}/channels"
     ) {

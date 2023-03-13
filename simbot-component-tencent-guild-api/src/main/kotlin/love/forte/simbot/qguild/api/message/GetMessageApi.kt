@@ -13,7 +13,7 @@
 package love.forte.simbot.qguild.api.message
 
 import kotlinx.serialization.DeserializationStrategy
-import love.forte.simbot.qguild.api.GetTencentApi
+import love.forte.simbot.qguild.api.GetQQGuildApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleGetApiDescription
 import love.forte.simbot.qguild.model.Message
@@ -26,7 +26,7 @@ import love.forte.simbot.qguild.model.Message
  *
  * @author ForteScarlet
  */
-public class GetMessageApi private constructor(channelId: String, messageId: String) : GetTencentApi<Message>() {
+public class GetMessageApi private constructor(channelId: String, messageId: String) : GetQQGuildApi<Message>() {
     public companion object Factory : SimpleGetApiDescription(
         "/channels/{channel_id}/messages/{message_id}"
     ) {

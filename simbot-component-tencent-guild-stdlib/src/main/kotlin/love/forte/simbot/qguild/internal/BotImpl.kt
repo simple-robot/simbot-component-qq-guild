@@ -80,6 +80,13 @@ internal class BotImpl(
         val configJob = configContext[Job]
         supervisorJob = SupervisorJob(configJob)
         coroutineContext = configContext + supervisorJob + CoroutineName("QGBot.${ticket.appId}")
+        configCheck()
+    }
+
+    private fun configCheck() {
+        if (configuration.intents.value == 0) {
+            logger.warn("Bot(appId=${ticket.appId}) intents value is ZERO")
+        }
     }
 
     private val wsDecoder = Signal.Dispatch.dispatchJson {

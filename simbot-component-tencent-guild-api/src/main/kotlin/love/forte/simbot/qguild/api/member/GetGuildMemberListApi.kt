@@ -12,10 +12,12 @@
 
 package love.forte.simbot.qguild.api.member
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.builtins.ListSerializer
 import love.forte.simbot.qguild.PrivateDomainOnly
-import love.forte.simbot.qguild.api.GetTencentApi
+import love.forte.simbot.qguild.api.GetQQGuildApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleGetApiDescription
 import love.forte.simbot.qguild.model.SimpleMember
@@ -48,7 +50,7 @@ public class GetGuildMemberListApi private constructor(
      * 分页大小，1-400，默认是 1。成员较多的频道尽量使用较大的limit值，以减少请求数.
      */
     private val limit: Int,
-) : GetTencentApi<List<SimpleMember>>() {
+) : GetQQGuildApi<List<SimpleMember>>() {
     init {
         require(limit > 0) { "limit must > 0, but $limit" }
         if (limit > 400) {
@@ -60,6 +62,11 @@ public class GetGuildMemberListApi private constructor(
     public companion object Factory : SimpleGetApiDescription(
         "/guilds/{guild_id}/members"
     ) {
+        /**
+         * [GetGuildMemberListApi.limit] 的最大有效值。
+         */
+        public const val MAX_LIMIT: Int = 400
+
         private val deserializer = ListSerializer(SimpleMember.serializer())
         private val logger = LoggerFactory.getLogger(GetGuildMemberListApi::class.java)
 
@@ -92,4 +99,22 @@ public class GetGuildMemberListApi private constructor(
         after?.also { builder.parametersAppender.append("after", it) }
         builder.parametersAppender.append("limit", limit)
     }
+}
+
+/**
+ * 根据指定的批次大小 [batch] 作为每次查询的 [GetGuildMemberListApi.limit] 进行全量查询。
+ */
+public suspend inline fun GetGuildMemberListApi.Factory.createFlow(
+    guildId: String,
+    batch: Int,
+    crossinline doRequest: suspend GetGuildMemberListApi.() -> List<SimpleMember>
+): Flow<List<SimpleMember>> = flow {
+    var after: String? = null
+    do {
+        val list = GetGuildMemberListApi.create(guildId, after).doRequest()
+        if (list.isNotEmpty()) {
+            emit(list)
+            after = list.last().user!!.id
+        }
+    } while (list.isNotEmpty())
 }

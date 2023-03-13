@@ -13,9 +13,9 @@
 package love.forte.simbot.qguild.api.guild.mute
 
 import io.ktor.http.*
+import love.forte.simbot.qguild.api.QQGuildApiWithoutResult
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleApiDescription
-import love.forte.simbot.qguild.api.TencentApiWithoutResult
 import java.time.Duration
 import java.time.Instant
 import java.util.concurrent.TimeUnit
@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit
  * @author ForteScarlet
  */
 public class MuteMemberApi private constructor(guildId: String, userId: String, body: MuteBody) :
-    TencentApiWithoutResult() {
+    QQGuildApiWithoutResult() {
     public companion object Factory : SimpleApiDescription(
         HttpMethod.Patch, "/guilds/{guild_id}/members/{user_id}/mute"
     ) {

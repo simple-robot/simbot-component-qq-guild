@@ -17,7 +17,7 @@ import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.ApiModel
-import love.forte.simbot.qguild.api.PostTencentApi
+import love.forte.simbot.qguild.api.PostQQGuildApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimplePostApiDescription
 import love.forte.simbot.qguild.model.Role
@@ -36,7 +36,7 @@ import love.forte.simbot.qguild.model.Role
 public class CreateGuildRoleApi private constructor(
     guildId: String,
     private val _body: NewBody,
-) : PostTencentApi<GuildRoleCreated>() {
+) : PostQQGuildApi<GuildRoleCreated>() {
     public companion object Factory : SimplePostApiDescription(
         "/guilds/{guild_id}/roles"
     ) {

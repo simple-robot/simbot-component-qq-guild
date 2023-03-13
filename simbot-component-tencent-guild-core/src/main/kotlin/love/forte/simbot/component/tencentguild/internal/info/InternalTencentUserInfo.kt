@@ -9,36 +9,3 @@
  *
  * You should have received a copy of the GNU Lesser General Public License along with simbot-component-tencent-guild. If not, see <https://www.gnu.org/licenses/>.
  */
-
-package love.forte.simbot.component.tencentguild.internal.info
-
-import love.forte.simbot.ID
-
-/**
- *
- * @author ForteScarlet
- */
-internal data class InternalTencentUserInfo(
-    override var id: ID,
-    override var username: String,
-    override var avatar: String,
-    override var isBot: Boolean,
-    override var unionOpenid: String?,
-    override var unionUserAccount: String?,
-) : TencentUserInfo
-
-
-internal fun TencentUserInfo.toInternal(copy: Boolean = true): InternalTencentUserInfo {
-    if (this is InternalTencentUserInfo) {
-        return if (copy) copy() else this
-    }
-    
-    return InternalTencentUserInfo(
-        id,
-        username,
-        avatar,
-        isBot,
-        unionOpenid,
-        unionUserAccount
-    )
-}

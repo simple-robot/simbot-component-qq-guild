@@ -17,9 +17,9 @@ import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.PrivateDomainOnly
+import love.forte.simbot.qguild.api.QQGuildApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleApiDescription
-import love.forte.simbot.qguild.api.TencentApi
 import love.forte.simbot.qguild.model.PrivateType
 import love.forte.simbot.qguild.model.SimpleChannel
 import love.forte.simbot.qguild.model.SpeakPermission
@@ -38,7 +38,7 @@ import love.forte.simbot.qguild.model.SpeakPermission
 @PrivateDomainOnly
 public class ModifyChannelApi private constructor(
     channelId: String, override val body: Body
-) : TencentApi<SimpleChannel>() {
+) : QQGuildApi<SimpleChannel>() {
     public companion object Factory : SimpleApiDescription(
         HttpMethod.Patch, "/channels/{channel_id}"
     ) {

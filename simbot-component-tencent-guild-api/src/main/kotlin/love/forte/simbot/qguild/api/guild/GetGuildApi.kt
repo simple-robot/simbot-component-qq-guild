@@ -14,9 +14,9 @@ package love.forte.simbot.qguild.api.guild
 
 import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
+import love.forte.simbot.qguild.api.QQGuildApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleGetApiDescription
-import love.forte.simbot.qguild.api.TencentApi
 import love.forte.simbot.qguild.model.SimpleGuild
 
 /**
@@ -25,7 +25,7 @@ import love.forte.simbot.qguild.model.SimpleGuild
  * 用于获取 `guildId` 指定的频道的详情。
  *
  */
-public class GetGuildApi private constructor(guildId: String) : TencentApi<SimpleGuild>() {
+public class GetGuildApi private constructor(guildId: String) : QQGuildApi<SimpleGuild>() {
     public companion object Factory : SimpleGetApiDescription(
         "/guilds/{guild_id}"
     ) {

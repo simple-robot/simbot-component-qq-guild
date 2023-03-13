@@ -17,9 +17,9 @@ import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.CharSequenceID
+import love.forte.simbot.qguild.api.QQGuildApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleApiDescription
-import love.forte.simbot.qguild.api.TencentApi
 import love.forte.simbot.qguild.model.Role
 
 /**
@@ -35,7 +35,7 @@ import love.forte.simbot.qguild.model.Role
 public class ModifyGuildRoleApi private constructor(
     guildId: String, roleId: String,
     private val _body: Body,
-) : TencentApi<GuildRoleModified>() {
+) : QQGuildApi<GuildRoleModified>() {
     public companion object Factory : SimpleApiDescription(
         HttpMethod.Patch, "/guilds/{guild_id}/roles/{role_id}"
     ) {

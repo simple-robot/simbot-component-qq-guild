@@ -66,7 +66,7 @@ public data class TcgArk internal constructor(
 
 public fun Message.Ark.toMessage(): TcgArk = TcgArk(templateId.ID, kv)
 
-public fun TcgArk.toArk(): Message.Ark = buildArk(templateId) {
+public fun TcgArk.toArk(): Message.Ark = buildArk(templateId.literal) {
     kvs = this@toArk.kvs.toMutableList()
 }
 
@@ -80,7 +80,7 @@ internal object ArkParser : SendingMessageParser {
     ) {
         if (element is TcgArk) {
             val realArk = element.toRealArk()
-            builder.ark = buildArk(realArk.templateId.ID) { from(realArk) }
+            builder.ark = buildArk(realArk.templateId) { from(realArk) }
         }
     }
 }

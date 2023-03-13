@@ -16,9 +16,9 @@ import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.builtins.serializer
 import love.forte.simbot.qguild.PrivateDomainOnly
+import love.forte.simbot.qguild.api.QQGuildApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleApiDescription
-import love.forte.simbot.qguild.api.TencentApi
 
 
 /**
@@ -35,7 +35,7 @@ import love.forte.simbot.qguild.api.TencentApi
  * @author ForteScarlet
  */
 @PrivateDomainOnly
-public class DeleteChannelApi private constructor(channelId: String) : TencentApi<Unit>() {
+public class DeleteChannelApi private constructor(channelId: String) : QQGuildApi<Unit>() {
     public companion object Factory : SimpleApiDescription(
         HttpMethod.Delete, "/channels/{channel_id}"
     ) {

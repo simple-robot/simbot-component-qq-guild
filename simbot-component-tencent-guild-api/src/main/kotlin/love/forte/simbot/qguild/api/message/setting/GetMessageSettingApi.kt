@@ -13,7 +13,7 @@
 package love.forte.simbot.qguild.api.message.setting
 
 import kotlinx.serialization.DeserializationStrategy
-import love.forte.simbot.qguild.api.GetTencentApi
+import love.forte.simbot.qguild.api.GetQQGuildApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleGetApiDescription
 import love.forte.simbot.qguild.model.MessageSetting
@@ -25,7 +25,7 @@ import love.forte.simbot.qguild.model.MessageSetting
  * 用于获取机器人在频道 `guild_id` 内的消息频率设置。
  * @author ForteScarlet
  */
-public class GetMessageSettingApi private constructor(guildId: String) : GetTencentApi<MessageSetting>() {
+public class GetMessageSettingApi private constructor(guildId: String) : GetQQGuildApi<MessageSetting>() {
     public companion object Factory : SimpleGetApiDescription(
         "/guilds/{guild_id}/message/setting"
     ) {

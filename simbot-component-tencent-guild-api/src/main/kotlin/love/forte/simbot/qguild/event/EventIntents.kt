@@ -15,11 +15,9 @@ package love.forte.simbot.qguild.event
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.*
-import love.forte.simbot.qguild.event.EventIntents.GuildMembers
-import love.forte.simbot.qguild.event.EventIntents.Guilds
-import love.forte.simbot.qguild.event.EventIntents.PublicGuildMessages
-import love.forte.simbot.qguild.event.EventIntents.READY_TYPE
-import love.forte.simbot.qguild.event.EventIntents.RESUMED_TYPE
+import love.forte.simbot.qguild.event.EventIntents.*
+import love.forte.simbot.qguild.event.EventIntents.Companion.READY_TYPE
+import love.forte.simbot.qguild.event.EventIntents.Companion.RESUMED_TYPE
 import love.forte.simbot.qguild.model.User
 
 /**
@@ -52,7 +50,7 @@ public value class Intents(public val value: Int) {
     /**
      * 判断 [intents] 中的权限是否**完全**与当前 [value] 相同。
      */
-    public fun contains(intents: Intents): Boolean = contains(intents, true)
+    public operator fun contains(intents: Intents): Boolean = contains(intents, true)
 
     /**
      * 判断 [intents] 中的权限是否与当前 [value] 相同。
@@ -69,8 +67,11 @@ public value class Intents(public val value: Int) {
         }
     }
 
-}
+    public companion object {
+        public val ZERO: Intents = Intents(0)
+    }
 
+}
 
 /**
  * 各事件的 [`intents`][Intents] 和类型常量。
@@ -87,7 +88,13 @@ public value class Intents(public val value: Int) {
  * 更多参考[文档](https://bot.q.qq.com/wiki/develop/api/gateway/intents.html)
  *
  */
-public object EventIntents {
+public sealed class EventIntents {
+
+    /**
+     * 获取事件类型对应的标记为值。
+     */
+    public abstract val intentsValue: Int
+
     /**
      * ```
      * GUILDS (1 << 0)
@@ -100,11 +107,14 @@ public object EventIntents {
      * ```
      *
      */
-    public object Guilds {
+    public object Guilds : EventIntents() {
         /** 频道事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
         public val intents: Intents = Intents(1 shl 0)
+
+        override val intentsValue: Int
+            get() = intents.value
 
         /** 当机器人加入新guild时 */
         public const val GUILD_CREATE_TYPE: String = "GUILD_CREATE"
@@ -133,11 +143,14 @@ public object EventIntents {
      *   - GUILD_MEMBER_REMOVE    // 当成员被移除时
      * ```
      */
-    public object GuildMembers {
+    public object GuildMembers : EventIntents() {
         /** 频道成员事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
         public val intents: Intents = Intents(1 shl 1)
+
+        override val intentsValue: Int
+            get() = Guilds.intents.value
 
         /** 当成员加入时 */
         public const val GUILD_MEMBER_ADD_TYPE: String = "GUILD_MEMBER_ADD"
@@ -158,11 +171,14 @@ public object EventIntents {
      * ```
      */
     @PrivateDomainOnly
-    public object GuildMessages {
+    public object GuildMessages : EventIntents() {
         /** 频道消息事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
         public val intents: Intents = Intents(1 shl 9)
+
+        override val intentsValue: Int
+            get() = Guilds.intents.value
 
         /** 发送消息事件，代表频道内的全部消息，而不只是 at 机器人的消息。内容与 AT_MESSAGE_CREATE 相同 */
         public const val MESSAGE_CREATE_TYPE: String = "MESSAGE_CREATE"
@@ -178,11 +194,14 @@ public object EventIntents {
      *   - MESSAGE_REACTION_REMOVE // 为消息删除表情表态
      * ```
      */
-    public object GuildMessageReactions {
+    public object GuildMessageReactions : EventIntents() {
         /** 表情表态事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
         public val intents: Intents = Intents(1 shl 10)
+
+        override val intentsValue: Int
+            get() = Guilds.intents.value
 
         /** 为消息添加表情表态 */
         public const val MESSAGE_REACTION_ADD_TYPE: String = "MESSAGE_REACTION_ADD"
@@ -199,11 +218,14 @@ public object EventIntents {
      *   - DIRECT_MESSAGE_DELETE   // 删除（撤回）消息事件
      * ```
      */
-    public object DirectMessage {
+    public object DirectMessage : EventIntents() {
         /** 表情表态事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
         public val intents: Intents = Intents(1 shl 12)
+
+        override val intentsValue: Int
+            get() = Guilds.intents.value
 
         /** 当收到用户发给机器人的私信消息时 */
         public const val DIRECT_MESSAGE_CREATE_TYPE: String = "DIRECT_MESSAGE_CREATE"
@@ -225,11 +247,14 @@ public object EventIntents {
      *   - OPEN_FORUM_REPLY_DELETE      // 当用户删除评论时
      * ```
      */
-    public object OpenForumsEvent {
+    public object OpenForumsEvent : EventIntents() {
         /** 论坛事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
         public val intents: Intents = Intents(1 shl 18)
+
+        override val intentsValue: Int
+            get() = Guilds.intents.value
 
         /** 当用户创建主题时 */
         public const val OPEN_FORUM_THREAD_CREATE_TYPE: String = "OPEN_FORUM_THREAD_CREATE"
@@ -261,11 +286,14 @@ public object EventIntents {
      *   - AUDIO_OR_LIVE_CHANNEL_MEMBER_EXIT   // 当用户离开音视频/直播子频道
      * ```
      */
-    public object AudioOrLiveChannelMember {
+    public object AudioOrLiveChannelMember : EventIntents() {
         /** 音视频/直播子频道成员进出事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
         public val intents: Intents = Intents(1 shl 19)
+
+        override val intentsValue: Int
+            get() = Guilds.intents.value
 
         /** 当用户进入音视频/直播子频道 */
         public const val AUDIO_OR_LIVE_CHANNEL_MEMBER_ENTER_TYPE: String = "AUDIO_OR_LIVE_CHANNEL_MEMBER_ENTER"
@@ -281,11 +309,14 @@ public object EventIntents {
      *   - INTERACTION_CREATE     // 互动事件创建时
      * ```
      */
-    public object Interaction {
+    public object Interaction : EventIntents() {
         /** 互动事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
         public val intents: Intents = Intents(1 shl 26)
+
+        override val intentsValue: Int
+            get() = Guilds.intents.value
 
         /** 互动事件创建时 */
         public const val INTERACTION_CREATE_TYPE: String = "INTERACTION_CREATE"
@@ -299,11 +330,14 @@ public object EventIntents {
      * - MESSAGE_AUDIT_REJECT   // 消息审核不通过
      * ```
      */
-    public object MessageAudit {
+    public object MessageAudit : EventIntents() {
         /** 互动事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
         public val intents: Intents = Intents(1 shl 27)
+
+        override val intentsValue: Int
+            get() = Guilds.intents.value
 
         /** 消息审核通过 */
         public const val MESSAGE_AUDIT_PASS_TYPE: String = "MESSAGE_AUDIT_PASS"
@@ -327,11 +361,14 @@ public object EventIntents {
      * ```
      */
     @PrivateDomainOnly
-    public object ForumsEvent {
+    public object ForumsEvent : EventIntents() {
         /** 论坛事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
         public val intents: Intents = Intents(1 shl 28)
+
+        override val intentsValue: Int
+            get() = Guilds.intents.value
 
         /** 当用户创建主题时 */
         public const val FORUM_THREAD_CREATE_TYPE: String = "FORUM_THREAD_CREATE"
@@ -369,11 +406,14 @@ public object EventIntents {
      * ```
      */
     @PrivateDomainOnly
-    public object AudioAction {
+    public object AudioAction : EventIntents() {
         /** 论坛事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
         public val intents: Intents = Intents(1 shl 29)
+
+        override val intentsValue: Int
+            get() = Guilds.intents.value
 
         /** 音频开始播放时 */
         public const val AUDIO_START_TYPE: String = "AUDIO_START"
@@ -397,11 +437,14 @@ public object EventIntents {
      * ```
      */
     @PrivateDomainOnly
-    public object PublicGuildMessages {
+    public object PublicGuildMessages : EventIntents() {
         /** 论坛事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
         public val intents: Intents = Intents(1 shl 30)
+
+        override val intentsValue: Int
+            get() = Guilds.intents.value
 
         /** 当收到@机器人的消息时 */
         public const val AT_MESSAGE_CREATE_TYPE: String = "AT_MESSAGE_CREATE"
@@ -411,23 +454,33 @@ public object EventIntents {
 
     }
 
-    /**
-     * 鉴权成功之后.
-     *
-     * 鉴权成功之后，后台会下发一个 Ready Event.
-     *
-     * 更多参考[文档](https://bot.q.qq.com/wiki/develop/api/gateway/reference.html#_2-%E9%89%B4%E6%9D%83%E8%BF%9E%E6%8E%A5)
-     */
-    public const val READY_TYPE: String = "READY"
+    public companion object {
+        /**
+         * 鉴权成功之后.
+         *
+         * 鉴权成功之后，后台会下发一个 Ready Event.
+         *
+         * 更多参考[文档](https://bot.q.qq.com/wiki/develop/api/gateway/reference.html#_2-%E9%89%B4%E6%9D%83%E8%BF%9E%E6%8E%A5)
+         */
+        public const val READY_TYPE: String = "READY"
 
-    /**
-     * 恢复成功之后，就开始补发遗漏事件，所有事件补发完成之后，会下发一个 `Resumed Event`
-     *
-     * 更多参考[文档](https://bot.q.qq.com/wiki/develop/api/gateway/reference.html#_4-%E6%81%A2%E5%A4%8D%E8%BF%9E%E6%8E%A5)
-     */
-    public const val RESUMED_TYPE: String = "RESUMED"
+        /**
+         * 恢复成功之后，就开始补发遗漏事件，所有事件补发完成之后，会下发一个 `Resumed Event`
+         *
+         * 更多参考[文档](https://bot.q.qq.com/wiki/develop/api/gateway/reference.html#_4-%E6%81%A2%E5%A4%8D%E8%BF%9E%E6%8E%A5)
+         */
+        public const val RESUMED_TYPE: String = "RESUMED"
+    }
+}
+
+public enum class Events {
 
 }
+
+
+
+
+
 
 /**
  * 鉴权成功之后，后台会下发的 Ready Event.

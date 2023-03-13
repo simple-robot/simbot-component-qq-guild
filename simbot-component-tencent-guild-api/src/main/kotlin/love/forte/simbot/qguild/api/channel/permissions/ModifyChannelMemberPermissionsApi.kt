@@ -14,9 +14,9 @@ package love.forte.simbot.qguild.api.channel.permissions
 
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
+import love.forte.simbot.qguild.api.QQGuildApiWithoutResult
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleApiDescription
-import love.forte.simbot.qguild.api.TencentApiWithoutResult
 import love.forte.simbot.qguild.model.Permissions
 
 /**
@@ -34,7 +34,7 @@ import love.forte.simbot.qguild.model.Permissions
 public class ModifyChannelMemberPermissionsApi private constructor(
     channelId: String, memberId: String,
     private val _body: Body
-) : TencentApiWithoutResult() {
+) : QQGuildApiWithoutResult() {
     public companion object Factory : SimpleApiDescription(
         HttpMethod.Put, "/channels/{channel_id}/members/{user_id}/permissions"
     ) {

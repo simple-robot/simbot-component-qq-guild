@@ -14,9 +14,9 @@ package love.forte.simbot.qguild.api.role
 
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
+import love.forte.simbot.qguild.api.QQGuildApiWithoutResult
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleApiDescription
-import love.forte.simbot.qguild.api.TencentApiWithoutResult
 
 /**
  *
@@ -35,7 +35,7 @@ public class AddMemberRoleApi private constructor(
     userId: String,
     roleId: String,
     channelId: String?,
-) : TencentApiWithoutResult() {
+) : QQGuildApiWithoutResult() {
     public companion object Factory : SimpleApiDescription(
         HttpMethod.Put, "/guilds/{guild_id}/members/{user_id}/roles/{role_id}"
     ) {

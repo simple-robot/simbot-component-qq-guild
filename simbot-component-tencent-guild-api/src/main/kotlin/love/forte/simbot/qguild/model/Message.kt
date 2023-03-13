@@ -89,7 +89,7 @@ public data class Message(
     /**
      * Member 对象	消息创建者的member信息
      */
-    public val member: SimpleMember,
+    public val member: SimpleMember, // TODO
 
     /**
      * ark消息对象	ark消息

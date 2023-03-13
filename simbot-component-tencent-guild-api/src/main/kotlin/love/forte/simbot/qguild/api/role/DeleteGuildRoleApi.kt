@@ -13,9 +13,9 @@
 package love.forte.simbot.qguild.api.role
 
 import io.ktor.http.*
+import love.forte.simbot.qguild.api.QQGuildApiWithoutResult
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleApiDescription
-import love.forte.simbot.qguild.api.TencentApiWithoutResult
 
 /**
  *
@@ -26,7 +26,7 @@ import love.forte.simbot.qguild.api.TencentApiWithoutResult
  * 需要使用的 `token` 对应的用户具备删除身份组权限。如果是机器人，要求被添加为管理员。
  * @author ForteScarlet
  */
-public class DeleteGuildRoleApi(guildId: String, roleId: String) : TencentApiWithoutResult() {
+public class DeleteGuildRoleApi(guildId: String, roleId: String) : QQGuildApiWithoutResult() {
     public companion object Factory : SimpleApiDescription(
         HttpMethod.Delete, "/guilds/{guild_id}/roles/{role_id}"
     ) {

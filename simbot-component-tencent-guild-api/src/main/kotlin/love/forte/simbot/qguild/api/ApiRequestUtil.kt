@@ -33,12 +33,12 @@ internal val logger = LoggerFactory.getLogger("love.forte.simbot.tencentguild.ap
  * @param client 提供一个 http client
  * @param server 提供一个目标服务器路径
  * @param token 提供一个 token.
- * @param decoder 如果有，提供一个decoder用于通过 [TencentApi.resultDeserializer] 进行反序列化，而不是通过 [client] 进行。
+ * @param decoder 如果有，提供一个decoder用于通过 [QQGuildApi.resultDeserializer] 进行反序列化，而不是通过 [client] 进行。
  *
  * @throws love.forte.simbot.qguild.TencentApiException 如果响应码不在 200..300 范围内。
  */
 @JvmSynthetic
-public suspend fun <R> TencentApi<R>.request(
+public suspend fun <R> QQGuildApi<R>.request(
     client: HttpClient,
     server: Url,
     token: String,
@@ -54,7 +54,7 @@ public suspend fun <R> TencentApi<R>.request(
 @Api4J
 @JvmOverloads
 public fun <R> doRequest(
-    api: TencentApi<R>,
+    api: QQGuildApi<R>,
     client: HttpClient,
     server: String,
     token: String,

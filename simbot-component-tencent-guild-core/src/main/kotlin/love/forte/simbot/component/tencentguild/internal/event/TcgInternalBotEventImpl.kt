@@ -14,18 +14,18 @@ package love.forte.simbot.component.tencentguild.internal.event
 
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
-import love.forte.simbot.component.tencentguild.event.TcgBotRegisteredEvent
-import love.forte.simbot.component.tencentguild.event.TcgBotStartedEvent
-import love.forte.simbot.component.tencentguild.internal.TencentGuildComponentBotImpl
+import love.forte.simbot.component.tencentguild.event.QGBotRegisteredEvent
+import love.forte.simbot.component.tencentguild.event.QGBotStartedEvent
+import love.forte.simbot.component.tencentguild.internal.QGBotImpl
 import love.forte.simbot.randomID
 
 
-internal class TcgBotRegisteredEventImpl(override val bot: TencentGuildComponentBotImpl) : TcgBotRegisteredEvent() {
+internal class QGBotRegisteredEventImpl(override val bot: QGBotImpl) : QGBotRegisteredEvent() {
     override val timestamp: Timestamp = Timestamp.now()
     override val id: ID = randomID()
 }
 
-internal class TcgBotStartedEventImpl(override val bot: TencentGuildComponentBotImpl) : TcgBotStartedEvent() {
+internal class QGBotStartedEventImpl(override val bot: QGBotImpl) : QGBotStartedEvent() {
     override val timestamp: Timestamp = Timestamp.now()
     override val id: ID = randomID()
 }

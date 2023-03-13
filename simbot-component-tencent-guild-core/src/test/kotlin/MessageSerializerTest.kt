@@ -14,7 +14,7 @@ import com.charleskorn.kaml.Yaml
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.plus
 import love.forte.simbot.ID
-import love.forte.simbot.component.tencentguild.TencentGuildComponent
+import love.forte.simbot.component.tencentguild.QQGuildComponent
 import love.forte.simbot.component.tencentguild.message.TcgMentionChannel
 import love.forte.simbot.component.tencentguild.message.toMessage
 import love.forte.simbot.message.At
@@ -30,7 +30,7 @@ import kotlin.test.Test
  */
 class MessageSerializerTest {
 
-    private val module = Messages.serializersModule + TencentGuildComponent.messageSerializersModule
+    private val module = Messages.serializersModule + QQGuildComponent.messageSerializersModule
 
     private val json
         get() = Json {

@@ -16,7 +16,10 @@ import io.ktor.http.*
 import io.ktor.websocket.*
 import kotlinx.serialization.Serializable
 
-
+/**
+ * QQ频道API请求过程中出现的异常
+ *
+ */
 @Suppress("MemberVisibilityCanBePrivate")
 public class TencentApiException : IllegalStateException {
     public val info: ErrInfo?
@@ -41,6 +44,21 @@ public class TencentApiException : IllegalStateException {
     
 }
 
+/**
+ * 判断 [TencentApiException.value] 的值是否为 `404`
+ */
+public inline val TencentApiException.isNotFound: Boolean get() = value == 404
+
+/**
+ * 如果 [TencentApiException.isNotFound] 为 `true`, 得到null，否则抛出此异常
+ */
+public inline fun <reified T> TencentApiException.ifNotFoundThenNull(): T? = if (isNotFound) null else throw this
+
+/**
+ * 提供 [ErrInfo] 和 [HttpStatusCode] ，构建一个 [TencentApiException] 并抛出。
+ *
+ * @throws TencentApiException 由 [ErrInfo] 和 [HttpStatusCode] 构建而来的异常
+ */
 public inline fun ErrInfo.err(codeBlock: () -> HttpStatusCode): Nothing {
     val code = codeBlock()
     throw TencentApiException(this, code.value, code.description)
@@ -54,7 +72,11 @@ public inline fun ErrInfo.err(codeBlock: () -> HttpStatusCode): Nothing {
 @Serializable
 public data class ErrInfo(val code: Int, val message: String)
 
-
+/**
+ * 提供一个 [CloseReason]，构建为一个 [TencentApiException] 并抛出。
+ *
+ * @throws TencentApiException 由 [CloseReason] 构建而来的异常
+ */
 @Suppress("NOTHING_TO_INLINE")
 public inline fun CloseReason?.err(e: Throwable? = null): Nothing {
     if (this == null) {

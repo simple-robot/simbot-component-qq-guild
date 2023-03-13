@@ -17,9 +17,9 @@ import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.ApiModel
+import love.forte.simbot.qguild.api.QQGuildApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleApiDescription
-import love.forte.simbot.qguild.api.TencentApi
 import java.time.Duration
 import java.time.Instant
 import java.util.concurrent.TimeUnit
@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit
  *
  * @author ForteScarlet
  */
-public class MuteMultiMemberApi private constructor(guildId: String, body: MuteBody) : TencentApi<MultiMuteResult>() {
+public class MuteMultiMemberApi private constructor(guildId: String, body: MuteBody) : QQGuildApi<MultiMuteResult>() {
     public companion object Factory : SimpleApiDescription(
         HttpMethod.Patch, "/guilds/{guild_id}/mute"
     ) {

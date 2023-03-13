@@ -19,7 +19,7 @@ import io.ktor.http.*
  * [接口权限对象](https://bot.q.qq.com/wiki/develop/api/openapi/api_permissions/model.html)
  * 中的相关信息保持一致。
  *
- * [ApiDescription] 主要实现于 [TencentApi] 实现类型的**伴生对象**上。
+ * [ApiDescription] 主要实现于 [QQGuildApi] 实现类型的**伴生对象**上。
  *
  * 可以通过 [eq] 来判断两个 [ApiDescription] 中的基本属性是否相同。
  *

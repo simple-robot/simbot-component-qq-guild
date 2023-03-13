@@ -63,7 +63,7 @@ public data class EventMember(
     /**
      * 用户的频道基础信息，只有成员相关接口中会填充此信息
      */
-    val user: User,
+    val user: User, // TODO?
     /**
      * 用户的昵称
      */

@@ -13,7 +13,7 @@
 package love.forte.simbot.qguild.api.channel.permissions
 
 import kotlinx.serialization.DeserializationStrategy
-import love.forte.simbot.qguild.api.GetTencentApi
+import love.forte.simbot.qguild.api.GetQQGuildApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleGetApiDescription
 import love.forte.simbot.qguild.model.ChannelPermissions
@@ -30,7 +30,7 @@ import love.forte.simbot.qguild.model.ChannelPermissions
  */
 public class GetChannelRolePermissionsApi(
     channelId: String, roleId: String
-) : GetTencentApi<ChannelPermissions>() {
+) : GetQQGuildApi<ChannelPermissions>() {
     public companion object Factory : SimpleGetApiDescription(
         "/channels/{channel_id}/roles/{role_id}/permissions"
     ) {

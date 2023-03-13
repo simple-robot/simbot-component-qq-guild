@@ -30,7 +30,7 @@ import love.forte.simbot.qguild.ApiModel
  * _Note: [Channel] 的内容暂不确定。_
  *
  */
-public interface Channel : Comparable<SimpleChannel> {
+public interface Channel : Comparable<Channel> {
 
     /** 子频道 id */
     public val id: String
@@ -83,7 +83,7 @@ public interface Channel : Comparable<SimpleChannel> {
      */
     public val permissionsValue: Long? get() = permissions?.value
 
-    override fun compareTo(other: SimpleChannel): Int = position.compareTo(other.position)
+    override fun compareTo(other: Channel): Int = position.compareTo(other.position)
 }
 
 /**
@@ -205,9 +205,9 @@ public class ChannelType private constructor(public val value: Int) {
     override fun toString(): String {
         return "ChannelType(value=$value)"
     }
-
-
 }
+
+public inline val ChannelType.isCategory: Boolean get() = this == ChannelType.CATEGORY
 
 /** Serializer for [ChannelType] */
 private object ChannelTypeSerializer : KSerializer<ChannelType> {

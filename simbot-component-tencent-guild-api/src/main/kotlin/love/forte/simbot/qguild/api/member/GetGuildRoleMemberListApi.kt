@@ -16,7 +16,7 @@ import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.ApiModel
 import love.forte.simbot.qguild.PrivateDomainOnly
-import love.forte.simbot.qguild.api.GetTencentApi
+import love.forte.simbot.qguild.api.GetQQGuildApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleGetApiDescription
 import love.forte.simbot.qguild.model.SimpleMember
@@ -45,7 +45,7 @@ public class GetGuildRoleMemberListApi private constructor(
      * 分页大小，`1-400`，默认是 `1`。成员较多的频道尽量使用较大的 `limit` 值，以减少请求数
      */
     private val limit: Int,
-) : GetTencentApi<GuildRoleMemberList>() {
+) : GetQQGuildApi<GuildRoleMemberList>() {
     init {
         require(limit > 0) { "limit must > 0, but $limit" }
         if (limit > 400) {

@@ -29,9 +29,9 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import love.forte.simbot.qguild.*
+import love.forte.simbot.qguild.api.QQGuildApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimplePostApiDescription
-import love.forte.simbot.qguild.api.TencentApi
 import love.forte.simbot.qguild.api.message.MessageSendApi.Body.Builder
 import love.forte.simbot.qguild.model.Message
 import love.forte.simbot.resources.*
@@ -122,7 +122,7 @@ import kotlin.io.path.name
 public class MessageSendApi private constructor(
     channelId: String,
     body: Body, // TencentMessageForSending || MultiPartFormDataContent
-) : TencentApi<Message>() {
+) : QQGuildApi<Message>() {
     public companion object Factory : SimplePostApiDescription(
         "/channels/{channel_id}/messages"
     ) {

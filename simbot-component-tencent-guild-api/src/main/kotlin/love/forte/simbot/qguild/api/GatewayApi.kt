@@ -32,7 +32,7 @@ import love.forte.simbot.qguild.api.GatewayApis.Shared
 public sealed class GatewayApis<R : GatewayInfo>(
     protected val path: Array<String>,
     override val resultDeserializer: DeserializationStrategy<R>
-) : GetTencentApi<R>() {
+) : GetQQGuildApi<R>() {
     
     override fun route(builder: RouteInfoBuilder) {
         builder.apiPath = path

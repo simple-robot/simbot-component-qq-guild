@@ -16,9 +16,9 @@ import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.builtins.serializer
 import love.forte.simbot.qguild.PrivateDomainOnly
+import love.forte.simbot.qguild.api.QQGuildApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleApiDescription
-import love.forte.simbot.qguild.api.TencentApi
 
 /**
  * [撤回私信](https://bot.q.qq.com/wiki/develop/api/openapi/dms/delete_dms.html)
@@ -34,7 +34,7 @@ public class DeleteDmsApi private constructor(
     guildId: String,
     messageId: String,
     private val hidetip: Boolean? = null,
-) : TencentApi<Unit>() {
+) : QQGuildApi<Unit>() {
     public companion object Factory : SimpleApiDescription(
         HttpMethod.Delete, "/dms/{guild_id}/messages/{message_id}"
     ) {

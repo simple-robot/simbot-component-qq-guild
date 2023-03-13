@@ -18,9 +18,9 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.serializer
 import love.forte.simbot.qguild.PrivateDomainOnly
+import love.forte.simbot.qguild.api.QQGuildApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleApiDescription
-import love.forte.simbot.qguild.api.TencentApi
 
 
 /**
@@ -40,7 +40,7 @@ public class DeleteMemberApi private constructor(
     guildId: String,
     userId: String,
     private val _body: Body
-) : TencentApi<Unit>() {
+) : QQGuildApi<Unit>() {
     public companion object Factory : SimpleApiDescription(
         HttpMethod.Delete, "/guilds/{guild_id}/members/{user_id}"
     ) {

@@ -19,7 +19,7 @@ import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
-import love.forte.simbot.qguild.api.GetTencentApi
+import love.forte.simbot.qguild.api.GetQQGuildApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleGetApiDescription
 
@@ -31,7 +31,7 @@ import love.forte.simbot.qguild.api.SimpleGetApiDescription
  *
  * @author ForteScarlet
  */
-public class GetChannelOnlineNumsApi(channelId: String) : GetTencentApi<Int>() {
+public class GetChannelOnlineNumsApi(channelId: String) : GetQQGuildApi<Int>() {
     public companion object Factory : SimpleGetApiDescription(
         "/channels/{channel_id}/online_nums"
     ) {

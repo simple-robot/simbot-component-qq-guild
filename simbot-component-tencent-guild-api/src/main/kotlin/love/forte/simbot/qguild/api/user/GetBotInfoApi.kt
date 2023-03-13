@@ -14,7 +14,7 @@ package love.forte.simbot.qguild.api.user
 
 import kotlinx.serialization.DeserializationStrategy
 import love.forte.simbot.qguild.api.ApiDescription
-import love.forte.simbot.qguild.api.GetTencentApi
+import love.forte.simbot.qguild.api.GetQQGuildApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleGetApiDescription
 import love.forte.simbot.qguild.api.user.GetBotInfoApi.Description
@@ -31,7 +31,7 @@ import love.forte.simbot.qguild.model.User
  *
  * @author ForteScarlet
  */
-public object GetBotInfoApi : GetTencentApi<User>() {
+public object GetBotInfoApi : GetQQGuildApi<User>() {
     /**
      * [GetBotInfoApi] 的 [ApiDescription] 实现。
      */

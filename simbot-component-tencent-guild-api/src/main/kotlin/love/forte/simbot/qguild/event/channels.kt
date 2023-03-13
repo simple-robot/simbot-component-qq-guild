@@ -78,3 +78,5 @@ public data class EventChannel(
     /** 操作人 */
     @SerialName("op_user_id") val opUserId: String,
 )
+
+

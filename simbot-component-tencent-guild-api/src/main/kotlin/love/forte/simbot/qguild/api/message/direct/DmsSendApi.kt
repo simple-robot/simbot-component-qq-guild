@@ -15,7 +15,7 @@ package love.forte.simbot.qguild.api.message.direct
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
-import love.forte.simbot.qguild.api.PostTencentApi
+import love.forte.simbot.qguild.api.PostQQGuildApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimplePostApiDescription
 import love.forte.simbot.qguild.api.message.MessageSendApi
@@ -49,7 +49,7 @@ import love.forte.simbot.qguild.model.Message
 public class DmsSendApi private constructor(
     guildId: String,
     body: MessageSendApi.Body, // TencentMessageForSending || MultiPartFormDataContent
-) : PostTencentApi<Message>() {
+) : PostQQGuildApi<Message>() {
     public companion object Factory : SimplePostApiDescription(
         "/channels/{channel_id}/messages"
     ) {

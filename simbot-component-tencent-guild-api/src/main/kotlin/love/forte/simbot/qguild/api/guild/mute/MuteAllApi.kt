@@ -15,9 +15,9 @@ package love.forte.simbot.qguild.api.guild.mute
 import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.builtins.serializer
+import love.forte.simbot.qguild.api.QQGuildApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleApiDescription
-import love.forte.simbot.qguild.api.TencentApi
 import java.time.Duration
 import java.time.Instant
 import java.util.concurrent.TimeUnit
@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit
  *
  * @author ForteScarlet
  */
-public class MuteAllApi private constructor(guildId: String, body: MuteBody) : TencentApi<Unit>() {
+public class MuteAllApi private constructor(guildId: String, body: MuteBody) : QQGuildApi<Unit>() {
     public companion object Factory : SimpleApiDescription(
         HttpMethod.Patch, "/guilds/{guild_id}/mute"
     ) {

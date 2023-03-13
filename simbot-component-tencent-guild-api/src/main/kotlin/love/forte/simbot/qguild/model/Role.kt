@@ -94,6 +94,18 @@ public data class Role(
         @JvmStatic
         public fun isDefault(id: String): Boolean = id in defaults
 
+
+        /**
+         * 判断 [id] 是否为如下所列的默认身分组ID:
+         * - [`"1"`: 全体成员][DEFAULT_ID_ALL_MEMBER]
+         * - [`"2"`: 管理员][DEFAULT_ID_ADMIN]
+         * - [`"4"`: 群主/创建者][DEFAULT_ID_OWNER]
+         * - [`"5"`: 子频道管理员][DEFAULT_ID_CHANNEL_ADMIN]
+         *
+         */
+        @get:JvmStatic
+        public val Role.isDefault: Boolean get() = isDefault(id)
+
     }
 }
 

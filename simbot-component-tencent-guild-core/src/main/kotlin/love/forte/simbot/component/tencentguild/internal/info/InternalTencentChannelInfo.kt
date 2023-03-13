@@ -9,39 +9,3 @@
  *
  * You should have received a copy of the GNU Lesser General Public License along with simbot-component-tencent-guild. If not, see <https://www.gnu.org/licenses/>.
  */
-
-package love.forte.simbot.component.tencentguild.internal.info
-
-import love.forte.simbot.ID
-import love.forte.simbot.qguild.ChannelSubType
-import love.forte.simbot.qguild.ChannelType
-import love.forte.simbot.qguild.model.ChannelType
-
-internal data class InternalTencentChannelInfo(
-    override var id: ID,
-    override var guildId: ID,
-    override var name: String,
-    override var channelType: ChannelType,
-    override var channelSubType: ChannelSubType,
-    override var position: Int,
-    override var parentId: String,
-    override var ownerId: ID,
-) : TencentChannelInfo
-
-
-internal fun TencentChannelInfo.toInternal(copy: Boolean = true): InternalTencentChannelInfo {
-    if (this is InternalTencentChannelInfo) {
-        return if (copy) copy() else this
-    }
-    
-    return InternalTencentChannelInfo(
-        id,
-        guildId,
-        name,
-        channelType,
-        channelSubType,
-        position,
-        parentId,
-        ownerId,
-    )
-}

@@ -16,7 +16,7 @@ import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import love.forte.simbot.qguild.api.PostTencentApi
+import love.forte.simbot.qguild.api.PostQQGuildApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimplePostApiDescription
 import love.forte.simbot.qguild.model.DirectMessageSession
@@ -41,7 +41,7 @@ import love.forte.simbot.qguild.model.DirectMessageSession
 public class CreateDmsApi private constructor(
     recipientId: String,
     sourceGuildId: String,
-) : PostTencentApi<DirectMessageSession>() {
+) : PostQQGuildApi<DirectMessageSession>() {
     public companion object Factory : SimplePostApiDescription(
         "/users/@me/dms"
     ) {

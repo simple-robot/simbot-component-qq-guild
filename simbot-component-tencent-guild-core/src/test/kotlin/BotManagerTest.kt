@@ -12,8 +12,8 @@
 
 import love.forte.simbot.ID
 import love.forte.simbot.ability.CompletionPerceivable
-import love.forte.simbot.component.tencentguild.TencentGuildBotManagerConfiguration
-import love.forte.simbot.component.tencentguild.useTencentGuild
+import love.forte.simbot.component.tencentguild.QGBotManagerConfiguration
+import love.forte.simbot.component.tencentguild.useQQGuild
 import love.forte.simbot.core.application.createSimpleApplication
 import love.forte.simbot.core.event.EventInterceptorsGenerator
 import love.forte.simbot.core.event.EventListenerRegistrationDescriptionsGenerator
@@ -52,7 +52,7 @@ private fun EventInterceptorsGenerator.myInterceptors() {
 }
 
 
-private fun TencentGuildBotManagerConfiguration.tencentGuildConfig() {
+private fun QGBotManagerConfiguration.tencentGuildConfig() {
     botConfigure = { _, _, _ ->
         intentsForShardFactory = { EventSignals.AtMessages.intents }
     }
@@ -73,7 +73,7 @@ private fun EventListenerRegistrationDescriptionsGenerator.myListeners() {
     }
 }
 
-private fun TencentGuildBotManagerConfiguration.tencentBot(completionPerceivable: CompletionPerceivable<*>) {
+private fun QGBotManagerConfiguration.tencentBot(completionPerceivable: CompletionPerceivable<*>) {
     register("", "", "", {
         intentsForShardFactory = { EventSignals.AtMessages.intents }
     }) { bot ->
@@ -97,7 +97,7 @@ suspend fun main() {
             }
         }
         
-        useTencentGuild {
+        useQQGuild {
             botManager {
                 tencentGuildConfig()
                 tencentBot(it)

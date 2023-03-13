@@ -16,7 +16,7 @@ import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.api.ApiDescription
-import love.forte.simbot.qguild.api.PostTencentApi
+import love.forte.simbot.qguild.api.PostQQGuildApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimplePostApiDescription
 import love.forte.simbot.qguild.model.ApiPermissionDemand
@@ -38,7 +38,7 @@ import love.forte.simbot.qguild.model.ApiPermissionDemandIdentify.Companion.toId
  */
 public class DemandApiPermissionApi private constructor(
     guildId: String, override val body: Body
-) : PostTencentApi<ApiPermissionDemand>() {
+) : PostQQGuildApi<ApiPermissionDemand>() {
 
     public companion object Factory : SimplePostApiDescription(
         "/guilds/{guild_id}/api_permission/demand"
