@@ -29,6 +29,17 @@ import org.slf4j.LoggerFactory
 private val apiLogger = LoggerFactory.getLogger("love.forte.simbot.qguild.api")
 
 /**
+ * [有关 traceID](https://bot.q.qq.com/wiki/develop/api/openapi/error/error.html#%E6%9C%89%E5%85%B3-traceid)
+ *
+ * 在 openapi 的返回 http 头上，有一个 X-Tps-trace-ID 自定义头部，是平台的链路追踪 ID，
+ * 如果开发者有无法自己定位的问题，需要找平台协助的时候，可以提取这个 ID，提交给平台方。
+ *
+ * 方便查询相关日志。
+ *
+ */
+private const val TRACE_ID_HEAD = "X-Tps-trace-ID"
+
+/**
  * 表示为一个QQ频道的API。
  *
  * 通过 [doRequest] 发起一次请求。
@@ -121,9 +132,10 @@ private suspend fun QQGuildApi<*>.requestForResponse(client: HttpClient, server:
             }
         }
 
-        apiLogger.debug("[{} {}] =====> server {}, body: {}", method.value, url.encodedPath, url.host, api.body)
+        apiLogger.debug("[{} /{}] =====> server {}, body: {}", method.value, url.encodedPath, url.host, api.body)
     }.also { resp ->
-        apiLogger.debug("[{} {}] <===== status: {}, resp: {}", method.value, resp.request.url.encodedPath, resp.status, resp)
+        val traceId = resp.headers[TRACE_ID_HEAD]
+        apiLogger.debug("[{} {}] <===== status: {}, traceID: {}", method.value, resp.request.url.encodedPath, resp.status, traceId)
     }
 }
 

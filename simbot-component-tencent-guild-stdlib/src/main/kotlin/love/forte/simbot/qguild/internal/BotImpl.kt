@@ -51,13 +51,29 @@ import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
 
 
-internal fun checkResumeCode(code: Short): Boolean {
+/**
+ * 是否可以重新连接
+ *
+ * [参考](https://bot.q.qq.com/wiki/develop/api/gateway/error/error.html)
+ */
+private fun isResumeAble(code: Short): Boolean {
     return when (code.toInt()) {
         // 4008  发送 payload 过快，请重新连接，并遵守连接后返回的频控信息
         // 4009  连接过期，请重连
         4008, 4009 -> true
-        // 4900+ 内部错误，请重连
-        else -> code >= 4900
+        else -> false
+    }
+}
+
+private fun isIdentifyAble(code: Short): Boolean {
+    return when (code.toInt()) {
+        // 4007 seq 错误
+        // 4006 无效的 session id，无法继续 resume，请 identify
+        // 4008 发送 payload 过快，请重新连接，并遵守连接后返回的频控信息
+        // 4009 连接过期，请重连并执行 resume 进行重新连接
+        4007, 4006 -> true
+        // 4900~4913 内部错误，请重连
+        else -> code in 4900..4913
     }
 }
 
@@ -514,30 +530,59 @@ internal class BotImpl(
 
             // TODO catch CancellationException?
 
+            suspend fun onCatchErr(e: Throwable) {
+                val reason = session.closeReason.await()
+                if (reason == null) {
+                    logger.debug("Session closed. reason is null, try resume", e)
+                    // try resume
+                    loop.appendStage(Resume(client))
+                    return
+                }
+
+                val reasonCode = reason.code
+                when {
+                    isResumeAble(reasonCode) -> {
+                        logger.debug("Session closed. reason: $reason, try resume", e)
+                        // try resume
+                        loop.appendStage(Resume(client))
+                    }
+                    isIdentifyAble(reasonCode) -> {
+                        logger.debug("Session closed. reason: $reason, try reconnect", e)
+                        // try resume
+                        val gatewayInfo: GatewayInfo = GatewayApis.Normal.requestBy(this@BotImpl)
+                        logger.debug("Reconnect gateway {} by shard {}", gatewayInfo, shard)
+                        loop.appendStage(Connect(shard, gatewayInfo))
+                    }
+                    else -> {
+                        // 4914，4915 不可以连接，请联系官方解封
+                        when (reasonCode.toInt()) {
+                            4914 -> logger.error("机器人已下架,只允许连接沙箱环境,请断开连接,检验当前连接环境", e)
+                            4915 -> logger.error("机器人已封禁,不允许连接,请断开连接,申请解封后再连接", e)
+                            else -> logger.error("Unknown reason, bot will be closed", e)
+                        }
+                        this@BotImpl.cancel(e)
+                    }
+                }
+            }
 
             logger.trace("Receiving next frame ...")
             val frame = try {
                 session.incoming.receive()
             } catch (e: ClosedReceiveChannelException) {
-                val reason = session.closeReason.await()
-                logger.debug("Session closed. reason: $reason", e)
-                // try resume
-                loop.appendStage(Resume(client))
+                onCatchErr(e)
                 return
-
             } catch (e: CancellationException) {
-                logger.error("Session cancellation.", e)
-                // try resume
-                loop.appendStage(Resume(client))
+                onCatchErr(e)
                 return
             }
+
             logger.trace("Received next frame: {}", frame)
             val raw = (frame as? Frame.Text)?.readText() ?: run {
-                logger.debug("No Text frame received {}, skip.", frame)
+                logger.debug("Not Text frame {}, skip.", frame)
                 loop.appendStage(this) // next: this
                 return
             }
-            logger.debug("Received next text frame raw: {}", raw)
+            logger.debug("Received text frame raw: {}", raw)
             val json = wsDecoder.parseToJsonElement(raw)
             when (val opcode = json.getOpcode()) {
                 Opcodes.Dispatch -> {
