@@ -15,7 +15,7 @@
  *
  */
 
-import love.forte.simbot.component.tencentguild.event.QGChannelAtMessageEvent
+import love.forte.simbot.component.qguild.event.QGChannelAtMessageEvent
 import love.forte.simbot.event.ChannelMessageEvent
 import love.forte.simbot.event.Event.Key.Companion.isSub
 import kotlin.test.Test

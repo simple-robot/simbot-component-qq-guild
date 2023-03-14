@@ -12,8 +12,8 @@
 
 import love.forte.simbot.ID
 import love.forte.simbot.ability.CompletionPerceivable
-import love.forte.simbot.component.tencentguild.QGBotManagerConfiguration
-import love.forte.simbot.component.tencentguild.useQQGuild
+import love.forte.simbot.component.qguild.QGBotManagerConfiguration
+import love.forte.simbot.component.qguild.useQQGuild
 import love.forte.simbot.core.application.createSimpleApplication
 import love.forte.simbot.core.event.EventInterceptorsGenerator
 import love.forte.simbot.core.event.EventListenerRegistrationDescriptionsGenerator

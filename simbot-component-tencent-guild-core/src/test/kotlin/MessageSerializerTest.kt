@@ -14,9 +14,9 @@ import com.charleskorn.kaml.Yaml
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.plus
 import love.forte.simbot.ID
-import love.forte.simbot.component.tencentguild.QQGuildComponent
-import love.forte.simbot.component.tencentguild.message.TcgMentionChannel
-import love.forte.simbot.component.tencentguild.message.toMessage
+import love.forte.simbot.component.qguild.QQGuildComponent
+import love.forte.simbot.component.qguild.message.TcgMentionChannel
+import love.forte.simbot.component.qguild.message.toMessage
 import love.forte.simbot.message.At
 import love.forte.simbot.message.Messages
 import love.forte.simbot.message.Text
