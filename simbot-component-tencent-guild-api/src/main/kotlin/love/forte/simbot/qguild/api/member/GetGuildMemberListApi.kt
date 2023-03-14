@@ -111,10 +111,10 @@ public suspend inline fun GetGuildMemberListApi.Factory.createFlow(
 ): Flow<List<SimpleMember>> = flow {
     var after: String? = null
     do {
-        val list = GetGuildMemberListApi.create(guildId, after).doRequest()
+        val list = create(guildId, after = after, limit = batch).doRequest()
         if (list.isNotEmpty()) {
             emit(list)
-            after = list.last().user!!.id
+            after = list.last().user.id
         }
     } while (list.isNotEmpty())
 }

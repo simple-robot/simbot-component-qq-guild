@@ -25,7 +25,7 @@ repositories {
 //}
 
 dependencies {
-    api("com.google.devtools.ksp:symbol-processing-api:1.8.0-1.0.8")
+    api("com.google.devtools.ksp:symbol-processing-api:1.8.10-1.0.9")
     api("com.squareup:kotlinpoet:1.12.0")
     api("com.squareup:kotlinpoet-ksp:1.12.0")
 

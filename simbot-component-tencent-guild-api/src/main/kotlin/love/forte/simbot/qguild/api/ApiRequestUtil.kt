@@ -37,7 +37,8 @@ internal val logger = LoggerFactory.getLogger("love.forte.simbot.qguild.api.requ
  *
  * @throws love.forte.simbot.qguild.QQGuildApiException 如果响应码不在 200..300 范围内。
  *
- * @sample love.forte.simbot.qguild.samples.api.apiRequestSample
+ * @sample love.forte.simbot.qguild.samples.api.apiRequestSample1
+ * @sample love.forte.simbot.qguild.samples.api.apiRequestSample2
  *
  */
 @JvmSynthetic
