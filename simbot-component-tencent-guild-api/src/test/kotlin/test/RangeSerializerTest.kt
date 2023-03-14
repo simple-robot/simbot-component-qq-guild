@@ -35,10 +35,10 @@ class RangeSerializerTest {
                 token = "token",
                 intents = Intents(153) + Intents(224) + Intents(810),
                 shard = Shard(0..4),
-                properties = Signal.Identify.Data.Prop(
-                    os = "windows",
-                    browser = "chrome",
-                    device = "abc"
+                properties = mapOf(
+                    "os" to "windows",
+                    "browser" to "chrome",
+                    "device" to "abc"
                 )
             )
         )
