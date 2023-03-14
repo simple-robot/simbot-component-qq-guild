@@ -21,20 +21,19 @@ import love.forte.simbot.qguild.model.Message
  *
  * @author ForteScarlet
  */
-
-/**
- *
- * @author ForteScarlet
- */
-internal class QGReceiveMessageContentImpl(sourceMessage: Message) : QGReceiveMessageContent() {
+internal class QGReceiveMessageContentImpl(override val sourceMessage: Message) : QGReceiveMessageContent() {
 
     override val messageId: ID = sourceMessage.id.ID
 
-    override val messages: Messages by lazy(LazyThreadSafetyMode.NONE) { MessageParsers.parse(sourceMessage) }
-    
+    override val messages: Messages by lazy(LazyThreadSafetyMode.PUBLICATION) { MessageParsers.parse(sourceMessage) }
 
-    override val plainText: String by lazy(LazyThreadSafetyMode.NONE) {
+    override val plainText: String by lazy(LazyThreadSafetyMode.PUBLICATION) {
         var content = sourceMessage.content
+        // TODO pref it
+        //  <@user_id> 或者 <@!user_id>
+        //  @everyone
+        //  <#channel_id>
+        //  <emoji:id>
 
         for (mention in sourceMessage.mentions) {
             val target = "<@!${mention.id}>"
@@ -45,7 +44,21 @@ internal class QGReceiveMessageContentImpl(sourceMessage: Message) : QGReceiveMe
             content = content.replaceFirst("@everyone", "")
         }
 
+        // TODO 解析 #子频道 标签
+
         content
     }
 
+    override fun toString(): String {
+        return "QGReceiveMessageContentImpl(messageId=$messageId, sourceMessage=$sourceMessage)"
+    }
+
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is QGReceiveMessageContent) return false
+        if (other === this) return true
+        return messageId == other.messageId
+    }
+
+    override fun hashCode(): Int = messageId.hashCode()
 }

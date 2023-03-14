@@ -28,7 +28,7 @@ import love.forte.simbot.qguild.api.message.MessageSendApi
  *
  * @author ForteScarlet
  */
-@SerialName("tcg.replyTo")
+@SerialName("qg.replyTo")
 @Serializable
 public data class TcgReplyTo(@Serializable(ID.AsCharSequenceIDSerializer::class) val id: ID) :
     TcgMessageElement<TcgReplyTo> {

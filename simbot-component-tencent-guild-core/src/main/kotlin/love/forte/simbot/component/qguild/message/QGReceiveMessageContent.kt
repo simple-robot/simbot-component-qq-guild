@@ -15,10 +15,10 @@ package love.forte.simbot.component.qguild.message
 import love.forte.simbot.ID
 import love.forte.simbot.message.Messages
 import love.forte.simbot.message.ReceivedMessageContent
-import love.forte.simbot.message.Text
-import love.forte.simbot.message.messages
+import love.forte.simbot.qguild.model.Message as QGSourceMessage
 
 /**
+ * 接收到的事件消息内容。
  *
  * @author ForteScarlet
  */
@@ -33,6 +33,12 @@ public abstract class QGReceiveMessageContent : ReceivedMessageContent() {
      * 转化消息列表
      */
     abstract override val messages: Messages
+
+    /**
+     * 事件接收到的原始的消息对象 [Message][QGSourceMessage]
+     */
+    public abstract val sourceMessage: QGSourceMessage
+
 
     /**
      *
@@ -50,8 +56,8 @@ public abstract class QGReceiveMessageContent : ReceivedMessageContent() {
      * ```
      *  你好
      * ```
-     * ⚠️ 注意！此处的 ` 你好` 前面是大概率有空格的，因为目前在默认情况下不会对消息有过多的操作。
-     * 因此如果有需要，请注意在判断之前先进行 `trim` 等操作来消除空格。
+     * _**⚠️ 注意！此处的 ` 你好` 前面是大概率有空格的，因为目前在默认情况下不会对消息有过多的操作。
+     * 因此如果有需要，请注意在判断之前先进行 `trim` 等操作来消除空格。**_
      *
      * 如果发送的消息为：
      * ```
@@ -67,9 +73,9 @@ public abstract class QGReceiveMessageContent : ReceivedMessageContent() {
      *  <@!123456> 你好
      * ```
      *
-     * 对于 @全体成员 同理，且如果存在@全体成员，只会清理一次。
+     * 对于 `@everyone` 同理，且如果存在 `@everyone`，只会清理一次。
      *
-     * 如果你想要得到本次消息最原始的 `content`，请从 [messages] 中获取唯一的 [Text] 类型元素.
+     * 如果你想要得到本次消息最原始的 `content`，直接使用 [sourceMessage] 获取 [Message.content][QGSourceMessage.content]
      *
      */
     abstract override val plainText: String
@@ -79,18 +85,4 @@ public abstract class QGReceiveMessageContent : ReceivedMessageContent() {
      */
     override suspend fun delete(): Boolean = false
     
-    
-    override fun toString(): String {
-        return "TencentReceiveMessageContent(id=$messageId, messages=$messages)"
-    }
-
-
-    override fun equals(other: Any?): Boolean {
-        if (other !is QGReceiveMessageContent) return false
-        if (other === this) return true
-        return messageId == other.messageId
-    }
-
-    override fun hashCode(): Int = messageId.hashCode()
-
 }

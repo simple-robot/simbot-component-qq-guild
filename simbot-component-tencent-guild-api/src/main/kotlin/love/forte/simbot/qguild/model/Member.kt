@@ -26,6 +26,8 @@ import java.time.Instant
  */
 public interface Member {
 
+    public val user: User // TODO 不确定是否真的可以不为null
+
     /**
      * 用户的昵称
      */
@@ -66,7 +68,7 @@ public data class SimpleMember(
     /**
      * 用户的频道基础信息，只有成员相关接口中会填充此信息
      */
-    val user: User,
+    override val user: User,
     /**
      * 用户的昵称
      */
@@ -97,7 +99,7 @@ public data class SimpleMemberWithGuildId(
     /**
      * 用户的频道基础信息，只有成员相关接口中会填充此信息
      */
-    val user: User,
+    override val user: User,
     /**
      * 用户的昵称
      */
@@ -105,9 +107,11 @@ public data class SimpleMemberWithGuildId(
     /**
      * 用户在频道内的身份组ID, 默认值可参考 [DefaultRoles](https://bot.q.qq.com/wiki/develop/api/openapi/guild/role_model.html#DefaultRoles)
      */
-    override val roles: List<String>,
+    override val roles: List<String> = emptyList(),
     /**
      * 用户加入频道的时间
+     *
+     * 如果属性缺失则会使用 [Instant.EPOCH]
      */
-    @SerialName("join_at") override val joinedAt: Instant
+    @SerialName("join_at") override val joinedAt: Instant = Instant.EPOCH
 ) : MemberWithGuildId

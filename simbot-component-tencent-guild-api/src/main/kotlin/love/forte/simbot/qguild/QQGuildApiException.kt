@@ -21,7 +21,7 @@ import kotlinx.serialization.Serializable
  *
  */
 @Suppress("MemberVisibilityCanBePrivate")
-public class QQGuildApiException : IllegalStateException {
+public open class QQGuildApiException : IllegalStateException {
     public val info: ErrInfo?
     public val value: Int
     public val description: String
@@ -44,14 +44,25 @@ public class QQGuildApiException : IllegalStateException {
     
 }
 
+private class QQGuildApiExceptionCopied : QQGuildApiException {
+    constructor(value: Int, description: String) : super(value, description)
+    constructor(info: ErrInfo?, value: Int, description: String) : super(info, value, description)
+}
+
 /**
  * @suppress
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun QQGuildApiException.copyCurrent(): QQGuildApiException = QQGuildApiException(
-    info, value, description
-).also {
-    initCause(it)
+public fun QQGuildApiException.copyCurrent(): QQGuildApiException {
+    return if (this is QQGuildApiExceptionCopied) {
+        this
+    } else {
+        QQGuildApiExceptionCopied(
+            info, value, description
+        ).also {
+            initCause(it)
+        }
+    }
 }
 
 /**

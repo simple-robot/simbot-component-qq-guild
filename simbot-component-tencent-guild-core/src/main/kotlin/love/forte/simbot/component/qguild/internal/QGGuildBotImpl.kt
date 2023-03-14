@@ -19,6 +19,7 @@ import love.forte.simbot.component.qguild.*
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.message.Image
 import love.forte.simbot.qguild.Bot
+import love.forte.simbot.qguild.model.User
 import love.forte.simbot.utils.item.Items
 import org.slf4j.Logger
 import kotlin.coroutines.CoroutineContext
@@ -70,6 +71,8 @@ internal class QGGuildBotImpl(
 
     override val guilds: Items<QGGuildImpl>
         get() = bot.guilds
+
+    override suspend fun me(): User = bot.me()
 }
 
 internal fun QGBotImpl.asMember(member: QGMemberImpl): QGGuildBotImpl {

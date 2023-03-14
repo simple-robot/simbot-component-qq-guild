@@ -115,17 +115,28 @@ internal fun QGBotImpl.registerEventProcessor() {
             //region Member相关
             is GuildMemberAdd -> {
                 val guild: QGGuildImpl = getOrComputeGuild(event.data.guildId)
-                println("GuildMemberAdd: $this, guild=$guild")
+                val member = guild.emitMemberAdd(event)
+                pushEvent(QGMemberAddEvent) {
+                    QGMemberAddEventImpl(bot, raw, event.data, member)
+                }
             }
 
             is GuildMemberUpdate -> {
                 val guild: QGGuildImpl = getOrComputeGuild(event.data.guildId)
-                println("GuildMemberUpdate: $this, guild=$guild")
+                val member = guild.emitMemberUpdate(event)
+                pushEvent(QGMemberUpdateEvent) {
+                    QGMemberUpdateEventImpl(bot, raw, event.data, member)
+                }
             }
 
             is GuildMemberRemove -> {
                 val guild: QGGuildImpl = getOrComputeGuild(event.data.guildId)
-                println("GuildMemberRemove: $this, guild=$guild")
+                val member = guild.emitMemberRemove(event)
+                    ?: QGMemberImpl(event.data, guild)
+
+                pushEvent(QGMemberRemoveEvent) {
+                    QGMemberRemoveEventImpl(bot, raw, event.data, member)
+                }
             }
             //endregion
 

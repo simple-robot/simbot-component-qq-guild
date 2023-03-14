@@ -63,7 +63,7 @@ public data class EventMember(
     /**
      * 用户的频道基础信息
      */
-    val user: User, // 好像事件里也会填充
+    override val user: User, // 好像事件里也会填充
     /**
      * 用户的昵称
      */
@@ -72,6 +72,13 @@ public data class EventMember(
      * 用户在频道内的身份组ID, 默认值可参考 [DefaultRoles](https://bot.q.qq.com/wiki/develop/api/openapi/guild/role_model.html#DefaultRoles)
      */
     override val roles: List<String> = emptyList(),
+
+    /**
+     * 操作人
+     */
+    @SerialName("op_user_id")
+    public val opUserId: String,
+
     /**
      * 用户加入频道的时间
      *

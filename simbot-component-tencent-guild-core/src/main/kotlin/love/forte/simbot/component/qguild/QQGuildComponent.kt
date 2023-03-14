@@ -86,8 +86,8 @@ public class QQGuildComponent : Component {
         @JvmStatic
         public val messageSerializersModule: SerializersModule = SerializersModule {
             fun PolymorphicModuleBuilder<TcgMessageElement<*>>.subclass0() {
-                subclass(TcgArk.serializer())
-                subclass(TcgMentionChannel.serializer())
+                subclass(QGArk.serializer())
+                subclass(QGAtChannel.serializer())
                 subclass(TcgAttachmentMessage.serializer())
                 subclass(TcgReplyTo.serializer())
             }

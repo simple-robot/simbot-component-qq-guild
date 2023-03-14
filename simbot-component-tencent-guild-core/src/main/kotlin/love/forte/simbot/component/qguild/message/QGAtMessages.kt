@@ -16,26 +16,28 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.ID
 import love.forte.simbot.component.qguild.internal.SendingMessageParser
-import love.forte.simbot.message.At
-import love.forte.simbot.message.Message
-import love.forte.simbot.message.Messages
-import love.forte.simbot.message.doSafeCast
+import love.forte.simbot.message.*
 import love.forte.simbot.qguild.api.message.MessageSendApi
 
-
-@SerialName("tcg.mentionChannel") // tencentguild.channel.mention
+/**
+ * 在QQ频道中AT（提及）一个子频道
+ *
+ */
+@SerialName("qg.atChannel")
 @Serializable
-public data class TcgMentionChannel(
+public data class QGAtChannel(
     @Serializable(ID.AsCharSequenceIDSerializer::class)
     public val target: ID
-) : TcgMessageElement<TcgMentionChannel> {
-    override val key: Message.Key<TcgMentionChannel>
+) : TcgMessageElement<QGAtChannel> {
+    override val key: Message.Key<QGAtChannel>
         get() = Key
 
-    public companion object Key : Message.Key<TcgMentionChannel> {
-        override fun safeCast(value: Any): TcgMentionChannel? = doSafeCast(value)
+    public companion object Key : Message.Key<QGAtChannel> {
+        override fun safeCast(value: Any): QGAtChannel? = doSafeCast(value)
     }
 }
+
+
 
 
 internal object MentionParser : SendingMessageParser {
@@ -45,15 +47,35 @@ internal object MentionParser : SendingMessageParser {
         messages: Messages?,
         builder: MessageSendApi.Body.Builder
     ) {
-        if (element is At) {
-            if (element.type == "channel") {
-                builder.contentAppend("<#${element.target}>")
-            } else {
-                builder.contentAppend("<@${element.target}>")
-            }
+        // https://bot.q.qq.com/wiki/develop/api/openapi/message/message_format.html
+
+        /*
+            解析为 #子频道 标签，点击可以跳转至子频道，仅支持当前频道内的子频道
+         */
+        fun atChannel(id: ID) {
+            builder.appendContent("<#$id>")
         }
-        if (element is TcgMentionChannel) {
-            builder.contentAppend("<#${element.target}>")
+
+        when (element) {
+            is At -> {
+                if (element.type == "channel") {
+                    atChannel(element.target)
+                } else {
+                    /*
+                        解析为 @用户 标签
+                     */
+                    builder.appendContent("<@${element.target}>")
+                }
+            }
+            is AtAll -> {
+                /*
+                    解析为 @所有人 标签，需要机器人拥有发送 @所有人 消息的权限
+                 */
+                builder.appendContent("@everyone")
+            }
+            is QGAtChannel -> {
+                atChannel(element.target)
+            }
         }
     }
 }

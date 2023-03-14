@@ -16,7 +16,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.ID
 import love.forte.simbot.component.qguild.internal.SendingMessageParser
-import love.forte.simbot.component.qguild.message.TcgArk.Key.byArk
+import love.forte.simbot.component.qguild.message.QGArk.Key.byArk
 import love.forte.simbot.literal
 import love.forte.simbot.message.Messages
 import love.forte.simbot.message.doSafeCast
@@ -30,15 +30,15 @@ import love.forte.simbot.message.Message as SimbotMessage
  *
  * 需要注意在直接使用 [byArk] 构建实例的时候，属性拷贝为浅拷贝。
  */
-@SerialName("tcg.ark")
+@SerialName("qg.ark")
 @Serializable
-public data class TcgArk internal constructor(
+public data class QGArk internal constructor(
     @SerialName("template_id")
     @Serializable(ID.AsCharSequenceIDSerializer::class)
     public val templateId: ID,
     public val kvs: List<Message.Ark.Kv> = emptyList()
-) : TcgMessageElement<TcgArk> {
-    override val key: SimbotMessage.Key<TcgArk>
+) : TcgMessageElement<QGArk> {
+    override val key: SimbotMessage.Key<QGArk>
         get() = Key
 
     /**
@@ -47,26 +47,26 @@ public data class TcgArk internal constructor(
     public fun toRealArk(): Message.Ark =
         Message.Ark(templateId.literal, kvs.toList())
 
-    public companion object Key : SimbotMessage.Key<TcgArk> {
-        override fun safeCast(value: Any): TcgArk? = doSafeCast(value)
+    public companion object Key : SimbotMessage.Key<QGArk> {
+        override fun safeCast(value: Any): QGArk? = doSafeCast(value)
 
         @JvmStatic
-        public fun byArk(ark: Message.Ark): TcgArk =
-            TcgArk(ark.templateId.ID, ark.kv.toList())
+        public fun byArk(ark: Message.Ark): QGArk =
+            QGArk(ark.templateId.ID, ark.kv.toList())
 
         @JvmStatic
         public fun create(
             templateId: ID,
             kv: List<Message.Ark.Kv> = emptyList()
-        ): TcgArk =
-            TcgArk(templateId, kv.toList())
+        ): QGArk =
+            QGArk(templateId, kv.toList())
     }
 }
 
 
-public fun Message.Ark.toMessage(): TcgArk = TcgArk(templateId.ID, kv)
+public fun Message.Ark.toMessage(): QGArk = QGArk(templateId.ID, kv)
 
-public fun TcgArk.toArk(): Message.Ark = buildArk(templateId.literal) {
+public fun QGArk.toArk(): Message.Ark = buildArk(templateId.literal) {
     kvs = this@toArk.kvs.toMutableList()
 }
 
@@ -78,7 +78,7 @@ internal object ArkParser : SendingMessageParser {
         messages: Messages?,
         builder: MessageSendApi.Body.Builder
     ) {
-        if (element is TcgArk) {
+        if (element is QGArk) {
             val realArk = element.toRealArk()
             builder.ark = buildArk(realArk.templateId) { from(realArk) }
         }

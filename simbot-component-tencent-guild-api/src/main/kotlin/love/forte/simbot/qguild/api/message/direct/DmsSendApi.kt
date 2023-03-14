@@ -58,7 +58,7 @@ public class DmsSendApi private constructor(
          * 构造 [CreateDmsApi]
          */
         @JvmStatic
-        public fun create(channelId: String, body: MessageSendApi.Body): DmsSendApi = DmsSendApi(channelId, body)
+        public fun create(guildId: String, body: MessageSendApi.Body): DmsSendApi = DmsSendApi(guildId, body)
 
     }
 

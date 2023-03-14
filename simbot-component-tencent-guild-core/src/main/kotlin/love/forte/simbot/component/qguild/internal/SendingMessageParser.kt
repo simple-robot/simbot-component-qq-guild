@@ -52,7 +52,7 @@ public fun interface ReceivingMessageParser : (Message, Messages) -> Messages {
      * 对于第一个转化器来讲，[messages] 是一个 [EmptyMessages].
      *
      */
-    override fun invoke(tencentMessage: Message, messages: Messages): Messages
+    override fun invoke(qgMessage: Message, messages: Messages): Messages
 }
 
 
@@ -90,9 +90,10 @@ public object MessageParsers {
     @JvmOverloads
     public suspend fun parse(
         message: SimbotMessage,
-        builderInit: MessageSendApi.Body.Builder.() -> Unit = {},
+        builderInitProcess: MessageSendApi.Body.Builder.() -> Unit = {},
+        builderPostProcess: MessageSendApi.Body.Builder.() -> Unit = {},
     ): MessageSendApi.Body.Builder {
-        val builder = MessageSendApi.Body.Builder().also(builderInit)
+        val builder = MessageSendApi.Body.Builder().also(builderInitProcess)
 
         when (message) {
             is SimbotMessage.Element<*> -> {
@@ -110,7 +111,7 @@ public object MessageParsers {
             }
         }
 
-        return builder
+        return builder.also(builderPostProcess)
     }
 
 

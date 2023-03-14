@@ -171,13 +171,38 @@ public class MessageSendApi private constructor(
      */
     @Serializable
     public class Body private constructor(
+        /**
+         * 选填，消息内容，文本内容，支持[内嵌格式](https://bot.q.qq.com/wiki/develop/api/openapi/message/message_format.html)
+         */
         public val content: String?,
+
+        /**
+         * 选填，embed 消息，一种特殊的 ark，详情参考[Embed消息](https://bot.q.qq.com/wiki/develop/api/openapi/message/embed_message.html)
+         */
         public val embed: Message.Embed?,
+        /**
+         * 选填，ark 消息
+         */
         public val ark: Message.Ark?,
+        /**
+         * 选填，引用消息
+         */
         public val messageReference: Message.Reference?,
+        /**
+         * 选填，图片url地址，平台会转存该图片，用于下发图片消息
+         */
         public val image: String?,
+        /**
+         * 选填，要回复的消息id, 在 `AT_CREATE_MESSAGE` 事件中获取。
+         */
         public val msgId: String?,
+        /**
+         * 选填，要回复的事件id, 在各事件对象中获取。
+         */
         public val eventId: String?,
+        /**
+         * 选填，markdown 消息
+         */
         public val markdown: Message.Markdown?,
     ) {
 
@@ -211,6 +236,8 @@ public class MessageSendApi private constructor(
          * var body = builder.build();
          * ```
          *
+         * 各属性参考 [Body] 内同名属性。
+         *
          */
         public class Builder {
             public var content: String? = null
@@ -222,7 +249,7 @@ public class MessageSendApi private constructor(
             public var eventId: String? = null
             public var markdown: Message.Markdown? = null
 
-            public fun contentAppend(append: String) {
+            public fun appendContent(append: String) {
                 if (content == null) {
                     content = append
                 } else {

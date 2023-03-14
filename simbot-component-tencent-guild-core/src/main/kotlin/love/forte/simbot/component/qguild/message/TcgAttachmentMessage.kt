@@ -30,7 +30,7 @@ import love.forte.simbot.message.Message as SimbotMessage
  *
  * @author ForteScarlet
  */
-@SerialName("tcg.attachment")
+@SerialName("qg.attachment")
 @Serializable
 public data class TcgAttachmentMessage(public val url: String) : TcgMessageElement<TcgAttachmentMessage> {
 

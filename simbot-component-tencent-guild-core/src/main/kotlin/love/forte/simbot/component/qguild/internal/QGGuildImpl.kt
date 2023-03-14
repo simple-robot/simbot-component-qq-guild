@@ -22,6 +22,7 @@ import kotlinx.coroutines.sync.withLock
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.component.qguild.QGChannel
+import love.forte.simbot.component.qguild.QGGuild
 import love.forte.simbot.component.qguild.QQGuildInitException
 import love.forte.simbot.component.qguild.util.requestBy
 import love.forte.simbot.literal
@@ -60,18 +61,18 @@ internal class QGGuildImpl private constructor(
     override val source: QGSourceGuild,
     private val job: CompletableJob,
     override val coroutineContext: CoroutineContext,
-) : love.forte.simbot.component.qguild.QGGuild {
-
+) : QGGuild {
 
 
     internal fun update(guild: QGSourceGuild): QGGuildImpl {
+        // copy job and context.
         return QGGuildImpl(
             baseBot, guild, job, coroutineContext,
         ).also {
+            // copy internal info
             it.permissions = permissions
             it.internalMembers = internalMembers
             it.internalChannels = internalChannels
-//            it.internalChannelCategories = internalChannelCategories
             it.ownerInternal = ownerInternal
             // caches
             it.internalChannelInfoCache = internalChannelInfoCache
@@ -170,7 +171,7 @@ internal class QGGuildImpl private constructor(
         return internalChannelInfoCache?.remove(id)?.value
     }
 
-    internal fun updateChannelCache(channel: SimpleChannel): SimpleChannel? {
+    private fun updateChannelCache(channel: SimpleChannel): SimpleChannel? {
         // no update category
         if (channel.type.isCategory) return null
 
@@ -185,7 +186,7 @@ internal class QGGuildImpl private constructor(
         }?.value
     }
 
-    internal fun updateChannelCache(channel: EventChannel): SimpleChannel? {
+    private fun updateChannelCache(channel: EventChannel): SimpleChannel? {
         // no update category
         // 不更新B
         if (channel.type.isCategory) return null
@@ -217,7 +218,7 @@ internal class QGGuildImpl private constructor(
     /**
      * 当 [internalMemberInfoCache] 可用时优先使用缓存。
      */
-    internal suspend fun getMemberWithCache(id: String): SimpleMember {
+    private suspend fun getMemberWithCache(id: String): SimpleMember {
         suspend fun get() = GetMemberApi.create(source.id, id).requestBy(baseBot)
         val cache = internalMemberInfoCache ?: return get()
 
@@ -226,11 +227,11 @@ internal class QGGuildImpl private constructor(
         }
     }
 
-    internal fun removeMemberCache(id: String): SimpleMember? {
+    private fun removeMemberCache(id: String): SimpleMember? {
         return internalMemberInfoCache?.remove(id)?.value
     }
 
-    internal fun updateMemberCache(member: SimpleMember): SimpleMember? {
+    private fun updateMemberCache(member: SimpleMember): SimpleMember? {
         val cache = internalMemberInfoCache ?: return null
         val now = System.currentTimeMillis()
         return cache.computeIfPresent(member.user.id) { _, curr ->
@@ -258,7 +259,6 @@ internal class QGGuildImpl private constructor(
 
     private var internalMembers: ConcurrentHashMap<String, QGMemberImpl>? = null
     private var internalChannels: ConcurrentHashMap<String, QGChannelImpl>? = null
-//    private var internalChannelCategories: ConcurrentHashMap<String, QGChannelCategoryImpl>? = null
     private lateinit var ownerInternal: QGMemberImpl
 
     private val hasMemberListApiPermission get() = permissions hasAuth GetGuildMemberListApi
@@ -336,14 +336,16 @@ internal class QGGuildImpl private constructor(
         // 批次
         val batchLimit = batch.takeIf { it > 0 } ?: GetGuildMemberListApi.MAX_LIMIT
         val flow =
-            GetGuildMemberListApi.createFlow(source.id, batchLimit) { requestBy(baseBot) }.flatMapConcat { it.asFlow() }
+            GetGuildMemberListApi.createFlow(source.id, batchLimit) { requestBy(baseBot) }
+                .flatMapConcat { it.asFlow() }
+                .onEach(::updateMemberCache)
                 .let {
                     if (offset > 0) it.drop(offset) else it
                 }.let {
                     if (limit > 0) it.take(limit) else it
                 }
 
-        emitAll(flow.map { m -> QGMemberImpl(baseBot, m, this@QGGuildImpl) })
+        emitAll(flow.map { m -> QGMemberImpl(m, this@QGGuildImpl) })
     }
 
     override suspend fun member(id: ID): QGMemberImpl? = member(id.literal)
@@ -351,7 +353,7 @@ internal class QGGuildImpl private constructor(
     /**
      * 如果 [internalMembers] 不为null，寻找缓存，否则直接查询
      */
-    private suspend fun member(id: String): QGMemberImpl? {
+    internal suspend fun member(id: String): QGMemberImpl? {
         return internalMembers?.get(id) ?: queryMember(id)
     }
 
@@ -359,10 +361,10 @@ internal class QGGuildImpl private constructor(
         val member = try {
             getMemberWithCache(id)
         } catch (apiEx: QQGuildApiException) {
-            if (apiEx.value == 404) null else throw apiEx
+            apiEx.ifNotFoundThenNull()
         }
 
-        return member?.let { info -> QGMemberImpl(baseBot, info, this) }
+        return member?.let { info -> QGMemberImpl(info, this) }
     }
 
     override val roles: Items<QGRoleImpl>
@@ -507,7 +509,7 @@ internal class QGGuildImpl private constructor(
             } while (memberList.isNotEmpty())
 
             this.internalMembers =
-                members.mapValuesTo(ConcurrentHashMap()) { (_, member) -> QGMemberImpl(baseBot, member, this) }
+                members.mapValuesTo(ConcurrentHashMap()) { (_, member) -> QGMemberImpl(member, this) }
         }
     }
 
@@ -528,7 +530,7 @@ internal class QGGuildImpl private constructor(
         val ownerId = source.ownerId
         val owner = member(ownerId) ?: run {
             val ownerInfo = GetMemberApi.create(source.id, ownerId).requestBy(baseBot)
-            QGMemberImpl(baseBot, ownerInfo, this)
+            QGMemberImpl(ownerInfo, this)
         }
 
         logger.debug("Sync guild owner: {}", owner)
@@ -541,51 +543,24 @@ internal class QGGuildImpl private constructor(
         if (hasChannelListApiPermission && EventIntents.Guilds.intents in baseBot.source.configuration.intents) {
             val channelList = GetGuildChannelListApi.create(source.id).requestBy(baseBot)
 
-            val groupByCategory = channelList
+            val channelSequence = channelList
                 .asSequence()
-                .onEach { updateChannelCache(it) }
-                .groupBy { it.type.isCategory }
+                // 不要分组类型
+                .filterNot { it.type.isCategory }
+                .onEach(::updateChannelCache)
 
-            val categories = groupByCategory[true] ?: emptyList()
-            val channels = groupByCategory[false] ?: emptyList()
 
-            logger.debug(
-                "Sync channel list for guild(id={}, name={}), channels: {}, categories: {}",
-                id, name,
-                categories.size,
-                channels.size,
-            )
-
-            val categoriesMap: Map<String, QGChannelCategoryImpl> = categories
-                .associateBy { it.id }
-                .mapValues { (_, info) ->
-                    QGChannelCategoryImpl(info, this)
-                }
-
-            val internalChannels: ConcurrentHashMap<String, QGChannelImpl> = channels
-                .asSequence()
-                .filter { info ->
-                    val categoryId = info.parentId
-
-                    // 没有对应的分组?
-                    if (!categoriesMap.containsKey(categoryId)) {
-                        logger.warn(
-                            "Cannot find category(id={}) for channel({}). This is an expected problem and please report this log to issues: https://github.com/simple-robot/simbot-component-tencent-guild/issues/new/choose?labels=%E7%BC%BA%E9%99%B7",
-                            categoryId,
-                            info
-                        )
-                        return@filter false
-                    }
-
-                    true
-                }
-                .associateBy { it.id }
-                .mapValuesTo(ConcurrentHashMap()) { (_, info) ->
-                    val category = categoriesMap[info.parentId]!!
+            val internalChannels: ConcurrentHashMap<String, QGChannelImpl> = channelSequence
+                .associateByTo(ConcurrentHashMap(), { it.id }) { info ->
+                    val category = QGChannelCategoryIdImpl(this, info.parentId.ID)
                     QGChannelImpl(baseBot, info, this, category)
                 }
 
-//            this.internalChannelCategories = internalCategories
+            logger.debug(
+                "{} channels synced for Guild(id={}, name={}) (not including category channels)",
+                internalChannels.size, id, name,
+            )
+
             this.internalChannels = internalChannels
         } else {
             if (!hasChannelListApiPermission) {
@@ -604,33 +579,33 @@ internal class QGGuildImpl private constructor(
         }
     }
 
-    internal suspend fun resolveChannel(channel: EventChannel): QGChannelImpl {
+    //region internal events
+    private suspend fun resolveChannel(channel: EventChannel): QGChannelImpl {
         val channelId = channel.id
         val info = updateChannelCache(channel) ?: getChannelWithCache(channelId)
 
         if (channel.type.isCategory) {
             throw IllegalStateException("Cannot resolve category, but $channel")
-        } else {
-            val internalChannels = internalChannels
+        }
 
-            return if (internalChannels == null) {
-                // not support
+        val internalChannels = internalChannels
+
+        return if (internalChannels == null) {
+            // not support
+            val category = QGChannelCategoryIdImpl(this, info.parentId.ID)
+            QGChannelImpl(baseBot, info, this, category)
+        } else {
+            // ok
+            internalChannels.computeIfPresent(channelId) { _, curr ->
+                curr.update(info)
+            } ?: kotlin.run {
                 val category = QGChannelCategoryIdImpl(this, info.parentId.ID)
-                QGChannelImpl(baseBot, info, this, category)
-            } else {
-                // ok
-                internalChannels.computeIfPresent(channelId) { _, curr ->
-                    curr.update(info)
-                } ?: kotlin.run {
-                    val category = QGChannelCategoryIdImpl(this, info.parentId.ID)
-                    internalChannels.computeIfAbsent(channelId) { QGChannelImpl(baseBot, info, this, category) }
-                }
+                internalChannels.computeIfAbsent(channelId) { QGChannelImpl(baseBot, info, this, category) }
             }
         }
 
     }
 
-    //region internal events
     internal suspend fun emitChannelCreate(event: ChannelCreate): QGChannelImpl {
         return resolveChannel(event.data)
     }
@@ -642,11 +617,45 @@ internal class QGGuildImpl private constructor(
     internal fun emitChannelDelete(event: ChannelDelete): QGChannelImpl? {
         val channel = event.data
         val channelId = channel.id
-        internalChannelInfoCache?.remove(channelId)
+        removeChannelCache(channelId)
 
         return internalChannels?.remove(channelId)
     }
     //endregion
+
+    //region internal member events
+    private fun resolveMember(member: EventMember): QGMemberImpl {
+        // update cache
+        updateMemberCache(member)
+
+        fun newMember(): QGMemberImpl = QGMemberImpl(member, this)
+
+        val id = member.user.id
+
+        return internalMembers?.let { internalMembers ->
+            internalMembers.compute(id) { _, old ->
+                old?.update(member) ?: newMember()
+            }
+        } ?: newMember()
+    }
+
+    internal suspend fun emitMemberAdd(event: GuildMemberAdd): QGMemberImpl {
+        return resolveMember(event.data)
+    }
+
+    internal suspend fun emitMemberUpdate(event: GuildMemberUpdate): QGMemberImpl {
+        return resolveMember(event.data)
+    }
+
+    internal fun emitMemberRemove(event: GuildMemberRemove): QGMemberImpl? {
+        val member = event.data
+        val memberId = member.user.id
+        removeMemberCache(memberId)
+
+        return internalMembers?.remove(memberId)
+    }
+    //endregion
+
 
     companion object {
         private val logger =
@@ -673,3 +682,6 @@ internal class QGGuildImpl private constructor(
 }
 
 
+/*
+    你妈的逼缓存受不了了不想搞真勾吧麻烦一拳把公私域权限打爆
+ */

@@ -12,107 +12,123 @@
 
 package love.forte.simbot.component.qguild.internal
 
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
+import love.forte.simbot.component.qguild.QGBot
 import love.forte.simbot.component.qguild.QGGuild
 import love.forte.simbot.component.qguild.QGMember
 import love.forte.simbot.component.qguild.QGRole
+import love.forte.simbot.component.qguild.util.requestBy
 import love.forte.simbot.literal
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
+import love.forte.simbot.qguild.api.message.MessageSendApi
+import love.forte.simbot.qguild.api.message.direct.CreateDmsApi
+import love.forte.simbot.qguild.api.message.direct.DmsSendApi
 import love.forte.simbot.qguild.model.DirectMessageSession
-import love.forte.simbot.qguild.model.SimpleMember
 import love.forte.simbot.toTimestamp
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.effectedItemsByFlow
+import love.forte.simbot.qguild.model.Member as QGSourceMember
 
 /**
  *
  * @author ForteScarlet
  */
 internal class QGMemberImpl(
-    override val bot: QGBotImpl,
-    override val source: SimpleMember,
-    private val _guild: QGGuildImpl,
+    override val source: QGSourceMember,
+    internal val _guild: QGGuildImpl,
 ) : QGMember {
-    private val user = source.user
+
+    private val user get() = source.user
+
     override val id: ID = user.id.ID
+
+    override val bot: QGBot
+        get() = _guild.bot.bot
 
     override val joinTime: Timestamp
         get() = source.joinedAt.toTimestamp()
+
     override val nickname: String
         get() = source.nick
+
     override val avatar: String
         get() = user.avatar
+
     override val username: String
         get() = user.username
 
     override suspend fun guild(): QGGuild = _guild
 
     private val roleIdSet = source.roles.toSet()
-    private lateinit var dms: DirectMessageSession
+
     private val dmsInitLock = Mutex()
 
+    @Volatile
+    private lateinit var dms: DirectMessageSession
+
     private suspend fun getDms(): DirectMessageSession {
-        TODO()
-//        if (::dms.isInitialized) {
-//            return dms
-//        } else {
-//            dmsInitLock.withLock {
-//                if (::dms.isInitialized) {
-//                    return dms
-//                }
-//                return CreateDmsApi.create(id, _guild.id).requestBy(bot).also {
-//                    dms = it
-//                }
-//            }
-//        }
+        if (::dms.isInitialized) {
+            return dms
+        } else {
+            dmsInitLock.withLock {
+                if (::dms.isInitialized) {
+                    return dms
+                }
+                return CreateDmsApi.create(user.id, _guild.id.literal).requestBy(bot).also {
+                    dms = it
+                }
+            }
+        }
     }
 
     override val roles: Items<QGRole>
         get() {
-
+            // TODO
             return bot.effectedItemsByFlow {
                 _guild.roles.asFlow().filter { it.id.literal in roleIdSet }
             }
-
         }
 
 
     @JvmSynthetic
     override suspend fun send(message: Message): QGMessageReceipt {
-        TODO()
-//        val dms = getDms()
-//        val currentCoroutineContext = currentCoroutineContext()
+        val dms = getDms()
+        val currentCoroutineContext = currentCoroutineContext()
+
+        val builder = MessageParsers.parse(message) {
+            // TODO try auto-include msgId
+            if (this.msgId == null) {
+//              val currentEvent =
+//                  currentCoroutineContext[EventProcessingContext]?.event?.takeIf { it is QGEvent<*> } as? QGEvent<*>
 //
-//        val (messageForSend, fileImage) = MessageParsers.parse(message) {
-//            forSending {
-//                if (this.msgId == null) {
-//                    val currentEvent =
-//                        currentCoroutineContext[EventProcessingContext]?.event?.takeIf { it is QGChannelAtMessageEvent } as? QGChannelAtMessageEvent
-//
-//                    val msgId = currentEvent?.sourceEventEntity?.id
-//                    if (msgId != null) {
-//                        this.msgId = msgId
-//                    }
-//                }
-//            }
-//        }
-//
-//
-//        return DmsSendApi.create(dms.guildId, messageForSend, fileImage).requestBy(bot).asReceipt()
+//              val msgId = currentEvent?.sourceEventEntity?.id
+//              if (msgId != null) {
+//                  this.msgId = msgId
+//              }
+            }
+        }
+
+        return DmsSendApi.create(dms.guildId, builder.build()).requestBy(bot).asReceipt()
     }
 
     override suspend fun send(text: String): QGMessageReceipt {
-        TODO()
-//        val dms = getDms()
+        val dms = getDms()
+
 //        val currentEvent =
 //            currentCoroutineContext()[EventProcessingContext]?.event?.takeIf { it is QGChannelAtMessageEvent } as? QGChannelAtMessageEvent
 //        val msgId = currentEvent?.sourceEventEntity?.id
-//
-//        return DmsSendApi.create(guildId = dms.guildId, content = text, msgId = msgId).requestBy(bot).asReceipt()
+
+        val body = MessageSendApi.Body {
+            content = text // TODO 转义
+        }
+
+        return DmsSendApi.create(dms.guildId, body).requestBy(bot).asReceipt()
     }
 
 
@@ -121,7 +137,16 @@ internal class QGMemberImpl(
     }
 
     override fun toString(): String {
-        return "TencentMemberImpl(bot=$bot, source=$source, guild=$_guild)"
+        return "QGMemberImpl(id=$id, nickname=$nickname, username=$username, source=$source, bot=$bot, guild=$_guild)"
+    }
+
+    internal fun update(member: QGSourceMember): QGMemberImpl {
+        return QGMemberImpl(source, _guild).also {
+            val initDms = if (::dms.isInitialized) dms else null
+            if (initDms != null) {
+                it.dms = initDms
+            }
+        }
     }
 }
 

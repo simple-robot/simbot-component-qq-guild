@@ -251,7 +251,7 @@ internal class BotImpl(
         }
 
         override fun toString(): String {
-            return "TencentBot.Client(shard=$shard, session=$readyData, seq=$seq)"
+            return "ClientImpl(shard=$shard, session=$readyData, seq=$seq)"
         }
     }
 

@@ -28,8 +28,10 @@ internal object ContentParser : SendingMessageParser {
         builder: MessageSendApi.Body.Builder
     ) {
         if (element is PlainText<*>) {
-            builder.contentAppend(element.text)
+            // TODO 转义
+            builder.appendContent(element.text)
         }
+        // TODO ContentText
     }
 }
 
@@ -37,20 +39,20 @@ internal object ContentParser : SendingMessageParser {
 internal object TencentMessageParser : ReceivingMessageParser {
     // private val mentionRegex = Regex("<@!(?<uid>\\d+)>|<#!(?<cid>\\d+)>")
 
-    override fun invoke(tencentMessage: Message, messages: Messages): Messages {
+    override fun invoke(qgMessage: Message, messages: Messages): Messages {
         val messageList = mutableListOf<SimbotMessage.Element<*>>()
 
         // at and text
-        val content = tencentMessage.content
+        val content = qgMessage.content
 
         // 与 plainText 属性不同，此处不对 content 做任何操作。
         messageList.add(Text { content })
 
-        if (tencentMessage.mentionEveryone) {
+        if (qgMessage.mentionEveryone) {
             messageList.add(AtAll)
         }
 
-        tencentMessage.mentions.takeIf { it.isNotEmpty() }?.also {
+        qgMessage.mentions.takeIf { it.isNotEmpty() }?.also {
             messageList.addAll(it.map { u -> At(u.id.ID) })
         }
 
@@ -75,11 +77,11 @@ internal object TencentMessageParser : ReceivingMessageParser {
         //     }
         // }
 
-        tencentMessage.ark?.also {
+        qgMessage.ark?.also {
             messageList.add(it.toMessage())
         }
 
-        tencentMessage.attachments.takeIf { it.isNotEmpty() }
+        qgMessage.attachments.takeIf { it.isNotEmpty() }
             ?.map(Message.Attachment::toMessage)
             ?.also {
                 messageList.addAll(it)
