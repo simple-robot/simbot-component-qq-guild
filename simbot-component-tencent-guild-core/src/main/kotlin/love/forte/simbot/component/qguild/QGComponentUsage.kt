@@ -104,6 +104,16 @@ public fun <A : Application> ApplicationBuilder<A>.useQQGuild(builder: QQGuildUs
 }
 
 /**
+ * 使用 [QGBotManager]
+ *
+ * @throws NoSuchElementException 如果不存在
+ */
+public inline fun <A : Application> A.qqGuildBots(block: QGBotManager.() -> Unit) {
+    botManagers.firstQQGuildBotManager().also(block)
+}
+
+
+/**
  * 为 [QQGuildUsageBuilder] 中的函数染色。
  */
 @DslMarker

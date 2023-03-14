@@ -21,7 +21,7 @@ import kotlinx.serialization.Serializable
  *
  */
 @Suppress("MemberVisibilityCanBePrivate")
-public class TencentApiException : IllegalStateException {
+public class QQGuildApiException : IllegalStateException {
     public val info: ErrInfo?
     public val value: Int
     public val description: String
@@ -33,7 +33,7 @@ public class TencentApiException : IllegalStateException {
     }
     
     public constructor(
-        info: ErrInfo,
+        info: ErrInfo?,
         value: Int,
         description: String,
     ) : super("$value: $description; response info: $info") {
@@ -45,23 +45,38 @@ public class TencentApiException : IllegalStateException {
 }
 
 /**
- * 判断 [TencentApiException.value] 的值是否为 `404`
+ * @suppress
  */
-public inline val TencentApiException.isNotFound: Boolean get() = value == 404
+@Suppress("NOTHING_TO_INLINE")
+public inline fun QQGuildApiException.copyCurrent(): QQGuildApiException = QQGuildApiException(
+    info, value, description
+).also {
+    initCause(it)
+}
 
 /**
- * 如果 [TencentApiException.isNotFound] 为 `true`, 得到null，否则抛出此异常
+ * 判断 [QQGuildApiException.value] 的值是否为 `404`
  */
-public inline fun <reified T> TencentApiException.ifNotFoundThenNull(): T? = if (isNotFound) null else throw this
+public inline val QQGuildApiException.isNotFound: Boolean get() = value == 404
 
 /**
- * 提供 [ErrInfo] 和 [HttpStatusCode] ，构建一个 [TencentApiException] 并抛出。
+ * 判断 [QQGuildApiException.value] 的值是否为 `401`
+ */
+public inline val QQGuildApiException.isUnauthorized: Boolean get() = value == 401
+
+/**
+ * 如果 [QQGuildApiException.isNotFound] 为 `true`, 得到null，否则抛出此异常
+ */
+public inline fun <reified T> QQGuildApiException.ifNotFoundThenNull(throwCopy: Boolean = true): T? = if (isNotFound) null else if (throwCopy) throw this.copyCurrent() else throw this
+
+/**
+ * 提供 [ErrInfo] 和 [HttpStatusCode] ，构建一个 [QQGuildApiException] 并抛出。
  *
- * @throws TencentApiException 由 [ErrInfo] 和 [HttpStatusCode] 构建而来的异常
+ * @throws QQGuildApiException 由 [ErrInfo] 和 [HttpStatusCode] 构建而来的异常
  */
 public inline fun ErrInfo.err(codeBlock: () -> HttpStatusCode): Nothing {
     val code = codeBlock()
-    throw TencentApiException(this, code.value, code.description)
+    throw QQGuildApiException(this, code.value, code.description)
 }
 
 /**
@@ -73,35 +88,35 @@ public inline fun ErrInfo.err(codeBlock: () -> HttpStatusCode): Nothing {
 public data class ErrInfo(val code: Int, val message: String)
 
 /**
- * 提供一个 [CloseReason]，构建为一个 [TencentApiException] 并抛出。
+ * 提供一个 [CloseReason]，构建为一个 [QQGuildApiException] 并抛出。
  *
- * @throws TencentApiException 由 [CloseReason] 构建而来的异常
+ * @throws QQGuildApiException 由 [CloseReason] 构建而来的异常
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline fun CloseReason?.err(e: Throwable? = null): Nothing {
     if (this == null) {
         if (e != null) {
-            throw TencentApiException(-1, "No reason").initCause(e)
+            throw QQGuildApiException(-1, "No reason").initCause(e)
         } else {
-            throw TencentApiException(-1, "No reason")
+            throw QQGuildApiException(-1, "No reason")
         }
     }
     val known = knownReason
     val message = message
     if (known != null) {
         if (e != null) {
-            throw TencentApiException(
+            throw QQGuildApiException(
                 known.code.toInt(),
                 "${known.name}: $message"
             ).initCause(e)
         } else {
-            throw TencentApiException(known.code.toInt(), "${known.name}: $message")
+            throw QQGuildApiException(known.code.toInt(), "${known.name}: $message")
         }
     } else {
         if (e != null) {
-            throw TencentApiException(code.toInt(), message).initCause(e)
+            throw QQGuildApiException(code.toInt(), message).initCause(e)
         } else {
-            throw TencentApiException(code.toInt(), message)
+            throw QQGuildApiException(code.toInt(), message)
         }
     }
 }

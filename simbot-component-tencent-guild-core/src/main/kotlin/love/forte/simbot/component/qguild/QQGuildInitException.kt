@@ -10,32 +10,18 @@
  * You should have received a copy of the GNU Lesser General Public License along with simbot-component-tencent-guild. If not, see <https://www.gnu.org/licenses/>.
  */
 
-plugins {
-    `simbot-tcg-suspend-transform-configure`
-    id("simbot-tencent-guild.module-conventions")
-    id("simbot-tencent-guild.maven-publish")
-    kotlin("plugin.serialization")
+package love.forte.simbot.component.qguild
+
+import love.forte.simbot.SimbotRuntimeException
+
+
+/**
+ * 用于当 [QGGuild] 或 [QGBot] 等类型实现类内部初始化信息过程中出现的异常。
+ * @author ForteScarlet
+ */
+public open class QQGuildInitException : SimbotRuntimeException {
+    public constructor() : super()
+    public constructor(message: String?) : super(message)
+    public constructor(message: String?, cause: Throwable?) : super(message, cause)
+    public constructor(cause: Throwable?) : super(cause)
 }
-
-
-dependencies {
-    api(project(":simbot-component-tencent-guild-stdlib")) {
-        exclude(SIMBOT_GROUP, "simbot-logger-slf4j-impl")
-    }
-
-    implementation(simbotCore)
-    api(libs.ktor.client.core)
-    api(libs.ktor.client.cio)
-    api(libs.ktor.client.ws)
-    api(libs.ktor.client.contentNegotiation)
-    api(libs.ktor.serialization.kotlinxJson)
-    api(libs.kotlinx.serialization.json)
-
-    compileOnly(libs.kotlinx.serialization.properties)
-    compileOnly(libs.charleskorn.kaml)
-
-    testImplementation(libs.charleskorn.kaml)
-    testImplementation("love.forte.simbot:simbot-logger-slf4j-impl:3.0.0-RC.3")
-
-}
-

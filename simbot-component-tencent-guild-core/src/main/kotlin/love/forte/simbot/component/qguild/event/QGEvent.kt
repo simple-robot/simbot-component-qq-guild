@@ -48,6 +48,11 @@ public abstract class QGEvent<T : Any> : Event, BotContainer {
      */
     public abstract val sourceEventEntity: T
 
+    /**
+     * 接收到的事件的原始JSON字符串
+     */
+    public abstract val eventRaw: String
+
     abstract override val key: Event.Key<out QGEvent<*>>
 
     public companion object : BaseEventKey<QGEvent<*>>("qg.event", Event) {

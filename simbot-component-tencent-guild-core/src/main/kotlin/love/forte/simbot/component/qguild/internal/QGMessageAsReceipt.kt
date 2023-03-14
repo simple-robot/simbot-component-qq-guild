@@ -13,39 +13,41 @@
 package love.forte.simbot.component.qguild.internal
 
 import love.forte.simbot.ID
-import love.forte.simbot.component.qguild.message.TencentReceiveMessageContent
-import love.forte.simbot.message.Messages
+import love.forte.simbot.message.MessageReceipt
+import love.forte.simbot.message.SingleMessageReceipt
 import love.forte.simbot.qguild.model.Message
 
 /**
- *
+ * QQ频道中消息发送后的回执。
  * @author ForteScarlet
  */
+public interface QGMessageReceipt : MessageReceipt {
+    /**
+     * QQ频道消息发送api发送消息后得到的回执，也就是消息对象。
+     */
+    public val messageResult: Message
 
-/**
- *
- * @author ForteScarlet
- */
-internal class TencentReceiveMessageContentImpl(sourceMessage: Message) : TencentReceiveMessageContent() {
+    /**
+     * 是否发送成功。
+     * 能得到此类型即说明消息已发送成功，始终为 `true`。
+     */
+    override val isSuccess: Boolean
+        get() = true
 
-    override val messageId: ID = sourceMessage.id
 
-    override val messages: Messages by lazy(LazyThreadSafetyMode.NONE) { MessageParsers.parse(sourceMessage) }
-    
+    /**
+     * 消息暂时不支持撤回。
+     */
+    override suspend fun delete(): Boolean = false
+}
 
-    override val plainText: String by lazy(LazyThreadSafetyMode.NONE) {
-        var content = sourceMessage.content
 
-        for (mention in sourceMessage.mentions) {
-            val target = "<@!${mention.id}>"
-            content = content.replaceFirst(target, "")
-        }
 
-        if (sourceMessage.mentionEveryone) {
-            content = content.replaceFirst("@everyone", "")
-        }
+private class QGMessageAsReceipt(override val messageResult: Message) : QGMessageReceipt, SingleMessageReceipt() {
+    override val id: ID = messageResult.id.ID
 
-        content
-    }
 
 }
+
+internal fun Message.asReceipt(): QGMessageReceipt = QGMessageAsReceipt(this)
+

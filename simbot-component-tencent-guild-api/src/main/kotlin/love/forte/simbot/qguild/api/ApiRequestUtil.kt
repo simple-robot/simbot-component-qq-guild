@@ -24,7 +24,7 @@ import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.utils.runInNoScopeBlocking
 import java.util.function.Consumer
 
-internal val logger = LoggerFactory.getLogger("love.forte.simbot.tencentguild.api.request")
+internal val logger = LoggerFactory.getLogger("love.forte.simbot.qguild.api.request")
 
 /**
  *
@@ -35,7 +35,7 @@ internal val logger = LoggerFactory.getLogger("love.forte.simbot.tencentguild.ap
  * @param token 提供一个 token.
  * @param decoder 如果有，提供一个decoder用于通过 [QQGuildApi.resultDeserializer] 进行反序列化，而不是通过 [client] 进行。
  *
- * @throws love.forte.simbot.qguild.TencentApiException 如果响应码不在 200..300 范围内。
+ * @throws love.forte.simbot.qguild.QQGuildApiException 如果响应码不在 200..300 范围内。
  */
 @JvmSynthetic
 public suspend fun <R> QQGuildApi<R>.request(

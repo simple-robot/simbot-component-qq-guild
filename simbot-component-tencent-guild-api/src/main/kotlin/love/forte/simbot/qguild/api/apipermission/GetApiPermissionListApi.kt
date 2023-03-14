@@ -81,6 +81,18 @@ public class ApiPermissions(public val apis: List<ApiPermission>) : Iterable<Api
      */
     public operator fun get(description: ApiDescription): List<ApiPermission> =
         apisMap[description.path] ?: emptyList()
+
+    override fun toString(): String {
+        return "ApiPermissions($apis)"
+    }
+
+    public companion object {
+        /**
+         * 权限列表为空的 [ApiPermissions]
+         */
+        @JvmField
+        public val EMPTY: ApiPermissions = ApiPermissions(emptyList())
+    }
 }
 
 /**
@@ -91,3 +103,4 @@ public class ApiPermissions(public val apis: List<ApiPermission>) : Iterable<Api
  */
 public infix fun ApiPermissions.hasAuth(description: ApiDescription): Boolean =
     find(description)?.isAuthorized ?: false
+

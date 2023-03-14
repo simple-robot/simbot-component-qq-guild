@@ -37,83 +37,95 @@ internal fun QGBotImpl.registerEventProcessor() {
     }
 
     val bot = this
-    source.registerPreProcessor {
+    source.registerPreProcessor { raw ->
         when (val event = this) {
             //region Guild相关
             is GuildCreate -> {
                 val guild = emitGuildCreate(event)
                 pushEvent(QGGuildCreateEvent) {
-                    QGGuildCreateEventImpl(event.data, bot, guild)
+                    QGGuildCreateEventImpl(raw, event.data, bot, guild)
                 }
             }
 
             is GuildUpdate -> {
                 val guild = emitGuildUpdate(event)
                 pushEvent(QGGuildUpdateEvent) {
-                    QGGuildUpdateEventImpl(event.data, bot, guild)
+                    QGGuildUpdateEventImpl(raw, event.data, bot, guild)
                 }
             }
 
             is GuildDelete -> {
                 val guild = emitGuildDelete(event).also { it?.cancel() }
                 pushEvent(QGGuildDeleteEvent) {
-                    QGGuildDeleteEventImpl(event.data, bot, guild)
+                    QGGuildDeleteEventImpl(raw, event.data, bot, guild)
                 }
             }
             //endregion
 
             //region Channel相关
             is ChannelCreate -> {
+                if (event.data.type.isCategory) {
+                    bot.logger.warn(
+                        "Received category create event [raw={}]. report this log to issues https://github.com/simple-robot/simbot-component-tencent-guild/issues/new/choose",
+                        raw
+                    )
+                    return@registerPreProcessor
+                }
+
                 val guild: QGGuildImpl = getOrComputeGuild(event.data.guildId)
-                val clOrCa = guild.emitChannelCreate(event)
-                if (clOrCa.isChannel) {
-                    val channel = clOrCa.channel
-                    pushEvent(QGChannelCreateEvent) {
-                        QGChannelCreateEventImpl(event.data, bot, channel)
-                    }
-                } else if (clOrCa.isCategory) {
-                    TODO()
+                val channel = guild.emitChannelCreate(event)
+                pushEvent(QGChannelCreateEvent) {
+                    QGChannelCreateEventImpl(raw, event.data, bot, channel)
                 }
 
             }
 
             is ChannelUpdate -> {
+                if (event.data.type.isCategory) {
+                    bot.logger.warn(
+                        "Received category update event [raw={}]. report this log to issues https://github.com/simple-robot/simbot-component-tencent-guild/issues/new/choose",
+                        raw
+                    )
+                    return@registerPreProcessor
+                }
                 val guild: QGGuildImpl = getOrComputeGuild(event.data.guildId)
-                val clOrCa = guild.emitChannelUpdate(event)
-                if (clOrCa.isChannel) {
-                    val channel = clOrCa.channel
-                    pushEvent(QGChannelUpdateEvent) {
-                        QGChannelUpdateEventImpl(event.data, bot, channel)
-                    }
-                } else if (clOrCa.isCategory) {
-                    TODO()
+                val channel = guild.emitChannelUpdate(event)
+                pushEvent(QGChannelUpdateEvent) {
+                    QGChannelUpdateEventImpl(raw, event.data, bot, channel)
                 }
             }
+
             is ChannelDelete -> {
+                if (event.data.type.isCategory) {
+                    bot.logger.warn(
+                        "Received category delete event [raw={}]. report this log to issues https://github.com/simple-robot/simbot-component-tencent-guild/issues/new/choose",
+                        raw
+                    )
+                }
+
                 val guild: QGGuildImpl = getOrComputeGuild(event.data.guildId)
                 guild.emitChannelDelete(event)
 
-                if (event.data.type.isCategory) {
-                    TODO()
-                } else {
-                    pushEvent(QGChannelDeleteEvent) {
-                        QGChannelDeleteEventImpl(event.data, bot, guild)
-                    }
+                pushEvent(QGChannelDeleteEvent) {
+                    QGChannelDeleteEventImpl(raw, event.data, bot, guild)
                 }
             }
             //endregion
 
             //region Member相关
             is GuildMemberAdd -> {
-
+                val guild: QGGuildImpl = getOrComputeGuild(event.data.guildId)
+                println("GuildMemberAdd: $this, guild=$guild")
             }
 
             is GuildMemberUpdate -> {
-
+                val guild: QGGuildImpl = getOrComputeGuild(event.data.guildId)
+                println("GuildMemberUpdate: $this, guild=$guild")
             }
 
             is GuildMemberRemove -> {
-
+                val guild: QGGuildImpl = getOrComputeGuild(event.data.guildId)
+                println("GuildMemberRemove: $this, guild=$guild")
             }
             //endregion
 
@@ -125,11 +137,10 @@ internal fun QGBotImpl.registerEventProcessor() {
 
             // unsupported
             else -> {
-                pushEvent(QGUnsupportedEvent) { QGUnsupportedEventImpl(bot, event) }
+                pushEvent(QGUnsupportedEvent) { QGUnsupportedEventImpl(bot, event, raw) }
             }
         }
     }
-
 
 
 }

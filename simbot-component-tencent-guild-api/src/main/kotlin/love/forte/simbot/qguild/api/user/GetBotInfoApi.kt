@@ -13,6 +13,8 @@
 package love.forte.simbot.qguild.api.user
 
 import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
 import love.forte.simbot.qguild.api.ApiDescription
 import love.forte.simbot.qguild.api.GetQQGuildApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
@@ -29,6 +31,8 @@ import love.forte.simbot.qguild.model.User
  *
  * 由于 [GetBotInfoApi] 本身为 `object` 类型, 因此 [ApiDescription] 由内部对象 [Description] 提供而不是伴生对象。
  *
+ * [GetBotInfoApi] 得到的 [User] 中，[User.isBot] 始终为 `true`。
+ *
  * @author ForteScarlet
  */
 public object GetBotInfoApi : GetQQGuildApi<User>() {
@@ -38,9 +42,18 @@ public object GetBotInfoApi : GetQQGuildApi<User>() {
     public object Description : SimpleGetApiDescription("/users/@me")
 
     private val pathSec = arrayOf("users", "@me")
-    override val resultDeserializer: DeserializationStrategy<User> = User.serializer()
+    override val resultDeserializer: DeserializationStrategy<User> = BotInfoDeserializationStrategy
 
     override fun route(builder: RouteInfoBuilder) {
         builder.apiPath = pathSec
+    }
+}
+
+private object BotInfoDeserializationStrategy : DeserializationStrategy<User> {
+    private val serializer = User.serializer()
+    override val descriptor: SerialDescriptor = serializer.descriptor
+
+    override fun deserialize(decoder: Decoder): User {
+        return serializer.deserialize(decoder).copy(isBot = true)
     }
 }

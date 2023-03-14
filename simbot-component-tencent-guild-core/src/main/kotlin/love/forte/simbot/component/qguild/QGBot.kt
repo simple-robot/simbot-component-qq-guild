@@ -26,9 +26,17 @@ import love.forte.simbot.message.Image
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.Items.Companion.emptyItems
 import love.forte.simbot.qguild.Bot as QGSourceBot
+import love.forte.simbot.qguild.model.User as QGSourceUser
 
 /**
- * 一个tencent频道BOT的接口实例。
+ * 一个 [QQ频道Bot][QGSourceBot] 的 simbot组件实现接口，
+ * 是一个具有功能的 QQ频道组件Bot。
+ *
+ * ### AppID 与 用户ID
+ * [QGBot] 的 [id] 是用于连接服务器的 `appId` 而并非系统用户ID。
+ * 如果希望获取bot的 **用户ID**, 至少执行过一次 [QGBot.start] 后通过 [userId] 获取，
+ * 或者通过 [Bot.me] 实时查询。
+ *
  * @author ForteScarlet
  */
 public interface QGBot : Bot {
@@ -44,10 +52,14 @@ public interface QGBot : Bot {
         get() = this
 
     /**
-     * 在 stdlib 模块下的原始Bot类型。
+     * 在QQ频道标准库中的原始Bot类型。
      */
     public val source: love.forte.simbot.qguild.Bot
 
+    /**
+     * 使用 [source]
+     * @suppress
+     */
     @Deprecated("Use 'source'", ReplaceWith("source"))
     public val sourceBot: love.forte.simbot.qguild.Bot get() = source
 
@@ -55,7 +67,8 @@ public interface QGBot : Bot {
      * 当前bot的 **appId** 。
      *
      * 如果希望获取当前bot的**用户**ID，
-     * 使用 [asUser]
+     * 至少执行一次 [start] 后使用 [userId]，
+     * 或者通过 []
      */
     override val id: ID
         get() = source.ticket.appId.ID
@@ -161,6 +174,16 @@ public interface QGBot : Bot {
     @Deprecated("Group related APIs are not supported", ReplaceWith("null"))
     @JvmSynthetic
     override suspend fun group(id: ID): Group? = null
+
+    /**
+     * 通过API实时查询当前bot对应的用户信息。
+     *
+     * @return API得到的用户信息结果
+     */
+    @JvmAsync(asProperty = true)
+    @JvmBlocking(asProperty = true, suffix = "")
+    public suspend fun me(): QGSourceUser
+
 }
 
 

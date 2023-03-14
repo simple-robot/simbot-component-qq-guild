@@ -14,35 +14,61 @@ package love.forte.simbot.component.qguild.internal
 
 import love.forte.simbot.ID
 import love.forte.simbot.component.qguild.QGChannelCategory
+import love.forte.simbot.component.qguild.QGChannelCategoryId
 import love.forte.simbot.component.qguild.QGGuild
-import love.forte.simbot.component.qguild.QGGuildBot
-import love.forte.simbot.qguild.model.ChannelSubType
-import love.forte.simbot.qguild.model.ChannelType
 import love.forte.simbot.qguild.model.Channel as QGuildChannel
+
+
+internal open class QGChannelCategoryIdImpl(
+    private val _guild: QGGuildImpl,
+    override val id: ID,
+) : QGChannelCategoryId {
+    override val bot: QGGuildBotImpl
+        get() = _guild.bot
+
+    override suspend fun category(): QGChannelCategory {
+        return _guild.category(id)
+            ?: throw NoSuchElementException("Category(id=$id)")
+    }
+
+    override suspend fun guild(): QGGuild = _guild
+
+    override fun toString(): String {
+        return "QGChannelCategoryIdImpl(id=$id, name=$name, guild=$_guild)"
+    }
+}
+
 
 /**
  *
  * @author ForteScarlet
  */
-internal class QGChannelCategoryImpl(
-    private val baseBot: QGBotImpl,
+internal class QGChannelCategoryImpl private constructor(
     internal val source: QGuildChannel,
     private val _guild: QGGuildImpl,
-) : QGChannelCategory {
-    override val bot: QGGuildBot get() = _guild.bot
-    override val id: ID = source.id.ID
-    override val guildId: ID = source.guildId.ID
-    override val ownerId: ID = source.ownerId.ID
+    override val id: ID,
+    override val guildId: ID,
+    override val ownerId: ID,
+) : QGChannelCategoryIdImpl(_guild, id), QGChannelCategory {
+    internal constructor(
+        source: QGuildChannel,
+        guild: QGGuildImpl,
+    ) : this(
+        source, guild,
+        source.id.ID,
+        source.guildId.ID,
+        source.ownerId.ID,
+    )
+
     override val name: String get() = source.name
-    override val channelType: ChannelType get() = source.type
-    override val channelSubType: ChannelSubType get() = source.subType
     override val position: Int get() = source.position
-    override val parentId: String get() = source.parentId
 
-    override suspend fun guild(): QGGuild = _guild
+    override fun toString(): String {
+        return "QGChannelCategoryImpl(id=$id, name=$name, source=$source, guild=$_guild)"
+    }
 
+//    internal fun update(newChannel: QGuildChannel): QGChannelCategoryImpl =
+//        QGChannelCategoryImpl(baseBot, newChannel, _guild, id, guildId, ownerId)
 
-    internal fun update(channel: QGuildChannel): QGChannelCategoryImpl =
-        QGChannelCategoryImpl(baseBot, channel, _guild)
 }
 

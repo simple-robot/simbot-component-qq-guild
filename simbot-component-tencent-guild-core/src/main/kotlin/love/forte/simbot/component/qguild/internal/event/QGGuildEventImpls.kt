@@ -26,6 +26,7 @@ import kotlin.random.Random
 import kotlin.random.nextUInt
 
 internal class QGGuildCreateEventImpl(
+    override val eventRaw: String,
     override val sourceEventEntity: EventGuild,
     override val bot: QGBotImpl,
     private val _guild: QGGuildImpl,
@@ -38,6 +39,7 @@ internal class QGGuildCreateEventImpl(
 
 
 internal class QGGuildUpdateEventImpl(
+    override val eventRaw: String,
     override val sourceEventEntity: EventGuild,
     override val bot: QGBotImpl,
     private val _guild: QGGuildImpl,
@@ -50,6 +52,7 @@ internal class QGGuildUpdateEventImpl(
 
 
 internal class QGGuildDeleteEventImpl(
+    override val eventRaw: String,
     override val sourceEventEntity: EventGuild,
     override val bot: QGBotImpl,
     private val _guild: QGGuildImpl?,

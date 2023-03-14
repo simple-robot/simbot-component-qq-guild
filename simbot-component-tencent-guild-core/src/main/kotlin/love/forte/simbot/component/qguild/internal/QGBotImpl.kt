@@ -16,10 +16,8 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import love.forte.simbot.ID
-import love.forte.simbot.component.qguild.QGBot
-import love.forte.simbot.component.qguild.QGBotManager
-import love.forte.simbot.component.qguild.QGGuild
-import love.forte.simbot.component.qguild.QQGuildComponent
+import love.forte.simbot.component.qguild.*
+import love.forte.simbot.component.qguild.config.QGBotComponentConfiguration
 import love.forte.simbot.component.qguild.event.QGBotStartedEvent
 import love.forte.simbot.component.qguild.internal.QGGuildImpl.Companion.qgGuild
 import love.forte.simbot.component.qguild.internal.QGGuildImpl.Companion.qgGuildWithoutInit
@@ -28,12 +26,14 @@ import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.literal
 import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.qguild.Bot
+import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.api.user.GetBotGuildListApi
 import love.forte.simbot.qguild.event.GuildCreate
 import love.forte.simbot.qguild.event.GuildDelete
 import love.forte.simbot.qguild.event.GuildUpdate
 import love.forte.simbot.qguild.model.Guild
 import love.forte.simbot.qguild.model.SimpleGuild
+import love.forte.simbot.qguild.model.User
 import love.forte.simbot.qguild.requestBy
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.Items.Companion.asItems
@@ -52,12 +52,12 @@ internal class QGBotImpl(
     override val manager: QGBotManager,
     override val eventProcessor: EventProcessor,
     override val component: QQGuildComponent,
+    private val configuration: QGBotComponentConfiguration
 ) : QGBot {
-
     override val logger =
-        LoggerFactory.getLogger("love.forte.simbot.component.tencentguild.bot.${source.ticket.secret}")
+        LoggerFactory.getLogger("love.forte.simbot.component.qguild.bot.${source.ticket.secret}")
 
-    private val job: CompletableJob
+    internal val job: CompletableJob
     override val coroutineContext: CoroutineContext
 //    private val statusFlowCoroutineContext: CoroutineContext
 
@@ -65,16 +65,6 @@ internal class QGBotImpl(
     private var internalGuilds = ConcurrentHashMap<String, QGGuildImpl>()
 
     internal fun getInternalGuild(id: String): QGGuildImpl? = internalGuilds[id]
-
-//    /**
-//     * 从缓存中获取指定 Guild，如果不存在，根据ID查询并记录。
-//     *
-//     */
-//    internal suspend fun computeIfAbsentGuild(id: String): QGGuildImpl {
-//        internalGuilds.computeIfAbsent(id) {
-//            QGGuildImpl.qgGuildWithoutInit(this, )
-//        }
-//    }
 
     init {
         val context = source.coroutineContext
@@ -121,13 +111,15 @@ internal class QGBotImpl(
 
     private val startLock = Mutex()
 
+    override suspend fun me(): User = source.me()
+
     /**
      * 启动当前bot。
      */
     override suspend fun start(): Boolean = startLock.withLock {
         source.start().also {
             // just set everytime.
-            botSelf = source.me().also { me ->
+            botSelf = me().also { me ->
                 logger.debug("bot own information: {}", me)
             }
 
@@ -177,6 +169,11 @@ internal class QGBotImpl(
 
 
     private suspend fun initGuildListData() {
+        val guildParallel = configuration.initConfig.parallel.guild
+        require(guildParallel >= 0) {
+            "Guild parallel must >= 0, but $guildParallel"
+        }
+
         val internalGuilds = ConcurrentHashMap<String, QGGuildImpl>()
         var lastId: String? = null
         var times = 1
@@ -205,15 +202,76 @@ internal class QGBotImpl(
         logger.info("{} pieces of guild information are synchronized", guilds.size)
         logger.info("Begin to initialize guild information asynchronously...")
 
-        // try init all guilds.
-        coroutineScope {
-            for (info in guilds.values) {
-                launch {
-                    val guildImpl = qgGuild(this@QGBotImpl, info)
-                    internalGuilds[info.id] = guildImpl
+
+        suspend fun syncGuild(info: SimpleGuild) {
+            try {
+                val guildImpl = qgGuild(this@QGBotImpl, info)
+                internalGuilds[info.id] = guildImpl
+            } catch (ex: RuntimeException) {
+                if (ex is QQGuildApiException || ex is QQGuildInitException) {
+                    logger.warn(
+                        "Guild(id={}, name={}) cannot be initialized because '{}'. Guild(id={}, name={}) will be skipped",
+                        info.id,
+                        info.name,
+                        ex.localizedMessage,
+                        info.id,
+                        info.name,
+                    )
+                    logger.debug(
+                        "Guild(id={}, name={}) cannot be initialized because '{}'. Guild(id={}, name={}) will be skipped",
+                        info.id,
+                        info.name,
+                        ex.localizedMessage,
+                        info.id,
+                        info.name,
+                        ex
+                    )
+                } else {
+                    throw ex
                 }
             }
         }
+
+        when (guildParallel) {
+            0 -> coroutineScope {
+                for (info in guilds.values) {
+                    launch {
+                        syncGuild(info)
+                    }
+                }
+            }
+
+            1 -> {
+                for (info in guilds.values) {
+                    syncGuild(info)
+                }
+            }
+
+            else -> {
+                @OptIn(ExperimentalStdlibApi::class, ExperimentalCoroutinesApi::class)
+                val dispatcher =
+                    (coroutineContext[CoroutineDispatcher] ?: Dispatchers.Default).limitedParallelism(guildParallel)
+                withContext(dispatcher) {
+                    coroutineScope {
+                        for (info in guilds.values) {
+                            launch {
+                                syncGuild(info)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+//        // try init all guilds.
+//        coroutineScope {
+//            for (info in guilds.values) {
+//                launch {
+//                    val guildImpl = qgGuild(this@QGBotImpl, info)
+//                    internalGuilds[info.id] = guildImpl
+//                }
+//            }
+//        }
 
         // cancel all old guilds
         this.internalGuilds.values.forEach {
@@ -248,5 +306,12 @@ internal class QGBotImpl(
 
     //endregion
 
+
+
+
+    override fun toString(): String {
+        val uid = if (::botSelf.isInitialized) botSelf.id else "(NOT INIT)"
+        return "QGBotImpl(appId=$id, userId=$uid, isActive=$isActive)"
+    }
 }
 

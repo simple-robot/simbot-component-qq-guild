@@ -19,13 +19,14 @@ import love.forte.simbot.component.qguild.QGBot
 import love.forte.simbot.component.qguild.QGBotManager
 import love.forte.simbot.component.qguild.QGBotManagerConfiguration
 import love.forte.simbot.component.qguild.QQGuildComponent
+import love.forte.simbot.component.qguild.config.QGBotComponentConfiguration
 import love.forte.simbot.component.qguild.event.QGBotRegisteredEvent
 import love.forte.simbot.component.qguild.internal.event.QGBotRegisteredEventImpl
+import love.forte.simbot.component.qguild.util.registerRootJob
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.event.pushIfProcessable
 import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.qguild.BotFactory
-import love.forte.simbot.qguild.ConfigurableBotConfiguration
 import org.slf4j.Logger
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -46,14 +47,14 @@ internal class QGBotManagerImpl(
         private val LOGGER = LoggerFactory.getLogger(QGBotManagerImpl::class)
     }
 
-    private val completableJob: CompletableJob
+    private val job: CompletableJob
     override val coroutineContext: CoroutineContext
 
     init {
         val parentContext = configuration.parentCoroutineContext
         val parentJob = parentContext[Job]
-        completableJob = SupervisorJob(parentJob)
-        coroutineContext = parentContext.minusKey(Job) + completableJob
+        job = SupervisorJob(parentJob)
+        coroutineContext = parentContext + job
     }
 
     override val logger: Logger
@@ -65,25 +66,25 @@ internal class QGBotManagerImpl(
     private val lock = ReentrantReadWriteLock()
 
     override val isActive: Boolean
-        get() = completableJob.isActive
+        get() = job.isActive
 
     override val isCancelled: Boolean
-        get() = completableJob.isCancelled
+        get() = job.isCompleted
 
     override val isStarted: Boolean
-        get() = completableJob.isActive
+        get() = job.isActive || job.isCompleted
 
     override fun invokeOnCompletion(handler: CompletionHandler) {
-        completableJob.invokeOnCompletion(handler)
+        job.invokeOnCompletion(handler)
     }
 
     override suspend fun join() {
-        completableJob.join()
+        job.join()
     }
 
     // nothing to start
     override suspend fun start(): Boolean {
-        return !completableJob.isCompleted
+        return !job.isCompleted
     }
 
     private var botMap = ConcurrentHashMap<String, QGBotImpl>()
@@ -91,7 +92,7 @@ internal class QGBotManagerImpl(
 
     override suspend fun doCancel(reason: Throwable?): Boolean {
         lock.write {
-            val cancelled = completableJob.isCancelled
+            val cancelled = job.isCancelled
             for (bot in botMap.values.toList()) {
                 bot.cancel(reason)
             }
@@ -100,18 +101,18 @@ internal class QGBotManagerImpl(
             }
 
             if (reason != null) {
-                completableJob.cancel(reason.localizedMessage, reason)
+                job.cancel(reason.localizedMessage, reason)
             } else {
-                completableJob.cancel()
+                job.cancel()
             }
-            completableJob.join()
+            job.join()
             return true
         }
     }
 
     override fun get(id: ID): QGBot? {
         lock.read {
-            if (completableJob.isCancelled) throw IllegalStateException("This manager has already cancelled.")
+            if (job.isCancelled) throw IllegalStateException("This manager has already cancelled.")
 
             return botMap[id.toString()]
         }
@@ -126,15 +127,20 @@ internal class QGBotManagerImpl(
         appId: String,
         appKey: String,
         token: String,
-        block: ConfigurableBotConfiguration.() -> Unit,
+        block: QGBotComponentConfiguration.() -> Unit,
     ): QGBot {
         val configure = configuration.botConfigure
         lock.write {
+            val config = QGBotComponentConfiguration().also(block)
             val sourceBot = BotFactory.create(appId, appKey, token) {
                 configure(appId, appKey, token)
-                block()
-                if (coroutineContext[Job] == null) {
-                    coroutineContext += completableJob
+                config.botConfigure.invoke(this)
+
+                val customJob = coroutineContext[Job]
+                if (customJob == null) {
+                    coroutineContext += job
+                } else {
+                    customJob.registerRootJob(job)
                 }
             }
             // check botInfo
@@ -142,10 +148,10 @@ internal class QGBotManagerImpl(
             return botMap.compute(appId) { key, old ->
                 if (old != null) throw BotAlreadyRegisteredException(key)
 
-                QGBotImpl(sourceBot, this, eventProcessor, component).apply {
-                    coroutineContext[Job]!!.invokeOnCompletion {
+                QGBotImpl(sourceBot, this, eventProcessor, component, config).apply {
+                    job.invokeOnCompletion {
                         // remove self on completion
-                        botMap.remove(key)
+                        botMap.remove(key, this)
                     }
                 }
             }!!.also { bot ->

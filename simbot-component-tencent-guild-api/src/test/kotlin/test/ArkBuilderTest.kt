@@ -13,7 +13,6 @@
 package test
 
 import kotlinx.serialization.json.Json
-import love.forte.simbot.ID
 import love.forte.simbot.qguild.buildArk
 import love.forte.simbot.qguild.model.Message
 import kotlin.test.Test
@@ -28,7 +27,7 @@ class ArkBuilderTest {
     @Test
     fun test() {
 
-        val ark = buildArk(0.ID) {
+        val ark = buildArk("0") {
             // 增加kvs
             kvs {
                 kv("Key1", "value") // kv

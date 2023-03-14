@@ -228,7 +228,7 @@ public data class Shard(val value: Int, val total: Int) {
 /**
  * `Range(1, 2)` -> `[1, 2]`
  */
-private object SharedSerializer : KSerializer<Shard> {
+internal object SharedSerializer : KSerializer<Shard> {
     private val arraySerializer = IntArraySerializer()
     override fun deserialize(decoder: Decoder): Shard {
         val array = arraySerializer.deserialize(decoder)

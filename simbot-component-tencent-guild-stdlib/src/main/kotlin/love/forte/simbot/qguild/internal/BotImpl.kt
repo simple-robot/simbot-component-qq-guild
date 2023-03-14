@@ -13,6 +13,7 @@
 package love.forte.simbot.qguild.internal
 
 import io.ktor.client.*
+import io.ktor.client.network.sockets.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.websocket.*
@@ -69,7 +70,7 @@ internal class BotImpl(
     override val ticket: Bot.Ticket,
     override val configuration: BotConfiguration,
 ) : Bot {
-    private val logger = LoggerFactory.getLogger("love.forte.simbot.tencentguild.bot.${ticket.appId}")
+    private val logger = LoggerFactory.getLogger("love.forte.simbot.qguild.bot.${ticket.appId}")
 
     // private val parentJob: Job
     override val coroutineContext: CoroutineContext
@@ -109,7 +110,10 @@ internal class BotImpl(
             json()
         }
         install(HttpTimeout) {
-            requestTimeoutMillis = 5000 // TODO configurable
+            connectTimeoutMillis = 5000 // TODO configurable?
+        }
+        install(HttpRequestRetry) {
+            maxRetries = 3
         }
     }
 
@@ -137,7 +141,7 @@ internal class BotImpl(
     private class DisposableHandleImpl(queue: ConcurrentLinkedQueue<EventProcessor>, subject: EventProcessor) :
         DisposableHandle {
         @Suppress("unused")
-        private var disposed = 0
+        @Volatile private var disposed = 0
 
         @Volatile
         private var queueRef: WeakReference<ConcurrentLinkedQueue<EventProcessor>>? = WeakReference(queue)
@@ -512,20 +516,21 @@ internal class BotImpl(
 
 
             logger.trace("Receiving next frame ...")
-            try {
+            val frame = try {
                 session.incoming.receive()
             } catch (e: ClosedReceiveChannelException) {
                 val reason = session.closeReason.await()
                 logger.debug("Session closed. reason: $reason", e)
                 // try resume
                 loop.appendStage(Resume(client))
+                return
 
             } catch (e: CancellationException) {
                 logger.error("Session cancellation.", e)
                 // try resume
                 loop.appendStage(Resume(client))
+                return
             }
-            val frame = session.incoming.receive()
             logger.trace("Received next frame: {}", frame)
             val raw = (frame as? Frame.Text)?.readText() ?: run {
                 logger.debug("No Text frame received {}, skip.", frame)

@@ -32,6 +32,9 @@ import love.forte.simbot.qguild.event.EventChannel as QGSourceEventChannel
  * @see QGChannelCreateEvent
  * @see QGChannelUpdateEvent
  * @see QGChannelDeleteEvent
+ * @see QGChannelCategoryCreateEvent
+ * @see QGChannelCategoryUpdateEvent
+ * @see QGChannelCategoryDeleteEvent
  *
  * @author ForteScarlet
  */
@@ -56,9 +59,8 @@ public sealed class QGChannelEvent : QGEvent<QGSourceEventChannel>() {
     ) {
         override fun safeCast(value: Any): QGChannelEvent? = doSafeCast(value)
     }
-
-
 }
+
 
 /**
  * 子频道被创建
@@ -134,7 +136,7 @@ public abstract class QGChannelUpdateEvent : QGChannelEvent(), ChangedEvent, Cha
     /**
      * 发生变更的频道。同 [source].
      */
-    override suspend fun after(): QGChannel? = channel()
+    override suspend fun after(): QGChannel = channel()
 
     /**
      * 始终为null。
@@ -184,3 +186,150 @@ public abstract class QGChannelDeleteEvent : QGChannelEvent(), EndPointEvent {
         override fun safeCast(value: Any): QGChannelDeleteEvent? = doSafeCast(value)
     }
 }
+
+// 不推送频道分类变更事件
+
+//
+///**
+// * 子频道分类被创建
+// */
+//@JvmBlocking(asProperty = true, suffix = "")
+//@JvmAsync(asProperty = true)
+//public abstract class QGChannelCategoryCreateEvent : QGChannelEvent(), StartPointEvent, ChangedEvent, GuildEvent {
+//
+//    override val changedTime: Timestamp = Timestamp.now()
+//    override val timestamp: Timestamp get() = changedTime
+//
+//    /**
+//     * 变更源。即发生变更的子频道分类。
+//     */
+//    public abstract suspend fun category(): QGChannelCategory
+//
+//    /**
+//     * 变更源。即发生变更的频道。同 [category]
+//     */
+//    override suspend fun source(): QGChannelCategory = category()
+//
+//    /**
+//     * 被创建的子频道分类。同 [category]。
+//     */
+//    override suspend fun after(): QGChannelCategory = category()
+//
+//    /**
+//     * 事件发生的频道服务器。
+//     */
+//    abstract override suspend fun guild(): QGGuild
+//
+//    /**
+//     * 事件发生的频道服务器。同 [guild].
+//     */
+//    override suspend fun organization(): QGGuild = guild()
+//
+//    /**
+//     * 始终为null。
+//     */
+//    override suspend fun before(): Any? = null
+//
+//    override val key: Event.Key<out QGChannelCategoryCreateEvent> get() = Key
+//
+//
+//    public companion object Key : BaseEventKey<QGChannelCategoryCreateEvent>(
+//        "qg.channel_category_create", setOf(QGChannelEvent, StartPointEvent, ChangedEvent, GuildEvent)
+//    ) {
+//        override fun safeCast(value: Any): QGChannelCategoryCreateEvent? = doSafeCast(value)
+//    }
+//}
+//
+///**
+// * 子频道分类信息变更
+// *
+// * 无法得知变更前 ([before]) 的信息。
+// */
+//@JvmBlocking(asProperty = true, suffix = "")
+//@JvmAsync(asProperty = true)
+//public abstract class QGChannelCategoryUpdateEvent : QGChannelEvent(), ChangedEvent, GuildEvent {
+//    override val changedTime: Timestamp = Timestamp.now()
+//    override val timestamp: Timestamp get() = changedTime
+//
+//    /**
+//     * 发生变更的子频道分类。
+//     */
+//    public abstract suspend fun category(): QGChannelCategory
+//
+//    /**
+//     * 变更源。即发生变更的频道。同 [category]
+//     */
+//    override suspend fun source(): QGChannelCategory = category()
+//
+//    /**
+//     * 发生变更的子频道分类。同 [category].
+//     */
+//    override suspend fun after(): QGChannelCategory = category()
+//
+//    /**
+//     * 事件发生的频道服务器。
+//     */
+//    abstract override suspend fun guild(): QGGuild
+//
+//    /**
+//     * 事件发生的频道服务器。同 [guild]
+//     */
+//    override suspend fun organization(): QGGuild = guild()
+//
+//    /**
+//     * 始终为null。
+//     */
+//    override suspend fun before(): Any? = null
+//
+//    ////
+//
+//    override val key: Event.Key<out QGChannelCategoryUpdateEvent> get() = Key
+//
+//    public companion object Key : BaseEventKey<QGChannelCategoryUpdateEvent>(
+//        "qg.channel_category_update", QGChannelEvent, ChangedEvent, GuildEvent
+//    ) {
+//        override fun safeCast(value: Any): QGChannelCategoryUpdateEvent? = doSafeCast(value)
+//    }
+//}
+//
+///**
+// * 子频道分类被删除
+// *
+// * 当收到此事件时，category 已经被删除，因此此处仅能 通过 [before] 获取到被删除子频道分类的 [事件信息][QGSourceEventChannel] 实例。
+// */
+//@JvmBlocking(asProperty = true, suffix = "")
+//@JvmAsync(asProperty = true)
+//public abstract class QGChannelCategoryDeleteEvent : QGChannelEvent(), EndPointEvent, GuildEvent {
+//    override val changedTime: Timestamp = Timestamp.now()
+//    override val timestamp: Timestamp get() = changedTime
+//
+//    /**
+//     * 被删除的子频道分类。同 [sourceEventEntity]
+//     *
+//     * 当收到此事件时，category 已经被删除，因此此处仅能获取到被删除子频道的 [事件信息][QGSourceEventChannel] 实例。
+//     */
+//    override suspend fun before(): QGSourceEventChannel = sourceEventEntity
+//
+//    /**
+//     * 被删除的子频道所在的频道服务器。
+//     */
+//    abstract override suspend fun guild(): QGGuild
+//
+//    /**
+//     * 被删除的子频道所在的频道服务器。同 [guild]
+//     */
+//    override suspend fun organization(): QGGuild = guild()
+//
+//    /**
+//     * 被删除的子频道所在的频道服务器。同 [guild]
+//     */
+//    override suspend fun source(): QGGuild = guild()
+//
+//    override val key: Event.Key<out QGChannelDeleteEvent> get() = Key
+//
+//    public companion object Key : BaseEventKey<QGChannelDeleteEvent>(
+//        "qg.channel_category_delete", setOf(QGChannelEvent, EndPointEvent, GuildEvent)
+//    ) {
+//        override fun safeCast(value: Any): QGChannelDeleteEvent? = doSafeCast(value)
+//    }
+//}

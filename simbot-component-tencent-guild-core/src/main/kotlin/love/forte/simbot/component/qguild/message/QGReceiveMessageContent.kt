@@ -22,7 +22,7 @@ import love.forte.simbot.message.messages
  *
  * @author ForteScarlet
  */
-public abstract class TencentReceiveMessageContent : ReceivedMessageContent() {
+public abstract class QGReceiveMessageContent : ReceivedMessageContent() {
 
     /**
      * 此消息的ID
@@ -86,7 +86,7 @@ public abstract class TencentReceiveMessageContent : ReceivedMessageContent() {
 
 
     override fun equals(other: Any?): Boolean {
-        if (other !is TencentReceiveMessageContent) return false
+        if (other !is QGReceiveMessageContent) return false
         if (other === this) return true
         return messageId == other.messageId
     }

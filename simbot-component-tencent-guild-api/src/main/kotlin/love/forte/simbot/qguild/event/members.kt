@@ -61,9 +61,9 @@ public data class EventMember(
      */
     @SerialName("guild_id") override val guildId: String,
     /**
-     * 用户的频道基础信息，只有成员相关接口中会填充此信息
+     * 用户的频道基础信息
      */
-    val user: User, // TODO?
+    val user: User, // 好像事件里也会填充
     /**
      * 用户的昵称
      */
@@ -71,9 +71,11 @@ public data class EventMember(
     /**
      * 用户在频道内的身份组ID, 默认值可参考 [DefaultRoles](https://bot.q.qq.com/wiki/develop/api/openapi/guild/role_model.html#DefaultRoles)
      */
-    override val roles: List<String>,
+    override val roles: List<String> = emptyList(),
     /**
      * 用户加入频道的时间
+     *
+     * 如果属性缺失则会使用 [Instant.EPOCH]
      */
-    @Serializable(InstantISO8601Serializer::class) @SerialName("join_at") override val joinedAt: Instant
+    @Serializable(InstantISO8601Serializer::class) @SerialName("join_at") override val joinedAt: Instant = Instant.EPOCH
 ) : MemberWithGuildId

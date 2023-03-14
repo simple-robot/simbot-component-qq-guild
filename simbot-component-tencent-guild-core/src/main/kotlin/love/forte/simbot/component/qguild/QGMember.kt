@@ -15,7 +15,7 @@ package love.forte.simbot.component.qguild
 import love.forte.plugin.suspendtrans.annotation.JvmAsync
 import love.forte.plugin.suspendtrans.annotation.JvmBlocking
 import love.forte.simbot.ID
-import love.forte.simbot.component.qguild.internal.TencentMessageReceipt
+import love.forte.simbot.component.qguild.internal.QGMessageReceipt
 import love.forte.simbot.definition.GuildMember
 import love.forte.simbot.definition.MemberInfo
 import love.forte.simbot.message.Message
@@ -39,15 +39,15 @@ public interface QGMember : GuildMember, MemberInfo, QGObjectiveContainer<QGSour
     
     @JvmBlocking
     @JvmAsync
-    override suspend fun send(message: Message): TencentMessageReceipt
+    override suspend fun send(message: Message): QGMessageReceipt
     
     @JvmBlocking
     @JvmAsync
-    override suspend fun send(text: String): TencentMessageReceipt
+    override suspend fun send(text: String): QGMessageReceipt
     
     @JvmBlocking
     @JvmAsync
-    override suspend fun send(message: MessageContent): TencentMessageReceipt
+    override suspend fun send(message: MessageContent): QGMessageReceipt
     
     @JvmBlocking(asProperty = true, suffix = "")
     @JvmAsync(asProperty = true)

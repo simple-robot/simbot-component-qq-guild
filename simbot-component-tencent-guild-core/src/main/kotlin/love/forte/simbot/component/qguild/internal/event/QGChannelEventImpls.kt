@@ -27,6 +27,7 @@ import kotlin.random.nextUInt
 
 
 internal class QGChannelCreateEventImpl(
+    override val eventRaw: String,
     override val sourceEventEntity: EventChannel,
     override val bot: QGBotImpl,
     private val _channel: QGChannelImpl,
@@ -38,6 +39,7 @@ internal class QGChannelCreateEventImpl(
 
 
 internal class QGChannelUpdateEventImpl(
+    override val eventRaw: String,
     override val sourceEventEntity: EventChannel,
     override val bot: QGBotImpl,
     private val _channel: QGChannelImpl,
@@ -49,6 +51,7 @@ internal class QGChannelUpdateEventImpl(
 
 
 internal class QGChannelDeleteEventImpl(
+    override val eventRaw: String,
     override val sourceEventEntity: EventChannel,
     override val bot: QGBotImpl,
     private val _guild: QGGuildImpl,
@@ -57,6 +60,50 @@ internal class QGChannelDeleteEventImpl(
     override val operatorId: ID = sourceEventEntity.opUserId.ID
     override suspend fun source(): QGGuildImpl = _guild
 }
+
+
+
+//internal class QGChannelCategoryCreateEventImpl(
+//    override val eventRaw: String,
+//    override val sourceEventEntity: EventChannel,
+//    override val bot: QGBotImpl,
+//    private val _category: QGChannelCategoryImpl,
+//    private val _guild: QGGuildImpl,
+//) : QGChannelCategoryCreateEvent() {
+//    override val id: ID = tcgChannelModifyId(3, bot.id, sourceEventEntity.id, changedTime)
+//    override val operatorId: ID = sourceEventEntity.opUserId.ID
+//    override suspend fun category(): QGChannelCategory = _category
+//    override suspend fun guild(): QGGuild = _guild
+//}
+//
+//
+//internal class QGChannelCategoryUpdateEventImpl(
+//    override val eventRaw: String,
+//    override val sourceEventEntity: EventChannel,
+//    override val bot: QGBotImpl,
+//    private val _category: QGChannelCategoryImpl,
+//    private val _guild: QGGuildImpl,
+//) : QGChannelCategoryUpdateEvent() {
+//    override val id: ID = tcgChannelModifyId(4, bot.id, sourceEventEntity.id, changedTime)
+//    override val operatorId: ID = sourceEventEntity.opUserId.ID
+//    override suspend fun category(): QGChannelCategory = _category
+//    override suspend fun guild(): QGGuild = _guild
+//}
+//
+//
+//internal class QGChannelCategoryDeleteEventImpl(
+//    override val eventRaw: String,
+//    override val sourceEventEntity: EventChannel,
+//    override val bot: QGBotImpl,
+//    private val _guild: QGGuildImpl,
+//) : QGChannelCategoryDeleteEvent() {
+//    override val id: ID = tcgChannelModifyId(5, bot.id, sourceEventEntity.id, changedTime)
+//    override val operatorId: ID = sourceEventEntity.opUserId.ID
+//    override suspend fun guild(): QGGuildImpl = _guild
+//
+//}
+
+
 
 private fun tcgChannelModifyId(t: Int, sourceBot: ID, sourceChannel: String, timestamp: Timestamp): ID =
     "$t$sourceBot.${timestamp.second}.$sourceChannel.${Random.nextUInt()}".ID

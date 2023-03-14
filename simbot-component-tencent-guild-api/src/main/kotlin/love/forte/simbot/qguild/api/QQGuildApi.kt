@@ -24,7 +24,9 @@ import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
 import love.forte.simbot.qguild.ErrInfo
 import love.forte.simbot.qguild.err
+import org.slf4j.LoggerFactory
 
+private val apiLogger = LoggerFactory.getLogger("love.forte.simbot.qguild.api")
 
 /**
  * 表示为一个QQ频道的API。
@@ -45,8 +47,8 @@ public abstract class QQGuildApi<out R> {
      * 此api请求方式
      */
     public abstract val method: HttpMethod
-    
-    
+
+
     /**
      * 此请求对应的api路由路径以及路径参数。
      * 例如：`/guild/list`
@@ -69,7 +71,7 @@ public abstract class QQGuildApi<out R> {
      * 使用此api发起一次请求，并得到预期中的结果。如果返回了代表错误的响应值
      *
      * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
-     * @throws love.forte.simbot.qguild.TencentApiException 请求过程中出现了错误。
+     * @throws love.forte.simbot.qguild.QQGuildApiException 请求过程中出现了错误。
      * @see ErrInfo
      */
     @JvmSynthetic
@@ -81,7 +83,6 @@ public abstract class QQGuildApi<out R> {
     ): R {
         val resp = requestForResponse(client, server, token)
 
-
         checkStatus(resp) { resp.status }
         
         // decode
@@ -92,7 +93,8 @@ public abstract class QQGuildApi<out R> {
 
 private suspend fun QQGuildApi<*>.requestForResponse(client: HttpClient, server: Url, token: String): HttpResponse {
     val api = this
-    
+
+
     return client.request {
         method = api.method
         
@@ -118,6 +120,10 @@ private suspend fun QQGuildApi<*>.requestForResponse(client: HttpClient, server:
                 }
             }
         }
+
+        apiLogger.debug("[{} {}] =====> server {}, body: {}", method.value, url.encodedPath, url.host, api.body)
+    }.also { resp ->
+        apiLogger.debug("[{} {}] <===== status: {}, resp: {}", method.value, resp.request.url.encodedPath, resp.status, resp)
     }
 }
 
@@ -127,7 +133,7 @@ private suspend fun <R> QQGuildApi<R>.decodeFromHttpResponseViaString(
 ): R {
     val remainingText = response.bodyAsText()
 
-    logger.debug("api: {}, resp: {}", this, remainingText)
+    apiLogger.debug("[{} {}] <===== body: {}", method.value, response.request.url.encodedPath, remainingText)
 
     return decoder.decodeFromString(resultDeserializer, remainingText)
 }

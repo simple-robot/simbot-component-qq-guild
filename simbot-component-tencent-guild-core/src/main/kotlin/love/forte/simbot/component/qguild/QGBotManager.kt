@@ -13,6 +13,7 @@
 package love.forte.simbot.component.qguild
 
 import io.ktor.http.*
+import kotlinx.coroutines.Job
 import love.forte.simbot.*
 import love.forte.simbot.application.ApplicationConfiguration
 import love.forte.simbot.application.EventProviderAutoRegistrarFactory
@@ -20,8 +21,10 @@ import love.forte.simbot.application.EventProviderFactory
 import love.forte.simbot.bot.BotManager
 import love.forte.simbot.bot.BotVerifyInfo
 import love.forte.simbot.bot.ComponentMismatchException
+import love.forte.simbot.component.qguild.config.QGBotComponentConfiguration
 import love.forte.simbot.component.qguild.config.QGBotFileConfiguration
 import love.forte.simbot.component.qguild.internal.QGBotManagerImpl
+import love.forte.simbot.component.qguild.util.registerRootJob
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.qguild.BotConfiguration
 import love.forte.simbot.qguild.ConfigurableBotConfiguration
@@ -72,12 +75,24 @@ public abstract class QGBotManager : BotManager<QGBot>() {
 
     /**
      * 通过所需信息注册一个bot。
+     *
+     * 注意，在配置 [ConfigurableBotConfiguration] 时，
+     * 如果 [coroutineContext][ConfigurableBotConfiguration.coroutineContext] 中
+     * 存在自定义的 [Job][kotlinx.coroutines.Job]，那么 `Application` 中的Job
+     * 则会作为一个 `Root Job` 而不是 `Parent Job` 使用。
+     *
+     * `Root Job` 仅会在其自身完成或关闭的时候**通知**相关联的子类使它们关闭，
+     * 但不会有硬性关联，这种通知是通过 [Job.invokeOnCompletion][kotlinx.coroutines.Job.invokeOnCompletion] 实现的，
+     * 参考 [Job.registerRootJob]。
+     *
+     * 如果 [coroutineContext] 中不存在自定义的Job，则会直接使用 [QGBotManager] 内的 [Job] 作为 parent Job 。
+     *
      */
     public abstract fun register(
         appId: String,
         appKey: String,
         token: String,
-        block: ConfigurableBotConfiguration.() -> Unit = {},
+        block: QGBotComponentConfiguration.() -> Unit = {},
     ): QGBot
 
     /**
@@ -184,7 +199,7 @@ public interface QGBotManagerConfiguration {
     @QGBotManagerConfigurationDsl
     public fun register(
         appId: String, appKey: String, token: String,
-        botConfiguration: BotConfiguration.() -> Unit = {},
+        botConfiguration: QGBotComponentConfiguration.() -> Unit = {},
         onBot: suspend (QGBot) -> Unit,
     )
 
@@ -236,7 +251,7 @@ private class QGBotManagerConfigurationImpl : QGBotManagerConfiguration {
         appId: String,
         appKey: String,
         token: String,
-        botConfiguration: BotConfiguration.() -> Unit,
+        botConfiguration: QGBotComponentConfiguration.() -> Unit,
         onBot: suspend (QGBot) -> Unit,
     ) {
         addBotManagerConfig { manager ->

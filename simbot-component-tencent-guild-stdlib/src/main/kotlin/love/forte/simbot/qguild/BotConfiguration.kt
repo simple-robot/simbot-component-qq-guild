@@ -16,6 +16,7 @@ import io.ktor.client.*
 import io.ktor.http.*
 import kotlinx.serialization.json.Json
 import love.forte.simbot.ExceptionProcessor
+import love.forte.simbot.qguild.event.EventIntents
 import love.forte.simbot.qguild.event.Intents
 import love.forte.simbot.qguild.event.Shard
 import love.forte.simbot.qguild.event.Signal
@@ -57,10 +58,16 @@ public interface BotConfiguration {
     public val shard: Shard
 
     /**
-     * bot需要订阅的事件 [Intents]. 默认为0，即不订阅任何事件。
+     * bot需要订阅的事件 [Intents].
+     *
+     * 默认订阅如下事件：
+     * - [频道相关事件][EventIntents.Guilds]
+     * - [频道成员相关事件][EventIntents.GuildMembers]
+     * - [公域消息相关事件][EventIntents.PublicGuildMessages]
      */
     @get:JvmSynthetic
     public val intents: Intents
+
 
     /**
      * @see intents

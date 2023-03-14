@@ -82,7 +82,7 @@ internal class QGMemberImpl(
 
 
     @JvmSynthetic
-    override suspend fun send(message: Message): TencentMessageReceipt {
+    override suspend fun send(message: Message): QGMessageReceipt {
         TODO()
 //        val dms = getDms()
 //        val currentCoroutineContext = currentCoroutineContext()
@@ -105,7 +105,7 @@ internal class QGMemberImpl(
 //        return DmsSendApi.create(dms.guildId, messageForSend, fileImage).requestBy(bot).asReceipt()
     }
 
-    override suspend fun send(text: String): TencentMessageReceipt {
+    override suspend fun send(text: String): QGMessageReceipt {
         TODO()
 //        val dms = getDms()
 //        val currentEvent =
@@ -116,7 +116,7 @@ internal class QGMemberImpl(
     }
 
 
-    override suspend fun send(message: MessageContent): TencentMessageReceipt {
+    override suspend fun send(message: MessageContent): QGMessageReceipt {
         return send(message.messages)
     }
 

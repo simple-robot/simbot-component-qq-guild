@@ -20,7 +20,7 @@ import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.definition.Guild
 import love.forte.simbot.definition.Organization
-import love.forte.simbot.qguild.TencentApiException
+import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.api.apipermission.ApiPermissions
 import love.forte.simbot.qguild.api.channel.GetGuildChannelListApi
 import love.forte.simbot.qguild.api.member.GetGuildMemberListApi
@@ -132,7 +132,7 @@ public interface QGGuild : Guild, CoroutineScope {
      * 或者没有监听 [Guild相关事件][EventIntents.Guilds] (参考 [channels] 说明)，
      * 则 [channel] 会尝试直接通过API实时查询对应信息。
      *
-     * @throws TencentApiException API请求失败，例如没有权限等
+     * @throws QQGuildApiException API请求失败，例如没有权限等
      */
     @JvmBlocking(baseName = "getChannel", suffix = "")
     @JvmAsync(baseName = "getChannel")
@@ -158,15 +158,9 @@ public interface QGGuild : Guild, CoroutineScope {
     /**
      * 得到当前频道服务器下的所有频道分类。
      *
-     * 如果当前bot在当前guild中没有 [获取频道列表][GetGuildChannelListApi] 的API权限，
-     * 则 [categories] 将会始终得到[空的Items][Items.emptyItems].
+     * 因为QQ频道中子频道分组的修改不会被推送事件，因此 [categories]
+     * 在任何情况下都不会内建缓存，而是每次都实时查询。
      *
-     * 如果拥有权限，但是当前bot未监听 [Guild相关事件][EventIntents.Guilds]
-     * 则 [categories] 不会内建缓存，每次获取都会实时使用相关API。
-     *
-     * _可以通过 [permissions] 手动检查是否存在 [GetGuildChannelListApi] 的权限。_
-     *
-     * @see channels
      */
     public val categories: Items<QGChannelCategory>
 
@@ -178,7 +172,7 @@ public interface QGGuild : Guild, CoroutineScope {
      *
      * 更多参考 [categories] 有关内建缓存的说明。
      *
-     * @throws TencentApiException API请求过程中产生的异常
+     * @throws QQGuildApiException API请求过程中产生的异常
      * @throws IllegalStateException 当目标子频道的类型不属于 [分组类型][ChannelType.CATEGORY] 时
      *
      */

@@ -19,9 +19,7 @@ import love.forte.simbot.component.qguild.QGChannel
 import love.forte.simbot.component.qguild.QGGuild
 import love.forte.simbot.component.qguild.QGGuildBot
 import love.forte.simbot.component.qguild.QGMember
-import love.forte.simbot.component.qguild.event.QGChannelAtMessageEvent
 import love.forte.simbot.component.qguild.util.requestBy
-import love.forte.simbot.event.EventProcessingContext
 import love.forte.simbot.message.Message
 import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.qguild.model.Channel
@@ -41,18 +39,19 @@ internal abstract class BaseQGChannel : QGChannel {
     override val maximumMember: Int get() = guildInternal.maximumMember
     override val roles: Items<QGRoleImpl> get() = guildInternal.roles
 
-    override suspend fun send(message: Message): TencentMessageReceipt {
+    override suspend fun send(message: Message): QGMessageReceipt {
         val currentCoroutineContext = currentCoroutineContext()
 
         val builder = MessageParsers.parse(message) {
             if (this.msgId == null) {
-                val currentEvent =
-                    currentCoroutineContext[EventProcessingContext]?.event?.takeIf { it is QGChannelAtMessageEvent } as? QGChannelAtMessageEvent
+                // TODO
+//                val currentEvent =
+//                    currentCoroutineContext[EventProcessingContext]?.event?.takeIf { it is QGChannelAtMessageEvent } as? QGChannelAtMessageEvent
 
-                val msgId = currentEvent?.sourceEventEntity?.id
-                if (msgId != null) {
-                    this.msgId = msgId
-                }
+//                val msgId = currentEvent?.sourceEventEntity?.id
+//                if (msgId != null) {
+//                    this.msgId = msgId
+//                }
             }
         }
 
@@ -61,30 +60,44 @@ internal abstract class BaseQGChannel : QGChannel {
 }
 
 
-
 /**
  *
  * @author ForteScarlet
  */
-internal class QGChannelImpl internal constructor(
+internal class QGChannelImpl private constructor(
     override val baseBot: QGBotImpl,
     override val source: QGSourceChannel,
     override val guildInternal: QGGuildImpl,
-    override val category: QGChannelCategoryImpl,
+    override val category: QGChannelCategoryIdImpl,
+    override val id: ID,
+    override val ownerId: ID,
+    override val guildId: ID,
 ) : BaseQGChannel() {
-    override val id: ID = source.id.ID
-    override val ownerId: ID = source.ownerId.ID
-    override val guildId: ID = source.guildId.ID
+
+    internal constructor(
+        baseBot: QGBotImpl,
+        source: QGSourceChannel,
+        guildInternal: QGGuildImpl,
+        category: QGChannelCategoryIdImpl,
+    ) : this(
+        baseBot, source, guildInternal, category,
+        source.id.ID,
+        source.ownerId.ID,
+        source.guildId.ID,
+    )
+
     override val name: String get() = source.name
+    override val bot: QGGuildBot get() = guildInternal.bot
 
     override suspend fun guild(): QGGuild = guildInternal
     override suspend fun owner(): QGMember = guildInternal.owner()
 
-    override val bot: QGGuildBot get() = guildInternal.bot
-
     override fun toString(): String {
-        return "QGChannelImpl(bot=$baseBot, source=$source, guild=$guildInternal)"
+        return "QGChannelImpl(id=$id, name=$name, bot=$baseBot, source=$source, guild=$guildInternal)"
     }
+
+    internal fun update(newSource: QGSourceChannel): QGChannelImpl =
+        QGChannelImpl(baseBot, newSource, guildInternal, category, id, ownerId, guildId)
 }
 
 /**

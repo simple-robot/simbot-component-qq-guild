@@ -19,6 +19,7 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 import love.forte.simbot.ExceptionProcessor
+import love.forte.simbot.qguild.event.EventIntents
 import love.forte.simbot.qguild.event.Intents
 import love.forte.simbot.qguild.event.Shard
 import love.forte.simbot.qguild.event.Signal
@@ -46,10 +47,16 @@ public class ConfigurableBotConfiguration : BotConfiguration {
     override var shard: Shard = Shard.FULL
 
     /**
-     * bot需要订阅的事件 [Intents]. 默认为0，即不订阅任何事件。
+     * bot需要订阅的事件 [Intents].
+     *
+     * 默认订阅如下事件：
+     * - [频道相关事件][EventIntents.Guilds]
+     * - [频道成员相关事件][EventIntents.GuildMembers]
+     * - [公域消息相关事件][EventIntents.PublicGuildMessages]
      */
     @get:JvmSynthetic
-    override var intents: Intents = Intents(0)
+    override var intents: Intents =
+        EventIntents.Guilds.intents + EventIntents.GuildMembers.intents + EventIntents.PublicGuildMessages.intents
 
     /**
      * 异常处理器。

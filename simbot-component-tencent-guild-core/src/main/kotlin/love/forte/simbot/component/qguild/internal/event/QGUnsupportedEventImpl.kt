@@ -21,4 +21,7 @@ import love.forte.simbot.qguild.event.Signal
  *
  * @author ForteScarlet
  */
-internal data class QGUnsupportedEventImpl(override val bot: QGBot, override val sourceEventEntity: Signal.Dispatch) : QGUnsupportedEvent()
+internal data class QGUnsupportedEventImpl(
+    override val bot: QGBot, override val sourceEventEntity: Signal.Dispatch,
+    override val eventRaw: String
+) : QGUnsupportedEvent()

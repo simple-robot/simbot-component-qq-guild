@@ -39,3 +39,6 @@ public interface QGRole : Role {
      */
     override val isAdmin: Boolean get() = sourceRole.isDefault && sourceRole.id != QGSourceRole.DEFAULT_ID_ALL_MEMBER
 }
+
+// TODO Guild Role
+// TODO Member Role

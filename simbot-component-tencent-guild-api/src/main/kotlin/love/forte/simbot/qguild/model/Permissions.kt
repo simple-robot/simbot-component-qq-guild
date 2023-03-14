@@ -95,7 +95,7 @@ public value class Permissions(public val value: Long) {
     @Deprecated(
         "use contains", ReplaceWith(
             "contains(CHANNEL_VIEWABLE)",
-            "love.forte.simbot.tencentguild.model.Permissions.Companion.CHANNEL_VIEWABLE"
+            "love.forte.simbot.qguild.model.Permissions.Companion.CHANNEL_VIEWABLE"
         )
     )
     public val isChannelViewable: Boolean get() = contains(CHANNEL_VIEWABLE)
@@ -106,7 +106,7 @@ public value class Permissions(public val value: Long) {
     @Deprecated(
         "use contains", ReplaceWith(
             "contains(CHANNEL_MANAGEABLE)",
-            "love.forte.simbot.tencentguild.model.Permissions.Companion.CHANNEL_MANAGEABLE"
+            "love.forte.simbot.qguild.model.Permissions.Companion.CHANNEL_MANAGEABLE"
         )
     )
     public val isChannelManageable: Boolean get() = contains(CHANNEL_MANAGEABLE)
@@ -120,7 +120,7 @@ public value class Permissions(public val value: Long) {
 }
 
 
-private object PermissionsSerializer : KSerializer<Permissions> {
+internal object PermissionsSerializer : KSerializer<Permissions> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Permissions", PrimitiveKind.STRING)
 
     override fun deserialize(decoder: Decoder): Permissions = Permissions(decoder.decodeString().toLong())

@@ -13,12 +13,12 @@
 package love.forte.simbot.component.qguild.config
 
 import io.ktor.http.*
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.Bot
 import love.forte.simbot.qguild.BotConfiguration
-import love.forte.simbot.qguild.ConfigurableBotConfiguration
 import love.forte.simbot.qguild.QGuildApi
-import love.forte.simbot.qguild.event.Intents
+import love.forte.simbot.qguild.event.EventIntents
 import love.forte.simbot.qguild.event.Signal
 
 // 仅用于文件序列化
@@ -36,6 +36,19 @@ public annotation class UsedOnlyForConfigSerialization
  * bot配置文件所对应的配置类，
  *
  * 通过由配置文件读取而来的信息来对指定Bot进行信息配置。
+ *
+ * ```json
+ * {
+ *    "component": "simbot.qqguild",
+ *    "ticket": {
+ *      "appId": "appId-value",
+ *      "secret": "secret-value",
+ *      "token": "token-value",
+ *    },
+ *    "config": { ... } // or null, or ignore
+ * }
+ * ```
+ *
  */
 @Suppress("MemberVisibilityCanBePrivate")
 @Serializable
@@ -53,7 +66,7 @@ public data class QGBotFileConfiguration(
 ) {
 
     /**
-     * 与 [Bot.Ticket] 相对应的映射类
+     * bot票据信息。是与 [Bot.Ticket] 相对应的映射类
      * @see Bot.Ticket
      */
     @Serializable
@@ -72,12 +85,17 @@ public data class QGBotFileConfiguration(
          * 机器人token，用于以机器人身份调用 openapi，格式为 `${app_id}.${random_str}`
          */
         val token: String
-    ) {
-        public fun parse(): Bot.Ticket = Bot.Ticket(appId, secret, token)
-    }
+    )
 
     /**
      * 其他配置信息。
+     *
+     * ```json
+     * {
+     *   "config": { ... }
+     * }
+     * ```
+     *
      */
     @Serializable
     @UsedOnlyForConfigSerialization
@@ -86,21 +104,75 @@ public data class QGBotFileConfiguration(
          * 目标服务器地址。默认为null，使用 [BotConfiguration] 的默认情况。
          *
          * 当 [serverUrl] 的值为特殊值：`"SANDBOX"` 时会选择使用 [QGuildApi.SANDBOX_URL_STRING]
+         *
+         * 自定义服务器地址：
+         *
+         * ```json
+         * {
+         *   "serverUrl": "https://xxx.com"
+         * }
+         * ```
+         *
+         * `"SANDBOX"` 特殊值：
+         *
+         * ```json
+         * {
+         *   "serverUrl": "SANDBOX"
+         * }
+         * ```
          */
         val serverUrl: String? = null,
 
         /**
          * 分片信息配置，默认为 [ShardConfig.Full]
+         *
+         * ```json
+         * {
+         *   "shard": {...}
+         * }
+         * ```
+         *
+         * @see ShardConfig
+         *
          */
-        val shard: ShardConfig = ShardConfig.Full,
+        @SerialName("shard")
+        val shardConfig: ShardConfig = ShardConfig.Full,
 
         /**
-         * 事件订阅配置。默认为0，即什么也不订阅。
+         * 事件订阅配置。
+         *
+         * ```json
+         * {
+         *    "intents": { ... }
+         * }
+         * ```
+         *
+         * 默认情况下订阅如下事件：
+         * - [频道相关事件][EventIntents.Guilds]
+         * - [频道成员相关事件][EventIntents.GuildMembers]
+         * - [公域消息相关事件][EventIntents.PublicGuildMessages]
+         *
+         * @see IntentsConfig
          */
-        val intents: IntentsConfig = IntentsConfig.Raw(Intents.ZERO),
+        @SerialName("intents")
+        val intentsConfig: IntentsConfig = IntentsConfig.Raw(
+            EventIntents.Guilds.intents
+             + EventIntents.GuildMembers.intents
+             + EventIntents.PublicGuildMessages.intents
+        ),
 
         /**
          * 用作 [Signal.Identify.Data.properties] 中的参数。
+         *
+         * ```json
+         * {
+         *   "clientProperties": {
+         *      "k1": "v1",
+         *      "foo": "bar"
+         *   }
+         * }
+         * ```
+         *
          *
          */
         public val clientProperties: Map<String, String> = emptyMap(),
@@ -112,18 +184,23 @@ public data class QGBotFileConfiguration(
     }
 
 
-    internal fun includeConfig(configuration: ConfigurableBotConfiguration) {
-        config?.also { c ->
-            c.serverUrl?.also { su ->
-                if (su == Config.SERVER_URL_SANDBOX_VALUE) {
-                    configuration.serverUrl = QGuildApi.SANDBOX_URL
-                } else {
-                    configuration.serverUrl = Url(su)
+    internal fun includeConfig(cpConfiguration: QGBotComponentConfiguration) {
+        cpConfiguration.botConfig {
+            val configuration = this
+            config?.apply {
+                serverUrl?.also { su ->
+                    if (su == Config.SERVER_URL_SANDBOX_VALUE) {
+                        configuration.serverUrl = QGuildApi.SANDBOX_URL
+                    } else {
+                        configuration.serverUrl = Url(su)
+                    }
                 }
+
+                configuration.shard = shardConfig.shard
+                configuration.intents = intentsConfig.intents
+
+                // TODO?
             }
-
-
-            // TODO
         }
     }
 }

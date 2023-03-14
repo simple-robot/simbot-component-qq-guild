@@ -16,7 +16,7 @@ import love.forte.plugin.suspendtrans.annotation.JvmAsync
 import love.forte.plugin.suspendtrans.annotation.JvmBlocking
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
-import love.forte.simbot.component.qguild.internal.TencentMessageReceipt
+import love.forte.simbot.component.qguild.internal.QGMessageReceipt
 import love.forte.simbot.definition.Channel
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
@@ -33,7 +33,7 @@ import love.forte.simbot.qguild.model.Channel as QGuildChannel
  * @author ForteScarlet
  */
 public interface QGChannel : Channel, QGObjectiveContainer<QGuildChannel> {
-    
+    override val source: love.forte.simbot.qguild.model.Channel
     override val bot: QGGuildBot
     override val createTime: Timestamp
     override val currentMember: Int
@@ -46,14 +46,28 @@ public interface QGChannel : Channel, QGObjectiveContainer<QGuildChannel> {
     override val ownerId: ID
     
     /**
-     * 子频道始终有分组。
+     * 子频道分组**的ID**。
+     *
+     * 子频道分组ID实例 [QGChannelCategoryId] 是一个仅包含 `id`
+     * 信息的未初始化实例，其 [id][QGChannelCategoryId.id] 和 [name][QGChannelCategoryId.name]
+     * 的值都是 [source.parentId][love.forte.simbot.qguild.model.Channel.parentId] 的值，即分组ID的字符串值。
+     *
+     * 如果希望获取完整信息，使用 [QGChannelCategoryId.category].
+     *
+     * @see QGChannelCategoryId
      */
-    override val category: QGChannelCategory
-    
+    override val category: QGChannelCategoryId
+
+    /**
+     * 得到当前子频道所属频道服务器
+     */
     @JvmBlocking(asProperty = true, suffix = "")
     @JvmAsync(asProperty = true)
     override suspend fun guild(): QGGuild
-    
+
+    /**
+     * 得到当前子频道所属用户
+     */
     @JvmBlocking(asProperty = true, suffix = "")
     @JvmAsync(asProperty = true)
     override suspend fun owner(): QGMember
@@ -67,17 +81,17 @@ public interface QGChannel : Channel, QGObjectiveContainer<QGuildChannel> {
     
     @JvmBlocking
     @JvmAsync
-    override suspend fun send(message: Message): TencentMessageReceipt
+    override suspend fun send(message: Message): QGMessageReceipt
     
     @JvmBlocking
     @JvmAsync
-    override suspend fun send(text: String): TencentMessageReceipt {
+    override suspend fun send(text: String): QGMessageReceipt {
         return send(Text.of(text))
     }
     
     @JvmBlocking
     @JvmAsync
-    override suspend fun send(message: MessageContent): TencentMessageReceipt {
+    override suspend fun send(message: MessageContent): QGMessageReceipt {
         return send(message.messages)
     }
     

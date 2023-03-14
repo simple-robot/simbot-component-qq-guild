@@ -209,8 +209,11 @@ public class ChannelType private constructor(public val value: Int) {
 
 public inline val ChannelType.isCategory: Boolean get() = this == ChannelType.CATEGORY
 
-/** Serializer for [ChannelType] */
-private object ChannelTypeSerializer : KSerializer<ChannelType> {
+/**
+ * Serializer for [ChannelType]
+ * @suppress
+ */
+internal object ChannelTypeSerializer : KSerializer<ChannelType> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("ChannelType", PrimitiveKind.INT)
 
     override fun deserialize(decoder: Decoder): ChannelType = ChannelType.valueOf(decoder.decodeInt())
@@ -269,7 +272,7 @@ public class ChannelSubType private constructor(public val value: Int) {
 }
 
 /** Serializer for [ChannelSubType] */
-private object ChannelSubTypeSerializer : KSerializer<ChannelSubType> {
+internal object ChannelSubTypeSerializer : KSerializer<ChannelSubType> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("ChannelSubType", PrimitiveKind.INT)
     override fun deserialize(decoder: Decoder): ChannelSubType = ChannelSubType.valueOf(decoder.decodeInt())
     override fun serialize(encoder: Encoder, value: ChannelSubType) {
@@ -295,7 +298,7 @@ public enum class PrivateType(public val value: Int) {
 }
 
 /** Serializer for [PrivateType] */
-private object PrivateTypeSerializer : KSerializer<PrivateType> {
+internal object PrivateTypeSerializer : KSerializer<PrivateType> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("PrivateType", PrimitiveKind.INT)
 
     override fun deserialize(decoder: Decoder): PrivateType = when (val value = decoder.decodeInt()) {
@@ -330,7 +333,7 @@ public enum class SpeakPermission(public val value: Int) {
 }
 
 /** Serializer for [SpeakPermission] */
-private object SpeakPermissionSerializer : KSerializer<SpeakPermission> {
+internal object SpeakPermissionSerializer : KSerializer<SpeakPermission> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("SpeakPermission", PrimitiveKind.INT)
 
     override fun deserialize(decoder: Decoder): SpeakPermission = when (val value = decoder.decodeInt()) {
