@@ -37,7 +37,7 @@ public data class QGArk internal constructor(
     @Serializable(ID.AsCharSequenceIDSerializer::class)
     public val templateId: ID,
     public val kvs: List<Message.Ark.Kv> = emptyList()
-) : TcgMessageElement<QGArk> {
+) : QGMessageElement<QGArk> {
     override val key: SimbotMessage.Key<QGArk>
         get() = Key
 

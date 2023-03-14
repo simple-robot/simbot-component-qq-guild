@@ -24,19 +24,19 @@ import love.forte.simbot.qguild.api.message.MessageSendApi
 
 /**
  *
- * QQ频道机器人为公域时可能需要指定一个回复消息的目标，通过拼接 [TcgReplyTo] 到当前消息列表中来提供一个回复消息的目标信息。
+ * QQ频道机器人为公域时可能需要指定一个回复消息的目标，通过拼接 [QGReplyTo] 到当前消息列表中来提供一个回复消息的目标信息。
  *
  * @author ForteScarlet
  */
 @SerialName("qg.replyTo")
 @Serializable
-public data class TcgReplyTo(@Serializable(ID.AsCharSequenceIDSerializer::class) val id: ID) :
-    TcgMessageElement<TcgReplyTo> {
-    override val key: Message.Key<TcgReplyTo>
+public data class QGReplyTo(@Serializable(ID.AsCharSequenceIDSerializer::class) val id: ID) :
+    QGMessageElement<QGReplyTo> {
+    override val key: Message.Key<QGReplyTo>
         get() = Key
 
-    public companion object Key : Message.Key<TcgReplyTo> {
-        override fun safeCast(value: Any): TcgReplyTo? = doSafeCast(value)
+    public companion object Key : Message.Key<QGReplyTo> {
+        override fun safeCast(value: Any): QGReplyTo? = doSafeCast(value)
     }
 
 }
@@ -49,7 +49,7 @@ internal object ReplyToParser : SendingMessageParser {
         messages: Messages?,
         builder: MessageSendApi.Body.Builder
     ) {
-        if (element is TcgReplyTo) {
+        if (element is QGReplyTo) {
             builder.msgId = element.id.literal
         }
     }

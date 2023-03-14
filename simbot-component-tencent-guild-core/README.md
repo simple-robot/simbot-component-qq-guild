@@ -7,20 +7,28 @@
 
 目前，组件支持的事件有：
 
-  - `QGGuildEvent` -> 频道服务器相关事件
-    - `QGGuildCreateEvent` -> 频道服务器 - 进入
-    - `QGGuildUpdateEvent` -> 频道服务器 - 更新
-    - `QGGuildDeleteEvent` -> 频道服务器 - 离开
-- `QGChannelEvent` -> 子频道相关事件
-    - `QGChannelCreateEvent` -> 子频道 - 新增
-    - `QGChannelUpdateEvent` -> 子频道 - 信息变更
-    - `QGChannelDeleteEvent` -> 子频道 - 删除
-    - `QGChannelCategoryCreateEvent` -> 子频道分类 - 新增
-    - `QGChannelCategoryUpdateEvent` -> 子频道分类 - 信息变更
-    - `QGChannelCategoryDeleteEvent` -> 子频道分类 - 删除
+| 事件                                 | 描述          |
+|:-----------------------------------|:------------|
+| `QGGuildEvent`                     | 频道服务器相关事件   |
+| -> `QGGuildCreateEvent`            | 频道服务器进入     |
+| -> `QGGuildUpdateEvent`            | 频道服务器信息更新   |
+| -> `QGGuildDeleteEvent`            | 频道服务器离开     |
+| `QGChannelEvent`                   | 子频道相关事件     |
+| -> `QGChannelCreateEvent`          | 子频道新增       |
+| -> `QGChannelUpdateEvent`          | 子频道信息变更     |
+| -> `QGChannelDeleteEvent`          | 子频道删除       |
+| -> `QGChannelCategoryCreateEvent`  | 子频道分类新增     |
+| -> `QGChannelCategoryUpdateEvent`  | 子频道分类信息变更   |
+| -> `QGChannelCategoryDeleteEvent`  | 子频道分类删除     |
+| `QGMemberEvent`                    | 成员相关事件      |
+| ->  `QGMemberAddEvent`             | 新增频道成员      |
+| ->  `QGMemberUpdateEvent`          | 频道成员信息更新    |
+| ->  `QGMemberRemoveEvent`          | 频道成员离开/移除   |
 
 
 ## 注意事项
+
+### 内建缓存
 
 ### 权限不足
 

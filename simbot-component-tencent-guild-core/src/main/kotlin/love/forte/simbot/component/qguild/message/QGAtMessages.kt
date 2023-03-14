@@ -28,7 +28,7 @@ import love.forte.simbot.qguild.api.message.MessageSendApi
 public data class QGAtChannel(
     @Serializable(ID.AsCharSequenceIDSerializer::class)
     public val target: ID
-) : TcgMessageElement<QGAtChannel> {
+) : QGMessageElement<QGAtChannel> {
     override val key: Message.Key<QGAtChannel>
         get() = Key
 

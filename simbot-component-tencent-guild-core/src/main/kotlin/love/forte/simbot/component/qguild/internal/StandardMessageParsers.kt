@@ -36,7 +36,7 @@ internal object ContentParser : SendingMessageParser {
 }
 
 
-internal object TencentMessageParser : ReceivingMessageParser {
+internal object QGMessageParser : ReceivingMessageParser {
     // private val mentionRegex = Regex("<@!(?<uid>\\d+)>|<#!(?<cid>\\d+)>")
 
     override fun invoke(qgMessage: Message, messages: Messages): Messages {

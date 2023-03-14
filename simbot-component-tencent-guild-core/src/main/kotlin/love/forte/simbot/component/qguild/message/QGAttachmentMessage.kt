@@ -32,22 +32,22 @@ import love.forte.simbot.message.Message as SimbotMessage
  */
 @SerialName("qg.attachment")
 @Serializable
-public data class TcgAttachmentMessage(public val url: String) : TcgMessageElement<TcgAttachmentMessage> {
+public data class QGAttachmentMessage(public val url: String) : QGMessageElement<QGAttachmentMessage> {
 
     @Deprecated("Just get url", ReplaceWith("url.ID", "love.forte.simbot.ID"))
     public val id: ID get() = url.ID
 
-    override val key: SimbotMessage.Key<TcgAttachmentMessage>
+    override val key: SimbotMessage.Key<QGAttachmentMessage>
         get() = Key
 
-    public companion object Key : SimbotMessage.Key<TcgAttachmentMessage> {
-        override fun safeCast(value: Any): TcgAttachmentMessage? = doSafeCast(value)
+    public companion object Key : SimbotMessage.Key<QGAttachmentMessage> {
+        override fun safeCast(value: Any): QGAttachmentMessage? = doSafeCast(value)
     }
 }
 
 
-public fun Message.Attachment.toMessage(): TcgAttachmentMessage = TcgAttachmentMessage(url)
-public fun TcgAttachmentMessage.toAttachment(): Message.Attachment = Message.Attachment(url)
+public fun Message.Attachment.toMessage(): QGAttachmentMessage = QGAttachmentMessage(url)
+public fun QGAttachmentMessage.toAttachment(): Message.Attachment = Message.Attachment(url)
 
 
 internal object AttachmentParser : SendingMessageParser {
@@ -58,7 +58,7 @@ internal object AttachmentParser : SendingMessageParser {
         messages: Messages?,
         builder: MessageSendApi.Body.Builder,
     ) {
-        if (element is TcgAttachmentMessage) {
+        if (element is QGAttachmentMessage) {
             logger.warn("Attachment message is not yet supported for sending")
         }
     }

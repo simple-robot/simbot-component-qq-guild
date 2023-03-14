@@ -23,7 +23,7 @@ import love.forte.simbot.qguild.model.Message
  * _content, embed, ark, image/file_image, markdown 至少需要有一个字段，否则无法下发消息。_
  */
 @Serializable
-public data class TencentMessageForSending @JvmOverloads constructor(
+public data class QGMessageForSending @JvmOverloads constructor(
     /**
      * 消息内容，文本内容，支持内嵌格式
      */

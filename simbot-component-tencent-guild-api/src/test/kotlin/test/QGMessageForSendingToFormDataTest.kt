@@ -21,8 +21,7 @@ import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
-import love.forte.simbot.Timestamp
-import love.forte.simbot.qguild.api.message.TencentMessageForSending
+import love.forte.simbot.qguild.api.message.QGMessageForSending
 import love.forte.simbot.qguild.model.Message
 import kotlin.test.Test
 
@@ -31,14 +30,14 @@ import kotlin.test.Test
  *
  * @author ForteScarlet
  */
-class TencentMessageForSendingToFormDataTest {
+class QGMessageForSendingToFormDataTest {
     
     @Test
     fun serializerTest() {
-        val param = TencentMessageForSending(
+        val param = QGMessageForSending(
             "content",
             image = "image",
-            embed = Message.Embed("title", "desc", "prompt", Timestamp.now(), emptyList())
+            embed = Message.Embed("title", "desc", Message.Embed.Thumbnail("URL"), emptyList())
         )
         
         val json = Json {
@@ -46,7 +45,7 @@ class TencentMessageForSendingToFormDataTest {
             ignoreUnknownKeys = true
         }
         
-        val ser = TencentMessageForSending.serializer()
+        val ser = QGMessageForSending.serializer()
         
         val formData = formData {
             val decoder = TencentMessageForSendingFormDataDecoder(

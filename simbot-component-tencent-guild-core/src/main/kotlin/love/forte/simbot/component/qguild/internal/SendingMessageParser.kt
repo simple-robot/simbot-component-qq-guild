@@ -72,7 +72,7 @@ public object MessageParsers {
 
     @ExperimentalSimbotApi
     public val receivingParsers: Queue<ReceivingMessageParser> = ConcurrentLinkedQueue<ReceivingMessageParser>().apply {
-        add(TencentMessageParser)
+        add(QGMessageParser)
     }
 
 
@@ -128,7 +128,7 @@ public object MessageParsers {
 
 }
 
-public class TencentMessageForSendingForParse internal constructor() {
+public class QGMessageForSendingForParse internal constructor() {
     public var sendBodyBuilder: MessageSendApi.Body.Builder = MessageSendApi.Body.Builder()
 
     /**

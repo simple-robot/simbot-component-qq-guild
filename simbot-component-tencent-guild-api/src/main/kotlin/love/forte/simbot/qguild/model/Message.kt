@@ -103,7 +103,10 @@ public data class Message(
      */
     @SerialName("seq_in_channel") public val seqInChannel: Long,
 
-    // TODO message_reference
+    /**
+     * 引用消息对象
+     */
+    @SerialName("message_reference") public val messageReference: Reference? = null,
 
     /**
      * 用于私信场景下识别真实的来源频道id
@@ -140,7 +143,7 @@ public data class Message(
     ) {
 
         /**
-         * [MessageEmbedThumbnail](https://bot.q.qq.com/wiki/develop/api/openapi/message/model.html#messageembedthumbnail)
+         * [缩略图](https://bot.q.qq.com/wiki/develop/api/openapi/message/model.html#messageembedthumbnail)
          *
          */
         @Serializable
