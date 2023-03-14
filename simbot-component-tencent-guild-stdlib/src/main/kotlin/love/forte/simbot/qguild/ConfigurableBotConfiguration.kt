@@ -71,15 +71,15 @@ public class ConfigurableBotConfiguration : BotConfiguration {
     override var clientProperties: Map<String, String> = emptyMap()
 
     /**
-     * 请求的服务器地址。默认为 [QGuildApi.URL]. 即正式地址。
+     * 请求的服务器地址。默认为 [QQGuild.URL]. 即正式地址。
      */
-    override var serverUrl: Url = QGuildApi.URL
+    override var serverUrl: Url = QQGuild.URL
 
     /**
-     * 使 [BotConfiguration.serverUrl] 为 [QGuildApi.SANDBOX_URL]
+     * 使 [BotConfiguration.serverUrl] 为 [QQGuild.SANDBOX_URL]
      */
     public fun useSandboxServerUrl() {
-        serverUrl = QGuildApi.SANDBOX_URL
+        serverUrl = QQGuild.SANDBOX_URL
     }
 
     /**

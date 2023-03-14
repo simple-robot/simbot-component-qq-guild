@@ -64,10 +64,14 @@ tasks.withType<JavaCompile> {
 
 kotlin {
     explicitApi()
-    this.sourceSets.configureEach {
+    sourceSets.configureEach {
         languageSettings {
             optIn("kotlin.RequiresOptIn")
         }
+    }
+
+    sourceSets.getByName("test").kotlin {
+        srcDir("src/samples")
     }
 }
 
@@ -122,7 +126,7 @@ tasks.withType<DokkaTaskPartial>().configureEach {
         // samples
         samples.from(
             project.files(),
-            project.files("src/samples/samples"),
+            project.files("src/samples"),
         )
         
         sourceLink {

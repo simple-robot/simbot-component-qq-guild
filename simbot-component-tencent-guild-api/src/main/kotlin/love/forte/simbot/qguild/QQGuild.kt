@@ -31,7 +31,7 @@ import java.time.format.DateTimeFormatter
  *
  * https://bot.q.qq.com/wiki/develop/api/openapi/guild/model.html
  */
-public object QGuildApi {
+public object QQGuild {
     @Suppress("MemberVisibilityCanBePrivate")
     public const val URL_STRING: String = "https://api.sgroup.qq.com"
     

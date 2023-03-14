@@ -17,7 +17,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.Bot
 import love.forte.simbot.qguild.BotConfiguration
-import love.forte.simbot.qguild.QGuildApi
+import love.forte.simbot.qguild.QQGuild
 import love.forte.simbot.qguild.event.EventIntents
 import love.forte.simbot.qguild.event.Signal
 
@@ -103,7 +103,7 @@ public data class QGBotFileConfiguration(
         /**
          * 目标服务器地址。默认为null，使用 [BotConfiguration] 的默认情况。
          *
-         * 当 [serverUrl] 的值为特殊值：`"SANDBOX"` 时会选择使用 [QGuildApi.SANDBOX_URL_STRING]
+         * 当 [serverUrl] 的值为特殊值：`"SANDBOX"` 时会选择使用 [QQGuild.SANDBOX_URL_STRING]
          *
          * 自定义服务器地址：
          *
@@ -190,7 +190,7 @@ public data class QGBotFileConfiguration(
             config?.apply {
                 serverUrl?.also { su ->
                     if (su == Config.SERVER_URL_SANDBOX_VALUE) {
-                        configuration.serverUrl = QGuildApi.SANDBOX_URL
+                        configuration.serverUrl = QQGuild.SANDBOX_URL
                     } else {
                         configuration.serverUrl = Url(su)
                     }

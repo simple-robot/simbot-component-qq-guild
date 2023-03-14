@@ -87,7 +87,7 @@ public interface BotConfiguration {
     public val clientProperties: Map<String, String>
 
     /**
-     * 请求的服务器地址。默认为 [QGuildApi.URL]. 即正式地址。
+     * 请求的服务器地址。默认为 [QQGuild.URL]. 即正式地址。
      */
     public val serverUrl: Url
 

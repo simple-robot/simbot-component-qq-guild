@@ -14,9 +14,8 @@ package test
 
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.plus
-import love.forte.simbot.qguild.QGuildApi
 import love.forte.simbot.qguild.api.role.GuildRoleList
+import love.forte.simbot.qguild.model.SimpleMember
 
 /**
  *
@@ -25,7 +24,7 @@ import love.forte.simbot.qguild.api.role.GuildRoleList
 
 class TencentSerializerTest {
     private val j = Json {
-        serializersModule += QGuildApi.serializersModule
+//        serializersModule += QQGuild.serializersModule
         classDiscriminator = "_t_"
         ignoreUnknownKeys = true
         isLenient = true
@@ -48,7 +47,7 @@ class TencentSerializerTest {
             }
         """.trimIndent()
 
-        val member: TencentMemberInfo = j.decodeFromString(TencentMemberInfo.serializer, memberJsonStr)
+        val member: SimpleMember = j.decodeFromString(SimpleMember.serializer(), memberJsonStr)
         println(member)
         println(member::class)
     }
