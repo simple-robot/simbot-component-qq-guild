@@ -40,7 +40,6 @@ KDoc(JavaDoc): [文档引导站点](https://docs.simbot.forte.love) 中的 [QQ�
 
 *本库通过 `kotlin` 协程达成全异步的高效实现，基于 `ktor` 进行网络交互，基于 `kotlinx-serialization` 进行数据序列化/反序列化。*
 
-
 <br>
 
 *以及，这个README看上去挺乱的，等一切安好之后会再考虑优化一下。*
@@ -66,10 +65,15 @@ KDoc(JavaDoc): [文档引导站点](https://docs.simbot.forte.love) 中的 [QQ�
 `simbot-component-tencent-guild` 使用 `LGPLv3` 许可证开源。
 
 ```
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+This program is free software: you can redistribute it and/or modify it under the terms
+of the GNU Lesser General Public License as published by the Free Software Foundation, 
+either version 3 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+See the GNU Lesser General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
+You should have received a copy of the GNU Lesser General Public License along with this program. 
+If not, see <https://www.gnu.org/licenses/>.
 ```
 
