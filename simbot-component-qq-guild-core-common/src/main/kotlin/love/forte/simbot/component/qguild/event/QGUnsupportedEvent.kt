@@ -12,6 +12,7 @@
 
 package love.forte.simbot.component.qguild.event
 
+import love.forte.simbot.FragileSimbotApi
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.event.BaseEventKey
@@ -26,8 +27,15 @@ import love.forte.simbot.randomID
  *
  * 用于表示、推送所有标准库中已经存在、但是组件库内无对应支持的事件类型。
  *
+ * ### 仅限临时应用
+ *
+ * [QGUnsupportedEvent] 用于对尚未支持的**组件事件**提供一个"捡漏"的方案，
+ * 但是使用 [QGUnsupportedEvent] 应当只是临时的。当某个事件在某个更新中被支持后，
+ * 将不会再出现在 [QGUnsupportedEvent] 中。
+ *
  * @author ForteScarlet
  */
+@FragileSimbotApi
 public abstract class QGUnsupportedEvent : QGEvent<Signal.Dispatch>() {
     /**
      * 事件ID。一个随机字符串。
