@@ -10,12 +10,12 @@
  * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild. If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = "qq-guild"
+package love.forte.simbot.component.qguild
 
+import love.forte.simbot.definition.User
 
-include(":builder-generator")
-include(":simbot-component-qq-guild-api")
-include(":simbot-component-qq-guild-stdlib")
-include(":simbot-component-qq-guild-core")
-
-
+/**
+ *
+ * @author ForteScarlet
+ */
+public interface QGUser : User

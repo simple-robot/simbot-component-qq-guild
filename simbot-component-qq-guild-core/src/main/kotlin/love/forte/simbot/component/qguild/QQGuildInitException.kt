@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2023. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -10,12 +10,18 @@
  * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild. If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = "qq-guild"
+package love.forte.simbot.component.qguild
+
+import love.forte.simbot.SimbotRuntimeException
 
 
-include(":builder-generator")
-include(":simbot-component-qq-guild-api")
-include(":simbot-component-qq-guild-stdlib")
-include(":simbot-component-qq-guild-core")
-
-
+/**
+ * 用于当 [QGGuild] 或 [QGBot] 等类型实现类内部初始化信息过程中出现的异常。
+ * @author ForteScarlet
+ */
+public open class QQGuildInitException : SimbotRuntimeException {
+    public constructor() : super()
+    public constructor(message: String?) : super(message)
+    public constructor(message: String?, cause: Throwable?) : super(message, cause)
+    public constructor(cause: Throwable?) : super(cause)
+}

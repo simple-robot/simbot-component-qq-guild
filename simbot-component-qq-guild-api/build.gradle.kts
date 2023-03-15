@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2023. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -10,12 +10,27 @@
  * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild. If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = "qq-guild"
+plugins {
+    id("simbot-tencent-guild.module-conventions")
+    id("simbot-tencent-guild.maven-publish")
+    kotlin("plugin.serialization")
+}
 
 
-include(":builder-generator")
-include(":simbot-component-qq-guild-api")
-include(":simbot-component-qq-guild-stdlib")
-include(":simbot-component-qq-guild-core")
 
+
+dependencies {
+    compileOnly(simbotApi) // use @Api4J annotation
+
+    api(libs.ktor.client.core)
+    api(libs.ktor.client.cio)
+    api(libs.ktor.client.contentNegotiation)
+    api(libs.ktor.serialization.kotlinxJson)
+    api(libs.kotlinx.serialization.json)
+
+    testImplementation(libs.log4j.api)
+    testImplementation(libs.log4j.core)
+    testImplementation(libs.log4j.slf4jImpl)
+
+}
 

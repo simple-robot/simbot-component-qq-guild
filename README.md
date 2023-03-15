@@ -6,8 +6,8 @@
     ~ simple-robot for tencent-guild ~ 
 </h2>
 <a href="https://github.com/simple-robot/simbot-component-tencent-guild/releases/latest"><img alt="release" src="https://img.shields.io/github/v/release/simple-robot/simbot-component-tencent-guild" /></a>
-<a href="https://repo1.maven.org/maven2/love/forte/simbot/component/simbot-component-tencent-guild-api/" target="_blank">
-  <img alt="release" src="https://img.shields.io/maven-central/v/love.forte.simbot.component/simbot-component-tencent-guild-api" /></a>
+<a href="https://repo1.maven.org/maven2/love/forte/simbot/component/simbot-component-qq-guild-api/" target="_blank">
+  <img alt="release" src="https://img.shields.io/maven-central/v/love.forte.simbot.component/simbot-component-qq-guild-api" /></a>
 <a href="https://www.yuque.com/simpler-robot/simpler-robot-doc" target="_blank">
   <img alt="doc" src="https://img.shields.io/badge/doc-yuque-brightgreen" /></a>
    <hr>
@@ -50,9 +50,6 @@ KDoc(JavaDoc): [文档引导站点](https://docs.simbot.forte.love) 中的 [QQ�
 
 如果你想要协助我们对当前仓库或者 [simbot3](https://github.com/ForteScarlet/simpler-robot/tree/v3-dev)
 的建设，欢迎通过issue提出宝贵意见或者通过pr参与到建设当中，十分感谢。
-
-## 文档
-你可以参考 [语雀说明文档](https://www.yuque.com/simpler-robot) 的 `simbot3` 部分，或者查看simbot3-腾讯频道组件的 [API Doc](https://simple-robot-library.github.io/simbot3-component-tencent-guild-apiDoc/) .
 
 ## ⚠ 注意
 

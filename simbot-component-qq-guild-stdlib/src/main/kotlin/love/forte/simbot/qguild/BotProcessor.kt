@@ -10,12 +10,18 @@
  * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild. If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = "qq-guild"
+package love.forte.simbot.qguild
+
+import kotlinx.coroutines.DisposableHandle
+import love.forte.simbot.qguild.event.Signal
 
 
-include(":builder-generator")
-include(":simbot-component-qq-guild-api")
-include(":simbot-component-qq-guild-stdlib")
-include(":simbot-component-qq-guild-core")
-
-
+public inline fun <reified E : Signal.Dispatch> Bot.registerProcessor(
+    crossinline block: suspend E.(raw: String) -> Unit
+): DisposableHandle {
+    return registerProcessor { raw ->
+        if (this is E) {
+            block(raw)
+        }
+    }
+}

@@ -10,12 +10,31 @@
  * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild. If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = "qq-guild"
+package love.forte.simbot.qguild.api
 
+import io.ktor.http.*
 
-include(":builder-generator")
-include(":simbot-component-qq-guild-api")
-include(":simbot-component-qq-guild-stdlib")
-include(":simbot-component-qq-guild-core")
+/**
+ * @suppress internal type
+ */
+public class RouteInfoBuilder(public val parametersAppender: ParametersAppender) {
+    /**
+     * api路径片段集
+     */
+    public var apiPath: Array<out String>? = null
+    
+    
+    /**
+     * 请求头中的 [ContentType].
+     * 默认为 [ContentType.Application.Json].
+     */
+    public var contentType: ContentType? = ContentType.Application.Json
+    
+}
 
-
+/**
+ * @suppress internal type
+ */
+public fun interface ParametersAppender {
+    public fun append(key: String, value: Any)
+}

@@ -10,12 +10,21 @@
  * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild. If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = "qq-guild"
+package love.forte.simbot.component.qguild.internal
 
+import love.forte.simbot.ID
+import love.forte.simbot.component.qguild.QGRole
+import love.forte.simbot.qguild.model.Role as QGSourceRole
 
-include(":builder-generator")
-include(":simbot-component-qq-guild-api")
-include(":simbot-component-qq-guild-stdlib")
-include(":simbot-component-qq-guild-core")
+/**
+ *
+ * @author ForteScarlet
+ */
+internal class QGRoleImpl(
+    @Suppress("unused")
+    private val bot: QGBotImpl,
+    override val sourceRole: QGSourceRole,
+) : QGRole {
+    override val id: ID = sourceRole.id.ID
 
-
+}

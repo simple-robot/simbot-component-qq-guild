@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2023. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -10,12 +10,17 @@
  * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild. If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = "qq-guild"
+package love.forte.simbot.component.qguild.message
+
+import love.forte.simbot.message.Message
 
 
-include(":builder-generator")
-include(":simbot-component-qq-guild-api")
-include(":simbot-component-qq-guild-stdlib")
-include(":simbot-component-qq-guild-core")
-
-
+/**
+ *
+ * 腾讯QQ频道下所有的组件特殊消息的统一类型。
+ *
+ * 所有腾讯QQ频道的组件消息类型，也就是 [QGMessageElement] 的实现类型，其开头都会以 `QG` 开头，例如 [QGReplyTo].
+ *
+ * @author ForteScarlet
+ */
+public interface QGMessageElement<out E : QGMessageElement<E>> : Message.Element<E>

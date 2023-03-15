@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2023. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -10,12 +10,21 @@
  * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild. If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = "qq-guild"
+package love.forte.simbot.component.qguild
 
 
-include(":builder-generator")
-include(":simbot-component-qq-guild-api")
-include(":simbot-component-qq-guild-stdlib")
-include(":simbot-component-qq-guild-core")
-
-
+/**
+ *
+ * 代表为一个包含一个 [TencentGuildObjective] 类型的[源][source]。
+ *
+ * @author ForteScarlet
+ */
+public interface QGObjectiveContainer<T> {
+    // TODO 尚未完善
+    
+    /**
+     * 得到此容器中保留的原始对象。
+     */
+    public val source: T
+    
+}

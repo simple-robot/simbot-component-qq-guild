@@ -10,12 +10,22 @@
  * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild. If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = "qq-guild"
+package love.forte.simbot.component.qguild.internal.event
+
+import love.forte.simbot.ID
+import love.forte.simbot.Timestamp
+import love.forte.simbot.component.qguild.event.QGBotRegisteredEvent
+import love.forte.simbot.component.qguild.event.QGBotStartedEvent
+import love.forte.simbot.component.qguild.internal.QGBotImpl
+import love.forte.simbot.randomID
 
 
-include(":builder-generator")
-include(":simbot-component-qq-guild-api")
-include(":simbot-component-qq-guild-stdlib")
-include(":simbot-component-qq-guild-core")
+internal class QGBotRegisteredEventImpl(override val bot: QGBotImpl) : QGBotRegisteredEvent() {
+    override val timestamp: Timestamp = Timestamp.now()
+    override val id: ID = randomID()
+}
 
-
+internal class QGBotStartedEventImpl(override val bot: QGBotImpl) : QGBotStartedEvent() {
+    override val timestamp: Timestamp = Timestamp.now()
+    override val id: ID = randomID()
+}
