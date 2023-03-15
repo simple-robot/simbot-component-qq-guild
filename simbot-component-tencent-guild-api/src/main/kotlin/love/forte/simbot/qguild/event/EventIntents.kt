@@ -48,13 +48,13 @@ public value class Intents(public val value: Int) {
     public operator fun plus(intents: Intents): Intents = Intents(value or intents.value)
 
     /**
-     * 判断 [intents] 中的权限是否**完全**与当前 [value] 相同。
+     * 判断 [intents] 中的权限是否**完全**包含在当前 [value] 中。
      */
     public operator fun contains(intents: Intents): Boolean = contains(intents, true)
 
     /**
-     * 判断 [intents] 中的权限是否与当前 [value] 相同。
-     * 当 [exactly] 为 `true` 时代表完全包含才返回true，否则仅部分包含也会得到true。
+     * 判断 [intents] 中的权限是否包含在当前 [value] 中。
+     * 当 [exactly] 为 `true` 时代表**完全包含**才返回 `true`，否则仅部分包含也会得到 `true`。
      *
      * @param exactly 是否判断完全包含, 默认为 `true`。
      *

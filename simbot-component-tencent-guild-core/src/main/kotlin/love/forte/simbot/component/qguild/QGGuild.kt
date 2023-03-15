@@ -26,6 +26,7 @@ import love.forte.simbot.qguild.api.channel.GetGuildChannelListApi
 import love.forte.simbot.qguild.api.member.GetGuildMemberListApi
 import love.forte.simbot.qguild.event.EventIntents
 import love.forte.simbot.qguild.model.ChannelType
+import love.forte.simbot.qguild.model.Member
 import love.forte.simbot.utils.item.Items
 import kotlin.time.Duration
 import love.forte.simbot.qguild.model.Guild as QGSourceGuild
@@ -48,7 +49,16 @@ import love.forte.simbot.qguild.model.Guild as QGSourceGuild
  * @author ForteScarlet
  */
 public interface QGGuild : Guild, CoroutineScope {
+    /**
+     * 当前bot在此频道服务器中的频道bot实例。
+     *
+     * _Note: 如果在进行bot-as-member信息初始化过程中无法初始化（未找到或没有权限），
+     * 则会直接根据 [QGBot.me] 构建一个丢失了 [`nick`][Member.nick]、[`roles`][Member.roles]
+     * 等信息的实例。_
+     *
+     */
     override val bot: QGGuildBot
+
     override val createTime: Timestamp
     override val currentMember: Int
     override val description: String
@@ -61,8 +71,7 @@ public interface QGGuild : Guild, CoroutineScope {
     public val source: QGSourceGuild
 
     /**
-     * 当前bot在频道服务器中拥有的API权限集, 在 [QGGuild] 被构建时初始化，
-     * 并可能会周期性更新。
+     * 当前bot在频道服务器中拥有的API权限集, 在 [QGGuild] 被构建时初始化。
      *
      * 可以通过 [refreshPermissions] 手动刷新 [permissions] 信息。
      *
@@ -70,6 +79,7 @@ public interface QGGuild : Guild, CoroutineScope {
      *
      */
     public val permissions: ApiPermissions
+    // TODO suspend property
 
     /**
      * 主动刷新 [permissions] 信息。
@@ -184,6 +194,10 @@ public interface QGGuild : Guild, CoroutineScope {
      * 当前频道服务器的所属人。
      *
      * 也可理解为频道主、创建者等。
+     *
+     * @throws QQGuildApiException 当没有权限获取时，通常 [QQGuildApiException.value] == `401`
+     * @throws NoSuchElementException 当没有找到对应成员时
+     *
      */
     @JvmBlocking(asProperty = true, suffix = "")
     @JvmAsync(asProperty = true)
@@ -192,6 +206,8 @@ public interface QGGuild : Guild, CoroutineScope {
     
     /**
      * 获取指定成员的信息。
+     *
+     * @throws QQGuildApiException 请求服务器得到异常，例如无权限。
      */
     @JvmBlocking(baseName = "getMember", suffix = "")
     @JvmAsync(baseName = "getMember")

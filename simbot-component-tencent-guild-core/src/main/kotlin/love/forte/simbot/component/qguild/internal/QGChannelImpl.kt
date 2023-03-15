@@ -17,27 +17,25 @@ import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.component.qguild.QGChannel
 import love.forte.simbot.component.qguild.QGGuild
-import love.forte.simbot.component.qguild.QGGuildBot
 import love.forte.simbot.component.qguild.QGMember
 import love.forte.simbot.component.qguild.util.requestBy
 import love.forte.simbot.message.Message
 import love.forte.simbot.qguild.api.message.MessageSendApi
-import love.forte.simbot.qguild.model.Channel
 import love.forte.simbot.utils.item.Items
-import love.forte.simbot.qguild.event.EventChannel as QGEventChannel
+import love.forte.simbot.utils.item.Items.Companion.emptyItems
 import love.forte.simbot.qguild.model.Channel as QGSourceChannel
 
 internal abstract class BaseQGChannel : QGChannel {
     internal abstract val baseBot: QGBotImpl
-    internal abstract val guildInternal: QGGuildImpl
+    internal abstract val guildInternal: QGGuildImpl? // TODO id only
 
 
     override val createTime: Timestamp get() = Timestamp.notSupport()
-    override val currentMember: Int get() = guildInternal.currentMember
+    override val currentMember: Int get() = -1
     override val description: String get() = ""
-    override val icon: String get() = guildInternal.icon
-    override val maximumMember: Int get() = guildInternal.maximumMember
-    override val roles: Items<QGRoleImpl> get() = guildInternal.roles
+    override val icon: String get() = ""
+    override val maximumMember: Int get() = -1
+    override val roles: Items<QGRoleImpl> get() = emptyItems()
 
     override suspend fun send(message: Message): QGMessageReceipt {
         val currentCoroutineContext = currentCoroutineContext()
@@ -65,9 +63,9 @@ internal abstract class BaseQGChannel : QGChannel {
  * @author ForteScarlet
  */
 internal class QGChannelImpl private constructor(
-    override val baseBot: QGBotImpl,
+    override val bot: QGGuildBotImpl,
     override val source: QGSourceChannel,
-    override val guildInternal: QGGuildImpl,
+    override val guildInternal: QGGuildImpl?,
     override val category: QGChannelCategoryIdImpl,
     override val id: ID,
     override val ownerId: ID,
@@ -75,56 +73,32 @@ internal class QGChannelImpl private constructor(
 ) : BaseQGChannel() {
 
     internal constructor(
-        baseBot: QGBotImpl,
+        bot: QGGuildBotImpl,
         source: QGSourceChannel,
-        guildInternal: QGGuildImpl,
+        guildInternal: QGGuildImpl?,
         category: QGChannelCategoryIdImpl,
     ) : this(
-        baseBot, source, guildInternal, category,
+        bot, source, guildInternal, category,
         source.id.ID,
         source.ownerId.ID,
         source.guildId.ID,
     )
 
-    override val name: String get() = source.name
-    override val bot: QGGuildBot get() = guildInternal.bot
+    override val baseBot: QGBotImpl
+        get() = bot.bot
 
-    override suspend fun guild(): QGGuild = guildInternal
-    override suspend fun owner(): QGMember = guildInternal.owner()
+    override val name: String get() = source.name
+
+    override suspend fun guild(): QGGuild =
+        guildInternal ?: bot.guild(guildId) ?: throw NoSuchElementException("guild(id=$guildId)")
+
+    override suspend fun owner(): QGMember = guild().owner()
 
     override fun toString(): String {
         return "QGChannelImpl(id=$id, name=$name, bot=$baseBot, source=$source, guild=$guildInternal)"
     }
 
     internal fun update(newSource: QGSourceChannel): QGChannelImpl =
-        QGChannelImpl(baseBot, newSource, guildInternal, category, id, ownerId, guildId)
+        QGChannelImpl(bot, newSource, guildInternal, category, id, ownerId, guildId)
 }
 
-/**
- * 通过事件推送而得到的 [QGChannel] 实现。
- *
- */
-internal class QGEventChannelImpl internal constructor(
-    override val baseBot: QGBotImpl,
-    private val eventChannel: QGEventChannel,
-    override val guildInternal: QGGuildImpl,
-    override val category: QGChannelCategoryImpl,
-) : BaseQGChannel() {
-    override val id: ID = eventChannel.id.ID
-    override val guildId: ID = eventChannel.guildId.ID
-    override val ownerId: ID = eventChannel.ownerId.ID
-
-    override val bot: QGGuildBot get() = guildInternal.bot
-    override val name: String get() = eventChannel.name
-
-    override suspend fun guild(): QGGuild {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun owner(): QGMember {
-        TODO("Not yet implemented")
-    }
-
-    override val source: Channel
-        get() = TODO("Not yet implemented")
-}

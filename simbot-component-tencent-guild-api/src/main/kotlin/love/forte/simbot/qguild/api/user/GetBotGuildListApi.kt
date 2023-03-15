@@ -54,7 +54,7 @@ public class GetBotGuildListApi private constructor(
     ) {
         private val route = arrayOf("users", "@me", "guilds")
         private val serializer = ListSerializer(SimpleGuild.serializer())
-        private const val DEFAULT_LIMIT: Int = 100
+        public const val DEFAULT_LIMIT: Int = 100
 
         /**
          * 构造 [GetBotGuildListApi]

@@ -73,7 +73,6 @@ internal class QGGuildImpl private constructor(
             it.permissions = permissions
             it.internalMembers = internalMembers
             it.internalChannels = internalChannels
-            it.ownerInternal = ownerInternal
             // caches
             it.internalChannelInfoCache = internalChannelInfoCache
             it.internalMemberInfoCache = internalMemberInfoCache
@@ -259,7 +258,12 @@ internal class QGGuildImpl private constructor(
 
     private var internalMembers: ConcurrentHashMap<String, QGMemberImpl>? = null
     private var internalChannels: ConcurrentHashMap<String, QGChannelImpl>? = null
-    private lateinit var ownerInternal: QGMemberImpl
+
+    /*
+     * 构造的时候即初始化，如果为null则大概率说明权限不足。
+     * 但是不管
+     */
+//    private var ownerInternal: QGMemberImpl? = null
 
     private val hasMemberListApiPermission get() = permissions hasAuth GetGuildMemberListApi
     private val hasChannelListApiPermission get() = permissions hasAuth GetGuildChannelListApi
@@ -271,12 +275,14 @@ internal class QGGuildImpl private constructor(
         return "QGGuildImpl(id=$id, name=$name, bot=$baseBot, guild=$source)"
     }
 
-    override suspend fun owner(): QGMemberImpl = ownerInternal
+    override suspend fun owner(): QGMemberImpl {
+        return member(ownerId) ?: throw NoSuchElementException("owner(id=$ownerId)")
+    }
 
     private val init = AtomicBoolean(false)
 
     /**
-     * 同步数据，包括成员信息和频道列表信息, 以及 [bot] 和 [ownerInternal] 的初始化。
+     * 同步数据，包括成员信息和频道列表信息, 以及 [bot] 的初始化。
      * 必须在对象实例后执行一次进行初始化，否则内部属性信息将会为空。
      *
      * *Note: 成员列表的获取暂时不支持（只支持私域）*
@@ -417,7 +423,7 @@ internal class QGGuildImpl private constructor(
             }.map { info ->
                 val categoryInfo = categories[info.parentId]!!
                 val category = QGChannelCategoryImpl(categoryInfo, this@QGGuildImpl)
-                QGChannelImpl(baseBot, info, this@QGGuildImpl, category)
+                QGChannelImpl(bot, info, this@QGGuildImpl, category)
             }
 
         emitAll(flow)
@@ -437,7 +443,7 @@ internal class QGGuildImpl private constructor(
 
 
         val category = QGChannelCategoryIdImpl(this, channelInfo.parentId.ID)
-        return QGChannelImpl(baseBot, channelInfo, this, category)
+        return QGChannelImpl(bot, channelInfo, this, category)
     }
 
     override val categories: Items<QGChannelCategoryImpl>
@@ -480,7 +486,7 @@ internal class QGGuildImpl private constructor(
 
         // TODO 401 process?
         syncBot()
-        syncOwner()
+//        syncOwner()
     }
 
     private suspend fun trySyncMemberList() {
@@ -517,25 +523,79 @@ internal class QGGuildImpl private constructor(
      * 从成员中寻找bot所代表的对象
      */
     private suspend fun syncBot() {
-        val member = member(baseBot.userId)!!
+        // 查询用户信息，如果因为权限问题得不到，使用 bot 的user信息直接构建。
+        var unauthorized = false
+        val botUserId = baseBot.userId
+        val member = try {
+            member(botUserId)
+        } catch (apiEx: QQGuildApiException) {
+            if (apiEx.isUnauthorized) {
+                unauthorized = true
+                null
+            } else throw apiEx.copyCurrent()
+        }?.also {
+            logger.debug("Synced guild(id={}, name={}) bot: {}", source.id, source.name, it)
+        } ?: kotlin.run {
+            if (unauthorized) {
+                logger.warn(
+                    "Synced guild(id={}, name={}) botAsMember(userId={}, username={}) is null, because unauthorized",
+                    source.id,
+                    source.name,
+                    botUserId,
+                    baseBot.username
+                )
+            } else {
+                // 基本不可能
+                logger.warn(
+                    "Synced guild(id={}, name={}) botAsMember(userId={}, username={}) is null, because not found",
+                    source.id,
+                    source.name,
+                    botUserId,
+                    baseBot.username
+                )
+            }
+            //
+            logger.warn(
+                "Will create bot member info by [bot.me()]. This will result in the loss of bot's nickname, role and other information in the guild(id={}, name={}).",
+                source.id,
+                source.name
+            )
+            val userInfo = baseBot.me()
+            val memberInfoByUser = SimpleMemberWithGuildId(source.id, userInfo, "")
+            QGMemberImpl(memberInfoByUser, this)
+        }
+
         val guildBot = baseBot.asMember(member)
-        logger.debug("Sync guild bot: {}", guildBot)
         bot = guildBot
     }
 
-    /**
-     * 从成员中寻找owner
-     */
-    private suspend fun syncOwner() {
-        val ownerId = source.ownerId
-        val owner = member(ownerId) ?: run {
-            val ownerInfo = GetMemberApi.create(source.id, ownerId).requestBy(baseBot)
-            QGMemberImpl(ownerInfo, this)
-        }
-
-        logger.debug("Sync guild owner: {}", owner)
-        ownerInternal = owner
-    }
+//    /**
+//     * 从成员中寻找owner
+//     */
+//    private suspend fun syncOwner() {
+//        val ownerId = source.ownerId
+//        var unauthorized = false
+//        val owner = try {
+//            member(ownerId)
+//        } catch (apiEx: QQGuildApiException) {
+//            if (apiEx.isUnauthorized) {
+//                unauthorized = true
+//                null
+//            } else throw apiEx.copyCurrent()
+//        }
+//
+//        if (owner == null) {
+//            if (unauthorized) {
+//                logger.warn("Synced guild(id={}, name={}) owner(id={}) is null, because unauthorized", source.id, source.name, ownerId)
+//            } else {
+//                logger.warn("Synced guild(id={}, name={}) owner(id={}) is null, because not found", source.id, source.name, ownerId)
+//            }
+//        } else {
+//            logger.debug("Synced guild(id={}, name={}) owner: {}", source.id, source.name, owner)
+//        }
+//
+//        ownerInternal = owner
+//    }
 
 
     private suspend fun trySyncChannels() {
@@ -553,7 +613,7 @@ internal class QGGuildImpl private constructor(
             val internalChannels: ConcurrentHashMap<String, QGChannelImpl> = channelSequence
                 .associateByTo(ConcurrentHashMap(), { it.id }) { info ->
                     val category = QGChannelCategoryIdImpl(this, info.parentId.ID)
-                    QGChannelImpl(baseBot, info, this, category)
+                    QGChannelImpl(bot, info, this, category)
                 }
 
             logger.debug(
@@ -593,14 +653,14 @@ internal class QGGuildImpl private constructor(
         return if (internalChannels == null) {
             // not support
             val category = QGChannelCategoryIdImpl(this, info.parentId.ID)
-            QGChannelImpl(baseBot, info, this, category)
+            QGChannelImpl(bot, info, this, category)
         } else {
             // ok
             internalChannels.computeIfPresent(channelId) { _, curr ->
                 curr.update(info)
             } ?: kotlin.run {
                 val category = QGChannelCategoryIdImpl(this, info.parentId.ID)
-                internalChannels.computeIfAbsent(channelId) { QGChannelImpl(baseBot, info, this, category) }
+                internalChannels.computeIfAbsent(channelId) { QGChannelImpl(bot, info, this, category) }
             }
         }
 

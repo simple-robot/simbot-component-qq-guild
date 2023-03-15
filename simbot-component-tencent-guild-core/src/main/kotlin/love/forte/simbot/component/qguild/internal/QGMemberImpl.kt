@@ -41,7 +41,7 @@ import love.forte.simbot.qguild.model.Member as QGSourceMember
  */
 internal class QGMemberImpl(
     override val source: QGSourceMember,
-    internal val _guild: QGGuildImpl,
+    internal val _guild: QGGuildImpl, // TODO nullable
 ) : QGMember {
 
     private val user get() = source.user

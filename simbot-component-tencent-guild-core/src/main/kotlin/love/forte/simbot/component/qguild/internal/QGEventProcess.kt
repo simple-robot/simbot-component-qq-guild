@@ -12,6 +12,7 @@
 
 package love.forte.simbot.component.qguild.internal
 
+import kotlinx.coroutines.DisposableHandle
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import love.forte.simbot.component.qguild.event.*
@@ -28,7 +29,7 @@ import love.forte.simbot.qguild.model.isCategory
  * 其中对于内建缓存的操作会在事件前后顺序执行，
  * 而对于向 [EventProcessor] 中的事件推送则是异步的。
  */
-internal fun QGBotImpl.registerEventProcessor() {
+internal fun QGBotImpl.registerEventProcessor(): DisposableHandle {
     suspend fun getOrComputeGuild(id: String): QGGuildImpl {
         return getInternalGuild(id) ?: kotlin.run {
             val guildInfo = GetGuildApi.create(id).requestBy(bot)
@@ -37,7 +38,7 @@ internal fun QGBotImpl.registerEventProcessor() {
     }
 
     val bot = this
-    source.registerPreProcessor { raw ->
+    return source.registerPreProcessor { raw ->
         when (val event = this) {
             //region Guild相关
             is GuildCreate -> {
@@ -72,7 +73,7 @@ internal fun QGBotImpl.registerEventProcessor() {
                     return@registerPreProcessor
                 }
 
-                val guild: QGGuildImpl = getOrComputeGuild(event.data.guildId)
+                val guild = getOrComputeGuild(event.data.guildId)
                 val channel = guild.emitChannelCreate(event)
                 pushEvent(QGChannelCreateEvent) {
                     QGChannelCreateEventImpl(raw, event.data, bot, channel)
@@ -88,7 +89,7 @@ internal fun QGBotImpl.registerEventProcessor() {
                     )
                     return@registerPreProcessor
                 }
-                val guild: QGGuildImpl = getOrComputeGuild(event.data.guildId)
+                val guild = getOrComputeGuild(event.data.guildId)
                 val channel = guild.emitChannelUpdate(event)
                 pushEvent(QGChannelUpdateEvent) {
                     QGChannelUpdateEventImpl(raw, event.data, bot, channel)
@@ -103,7 +104,7 @@ internal fun QGBotImpl.registerEventProcessor() {
                     )
                 }
 
-                val guild: QGGuildImpl = getOrComputeGuild(event.data.guildId)
+                val guild = getOrComputeGuild(event.data.guildId)
                 guild.emitChannelDelete(event)
 
                 pushEvent(QGChannelDeleteEvent) {
@@ -114,7 +115,7 @@ internal fun QGBotImpl.registerEventProcessor() {
 
             //region Member相关
             is GuildMemberAdd -> {
-                val guild: QGGuildImpl = getOrComputeGuild(event.data.guildId)
+                val guild = getOrComputeGuild(event.data.guildId)
                 val member = guild.emitMemberAdd(event)
                 pushEvent(QGMemberAddEvent) {
                     QGMemberAddEventImpl(bot, raw, event.data, member)
@@ -122,7 +123,7 @@ internal fun QGBotImpl.registerEventProcessor() {
             }
 
             is GuildMemberUpdate -> {
-                val guild: QGGuildImpl = getOrComputeGuild(event.data.guildId)
+                val guild = getOrComputeGuild(event.data.guildId)
                 val member = guild.emitMemberUpdate(event)
                 pushEvent(QGMemberUpdateEvent) {
                     QGMemberUpdateEventImpl(bot, raw, event.data, member)
@@ -130,7 +131,7 @@ internal fun QGBotImpl.registerEventProcessor() {
             }
 
             is GuildMemberRemove -> {
-                val guild: QGGuildImpl = getOrComputeGuild(event.data.guildId)
+                val guild = getOrComputeGuild(event.data.guildId)
                 val member = guild.emitMemberRemove(event)
                     ?: QGMemberImpl(event.data, guild)
 

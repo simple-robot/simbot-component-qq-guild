@@ -13,6 +13,7 @@
 package love.forte.simbot.component.qguild.internal
 
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import love.forte.simbot.ID
@@ -22,21 +23,27 @@ import love.forte.simbot.component.qguild.event.QGBotStartedEvent
 import love.forte.simbot.component.qguild.internal.QGGuildImpl.Companion.qgGuild
 import love.forte.simbot.component.qguild.internal.QGGuildImpl.Companion.qgGuildWithoutInit
 import love.forte.simbot.component.qguild.internal.event.QGBotStartedEventImpl
+import love.forte.simbot.component.qguild.util.requestBy
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.literal
 import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.qguild.Bot
 import love.forte.simbot.qguild.QQGuildApiException
+import love.forte.simbot.qguild.api.guild.GetGuildApi
 import love.forte.simbot.qguild.api.user.GetBotGuildListApi
+import love.forte.simbot.qguild.event.EventIntents
 import love.forte.simbot.qguild.event.GuildCreate
 import love.forte.simbot.qguild.event.GuildDelete
 import love.forte.simbot.qguild.event.GuildUpdate
+import love.forte.simbot.qguild.ifNotFoundThenNull
 import love.forte.simbot.qguild.model.Guild
 import love.forte.simbot.qguild.model.SimpleGuild
 import love.forte.simbot.qguild.model.User
 import love.forte.simbot.qguild.requestBy
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.Items.Companion.asItems
+import love.forte.simbot.utils.item.effectOn
+import love.forte.simbot.utils.item.itemsByFlow
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.set
@@ -59,12 +66,8 @@ internal class QGBotImpl(
 
     internal val job: CompletableJob
     override val coroutineContext: CoroutineContext
-//    private val statusFlowCoroutineContext: CoroutineContext
+    private val intents = source.configuration.intents
 
-    @Volatile
-    private var internalGuilds = ConcurrentHashMap<String, QGGuildImpl>()
-
-    internal fun getInternalGuild(id: String): QGGuildImpl? = internalGuilds[id]
 
     init {
         val context = source.coroutineContext
@@ -100,18 +103,47 @@ internal class QGBotImpl(
     override val avatar: String
         get() = if (!::botSelf.isInitialized) "" else botSelf.avatar
 
-    internal fun getInternalGuild(id: ID): QGGuildImpl? = internalGuilds[id.literal]
 
-    override val guilds: Items<QGGuildImpl>
-        get() = internalGuilds.values.asItems()
 
-    override suspend fun guild(id: ID): QGGuild? {
-        return internalGuilds[id.literal]
+    // TODO check permissions (event signs)
+    // TODO 内建缓存的ID hash 需要根据 shard 来
+    //  https://bot.q.qq.com/wiki/develop/api/gateway/shard.html
+    //  分片是按照频道id进行哈希的，同一个频道的信息会固定从同一个链接推送。具体哈希计算规则如下：
+    //  shard_id = (guild_id >> 22) % num_shards
+    //  ...你妈的
+
+    /*
+        如果为null，则说明没有订阅guild相关的事件
+     */
+    @Volatile
+    private var internalGuilds: ConcurrentHashMap<String, QGGuildImpl>? = null
+
+    internal fun getInternalGuild(id: String): QGGuildImpl? = internalGuilds?.get(id)
+
+    private suspend fun queryGuild(id: String): QGGuildImpl? {
+        return try {
+            GetGuildApi.create(id).requestBy(bot)
+        } catch (apiEx: QQGuildApiException) {
+            apiEx.ifNotFoundThenNull()
+        }?.let { guild -> qgGuild(this, guild) }
     }
+
+    override suspend fun guild(id: ID): QGGuildImpl? {
+        return internalGuilds?.get(id.literal) ?: queryGuild(id.literal)
+    }
+
+    @OptIn(FlowPreview::class)
+    override val guilds: Items<QGGuildImpl>
+        get() = internalGuilds?.values?.asItems() ?: itemsByFlow { props ->
+            props.effectOn(queryGuildList(props.batch).flatMapConcat { it.asFlow() }).map { qgGuild(this, it) }
+        }
 
     private val startLock = Mutex()
 
     override suspend fun me(): User = source.me()
+
+    @Volatile
+    private var sourceListenerDisposableHandle: DisposableHandle? = null
 
     /**
      * 启动当前bot。
@@ -137,8 +169,12 @@ internal class QGBotImpl(
             }
 
             initData()
-            // TODO restart clear?
-            registerEventProcessor()
+
+            sourceListenerDisposableHandle?.also { handle ->
+                handle.dispose()
+                sourceListenerDisposableHandle = null
+            }
+            sourceListenerDisposableHandle = registerEventProcessor()
             pushStartedEvent()
         }
     }
@@ -164,9 +200,23 @@ internal class QGBotImpl(
      * 初始化bot基本信息.
      */
     private suspend fun initData() {
-        initGuildListData()
+        if (EventIntents.Guilds.intents in intents) {
+            initGuildListData()
+        } else {
+            logger.warn("Bot(appId={}) is not subscribed to guild events(intents={}) and will not have a guild cache built in.", id, EventIntents.Guilds.intents)
+        }
+
     }
 
+    private fun queryGuildList(batch: Int = GetBotGuildListApi.DEFAULT_LIMIT): Flow<List<SimpleGuild>> = flow {
+        var lastId: String? = null
+        while (true) {
+            val list = GetBotGuildListApi.create(after = lastId).requestBy(source)
+            if (list.isEmpty()) break
+            lastId = list.last().id
+            emit(list)
+        }
+    }
 
     private suspend fun initGuildListData() {
         val guildParallel = configuration.initConfig.parallel.guild
@@ -175,28 +225,18 @@ internal class QGBotImpl(
         }
 
         val internalGuilds = ConcurrentHashMap<String, QGGuildImpl>()
-        var lastId: String? = null
         var times = 1
         val guilds = mutableMapOf<String, SimpleGuild>()
-//        val guildInfoList = mutableSetOf<SimpleGuild>()
 
         TreeSet<SimpleGuild>(Comparator.comparing { it.id })
 
-        while (true) {
-            val list = GetBotGuildListApi.create(after = lastId).requestBy(source)
-            if (list.isEmpty()) break
-
+        queryGuildList().collect { list ->
             logger.debug(
-                "Sync batch {} of the guild list, {} pieces of synchronized data, after id: {}",
+                "Sync batch {} of the guild list, {} pieces of synchronized data.",
                 times++,
-                list.size,
-                lastId
+                list.size
             )
-
             list.associateByTo(guilds) { it.id }
-
-            lastId = list.lastOrNull()?.id
-
         }
 
         logger.info("{} pieces of guild information are synchronized", guilds.size)
@@ -274,8 +314,11 @@ internal class QGBotImpl(
 //        }
 
         // cancel all old guilds
-        this.internalGuilds.values.forEach {
-            it.cancel()
+        this.internalGuilds?.also { old ->
+            old.values.forEach {
+                it.cancel()
+            }
+            old.clear()
         }
 
         logger.info("{} pieces of guild are initialized.", internalGuilds.size)
@@ -285,11 +328,15 @@ internal class QGBotImpl(
 
     //region internal events
     internal suspend fun updateGuild(guild: Guild): QGGuildImpl {
-        return internalGuilds.compute(guild.id) { _, old ->
-            old?.update(guild) ?: qgGuildWithoutInit(this, guild)
-        }!!.also {
-            it.initData(true)
-        }
+        return internalGuilds?.let { cache ->
+            cache.compute(guild.id) { _, old ->
+                old?.update(guild) ?: qgGuildWithoutInit(this, guild)
+            }!!.also {
+                it.initData(true)
+            }
+        } ?: qgGuild(this, guild)
+        // 如果不支持缓存，直接初始化
+
     }
 
     internal suspend fun emitGuildCreate(event: GuildCreate): QGGuildImpl {
@@ -301,7 +348,7 @@ internal class QGBotImpl(
     }
 
     internal fun emitGuildDelete(event: GuildDelete): QGGuildImpl? {
-        return internalGuilds.remove(event.data.id)
+        return internalGuilds?.remove(event.data.id)
     }
 
     //endregion

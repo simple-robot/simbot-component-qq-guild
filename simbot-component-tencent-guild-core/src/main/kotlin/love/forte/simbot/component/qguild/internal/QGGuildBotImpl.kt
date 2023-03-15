@@ -33,7 +33,7 @@ internal class QGGuildBotImpl(
     override val bot: QGBotImpl,
     private val member: QGMemberImpl,
 ) : QGGuildBot, QGBot {
-    override suspend fun asMember(): QGMember = member
+    override suspend fun asMember(): QGMemberImpl = member
 
     override val userId: ID get() = bot.userId
     override val username: String get() = bot.username

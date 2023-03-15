@@ -35,7 +35,7 @@ import love.forte.simbot.qguild.model.User as QGSourceUser
  * ### AppID 与 用户ID
  * [QGBot] 的 [id] 是用于连接服务器的 `appId` 而并非系统用户ID。
  * 如果希望获取bot的 **用户ID**, 至少执行过一次 [QGBot.start] 后通过 [userId] 获取，
- * 或者通过 [Bot.me] 实时查询。
+ * 或者通过 [me] 实时查询。
  *
  * @author ForteScarlet
  */
@@ -128,7 +128,7 @@ public interface QGBot : Bot {
     override suspend fun resolveImage(id: ID): Image<*> {
 
         // TODO fake remote image?
-        throw UnsupportedActionException("resolveImage(ID) not support yet.")
+        throw UnsupportedActionException("resolveImage(ID) not support.")
     }
 
 
