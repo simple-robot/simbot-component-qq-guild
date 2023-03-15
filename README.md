@@ -36,13 +36,9 @@ KDoc(JavaDoc): [文档引导站点](https://docs.simbot.forte.love) 中的 [QQ�
 
 <br>
 
-## ⚠️ 目前README中的各种代码示例或说明严重**滞后**于当前版本，仅供参考。
-
-*本库通过 `kotlin` 协程达成全异步的高效实现，基于 `ktor` 进行网络交互，基于 `kotlinx-serialization` 进行数据序列化/反序列化。*
+本库通过 `kotlin` 协程达成全异步的高效实现，基于 `ktor` 进行网络交互，基于 `kotlinx-serialization` 进行数据序列化/反序列化。
 
 <br>
-
-*以及，这个README看上去挺乱的，等一切安好之后会再考虑优化一下。*
 
 ## 前言
 
@@ -51,10 +47,10 @@ KDoc(JavaDoc): [文档引导站点](https://docs.simbot.forte.love) 中的 [QQ�
 如果你想要协助我们对当前仓库或者 [simbot3](https://github.com/ForteScarlet/simpler-robot/tree/v3-dev)
 的建设，欢迎通过issue提出宝贵意见或者通过pr参与到建设当中，十分感谢。
 
-## ⚠ 注意
 
-我们目前正在全力追求 [核心库API](https://github.com/simple-robot/simpler-robot) 的稳定，因此当前仓库可能**暂时**的无法及时发现问题或跟进官方的更新。
-如果你有任何问题或建议，欢迎前往 [社区](https://github.com/orgs/simple-robot/discussions) 讨论，或通过 [PR](https://github.com/simple-robot/simbot-component-tencent-guild/pulls) 协助我们，非常感谢！
+## 模块引导
+
+
 
 
 ## License

@@ -30,8 +30,8 @@ dependencies {
     api(libs.ktor.client.ws)
 //    implementation(project(":builder-generator"))
 //    ksp(project(":builder-generator"))
-    testCompileOnly(project(":builder-generator"))
-    kspTest(project(":builder-generator"))
+//    testCompileOnly(project(":builder-generator"))
+//    kspTest(project(":builder-generator"))
 //    implementation("io.ktor:ktor-client-content-negotiation:2.2.3")
 //    implementation("io.ktor:ktor-serialization-jackson:2.2.3")
 }
