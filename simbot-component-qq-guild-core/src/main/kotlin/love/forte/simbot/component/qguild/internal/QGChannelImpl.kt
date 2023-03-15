@@ -14,28 +14,50 @@ package love.forte.simbot.component.qguild.internal
 
 import kotlinx.coroutines.currentCoroutineContext
 import love.forte.simbot.ID
-import love.forte.simbot.Timestamp
 import love.forte.simbot.component.qguild.QGChannel
+import love.forte.simbot.component.qguild.QGChannelCategoryId
 import love.forte.simbot.component.qguild.QGGuild
 import love.forte.simbot.component.qguild.QGMember
+import love.forte.simbot.component.qguild.message.MessageParsers
+import love.forte.simbot.component.qguild.message.QGMessageReceipt
 import love.forte.simbot.component.qguild.util.requestBy
 import love.forte.simbot.message.Message
 import love.forte.simbot.qguild.api.message.MessageSendApi
-import love.forte.simbot.utils.item.Items
-import love.forte.simbot.utils.item.Items.Companion.emptyItems
+import kotlin.coroutines.CoroutineContext
 import love.forte.simbot.qguild.model.Channel as QGSourceChannel
 
-internal abstract class BaseQGChannel : QGChannel {
-    internal abstract val baseBot: QGBotImpl
-    internal abstract val guildInternal: QGGuildImpl? // TODO id only
+internal abstract class BaseQGChannelImpl(
+    final override val bot: QGGuildBotImpl,
+) : QGChannel {
+    override val coroutineContext: CoroutineContext = bot.newSupervisorCoroutineContext()
 
+    override suspend fun guild(): QGGuild =
+        bot.guild(guildId) ?: throw NoSuchElementException("guild(id=$guildId)")
 
-    override val createTime: Timestamp get() = Timestamp.notSupport()
-    override val currentMember: Int get() = -1
-    override val description: String get() = ""
-    override val icon: String get() = ""
-    override val maximumMember: Int get() = -1
-    override val roles: Items<QGRoleImpl> get() = emptyItems()
+    override suspend fun owner(): QGMember = guild().owner()
+
+    override fun toString(): String {
+        return "QGChannelImpl(id=$id, name=$name, source=$source)"
+    }
+}
+
+/**
+ *
+ * @author ForteScarlet
+ */
+internal class QGChannelImpl internal constructor(
+    bot: QGGuildBotImpl,
+    override val source: QGSourceChannel,
+) : BaseQGChannelImpl(bot) {
+    override val id: ID = source.id.ID
+    override val guildId: ID = source.guildId.ID
+
+    override val category: QGChannelCategoryId get() = QGChannelCategoryIdImpl(bot, source.guildId.ID, source.parentId.ID)
+
+    override suspend fun guild(): QGGuild =
+        bot.guild(guildId) ?: throw NoSuchElementException("guild(id=$guildId)")
+
+    override suspend fun owner(): QGMember = guild().owner()
 
     override suspend fun send(message: Message): QGMessageReceipt {
         val currentCoroutineContext = currentCoroutineContext()
@@ -53,52 +75,10 @@ internal abstract class BaseQGChannel : QGChannel {
             }
         }
 
-        return MessageSendApi.create(source.id, builder.build()).requestBy(baseBot).asReceipt()
+        return MessageSendApi.create(source.id, builder.build()).requestBy(bot).asReceipt()
     }
 }
 
 
-/**
- *
- * @author ForteScarlet
- */
-internal class QGChannelImpl private constructor(
-    override val bot: QGGuildBotImpl,
-    override val source: QGSourceChannel,
-    override val guildInternal: QGGuildImpl?,
-    override val category: QGChannelCategoryIdImpl,
-    override val id: ID,
-    override val ownerId: ID,
-    override val guildId: ID,
-) : BaseQGChannel() {
 
-    internal constructor(
-        bot: QGGuildBotImpl,
-        source: QGSourceChannel,
-        guildInternal: QGGuildImpl?,
-        category: QGChannelCategoryIdImpl,
-    ) : this(
-        bot, source, guildInternal, category,
-        source.id.ID,
-        source.ownerId.ID,
-        source.guildId.ID,
-    )
-
-    override val baseBot: QGBotImpl
-        get() = bot.bot
-
-    override val name: String get() = source.name
-
-    override suspend fun guild(): QGGuild =
-        guildInternal ?: bot.guild(guildId) ?: throw NoSuchElementException("guild(id=$guildId)")
-
-    override suspend fun owner(): QGMember = guild().owner()
-
-    override fun toString(): String {
-        return "QGChannelImpl(id=$id, name=$name, bot=$baseBot, source=$source, guild=$guildInternal)"
-    }
-
-    internal fun update(newSource: QGSourceChannel): QGChannelImpl =
-        QGChannelImpl(bot, newSource, guildInternal, category, id, ownerId, guildId)
-}
 

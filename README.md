@@ -3,7 +3,7 @@
 <div align="center">
 <img src=".simbot/logo.png" alt="logo" style="width:230px; height:230px; border-radius:50%; " />
 <h2>
-    ~ simple-robot for tencent-guild ~ 
+    ~ simple-robot for qq-guild ~ 
 </h2>
 <a href="https://github.com/simple-robot/simbot-component-tencent-guild/releases/latest"><img alt="release" src="https://img.shields.io/github/v/release/simple-robot/simbot-component-tencent-guild" /></a>
 <a href="https://repo1.maven.org/maven2/love/forte/simbot/component/simbot-component-qq-guild-api/" target="_blank">

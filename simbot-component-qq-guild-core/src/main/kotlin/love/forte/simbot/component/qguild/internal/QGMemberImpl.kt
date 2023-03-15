@@ -13,15 +13,14 @@
 package love.forte.simbot.component.qguild.internal
 
 import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
-import love.forte.simbot.component.qguild.QGBot
-import love.forte.simbot.component.qguild.QGGuild
 import love.forte.simbot.component.qguild.QGMember
 import love.forte.simbot.component.qguild.QGRole
+import love.forte.simbot.component.qguild.message.MessageParsers
+import love.forte.simbot.component.qguild.message.QGMessageReceipt
 import love.forte.simbot.component.qguild.util.requestBy
 import love.forte.simbot.literal
 import love.forte.simbot.message.Message
@@ -32,7 +31,8 @@ import love.forte.simbot.qguild.api.message.direct.DmsSendApi
 import love.forte.simbot.qguild.model.DirectMessageSession
 import love.forte.simbot.toTimestamp
 import love.forte.simbot.utils.item.Items
-import love.forte.simbot.utils.item.effectedItemsByFlow
+import love.forte.simbot.utils.item.effectedFlowItems
+import kotlin.coroutines.CoroutineContext
 import love.forte.simbot.qguild.model.Member as QGSourceMember
 
 /**
@@ -40,30 +40,21 @@ import love.forte.simbot.qguild.model.Member as QGSourceMember
  * @author ForteScarlet
  */
 internal class QGMemberImpl(
+    override val bot: QGBotImpl,
     override val source: QGSourceMember,
-    internal val _guild: QGGuildImpl, // TODO nullable
+    private val guildId: ID,
 ) : QGMember {
+    override val coroutineContext: CoroutineContext = bot.newSupervisorCoroutineContext()
 
     private val user get() = source.user
 
     override val id: ID = user.id.ID
 
-    override val bot: QGBot
-        get() = _guild.bot.bot
-
     override val joinTime: Timestamp
         get() = source.joinedAt.toTimestamp()
 
-    override val nickname: String
-        get() = source.nick
 
-    override val avatar: String
-        get() = user.avatar
-
-    override val username: String
-        get() = user.username
-
-    override suspend fun guild(): QGGuild = _guild
+    override suspend fun guild(): QGGuildImpl = bot.guild(guildId) ?: throw NoSuchElementException("guild(id=$guildId)")
 
     private val roleIdSet = source.roles.toSet()
 
@@ -80,7 +71,7 @@ internal class QGMemberImpl(
                 if (::dms.isInitialized) {
                     return dms
                 }
-                return CreateDmsApi.create(user.id, _guild.id.literal).requestBy(bot).also {
+                return CreateDmsApi.create(user.id, guildId.literal).requestBy(bot).also {
                     dms = it
                 }
             }
@@ -90,8 +81,12 @@ internal class QGMemberImpl(
     override val roles: Items<QGRole>
         get() {
             // TODO
-            return bot.effectedItemsByFlow {
-                _guild.roles.asFlow().filter { it.id.literal in roleIdSet }
+            return effectedFlowItems {
+                guild().roles.collect {
+                    if (it.id.literal in roleIdSet) {
+                        emit(it)
+                    }
+                }
             }
         }
 
@@ -137,16 +132,7 @@ internal class QGMemberImpl(
     }
 
     override fun toString(): String {
-        return "QGMemberImpl(id=$id, nickname=$nickname, username=$username, source=$source, bot=$bot, guild=$_guild)"
-    }
-
-    internal fun update(member: QGSourceMember): QGMemberImpl {
-        return QGMemberImpl(source, _guild).also {
-            val initDms = if (::dms.isInitialized) dms else null
-            if (initDms != null) {
-                it.dms = initDms
-            }
-        }
+        return "QGMemberImpl(id=$id, nickname=$nickname, username=$username, guild=$guildId, source=$source)"
     }
 }
 

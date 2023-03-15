@@ -13,50 +13,50 @@
 package love.forte.simbot.component.qguild.internal
 
 import kotlinx.coroutines.DisposableHandle
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
+import love.forte.simbot.ID
 import love.forte.simbot.component.qguild.event.*
+import love.forte.simbot.component.qguild.internal.QGGuildImpl.Companion.qgGuild
 import love.forte.simbot.component.qguild.internal.event.*
 import love.forte.simbot.component.qguild.util.requestBy
 import love.forte.simbot.event.Event
-import love.forte.simbot.event.EventProcessor
-import love.forte.simbot.qguild.api.guild.GetGuildApi
+import love.forte.simbot.qguild.api.channel.GetChannelApi
 import love.forte.simbot.qguild.event.*
 import love.forte.simbot.qguild.model.isCategory
 
+private fun QGBotImpl.guild0(eventGuild: EventGuild): QGGuildImpl = qgGuild(this, eventGuild)
+
+private suspend fun QGBotImpl.channel0(eventChannel: EventChannel): QGChannelImpl {
+    val channel = GetChannelApi.create(eventChannel.id).requestBy(this)
+    return QGChannelImpl(this.inGuild(channel.guildId), channel)
+}
+
+private fun QGBotImpl.member0(eventMember: EventMember): QGMemberImpl =
+    QGMemberImpl(this, eventMember, eventMember.guildId.ID)
+
 /**
- * simbot针对QQ频道注册的时候只注册一个 **预处理** 函数。
- * 其中对于内建缓存的操作会在事件前后顺序执行，
- * 而对于向 [EventProcessor] 中的事件推送则是异步的。
+ * simbot针对QQ频道注册的时候只注册一个普通处理函数。
  */
 internal fun QGBotImpl.registerEventProcessor(): DisposableHandle {
-    suspend fun getOrComputeGuild(id: String): QGGuildImpl {
-        return getInternalGuild(id) ?: kotlin.run {
-            val guildInfo = GetGuildApi.create(id).requestBy(bot)
-            updateGuild(guildInfo)
-        }
-    }
-
     val bot = this
-    return source.registerPreProcessor { raw ->
+    return source.registerProcessor { raw ->
         when (val event = this) {
             //region Guild相关
             is GuildCreate -> {
-                val guild = emitGuildCreate(event)
+                val guild = guild0(event.data)
                 pushEvent(QGGuildCreateEvent) {
                     QGGuildCreateEventImpl(raw, event.data, bot, guild)
                 }
             }
 
             is GuildUpdate -> {
-                val guild = emitGuildUpdate(event)
+                val guild = guild0(event.data)
                 pushEvent(QGGuildUpdateEvent) {
                     QGGuildUpdateEventImpl(raw, event.data, bot, guild)
                 }
             }
 
             is GuildDelete -> {
-                val guild = emitGuildDelete(event).also { it?.cancel() }
+                val guild = guild0(event.data)
                 pushEvent(QGGuildDeleteEvent) {
                     QGGuildDeleteEventImpl(raw, event.data, bot, guild)
                 }
@@ -70,11 +70,9 @@ internal fun QGBotImpl.registerEventProcessor(): DisposableHandle {
                         "Received category create event [raw={}]. report this log to issues https://github.com/simple-robot/simbot-component-tencent-guild/issues/new/choose",
                         raw
                     )
-                    return@registerPreProcessor
                 }
 
-                val guild = getOrComputeGuild(event.data.guildId)
-                val channel = guild.emitChannelCreate(event)
+                val channel = channel0(event.data)
                 pushEvent(QGChannelCreateEvent) {
                     QGChannelCreateEventImpl(raw, event.data, bot, channel)
                 }
@@ -87,10 +85,8 @@ internal fun QGBotImpl.registerEventProcessor(): DisposableHandle {
                         "Received category update event [raw={}]. report this log to issues https://github.com/simple-robot/simbot-component-tencent-guild/issues/new/choose",
                         raw
                     )
-                    return@registerPreProcessor
                 }
-                val guild = getOrComputeGuild(event.data.guildId)
-                val channel = guild.emitChannelUpdate(event)
+                val channel = channel0(event.data)
                 pushEvent(QGChannelUpdateEvent) {
                     QGChannelUpdateEventImpl(raw, event.data, bot, channel)
                 }
@@ -104,37 +100,30 @@ internal fun QGBotImpl.registerEventProcessor(): DisposableHandle {
                     )
                 }
 
-                val guild = getOrComputeGuild(event.data.guildId)
-                guild.emitChannelDelete(event)
-
+                val channel = channel0(event.data)
                 pushEvent(QGChannelDeleteEvent) {
-                    QGChannelDeleteEventImpl(raw, event.data, bot, guild)
+                    QGChannelDeleteEventImpl(raw, event.data, bot, channel)
                 }
             }
             //endregion
 
             //region Member相关
             is GuildMemberAdd -> {
-                val guild = getOrComputeGuild(event.data.guildId)
-                val member = guild.emitMemberAdd(event)
+                val member = member0(event.data)
                 pushEvent(QGMemberAddEvent) {
                     QGMemberAddEventImpl(bot, raw, event.data, member)
                 }
             }
 
             is GuildMemberUpdate -> {
-                val guild = getOrComputeGuild(event.data.guildId)
-                val member = guild.emitMemberUpdate(event)
+                val member = member0(event.data)
                 pushEvent(QGMemberUpdateEvent) {
                     QGMemberUpdateEventImpl(bot, raw, event.data, member)
                 }
             }
 
             is GuildMemberRemove -> {
-                val guild = getOrComputeGuild(event.data.guildId)
-                val member = guild.emitMemberRemove(event)
-                    ?: QGMemberImpl(event.data, guild)
-
+                val member = member0(event.data)
                 pushEvent(QGMemberRemoveEvent) {
                     QGMemberRemoveEventImpl(bot, raw, event.data, member)
                 }
@@ -160,8 +149,9 @@ internal fun QGBotImpl.registerEventProcessor(): DisposableHandle {
 
 private suspend inline fun QGBotImpl.pushEvent(eventKey: Event.Key<*>, crossinline block: () -> Event) {
     if (eventProcessor.isProcessable(eventKey)) {
-        launch {
-            eventProcessor.push(block())
-        }
+        eventProcessor.push(block())
+//        launch {
+//            eventProcessor.push(block())
+//        }
     }
 }

@@ -22,8 +22,8 @@ import java.time.Instant
 /**
  * 代表 [Signal.Dispatch.data] 类型为 [EventGuild] 的事件类型。
  */
-public sealed interface EventGuildDispatch {
-    public val data: EventGuild
+public sealed class EventGuildDispatch : Signal.Dispatch() {
+    abstract override val data: EventGuild
 }
 
 /**
@@ -35,7 +35,7 @@ public sealed interface EventGuildDispatch {
  */
 @Serializable
 @SerialName(EventIntents.Guilds.GUILD_CREATE_TYPE)
-public data class GuildCreate(override val s: Long, @SerialName("d") override val data: EventGuild) : Signal.Dispatch(), EventGuildDispatch
+public data class GuildCreate(override val s: Long, @SerialName("d") override val data: EventGuild) : EventGuildDispatch()
 
 /**
  *
@@ -47,8 +47,7 @@ public data class GuildCreate(override val s: Long, @SerialName("d") override va
  */
 @Serializable
 @SerialName(EventIntents.Guilds.GUILD_UPDATE_TYPE)
-public data class GuildUpdate(override val s: Long, @SerialName("d") override val data: EventGuild) :
-    Signal.Dispatch(), EventGuildDispatch
+public data class GuildUpdate(override val s: Long, @SerialName("d") override val data: EventGuild) : EventGuildDispatch()
 
 /**
  *
@@ -61,8 +60,7 @@ public data class GuildUpdate(override val s: Long, @SerialName("d") override va
  */
 @Serializable
 @SerialName(EventIntents.Guilds.GUILD_DELETE_TYPE)
-public data class GuildDelete(override val s: Long, @SerialName("d") override val data: EventGuild) :
-    Signal.Dispatch(), EventGuildDispatch
+public data class GuildDelete(override val s: Long, @SerialName("d") override val data: EventGuild) : EventGuildDispatch()
 
 
 /**

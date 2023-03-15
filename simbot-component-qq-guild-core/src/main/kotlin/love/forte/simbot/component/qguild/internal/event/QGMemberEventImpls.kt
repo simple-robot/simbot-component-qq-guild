@@ -42,14 +42,14 @@ internal class QGMemberAddEventImpl(
     override suspend fun member(): QGMemberImpl = _member
     override suspend fun operator(): QGMemberImpl? {
         return try {
-            _member._guild.member(sourceEventEntity.opUserId)
+            guild().member(sourceEventEntity.opUserId)
         } catch (apiEx: QQGuildApiException) {
             // process no auth
             if (apiEx.isUnauthorized) null else throw apiEx.copyCurrent()
         }
     }
 
-    override suspend fun guild(): QGGuildImpl = _member._guild
+    override suspend fun guild(): QGGuildImpl = _member.guild()
 }
 
 internal class QGMemberUpdateEventImpl(
@@ -62,14 +62,14 @@ internal class QGMemberUpdateEventImpl(
     override suspend fun member(): QGMemberImpl = _member
     override suspend fun operator(): QGMemberImpl? {
         return try {
-            _member._guild.member(sourceEventEntity.opUserId)
+            guild().member(sourceEventEntity.opUserId)
         } catch (apiEx: QQGuildApiException) {
             // process no auth
             if (apiEx.isUnauthorized) null else throw apiEx.copyCurrent()
         }
     }
 
-    override suspend fun guild(): QGGuildImpl = _member._guild
+    override suspend fun guild(): QGGuildImpl = _member.guild()
 }
 
 internal class QGMemberRemoveEventImpl(
@@ -85,14 +85,14 @@ internal class QGMemberRemoveEventImpl(
     override suspend fun member(): QGMemberImpl = _member
     override suspend fun operator(): QGMemberImpl? {
         return try {
-            _member._guild.member(sourceEventEntity.opUserId)
+            guild().member(sourceEventEntity.opUserId)
         } catch (apiEx: QQGuildApiException) {
             // process no auth
             if (apiEx.isUnauthorized) null else throw apiEx.copyCurrent()
         }
     }
 
-    override suspend fun guild(): QGGuildImpl = _member._guild
+    override suspend fun guild(): QGGuildImpl = _member.guild()
 }
 
 private fun memberEventId(t: Int, sourceBot: ID, sourceUserId: String, timestamp: Timestamp): ID =

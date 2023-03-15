@@ -14,6 +14,7 @@ package love.forte.simbot.component.qguild.internal
 
 import love.forte.simbot.ID
 import love.forte.simbot.component.qguild.QGRole
+import kotlin.coroutines.CoroutineContext
 import love.forte.simbot.qguild.model.Role as QGSourceRole
 
 /**
@@ -23,8 +24,9 @@ import love.forte.simbot.qguild.model.Role as QGSourceRole
 internal class QGRoleImpl(
     @Suppress("unused")
     private val bot: QGBotImpl,
-    override val sourceRole: QGSourceRole,
+    override val source: QGSourceRole,
 ) : QGRole {
-    override val id: ID = sourceRole.id.ID
+    override val coroutineContext: CoroutineContext = bot.newSupervisorCoroutineContext()
+    override val id: ID = source.id.ID
 
 }

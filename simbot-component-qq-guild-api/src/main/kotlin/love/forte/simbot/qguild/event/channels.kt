@@ -15,9 +15,7 @@ package love.forte.simbot.qguild.event
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.ApiModel
-import love.forte.simbot.qguild.model.Channel
-import love.forte.simbot.qguild.model.ChannelSubType
-import love.forte.simbot.qguild.model.ChannelType
+import love.forte.simbot.qguild.model.*
 
 /**
  * 子频道事件 [CHANNEL_CREATE](https://bot.q.qq.com/wiki/develop/api/gateway/channel.html#channel-create)
@@ -27,7 +25,8 @@ import love.forte.simbot.qguild.model.ChannelType
  */
 @Serializable
 @SerialName(EventIntents.Guilds.CHANNEL_CREATE_TYPE)
-public data class ChannelCreate(override val s: Long, @SerialName("d") override val data: EventChannel) : Signal.Dispatch()
+public data class ChannelCreate(override val s: Long, @SerialName("d") override val data: EventChannel) :
+    Signal.Dispatch()
 
 /**
  * 子频道事件 [CHANNEL_UPDATE](https://bot.q.qq.com/wiki/develop/api/gateway/channel.html#channel-update)
@@ -37,7 +36,8 @@ public data class ChannelCreate(override val s: Long, @SerialName("d") override 
  */
 @Serializable
 @SerialName(EventIntents.Guilds.CHANNEL_UPDATE_TYPE)
-public data class ChannelUpdate(override val s: Long, @SerialName("d") override val data: EventChannel) : Signal.Dispatch()
+public data class ChannelUpdate(override val s: Long, @SerialName("d") override val data: EventChannel) :
+    Signal.Dispatch()
 
 /**
  * 子频道事件 [CHANNEL_DELETE](https://bot.q.qq.com/wiki/develop/api/gateway/channel.html#channel-delete)
@@ -47,7 +47,8 @@ public data class ChannelUpdate(override val s: Long, @SerialName("d") override 
  */
 @Serializable
 @SerialName(EventIntents.Guilds.CHANNEL_DELETE_TYPE)
-public data class ChannelDelete(override val s: Long, @SerialName("d") override val data: EventChannel) : Signal.Dispatch()
+public data class ChannelDelete(override val s: Long, @SerialName("d") override val data: EventChannel) :
+    Signal.Dispatch()
 
 
 /**

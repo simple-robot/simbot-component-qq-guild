@@ -15,12 +15,12 @@ package love.forte.simbot.component.qguild.internal.event
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.component.qguild.QGChannel
+import love.forte.simbot.component.qguild.QGGuild
 import love.forte.simbot.component.qguild.event.QGChannelCreateEvent
 import love.forte.simbot.component.qguild.event.QGChannelDeleteEvent
 import love.forte.simbot.component.qguild.event.QGChannelUpdateEvent
 import love.forte.simbot.component.qguild.internal.QGBotImpl
 import love.forte.simbot.component.qguild.internal.QGChannelImpl
-import love.forte.simbot.component.qguild.internal.QGGuildImpl
 import love.forte.simbot.qguild.event.EventChannel
 import kotlin.random.Random
 import kotlin.random.nextUInt
@@ -35,6 +35,7 @@ internal class QGChannelCreateEventImpl(
     override val id: ID = tcgChannelModifyId(0, bot.id, sourceEventEntity.id, changedTime)
     override val operatorId: ID = sourceEventEntity.opUserId.ID
     override suspend fun channel(): QGChannel = _channel
+    override suspend fun source(): QGGuild = _channel.guild()
 }
 
 
@@ -47,6 +48,7 @@ internal class QGChannelUpdateEventImpl(
     override val id: ID = tcgChannelModifyId(1, bot.id, sourceEventEntity.id, changedTime)
     override val operatorId: ID = sourceEventEntity.opUserId.ID
     override suspend fun channel(): QGChannel = _channel
+    override suspend fun source(): QGGuild = _channel.guild()
 }
 
 
@@ -54,11 +56,12 @@ internal class QGChannelDeleteEventImpl(
     override val eventRaw: String,
     override val sourceEventEntity: EventChannel,
     override val bot: QGBotImpl,
-    private val _guild: QGGuildImpl,
+    private val _channel: QGChannelImpl
 ) : QGChannelDeleteEvent() {
     override val id: ID = tcgChannelModifyId(2, bot.id, sourceEventEntity.id, changedTime)
     override val operatorId: ID = sourceEventEntity.opUserId.ID
-    override suspend fun source(): QGGuildImpl = _guild
+    override suspend fun channel(): QGChannel = _channel
+    override suspend fun source(): QGGuild = _channel.guild()
 }
 
 

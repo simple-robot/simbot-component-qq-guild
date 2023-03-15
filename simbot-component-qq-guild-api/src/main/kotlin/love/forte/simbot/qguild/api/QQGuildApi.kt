@@ -131,7 +131,7 @@ public abstract class QQGuildApi<out R> {
             traceId
         )
 
-        checkStatus(text, decoder) { resp.status }
+        checkStatus(text, decoder, resp.status)
 
         // decode
         return decodeResponse(decoder, text)
@@ -236,16 +236,15 @@ private fun <R> QQGuildApi<R>.decodeResponse(
     return decoder.decodeFromString(resultDeserializer, remainingText)
 }
 
-private inline fun checkStatus(
+private fun checkStatus(
     remainingText: String,
     decoder: StringFormat,
-    status: () -> HttpStatusCode
+    status: HttpStatusCode
 ) {
-    val s = status()
-    if (!s.isSuccess()) {
+    if (!status.isSuccess()) {
         val info = decoder.decodeFromString(ErrInfo.serializer(), remainingText)
         // throw err
-        throw QQGuildApiException(info, s.value, s.description)
+        throw QQGuildApiException(info, status.value, status.description)
     }
 }
 

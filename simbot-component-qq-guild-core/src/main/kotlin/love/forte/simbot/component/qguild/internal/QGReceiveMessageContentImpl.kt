@@ -13,6 +13,7 @@
 package love.forte.simbot.component.qguild.internal
 
 import love.forte.simbot.ID
+import love.forte.simbot.component.qguild.message.MessageParsers
 import love.forte.simbot.component.qguild.message.QGReceiveMessageContent
 import love.forte.simbot.message.Messages
 import love.forte.simbot.qguild.model.Message
