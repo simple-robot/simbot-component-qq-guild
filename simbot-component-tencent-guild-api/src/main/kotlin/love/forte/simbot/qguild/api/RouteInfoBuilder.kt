@@ -19,18 +19,22 @@ import io.ktor.http.*
  */
 public class RouteInfoBuilder(public val parametersAppender: ParametersAppender) {
     /**
-     * 可以设置api路径
+     * api路径片段集
      */
     public var apiPath: Array<out String>? = null
     
     
     /**
-     * 请求头中的 [ContentType], 绝大多数情况下，此参数默认为 [ContentType.Application.Json].
+     * 请求头中的 [ContentType].
+     * 默认为 [ContentType.Application.Json].
      */
     public var contentType: ContentType? = ContentType.Application.Json
     
 }
 
+/**
+ * @suppress internal type
+ */
 public fun interface ParametersAppender {
     public fun append(key: String, value: Any)
 }

@@ -23,6 +23,7 @@ repositories {
 }
 
 dependencies {
+    compileOnly(simbotApi) // use @Api4J annotation
     api(project(":simbot-component-tencent-guild-api"))
     api(simbotLoggerSlf4jImpl)
     api(simbotUtilLoop)

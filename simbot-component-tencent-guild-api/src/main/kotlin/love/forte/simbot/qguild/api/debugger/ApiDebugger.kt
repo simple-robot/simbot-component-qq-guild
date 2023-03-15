@@ -10,27 +10,5 @@
  * You should have received a copy of the GNU Lesser General Public License along with simbot-component-tencent-guild. If not, see <https://www.gnu.org/licenses/>.
  */
 
-plugins {
-    id("simbot-tencent-guild.module-conventions")
-    id("simbot-tencent-guild.maven-publish")
-    kotlin("plugin.serialization")
-}
-
-
-
-
-dependencies {
-    compileOnly(simbotApi) // use @Api4J annotation
-
-    api(libs.ktor.client.core)
-    api(libs.ktor.client.cio)
-    api(libs.ktor.client.contentNegotiation)
-    api(libs.ktor.serialization.kotlinxJson)
-    api(libs.kotlinx.serialization.json)
-
-    testImplementation(libs.log4j.api)
-    testImplementation(libs.log4j.core)
-    testImplementation(libs.log4j.slf4jImpl)
-
-}
+package love.forte.simbot.qguild.api.debugger
 

@@ -45,7 +45,6 @@ public open class QQGuildApiException : IllegalStateException {
 }
 
 private class QQGuildApiExceptionCopied : QQGuildApiException {
-    constructor(value: Int, description: String) : super(value, description)
     constructor(info: ErrInfo?, value: Int, description: String) : super(info, value, description)
 }
 
@@ -85,8 +84,7 @@ public inline fun <reified T> QQGuildApiException.ifNotFoundThenNull(throwCopy: 
  *
  * @throws QQGuildApiException 由 [ErrInfo] 和 [HttpStatusCode] 构建而来的异常
  */
-public inline fun ErrInfo.err(codeBlock: () -> HttpStatusCode): Nothing {
-    val code = codeBlock()
+public fun ErrInfo.err(code: HttpStatusCode): Nothing {
     throw QQGuildApiException(this, code.value, code.description)
 }
 
