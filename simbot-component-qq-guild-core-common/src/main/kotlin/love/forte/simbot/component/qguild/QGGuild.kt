@@ -3,18 +3,21 @@
  *
  * This file is part of simbot-component-qq-guild.
  *
- * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
  *
- * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild. If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild.
+ * If not, see <https://www.gnu.org/licenses/>.
  */
 
 package love.forte.simbot.component.qguild
 
 import kotlinx.coroutines.CoroutineScope
-import love.forte.plugin.suspendtrans.annotation.JvmAsync
-import love.forte.plugin.suspendtrans.annotation.JvmBlocking
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.definition.Guild
@@ -106,6 +109,7 @@ public interface QGGuild : Guild, CoroutineScope, QGObjectiveContainer<QGSourceG
     /**
      * 查询并获取当前bot在频道服务器中拥有的API权限集。
      */
+    @JSTP
     public suspend fun permissions(): ApiPermissions
 
     /**
@@ -129,8 +133,7 @@ public interface QGGuild : Guild, CoroutineScope, QGObjectiveContainer<QGSourceG
      *
      * @throws QQGuildApiException 请求失败，例如没有权限
      */
-    @JvmBlocking(baseName = "getChannel", suffix = "")
-    @JvmAsync(baseName = "getChannel")
+    @JST(blockingBaseName = "getChannel", blockingSuffix = "", asyncBaseName = "getChannel")
     override suspend fun channel(id: ID): QGChannel?
 
     /**
@@ -145,8 +148,7 @@ public interface QGGuild : Guild, CoroutineScope, QGObjectiveContainer<QGSourceG
      *
      * @see channel
      */
-    @JvmBlocking(baseName = "getChild", suffix = "")
-    @JvmAsync(baseName = "getChild")
+    @JST(blockingBaseName = "getChild", blockingSuffix = "", asyncBaseName = "getChild")
     override suspend fun child(id: ID): QGChannel? = channel(id)
 
     /**
@@ -163,8 +165,7 @@ public interface QGGuild : Guild, CoroutineScope, QGObjectiveContainer<QGSourceG
      * @throws IllegalStateException 当目标子频道的类型不属于 [分组类型][ChannelType.CATEGORY] 时
      *
      */
-    @JvmBlocking(baseName = "getCategory", suffix = "")
-    @JvmAsync(baseName = "getCategory")
+    @JST(blockingBaseName = "getCategory", blockingSuffix = "", asyncBaseName = "getCategory")
     public suspend fun category(id: ID): QGChannelCategory?
 
     /**
@@ -176,8 +177,7 @@ public interface QGGuild : Guild, CoroutineScope, QGObjectiveContainer<QGSourceG
      * @throws NoSuchElementException 当没有找到对应成员时
      *
      */
-    @JvmBlocking(asProperty = true, suffix = "")
-    @JvmAsync(asProperty = true)
+    @JSTP
     override suspend fun owner(): QGMember
 
 
@@ -186,8 +186,7 @@ public interface QGGuild : Guild, CoroutineScope, QGObjectiveContainer<QGSourceG
      *
      * @throws QQGuildApiException 请求失败，例如没有权限
      */
-    @JvmBlocking(baseName = "getMember", suffix = "")
-    @JvmAsync(baseName = "getMember")
+    @JST(blockingBaseName = "getMember", blockingSuffix = "", asyncBaseName = "getMember")
     override suspend fun member(id: ID): QGMember?
 
     /**

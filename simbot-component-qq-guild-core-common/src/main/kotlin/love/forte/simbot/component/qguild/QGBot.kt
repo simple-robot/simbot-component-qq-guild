@@ -18,8 +18,6 @@
 package love.forte.simbot.component.qguild
 
 import kotlinx.coroutines.isActive
-import love.forte.plugin.suspendtrans.annotation.JvmAsync
-import love.forte.plugin.suspendtrans.annotation.JvmBlocking
 import love.forte.simbot.ID
 import love.forte.simbot.action.UnsupportedActionException
 import love.forte.simbot.bot.Bot
@@ -128,8 +126,12 @@ public interface QGBot : Bot {
 
     //// Impl
 
-    @JvmBlocking
-    @JvmAsync
+    /**
+     * 暂时无法直接解析“id”图片
+     *
+     * @throws UnsupportedActionException
+     */
+    @JST
     override suspend fun resolveImage(id: ID): Image<*> {
 
         // TODO fake remote image?
@@ -157,8 +159,7 @@ public interface QGBot : Bot {
     /**
      * 根据ID尝试获取一个指定的guild。
      */
-    @JvmBlocking(baseName = "getGuild", suffix = "")
-    @JvmAsync(baseName = "getGuild")
+    @JST(blockingBaseName = "getGuild", blockingSuffix = "", asyncBaseName = "getGuild")
     override suspend fun guild(id: ID): QGGuild?
 
     /**
@@ -190,8 +191,7 @@ public interface QGBot : Bot {
      *
      * @return API得到的用户信息结果
      */
-    @JvmAsync(asProperty = true)
-    @JvmBlocking(asProperty = true, suffix = "")
+    @JSTP
     public suspend fun me(): QGSourceUser
 }
 
@@ -203,11 +203,14 @@ public interface QGBot : Bot {
 public interface QGGuildBot : QGBot, GuildBot {
     override suspend fun asMember(): QGMember
 
-
+    /**
+     * 获取频道服务器序列
+     */
     override val guilds: Items<QGGuild>
 
-
-    @JvmBlocking(baseName = "getGuild", suffix = "")
-    @JvmAsync(baseName = "getGuild")
+    /**
+     * 根据ID尝试获取一个指定的guild。
+     */
+    @JST(blockingBaseName = "getGuild", blockingSuffix = "", asyncBaseName = "getGuild")
     override suspend fun guild(id: ID): QGGuild?
 }

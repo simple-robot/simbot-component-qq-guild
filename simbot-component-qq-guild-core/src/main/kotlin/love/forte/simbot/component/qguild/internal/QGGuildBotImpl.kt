@@ -42,6 +42,7 @@ import kotlin.coroutines.CoroutineContext
 internal class QGGuildBotImpl(
     override val bot: QGBotImpl,
     private val guildId: String,
+    private val currentMsgId: String? = null
 ) : QGGuildBot, QGBot {
     override suspend fun asMember(): QGMemberImpl {
         val member = try {
@@ -58,10 +59,11 @@ internal class QGGuildBotImpl(
 
     @JvmBlocking(baseName = "getGuild", suffix = "")
     @JvmAsync(baseName = "getGuild")
-    override suspend fun guild(id: ID): QGGuild? = bot.guild(id)
+    override suspend fun guild(id: ID): QGGuildImpl? = bot.guild(id)?.also {
+        it.currentMsgId = this.currentMsgId
+    }
 
-    @JvmBlocking
-    @JvmAsync
+    @JST
     override suspend fun resolveImage(id: ID): Image<*> = bot.resolveImage(id)
 
     override val coroutineContext: CoroutineContext get() = bot.coroutineContext

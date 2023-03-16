@@ -26,49 +26,36 @@ import love.forte.simbot.component.qguild.message.MessageParsers
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
 import love.forte.simbot.component.qguild.util.requestBy
 import love.forte.simbot.message.Message
+import love.forte.simbot.message.MessageContent
 import love.forte.simbot.qguild.api.message.MessageSendApi
 import kotlin.coroutines.CoroutineContext
 import love.forte.simbot.qguild.model.Channel as QGSourceChannel
-
-internal abstract class BaseQGChannelImpl(
-    final override val bot: QGGuildBotImpl,
-) : QGChannel {
-    override val coroutineContext: CoroutineContext = bot.newSupervisorCoroutineContext()
-
-    override suspend fun guild(): QGGuild =
-        bot.guild(guildId) ?: throw NoSuchElementException("guild(id=$guildId)")
-
-    override suspend fun owner(): QGMember = guild().owner()
-
-    override fun toString(): String {
-        return "QGChannelImpl(id=$id, name=$name, source=$source)"
-    }
-}
 
 /**
  *
  * @author ForteScarlet
  */
 internal class QGChannelImpl internal constructor(
-    bot: QGGuildBotImpl,
+    override val bot: QGGuildBotImpl,
     override val source: QGSourceChannel,
+    override val category: QGChannelCategoryId = QGChannelCategoryIdImpl(
+        bot,
+        source.guildId.ID,
+        source.parentId.ID
+    ),
     /**
      * 如果是从一个事件而来，提供可用于消息回复的 msgId 来避免 event.channel().send(...) 出现问题
      */
     private val currentMsgId: String? = null
-) : BaseQGChannelImpl(bot) {
+) : QGChannel {
+    override val coroutineContext: CoroutineContext = bot.newSupervisorCoroutineContext()
     override val id: ID = source.id.ID
     override val guildId: ID = source.guildId.ID
 
-    override val category: QGChannelCategoryId
-        get() = QGChannelCategoryIdImpl(
-            bot,
-            source.guildId.ID,
-            source.parentId.ID
-        )
 
     override suspend fun guild(): QGGuild =
-        bot.guild(guildId) ?: throw NoSuchElementException("guild(id=$guildId)")
+        bot.guild(guildId)?.also { it.currentMsgId = currentMsgId }
+            ?: throw NoSuchElementException("guild(id=$guildId)")
 
     override suspend fun owner(): QGMember = guild().owner()
 
@@ -80,6 +67,18 @@ internal class QGChannelImpl internal constructor(
         }
 
         return MessageSendApi.create(source.id, builder.build()).requestBy(bot).asReceipt()
+    }
+
+    override suspend fun send(message: MessageContent): QGMessageReceipt {
+        return super.send(message)
+    }
+
+    override suspend fun send(text: String): QGMessageReceipt {
+        return super.send(text)
+    }
+
+    override fun toString(): String {
+        return "QGChannelImpl(id=$id, name=$name, source=$source)"
     }
 }
 

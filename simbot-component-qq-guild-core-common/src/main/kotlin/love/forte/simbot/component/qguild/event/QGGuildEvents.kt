@@ -3,22 +3,26 @@
  *
  * This file is part of simbot-component-qq-guild.
  *
- * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
  *
- * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild. If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild.
+ * If not, see <https://www.gnu.org/licenses/>.
  */
 
 package love.forte.simbot.component.qguild.event
 
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import love.forte.plugin.suspendtrans.annotation.JvmAsync
-import love.forte.plugin.suspendtrans.annotation.JvmBlocking
 import love.forte.simbot.FragileSimbotApi
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
+import love.forte.simbot.component.qguild.JSTP
 import love.forte.simbot.component.qguild.QGBot
 import love.forte.simbot.component.qguild.QGGuild
 import love.forte.simbot.event.*
@@ -74,8 +78,7 @@ public sealed class QGGuildEvent : QGEvent<EventGuild>() {
  *
  * [before] 恒为null。
  */
-@JvmBlocking(asProperty = true, suffix = "")
-@JvmAsync(asProperty = true)
+@JSTP
 public abstract class QGGuildCreateEvent : QGGuildEvent(), StartPointEvent, GuildEvent, ChangedEvent {
     override val changedTime: Timestamp = Timestamp.now()
     override val timestamp: Timestamp get() = changedTime
@@ -124,8 +127,7 @@ public abstract class QGGuildCreateEvent : QGGuildEvent(), StartPointEvent, Guil
  *
  * [after] 字段内容为变更后的字段内容
  */
-@JvmBlocking(asProperty = true, suffix = "")
-@JvmAsync(asProperty = true)
+@JSTP
 public abstract class QGGuildUpdateEvent : QGGuildEvent(), GuildEvent, ChangedEvent {
     override val changedTime: Timestamp = Timestamp.now()
     override val timestamp: Timestamp get() = changedTime
@@ -176,8 +178,7 @@ public abstract class QGGuildUpdateEvent : QGGuildEvent(), GuildEvent, ChangedEv
  * [before] 字段内容为变更前的字段内容
  *
  */
-@JvmBlocking(asProperty = true, suffix = "")
-@JvmAsync(asProperty = true)
+@JSTP
 public abstract class QGGuildDeleteEvent : QGGuildEvent(), ChangedEvent {
     override val changedTime: Timestamp = Timestamp.now()
     override val timestamp: Timestamp get() = changedTime

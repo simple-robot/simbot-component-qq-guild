@@ -18,6 +18,7 @@
 package love.forte.simbot.component.qguild.internal
 
 import kotlinx.coroutines.DisposableHandle
+import love.forte.simbot.FragileSimbotApi
 import love.forte.simbot.ID
 import love.forte.simbot.component.qguild.event.*
 import love.forte.simbot.component.qguild.internal.QGGuildImpl.Companion.qgGuild
@@ -41,6 +42,7 @@ private fun QGBotImpl.member0(eventMember: EventMember): QGMemberImpl =
 /**
  * simbot针对QQ频道注册的时候只注册一个普通处理函数。
  */
+@OptIn(FragileSimbotApi::class)
 internal fun QGBotImpl.registerEventProcessor(): DisposableHandle {
     val bot = this
     return source.registerProcessor { raw ->
@@ -136,8 +138,9 @@ internal fun QGBotImpl.registerEventProcessor(): DisposableHandle {
             //endregion
 
 
+            // 消息
             is AtMessageCreate -> {
-
+                QGAtMessageCreateEventImpl(bot, raw, event.data)
             }
 
 

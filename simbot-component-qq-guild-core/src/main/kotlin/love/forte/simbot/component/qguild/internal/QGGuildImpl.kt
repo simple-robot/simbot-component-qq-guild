@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.*
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.component.qguild.QGChannel
+import love.forte.simbot.component.qguild.QGChannelCategoryId
 import love.forte.simbot.component.qguild.QGGuild
 import love.forte.simbot.component.qguild.util.requestBy
 import love.forte.simbot.literal
@@ -45,6 +46,7 @@ import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.effectOn
 import love.forte.simbot.utils.item.effectedFlowItems
 import love.forte.simbot.utils.item.flowItems
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.CoroutineContext
 import love.forte.simbot.qguild.model.Guild as QGSourceGuild
 
@@ -61,8 +63,9 @@ internal class QGGuildImpl private constructor(
     /**
      * 如果是从一个事件而来，提供可用于消息回复的 msgId 来避免 event.channel().send(...) 出现问题
      */
-    private val currentMsgId: String? = null
+    internal var currentMsgId: String? = null
 ) : QGGuild {
+
 
     override val id: ID = source.id.ID
     override val ownerId: ID = source.ownerId.ID
@@ -81,7 +84,7 @@ internal class QGGuildImpl private constructor(
 
     override suspend fun permissions(): ApiPermissions = GetApiPermissionListApi.create(source.id).requestBy(baseBot)
 
-    override val bot: QGGuildBotImpl = QGGuildBotImpl(baseBot, source.id)
+    override val bot: QGGuildBotImpl = QGGuildBotImpl(baseBot, source.id, currentMsgId)
 
     override suspend fun owner(): QGMemberImpl {
         return member(ownerId) ?: throw NoSuchElementException("owner(id=$ownerId)")
@@ -133,13 +136,26 @@ internal class QGGuildImpl private constructor(
      * 通过API实时查询channels列表
      */
     private fun queryChannels(): Items<QGChannelImpl> = effectedFlowItems {
+        val categoryMap = ConcurrentHashMap<String, QGChannelCategoryId>()
         val flow = GetGuildChannelListApi
             .create(source.id)
             .requestBy(baseBot)
             .asFlow()
-            .filterNot { it.type.isCategory }
+            .filterNot { info ->
+                if (info.type.isCategory) {
+                    categoryMap.computeIfAbsent(info.parentId) {
+                        QGChannelCategoryImpl(bot, info)
+                    }
+                    false
+                } else {
+                    true
+                }
+            }
             .map { info ->
-                QGChannelImpl(bot, info, currentMsgId)
+                val category = categoryMap.computeIfAbsent(info.parentId) { cid ->
+                    QGChannelCategoryIdImpl(bot, info.guildId.ID, cid.ID)
+                }
+                QGChannelImpl(bot = bot, source = info, category = category, currentMsgId = currentMsgId)
             }
 
 
@@ -154,7 +170,7 @@ internal class QGGuildImpl private constructor(
             apiEx.ifNotFoundThenNull()
         } ?: return null
 
-        return QGChannelImpl(bot, channelInfo, currentMsgId)
+        return QGChannelImpl(bot, channelInfo, currentMsgId = currentMsgId)
     }
 
     override val categories: Items<QGChannelCategoryImpl>

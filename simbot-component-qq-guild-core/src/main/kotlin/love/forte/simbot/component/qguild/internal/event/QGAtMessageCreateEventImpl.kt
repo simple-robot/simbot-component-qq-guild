@@ -19,7 +19,7 @@ package love.forte.simbot.component.qguild.internal.event
 
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
-import love.forte.simbot.component.qguild.event.QGMessageCreateEvent
+import love.forte.simbot.component.qguild.event.QGAtMessageCreateEvent
 import love.forte.simbot.component.qguild.internal.QGBotImpl
 import love.forte.simbot.component.qguild.internal.QGChannelImpl
 import love.forte.simbot.component.qguild.internal.QGMemberImpl
@@ -41,11 +41,11 @@ import love.forte.simbot.toTimestamp
  *
  * @author ForteScarlet
  */
-internal class QGMessageCreateEventImpl(
+internal class QGAtMessageCreateEventImpl(
     override val bot: QGBotImpl,
     override val eventRaw: String,
     override val sourceEventEntity: Message
-) : QGMessageCreateEvent() {
+) : QGAtMessageCreateEvent() {
     override val id: ID = "${sourceEventEntity.guildId}.${sourceEventEntity.channelId}.${sourceEventEntity.id}.${sourceEventEntity.timestamp.epochSecond}".ID
 
     override val timestamp: Timestamp = sourceEventEntity.timestamp.toTimestamp()
@@ -53,7 +53,6 @@ internal class QGMessageCreateEventImpl(
     override val messageContent: QGReceiveMessageContentImpl = QGReceiveMessageContentImpl(sourceEventEntity)
 
     override suspend fun reply(message: love.forte.simbot.message.Message): QGMessageReceipt {
-//        MessageSendApi.create()
         TODO("Not yet implemented")
     }
 
@@ -65,6 +64,7 @@ internal class QGMessageCreateEventImpl(
     }
 
     override suspend fun reply(text: String): MessageReceipt {
+        // TODO
         return super.reply(text)
     }
 
@@ -87,6 +87,6 @@ internal class QGMessageCreateEventImpl(
                 apiEx.ifNotFoundThenNoSuch { "channel(id=${sourceEventEntity.channelId})" }
             }
 
-        return QGChannelImpl(bot.inGuild(sourceEventEntity.guildId), channel, sourceEventEntity.id)
+        return QGChannelImpl(bot.inGuild(sourceEventEntity.guildId), channel, currentMsgId = sourceEventEntity.id)
     }
 }

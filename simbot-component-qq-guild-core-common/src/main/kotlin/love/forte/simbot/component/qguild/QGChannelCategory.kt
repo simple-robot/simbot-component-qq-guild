@@ -3,17 +3,21 @@
  *
  * This file is part of simbot-component-qq-guild.
  *
- * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
  *
- * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild. If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild.
+ * If not, see <https://www.gnu.org/licenses/>.
  */
 
 package love.forte.simbot.component.qguild
 
-import love.forte.plugin.suspendtrans.annotation.JvmAsync
-import love.forte.plugin.suspendtrans.annotation.JvmBlocking
+import kotlinx.coroutines.sync.Mutex
 import love.forte.simbot.ID
 import love.forte.simbot.definition.BotContainer
 import love.forte.simbot.definition.Category
@@ -63,19 +67,21 @@ public interface QGChannelCategoryId : Category, BotContainer, GuildInfoContaine
     /**
      * 获取此分类所属的频道服务器。
      */
-    @JvmBlocking(asProperty = true, suffix = "")
-    @JvmAsync(asProperty = true)
+    @JSTP
     override suspend fun guild(): QGGuild
 
     /**
-     * 根据当前ID查询一个具体的分组对象实例 [QGChannelCategory].
+     * 根据当前ID**初始化**并得到一个具体的分组对象实例 [QGChannelCategory].
+     *
+     * [resolve] 只会最多生效一次并记录其结果，内部通过 [锁][Mutex] 控制并发。
+     * 如果在初始化阶段出现异常（例如无权限或未找到），则下次仍然会发起请求（且仍然会得到可能的任何异常）。
      *
      * @throws NoSuchElementException 当未查询到结果（例如查询时分组已被删除）
      * @throws QQGuildApiException api查询期间得到的任何异常
      */
-    @JvmAsync
-    @JvmBlocking
+    @JST
     public suspend fun resolve(): QGChannelCategory
+
 }
 
 
@@ -126,17 +132,11 @@ public interface QGChannelCategory : Category, BotContainer, GuildInfoContainer,
     /**
      * 获取此分类所属的频道服务器。
      */
-    @JvmBlocking(asProperty = true, suffix = "")
-    @JvmAsync(asProperty = true)
+    @JSTP
     override suspend fun guild(): QGGuild
 
     /**
-     * 根据当前ID查询一个具体的分组对象实例。
-     * 效果同 [QGChannelCategoryId.resolve], 会查询并得到一个新的实例，
-     * 当前实例内信息不变。
-     *
-     * @throws NoSuchElementException 当未查询到结果（例如查询时分组已被删除）
-     * @throws QQGuildApiException api查询期间得到的任何异常
+     * 得到自身。
      */
     @JvmSynthetic
     override suspend fun resolve(): QGChannelCategory

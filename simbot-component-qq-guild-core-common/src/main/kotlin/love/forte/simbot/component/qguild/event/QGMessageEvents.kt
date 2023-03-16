@@ -17,8 +17,8 @@
 
 package love.forte.simbot.component.qguild.event
 
-import jdk.internal.net.http.common.Log.channel
 import love.forte.simbot.Timestamp
+import love.forte.simbot.component.qguild.JSTP
 import love.forte.simbot.component.qguild.QGChannel
 import love.forte.simbot.component.qguild.QGMember
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
@@ -36,10 +36,10 @@ import love.forte.simbot.qguild.model.Message as QGSourceMessage
  * 的组件事件封装。
  *
  * [QGMessageEvent] 作为一个基础事件类型，本身不提供过多的类型约束，参考更具体的实现类型。
- * - [QGMessageCreateEvent]
+ * - [QGAtMessageCreateEvent]
  *
  *
- * @see QGMessageCreateEvent
+ * @see QGAtMessageCreateEvent
  *
  * @author ForteScarlet
  */
@@ -98,7 +98,8 @@ public sealed class QGMessageEvent : QGEvent<QGSourceMessage>(), MessageEvent {
  *
  * @author ForteScarlet
  */
-public abstract class QGMessageCreateEvent : QGMessageEvent(), ChannelMessageEvent {
+@JSTP
+public abstract class QGAtMessageCreateEvent : QGMessageEvent(), ChannelMessageEvent {
 
     /**
      * 发送消息的用户
@@ -133,11 +134,11 @@ public abstract class QGMessageCreateEvent : QGMessageEvent(), ChannelMessageEve
      */
     override suspend fun organization(): QGChannel = channel()
 
-    override val key: Event.Key<out QGMessageCreateEvent> get() = Key
+    override val key: Event.Key<out QGAtMessageCreateEvent> get() = Key
 
-    public companion object Key : BaseEventKey<QGMessageCreateEvent>(
+    public companion object Key : BaseEventKey<QGAtMessageCreateEvent>(
         "qg.at_message_create", QGMessageEvent, ChannelMessageEvent
     ) {
-        override fun safeCast(value: Any): QGMessageCreateEvent? = doSafeCast(value)
+        override fun safeCast(value: Any): QGAtMessageCreateEvent? = doSafeCast(value)
     }
 }

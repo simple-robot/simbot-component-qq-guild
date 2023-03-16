@@ -3,18 +3,21 @@
  *
  * This file is part of simbot-component-qq-guild.
  *
- * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
  *
- * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild. If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild.
+ * If not, see <https://www.gnu.org/licenses/>.
  */
 
 package love.forte.simbot.component.qguild
 
 import kotlinx.coroutines.CoroutineScope
-import love.forte.plugin.suspendtrans.annotation.JvmAsync
-import love.forte.plugin.suspendtrans.annotation.JvmBlocking
 import love.forte.simbot.ID
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
 import love.forte.simbot.definition.GuildMember
@@ -64,8 +67,7 @@ public interface QGMember : GuildMember, CoroutineScope, QGObjectiveContainer<QG
      *
      * 如果想允许内嵌格式，请使用 [ContentText] 消息类型而不是纯文本或 [Text] TODO
      */
-    @JvmBlocking
-    @JvmAsync
+    @JST
     override suspend fun send(message: Message): QGMessageReceipt
 
     /**
@@ -76,24 +78,20 @@ public interface QGMember : GuildMember, CoroutineScope, QGObjectiveContainer<QG
      *
      * 如果希望允许内嵌格式，请使用 [ContentText] 消息类型而不是纯文本或 [Text] TODO
      */
-    @JvmBlocking
-    @JvmAsync
+    @JST
     override suspend fun send(text: String): QGMessageReceipt
 
 
     /**
      * 向目标成员发送私聊消息。
      */
-    @JvmBlocking
-    @JvmAsync
+    @JST
     override suspend fun send(message: MessageContent): QGMessageReceipt
 
-    @JvmBlocking(asProperty = true, suffix = "")
-    @JvmAsync(asProperty = true)
+    @JSTP
     override suspend fun organization(): QGGuild = guild()
 
-    @JvmBlocking(asProperty = true, suffix = "")
-    @JvmAsync(asProperty = true)
+    @JSTP
     override suspend fun guild(): QGGuild
 
     /**

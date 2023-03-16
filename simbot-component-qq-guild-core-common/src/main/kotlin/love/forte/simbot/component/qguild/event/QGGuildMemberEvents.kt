@@ -3,19 +3,23 @@
  *
  * This file is part of simbot-component-qq-guild.
  *
- * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
  *
- * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild. If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild.
+ * If not, see <https://www.gnu.org/licenses/>.
  */
 
 package love.forte.simbot.component.qguild.event
 
-import love.forte.plugin.suspendtrans.annotation.JvmAsync
-import love.forte.plugin.suspendtrans.annotation.JvmBlocking
 import love.forte.simbot.Timestamp
 import love.forte.simbot.action.ActionType
+import love.forte.simbot.component.qguild.JSTP
 import love.forte.simbot.component.qguild.QGGuild
 import love.forte.simbot.component.qguild.QGMember
 import love.forte.simbot.event.*
@@ -56,8 +60,7 @@ public sealed class QGMemberEvent : QGEvent<EventMember>() {
  * 频道成员增加事件。
  *
  */
-@JvmBlocking(asProperty = true, suffix = "")
-@JvmAsync(asProperty = true)
+@JSTP
 public abstract class QGMemberAddEvent : QGMemberEvent(), GuildMemberIncreaseEvent {
     /**
      * 事件对象构建时间。
@@ -122,8 +125,7 @@ public abstract class QGMemberAddEvent : QGMemberEvent(), GuildMemberIncreaseEve
 /**
  * 频道成员信息更新事件。
  */
-@JvmBlocking(asProperty = true, suffix = "")
-@JvmAsync(asProperty = true)
+@JSTP
 public abstract class QGMemberUpdateEvent : QGMemberEvent(), MemberChangedEvent, GuildEvent {
     /**
      * 事件对象构建时间。
@@ -187,8 +189,7 @@ public abstract class QGMemberUpdateEvent : QGMemberEvent(), MemberChangedEvent,
 /**
  * 频道成员离开/被移除事件。事件触发时已经被移除。
  */
-@JvmBlocking(asProperty = true, suffix = "")
-@JvmAsync(asProperty = true)
+@JSTP
 public abstract class QGMemberRemoveEvent : QGMemberEvent(), GuildMemberDecreaseEvent {
     /**
      * 事件对象构建时间。

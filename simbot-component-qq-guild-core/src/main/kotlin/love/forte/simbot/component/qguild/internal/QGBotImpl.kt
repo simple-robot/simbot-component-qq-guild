@@ -118,7 +118,7 @@ internal class QGBotImpl(
 
     private val startLock = Mutex()
 
-    override suspend fun me(): User = source.me()
+    override suspend fun me(): User = source.me().also { botSelf = it }
 
     @Volatile
     private var sourceListenerDisposableHandle: DisposableHandle? = null

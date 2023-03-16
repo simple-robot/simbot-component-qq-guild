@@ -3,18 +3,21 @@
  *
  * This file is part of simbot-component-qq-guild.
  *
- * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
  *
- * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild. If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild.
+ * If not, see <https://www.gnu.org/licenses/>.
  */
 
 package love.forte.simbot.component.qguild
 
 import kotlinx.coroutines.CoroutineScope
-import love.forte.plugin.suspendtrans.annotation.JvmAsync
-import love.forte.plugin.suspendtrans.annotation.JvmBlocking
 import love.forte.simbot.CharSequenceID
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
@@ -127,15 +130,13 @@ public interface QGChannel : Channel, CoroutineScope, QGObjectiveContainer<QGSou
     /**
      * 得到当前子频道所属频道服务器
      */
-    @JvmBlocking(asProperty = true, suffix = "")
-    @JvmAsync(asProperty = true)
+    @JSTP
     override suspend fun guild(): QGGuild
 
     /**
      * 得到当前子频道所属用户
      */
-    @JvmBlocking(asProperty = true, suffix = "")
-    @JvmAsync(asProperty = true)
+    @JSTP
     override suspend fun owner(): QGMember
 
     /**
@@ -149,8 +150,7 @@ public interface QGChannel : Channel, CoroutineScope, QGObjectiveContainer<QGSou
     /**
      * 同 [guild]
      */
-    @JvmBlocking(asProperty = true, suffix = "")
-    @JvmAsync(asProperty = true)
+    @JSTP
     override suspend fun previous(): QGGuild = guild()
 
     /**
@@ -159,8 +159,7 @@ public interface QGChannel : Channel, CoroutineScope, QGObjectiveContainer<QGSou
      * @throws QQGuildApiException 请求异常，例如无权限
      *
      */
-    @JvmBlocking
-    @JvmAsync
+    @JST
     override suspend fun send(message: Message): QGMessageReceipt
 
 
@@ -170,8 +169,7 @@ public interface QGChannel : Channel, CoroutineScope, QGObjectiveContainer<QGSou
      * @throws QQGuildApiException 请求异常，例如无权限
      *
      */
-    @JvmBlocking
-    @JvmAsync
+    @JST
     override suspend fun send(text: String): QGMessageReceipt {
         return send(Text.of(text))
     }
@@ -183,8 +181,7 @@ public interface QGChannel : Channel, CoroutineScope, QGObjectiveContainer<QGSou
      * @throws QQGuildApiException 请求异常，例如无权限
      *
      */
-    @JvmBlocking
-    @JvmAsync
+    @JST
     override suspend fun send(message: MessageContent): QGMessageReceipt {
         return send(message.messages)
     }
@@ -214,8 +211,7 @@ public interface QGChannel : Channel, CoroutineScope, QGObjectiveContainer<QGSou
         "Channels cannot get a member, use `guild` to get it.",
         ReplaceWith("guild().member(id)")
     )
-    @JvmBlocking(baseName = "getMember", suffix = "")
-    @JvmAsync(baseName = "getMember")
+    @JST(blockingBaseName = "getMember", blockingSuffix = "", asyncBaseName = "getMember")
     override suspend fun member(id: ID): QGMember? = guild().member(id)
 
     // TODO
