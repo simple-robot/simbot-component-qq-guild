@@ -3,11 +3,16 @@
  *
  * This file is part of simbot-component-qq-guild.
  *
- * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
  *
- * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild. If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild.
+ * If not, see <https://www.gnu.org/licenses/>.
  */
 
 package love.forte.simbot.component.qguild.internal
@@ -52,6 +57,11 @@ internal class QGGuildImpl private constructor(
     private val baseBot: QGBotImpl,
     override val source: QGSourceGuild,
     override val coroutineContext: CoroutineContext,
+
+    /**
+     * 如果是从一个事件而来，提供可用于消息回复的 msgId 来避免 event.channel().send(...) 出现问题
+     */
+    private val currentMsgId: String? = null
 ) : QGGuild {
 
     override val id: ID = source.id.ID
@@ -129,7 +139,7 @@ internal class QGGuildImpl private constructor(
             .asFlow()
             .filterNot { it.type.isCategory }
             .map { info ->
-                QGChannelImpl(bot, info)
+                QGChannelImpl(bot, info, currentMsgId)
             }
 
 
@@ -144,7 +154,7 @@ internal class QGGuildImpl private constructor(
             apiEx.ifNotFoundThenNull()
         } ?: return null
 
-        return QGChannelImpl(bot, channelInfo)
+        return QGChannelImpl(bot, channelInfo, currentMsgId)
     }
 
     override val categories: Items<QGChannelCategoryImpl>
@@ -184,12 +194,13 @@ internal class QGGuildImpl private constructor(
 
         internal fun qgGuild(
             bot: QGBotImpl,
-            guild: QGSourceGuild
+            guild: QGSourceGuild,
+            currentMsgId: String? = null
         ): QGGuildImpl {
             val job: CompletableJob = SupervisorJob(bot.coroutineContext[Job])
             val coroutineContext: CoroutineContext = bot.coroutineContext + job
 
-            return QGGuildImpl(bot, guild, coroutineContext)
+            return QGGuildImpl(bot, guild, coroutineContext, currentMsgId)
         }
     }
 }

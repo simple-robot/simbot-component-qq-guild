@@ -3,11 +3,16 @@
  *
  * This file is part of simbot-component-qq-guild.
  *
- * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
  *
- * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild. If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild.
+ * If not, see <https://www.gnu.org/licenses/>.
  */
 
 package love.forte.simbot.qguild.api.message
@@ -170,7 +175,7 @@ public class MessageSendApi private constructor(
      *
      */
     @Serializable
-    public class Body private constructor(
+    public class Body internal constructor(
         /**
          * 选填，消息内容，文本内容，支持[内嵌格式](https://bot.q.qq.com/wiki/develop/api/openapi/message/message_format.html)
          */
@@ -291,6 +296,22 @@ public class MessageSendApi private constructor(
                 fileImage = uri
             }
 
+            /**
+             * 尝试使用 [message] 中的 [Message.content]、[Message.messageReference] 来覆盖当前builder中的属性。
+             * 当他们不为null（ `content` 不为空字符串）的时候才会填充。
+             */
+            public fun fromMessage(message: Message) {
+                if (message.content.isNotEmpty()) {
+                    content = message.content
+                }
+                message.ark ?.also {
+                    ark = it
+                }
+                message.messageReference?.also {
+                    messageReference = it
+                }
+            }
+
             public fun build(): Body =
                 Body(content, embed, ark, messageReference, image, msgId, eventId, markdown).apply {
                     this.fileImage = this@Builder.fileImage
@@ -315,6 +336,8 @@ public class MessageSendApi private constructor(
     }
 
 }
+
+
 
 // // TencentMessageForSending || MultiPartFormDataContent
 /**
