@@ -3,11 +3,16 @@
  *
  * This file is part of simbot-component-qq-guild.
  *
- * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
  *
- * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild. If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild.
+ * If not, see <https://www.gnu.org/licenses/>.
  */
 
 package love.forte.simbot.component.qguild
@@ -36,6 +41,8 @@ import love.forte.simbot.qguild.model.User as QGSourceUser
  * [QGBot] 的 [id] 是用于连接服务器的 `appId` 而并非系统用户ID。
  * 如果希望获取bot的 **用户ID**, 至少执行过一次 [QGBot.start] 后通过 [userId] 获取，
  * 或者通过 [me] 实时查询。
+ *
+ * _Note: QGBot仅由内部实现，对外不稳定_
  *
  * @author ForteScarlet
  */
@@ -111,7 +118,7 @@ public interface QGBot : Bot {
     /**
      * bot所属的bot管理器
      */
-    override val manager: BaseQGBotManager
+    override val manager: BaseQQGuildBotManager
 
     /**
      * bot所属的事件处理器。

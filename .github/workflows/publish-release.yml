@@ -161,4 +161,4 @@ jobs:
           publish_branch: kdoc-deploy/component-tencent-guild
           publish_dir: ./build/dokka/html
           # deploy to sub dir
-          destination_dir: components/tencent-guild
+          destination_dir: components/qq-guild

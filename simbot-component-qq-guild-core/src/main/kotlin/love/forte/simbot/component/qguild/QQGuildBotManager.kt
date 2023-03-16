@@ -3,24 +3,26 @@
  *
  * This file is part of simbot-component-qq-guild.
  *
- * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
  *
- * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild. If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild.
+ * If not, see <https://www.gnu.org/licenses/>.
  */
 
 package love.forte.simbot.component.qguild
 
-import love.forte.simbot.Attribute
 import love.forte.simbot.Component
 import love.forte.simbot.NoSuchComponentException
 import love.forte.simbot.application.ApplicationConfiguration
 import love.forte.simbot.application.EventProviderAutoRegistrarFactory
-import love.forte.simbot.application.EventProviderFactory
-import love.forte.simbot.attribute
 import love.forte.simbot.component.qguild.config.QGBotComponentConfiguration
-import love.forte.simbot.component.qguild.internal.QGBotManagerImpl
+import love.forte.simbot.component.qguild.internal.QQGuildBotManagerImpl
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.qguild.BotConfiguration
 import kotlin.coroutines.CoroutineContext
@@ -30,25 +32,25 @@ import kotlin.coroutines.EmptyCoroutineContext
  *
  * QQ频道BOT的bot管理器。
  *
- * [QGBotManager] 不允许注册相同 `appId` 的bot。
+ * [QQGuildBotManager] 不允许注册相同 `appId` 的bot。
+ *
+ * _Note: 仅由内部实现，对外不稳定_
  *
  * @author ForteScarlet
  */
-public abstract class QGBotManager : BaseQGBotManager() {
+public abstract class QQGuildBotManager : BaseQQGuildBotManager() {
 
     /**
-     * [QGBotManager] 的构建工厂。
+     * [QQGuildBotManager] 的构建工厂。
      */
-    public companion object Factory : EventProviderFactory<QGBotManager, QGBotManagerConfiguration> {
-        override val key: Attribute<QGBotManager> = attribute("SIMBOT.TCG")
-
+    public companion object Factory : BaseFactory<QQGuildBotManager>() {
         override suspend fun create(
             eventProcessor: EventProcessor,
             components: List<Component>,
             applicationConfiguration: ApplicationConfiguration,
-            configurator: QGBotManagerConfiguration.() -> Unit,
-        ): QGBotManager {
-            val configuration = QGBotManagerConfigurationImpl().also {
+            configurator: QQGuildBotManagerConfiguration.() -> Unit,
+        ): QQGuildBotManager {
+            val configuration = QQGuildBotManagerConfigurationImpl().also {
                 it.parentCoroutineContext = applicationConfiguration.coroutineContext
                 configurator(it)
             }
@@ -57,7 +59,7 @@ public abstract class QGBotManager : BaseQGBotManager() {
             val component = components.find { it.id == QQGuildComponent.ID_VALUE } as? QQGuildComponent
                 ?: throw NoSuchComponentException("component id [${QQGuildComponent.ID_VALUE}], and type of QQGuildComponent.")
 
-            return QGBotManagerImpl(eventProcessor, configuration, component).also {
+            return QQGuildBotManagerImpl(eventProcessor, configuration, component).also {
                 configuration.useBotManager(it)
             }
         }
@@ -66,19 +68,19 @@ public abstract class QGBotManager : BaseQGBotManager() {
 
 
 /**
- * [QGBotManager] 的自动注册工厂。
+ * [QQGuildBotManager] 的自动注册工厂。
  */
 public class QGBotManagerAutoRegistrarFactory :
-    EventProviderAutoRegistrarFactory<QGBotManager, QGBotManagerConfiguration> {
-    override val registrar: QGBotManager.Factory get() = QGBotManager
+    EventProviderAutoRegistrarFactory<QQGuildBotManager, QQGuildBotManagerConfiguration> {
+    override val registrar: QQGuildBotManager.Factory get() = QQGuildBotManager
 }
 
 
 /**
- * [QGBotManager] 使用的配置类。
+ * [QQGuildBotManager] 使用的配置类。
  */
 @Suppress("MemberVisibilityCanBePrivate")
-private class QGBotManagerConfigurationImpl : QGBotManagerConfiguration {
+private class QQGuildBotManagerConfigurationImpl : QQGuildBotManagerConfiguration {
     override var parentCoroutineContext: CoroutineContext = EmptyCoroutineContext
 
     override var botConfigure: BotConfiguration.(appId: String, appKey: String, token: String) -> Unit = { _, _, _ -> }
@@ -93,9 +95,9 @@ private class QGBotManagerConfigurationImpl : QGBotManagerConfiguration {
     }
 
 
-    private var botManagerConfig: suspend (QGBotManager) -> Unit = {}
+    private var botManagerConfig: suspend (QQGuildBotManager) -> Unit = {}
 
-    private fun addBotManagerConfig(block: suspend (QGBotManager) -> Unit) {
+    private fun addBotManagerConfig(block: suspend (QQGuildBotManager) -> Unit) {
         botManagerConfig.also { old ->
             botManagerConfig = {
                 old(it)
@@ -116,7 +118,7 @@ private class QGBotManagerConfigurationImpl : QGBotManagerConfiguration {
         }
     }
 
-    suspend fun useBotManager(botManager: QGBotManagerImpl) {
+    suspend fun useBotManager(botManager: QQGuildBotManagerImpl) {
         botManagerConfig(botManager)
     }
 

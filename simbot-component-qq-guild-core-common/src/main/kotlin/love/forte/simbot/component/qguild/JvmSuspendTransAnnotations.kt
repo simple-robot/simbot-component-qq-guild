@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2023. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -15,15 +15,14 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-plugins {
-    id("simbot-tencent-guild.changelog-generator")
-    id("simbot-tencent-guild.dokka-multi-module")
-    id("simbot-tencent-guild.root-module-conventions")
-    id("simbot-tencent-guild.nexus-publish")
-}
+package love.forte.simbot.component.qguild
 
-//group = P.ComponentTencentGuild.GROUP
-//version = P.ComponentTencentGuild.versionIfSnap
+import love.forte.simbot.JvmSuspendTrans
+import love.forte.simbot.JvmSuspendTransProperty
 
-logger.info("=== Current version: {} ===", version)
 
+/** @suppress */
+public typealias JST = JvmSuspendTrans
+
+/** @suppress */
+public typealias JSTP = JvmSuspendTransProperty

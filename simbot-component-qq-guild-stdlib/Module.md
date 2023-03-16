@@ -13,13 +13,13 @@ stdlib模块仅对BOT相关功能进行**较低限度**的实现，不会有过�
 **Gradle Kotlin DSL**
 
 ```kotlin
-implementation("love.forte.simbot.component:simbot-component-tencent-guild-stdlib:$VERSION")
+implementation("love.forte.simbot.component:simbot-component-qq-guild-stdlib:$VERSION")
 ```
 
 **Gradle Groovy**
 
 ```groovy
-implementation 'love.forte.simbot.component:simbot-component-tencent-guild-stdlib:$VERSION'
+implementation 'love.forte.simbot.component:simbot-component-qq-guild-stdlib:$VERSION'
 ```
 
 **Maven**
@@ -27,7 +27,7 @@ implementation 'love.forte.simbot.component:simbot-component-tencent-guild-stdli
 ```xml
 <dependency>
     <groupId>love.forte.simbot.component</groupId>
-    <artifactId>simbot-component-tencent-guild-stdlib</artifactId>
+    <artifactId>simbot-component-qq-guild-stdlib</artifactId>
     <version>${VERSION}</version>
 </dependency>
 ```

@@ -412,7 +412,7 @@ internal class QGGuildImpl private constructor(
                 // 没有对应的分组?
                 if (!categories.containsKey(categoryId)) {
                     logger.warn(
-                        "Cannot find category(id={}) for channel({}). This is an expected problem and please report this log to issues: https://github.com/simple-robot/simbot-component-tencent-guild/issues/new/choose?labels=%E7%BC%BA%E9%99%B7",
+                        "Cannot find category(id={}) for channel({}). This is an expected problem and please report this log to issues: https://github.com/simple-robot/simbot-component-qq-guild/issues/new/choose?labels=%E7%BC%BA%E9%99%B7",
                         categoryId,
                         info
                     )

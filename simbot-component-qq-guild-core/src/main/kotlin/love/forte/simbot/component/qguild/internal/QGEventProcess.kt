@@ -3,11 +3,16 @@
  *
  * This file is part of simbot-component-qq-guild.
  *
- * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
  *
- * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild. If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild.
+ * If not, see <https://www.gnu.org/licenses/>.
  */
 
 package love.forte.simbot.component.qguild.internal
@@ -67,7 +72,7 @@ internal fun QGBotImpl.registerEventProcessor(): DisposableHandle {
             is ChannelCreate -> {
                 if (event.data.type.isCategory) {
                     bot.logger.warn(
-                        "Received category create event [raw={}]. report this log to issues https://github.com/simple-robot/simbot-component-tencent-guild/issues/new/choose",
+                        "Received category create event [raw={}]. report this log to issues https://github.com/simple-robot/simbot-component-qq-guild/issues/new/choose",
                         raw
                     )
                 }
@@ -82,7 +87,7 @@ internal fun QGBotImpl.registerEventProcessor(): DisposableHandle {
             is ChannelUpdate -> {
                 if (event.data.type.isCategory) {
                     bot.logger.warn(
-                        "Received category update event [raw={}]. report this log to issues https://github.com/simple-robot/simbot-component-tencent-guild/issues/new/choose",
+                        "Received category update event [raw={}]. report this log to issues https://github.com/simple-robot/simbot-component-qq-guild/issues/new/choose",
                         raw
                     )
                 }
@@ -95,7 +100,7 @@ internal fun QGBotImpl.registerEventProcessor(): DisposableHandle {
             is ChannelDelete -> {
                 if (event.data.type.isCategory) {
                     bot.logger.warn(
-                        "Received category delete event [raw={}]. report this log to issues https://github.com/simple-robot/simbot-component-tencent-guild/issues/new/choose",
+                        "Received category delete event [raw={}]. report this log to issues https://github.com/simple-robot/simbot-component-qq-guild/issues/new/choose",
                         raw
                     )
                 }

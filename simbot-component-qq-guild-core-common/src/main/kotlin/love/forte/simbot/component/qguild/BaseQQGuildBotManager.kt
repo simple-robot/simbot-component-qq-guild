@@ -3,11 +3,16 @@
  *
  * This file is part of simbot-component-qq-guild.
  *
- * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
  *
- * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild. If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild.
+ * If not, see <https://www.gnu.org/licenses/>.
  */
 
 package love.forte.simbot.component.qguild
@@ -16,6 +21,7 @@ import io.ktor.http.*
 import kotlinx.coroutines.Job
 import love.forte.simbot.*
 import love.forte.simbot.application.ApplicationConfiguration
+import love.forte.simbot.application.EventProviderFactory
 import love.forte.simbot.bot.BotManager
 import love.forte.simbot.bot.BotVerifyInfo
 import love.forte.simbot.bot.ComponentMismatchException
@@ -31,15 +37,17 @@ import kotlin.coroutines.CoroutineContext
 /**
  * QQ频道BOT的bot管理器。
  *
- * [BaseQGBotManager] 不允许注册相同 `appId` 的bot。
+ * [BaseQQGuildBotManager] 不允许注册相同 `appId` 的bot。
+ *
+ * _Note: [BaseQQGuildBotManager] 仅由内部继承实现使用，对外不稳定_
  *
  * @author ForteScarlet
  */
-public abstract class BaseQGBotManager : BotManager<QGBot>() {
+public abstract class BaseQQGuildBotManager : BotManager<QGBot>() {
     public abstract val eventProcessor: EventProcessor
     protected abstract val logger: Logger
     abstract override val component: QQGuildComponent
-    public abstract val configuration: QGBotManagerConfiguration
+    public abstract val configuration: QQGuildBotManagerConfiguration
 
 
     /**
@@ -88,6 +96,14 @@ public abstract class BaseQGBotManager : BotManager<QGBot>() {
         token: String,
         block: QGBotComponentConfiguration.() -> Unit = {},
     ): QGBot
+
+    /**
+     * 由 [BaseQQGuildBotManager] 的实现者提供的工厂继承使用
+     */
+    public abstract class BaseFactory<M : BaseQQGuildBotManager> :
+        EventProviderFactory<M, QQGuildBotManagerConfiguration> {
+            final override val key: Attribute<M> = attribute("SIMBOT.QQGUILD")
+        }
 }
 
 /**
@@ -101,7 +117,7 @@ public annotation class QGBotManagerConfigurationDsl
 /**
  * [QGBotManager] 使用的配置类描述。
  */
-public interface QGBotManagerConfiguration {
+public interface QQGuildBotManagerConfiguration {
 
     /**
      * 对所有bot的配置信息进行统一处理的函数。

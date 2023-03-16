@@ -19,14 +19,14 @@ core模块尽可能大限度的以QQ频道的角度去实现simbot核心库中�
 
 ```kotlin
 implementation("love.forte.simbot:simbot-core:$SIMBOT_VERSION") // 必须显式指定simbot相关依赖比如此核心库或spring-boot-starter
-implementation("love.forte.simbot.component:simbot-component-tencent-guild-core:$VERSION")
+implementation("love.forte.simbot.component:simbot-component-qq-guild-core:$VERSION")
 ```
 
 **Gradle Groovy**
 
 ```groovy
 implementation 'love.forte.simbot:simbot-core:$SIMBOT_VERSION' // 必须显式指定simbot相关依赖，如此核心库或spring-boot-starter
-implementation 'love.forte.simbot.component:simbot-component-tencent-guild-stdlib:$VERSION'
+implementation 'love.forte.simbot.component:simbot-component-qq-guild-stdlib:$VERSION'
 ```
 
 **Maven**

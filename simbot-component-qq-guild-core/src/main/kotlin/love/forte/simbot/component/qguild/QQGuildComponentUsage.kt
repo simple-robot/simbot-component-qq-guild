@@ -3,19 +3,22 @@
  *
  * This file is part of simbot-component-qq-guild.
  *
- * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms 
+ * of the GNU Lesser General Public License as published by the Free Software Foundation, 
+ * either version 3 of the License, or (at your option) any later version.
  *
- * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+ * See the GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild. If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild. 
+ * If not, see <https://www.gnu.org/licenses/>.
  */
 
 package love.forte.simbot.component.qguild
 
 import love.forte.simbot.ability.CompletionPerceivable
-import love.forte.simbot.application.Application
-import love.forte.simbot.application.ApplicationBuilder
-import love.forte.simbot.application.ApplicationBuilderDsl
+import love.forte.simbot.application.*
 
 
 /**
@@ -46,7 +49,7 @@ public fun <A : Application> ApplicationBuilder<A>.useQQGuildComponent(configura
 }
 
 /**
- * 在 [ApplicationBuilder] 中安装使用 [QGBotManager]。
+ * 在 [ApplicationBuilder] 中 **尝试** 安装使用 [QQGuildBotManager]。
  *
  * usage:
  * ```kotlin
@@ -60,21 +63,21 @@ public fun <A : Application> ApplicationBuilder<A>.useQQGuildComponent(configura
  * 相当于：
  * ```kotlin
  * simbotApplication(Foo) {
- *    install(QGBotManager) { ... }
+ *    install(QQGuildBotManager) { ... }
  * }
  * ```
- *
- * @see QGBotManager
+ * @see QQGuildBotManager
  *
  */
+@Suppress("UNCHECKED_CAST")
 @ApplicationBuilderDsl
-public fun <A : Application> ApplicationBuilder<A>.useQQGuildBotManager(configurator: QGBotManagerConfiguration.(perceivable: CompletionPerceivable<A>) -> Unit = {}) {
-    install(QGBotManager, configurator)
+@Throws(ClassNotFoundException::class)
+public fun <A : Application> ApplicationBuilder<A>.useQQGuildBotManager(configurator: QQGuildBotManagerConfiguration.(perceivable: CompletionPerceivable<A>) -> Unit = {}) {
+    install(QQGuildBotManager, configurator)
 }
 
-
 /**
- * 同时安装使用 [QQGuildComponent] 和 [QGBotManager].
+ * 同时安装使用 [QQGuildComponent] 和 [QQGuildBotManager].
  *
  * usage:
  * ```kotlin
@@ -104,11 +107,11 @@ public fun <A : Application> ApplicationBuilder<A>.useQQGuild(builder: QQGuildUs
 }
 
 /**
- * 使用 [QGBotManager]
+ * 使用 [QQGuildBotManager]
  *
  * @throws NoSuchElementException 如果不存在
  */
-public inline fun <A : Application> A.qqGuildBots(block: QGBotManager.() -> Unit) {
+public inline fun <A : Application> A.qqGuildBots(block: QQGuildBotManager.() -> Unit) {
     botManagers.firstQQGuildBotManager().also(block)
 }
 
@@ -122,7 +125,7 @@ internal annotation class QQGuildUsageBuilderDsl
 
 
 /**
- * 使用在 [useQQGuild] 函数中，用于同时针对 [QQGuildComponent] 和 [QGBotManager]
+ * 使用在 [useQQGuild] 函数中，用于同时针对 [QQGuildComponent] 和 [QQGuildBotManager]
  * 进行配置。
  *
  * @see useQQGuild
@@ -137,17 +140,17 @@ public interface QQGuildUsageBuilder<A : Application> {
     
     
     /**
-     * 追加一个安装 [QGBotManager] 时候使用的配置。
+     * 追加一个安装 [QQGuildBotManager] 时候使用的配置。
      */
     @QQGuildUsageBuilderDsl
-    public fun botManager(configurator: QGBotManagerConfiguration.(perceivable: CompletionPerceivable<A>) -> Unit)
+    public fun botManager(configurator: QQGuildBotManagerConfiguration.(perceivable: CompletionPerceivable<A>) -> Unit)
     
 }
 
 
 private class QQGuildUsageBuilderImpl<A : Application> : QQGuildUsageBuilder<A> {
     private var componentConfig: QQGuildComponentConfiguration.(perceivable: CompletionPerceivable<A>) -> Unit = {}
-    private var botManagerConfig: QGBotManagerConfiguration.(perceivable: CompletionPerceivable<A>) -> Unit =
+    private var botManagerConfig: QQGuildBotManagerConfiguration.(perceivable: CompletionPerceivable<A>) -> Unit =
         {}
     
     override fun component(configurator: QQGuildComponentConfiguration.(perceivable: CompletionPerceivable<A>) -> Unit) {
@@ -159,7 +162,7 @@ private class QQGuildUsageBuilderImpl<A : Application> : QQGuildUsageBuilder<A> 
         }
     }
     
-    override fun botManager(configurator: QGBotManagerConfiguration.(perceivable: CompletionPerceivable<A>) -> Unit) {
+    override fun botManager(configurator: QQGuildBotManagerConfiguration.(perceivable: CompletionPerceivable<A>) -> Unit) {
         botManagerConfig.also { old ->
             botManagerConfig = {
                 old(it)

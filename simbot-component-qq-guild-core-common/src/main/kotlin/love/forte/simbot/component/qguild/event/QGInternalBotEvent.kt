@@ -3,16 +3,21 @@
  *
  * This file is part of simbot-component-qq-guild.
  *
- * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
  *
- * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild. If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild.
+ * If not, see <https://www.gnu.org/licenses/>.
  */
 
 package love.forte.simbot.component.qguild.event
 
-import love.forte.simbot.component.qguild.BaseQGBotManager
+import love.forte.simbot.component.qguild.BaseQQGuildBotManager
 import love.forte.simbot.component.qguild.QGBot
 import love.forte.simbot.event.BaseEventKey
 import love.forte.simbot.event.Event
@@ -38,13 +43,13 @@ public sealed interface QGInternalBotEvent : Event {
 }
 
 /**
- * qq频道组件中，每当 [BaseQGBotManager] 通过任意 [BaseQGBotManager.register] 注册并得到Bot实例后触发的事件。
+ * qq频道组件中，每当 [BaseQQGuildBotManager] 通过任意 [BaseQQGuildBotManager.register] 注册并得到Bot实例后触发的事件。
  *
  * 遵循 [BotRegisteredEvent] 约定特性，此事件会在注册完成后**异步**触发.
  *
  * @see BotRegisteredEvent
- * @see BaseQGBotManager
- * @see BaseQGBotManager.register
+ * @see BaseQQGuildBotManager
+ * @see BaseQQGuildBotManager.register
  */
 public abstract class QGBotRegisteredEvent : BotRegisteredEvent(), QGInternalBotEvent {
 

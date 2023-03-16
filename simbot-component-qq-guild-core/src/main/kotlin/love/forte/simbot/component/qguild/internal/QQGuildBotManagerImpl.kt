@@ -3,11 +3,16 @@
  *
  * This file is part of simbot-component-qq-guild.
  *
- * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
  *
- * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild. If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild.
+ * If not, see <https://www.gnu.org/licenses/>.
  */
 
 package love.forte.simbot.component.qguild.internal
@@ -16,8 +21,8 @@ import kotlinx.coroutines.*
 import love.forte.simbot.ID
 import love.forte.simbot.bot.BotAlreadyRegisteredException
 import love.forte.simbot.component.qguild.QGBot
-import love.forte.simbot.component.qguild.QGBotManager
-import love.forte.simbot.component.qguild.QGBotManagerConfiguration
+import love.forte.simbot.component.qguild.QQGuildBotManager
+import love.forte.simbot.component.qguild.QQGuildBotManagerConfiguration
 import love.forte.simbot.component.qguild.QQGuildComponent
 import love.forte.simbot.component.qguild.config.QGBotComponentConfiguration
 import love.forte.simbot.component.qguild.event.QGBotRegisteredEvent
@@ -38,13 +43,13 @@ import kotlin.coroutines.CoroutineContext
  *
  * @author ForteScarlet
  */
-internal class QGBotManagerImpl(
+internal class QQGuildBotManagerImpl(
     override val eventProcessor: EventProcessor,
-    override val configuration: QGBotManagerConfiguration,
+    override val configuration: QQGuildBotManagerConfiguration,
     override val component: QQGuildComponent,
-) : QGBotManager() {
+) : QQGuildBotManager() {
     companion object {
-        private val LOGGER = LoggerFactory.getLogger(QGBotManagerImpl::class)
+        private val LOGGER = LoggerFactory.getLogger(QQGuildBotManagerImpl::class)
     }
 
     private val job: CompletableJob
