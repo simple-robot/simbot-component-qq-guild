@@ -20,10 +20,7 @@ package love.forte.simbot.component.qguild.internal.event
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.component.qguild.event.QGAtMessageCreateEvent
-import love.forte.simbot.component.qguild.internal.QGBotImpl
-import love.forte.simbot.component.qguild.internal.QGChannelImpl
-import love.forte.simbot.component.qguild.internal.QGMemberImpl
-import love.forte.simbot.component.qguild.internal.QGReceiveMessageContentImpl
+import love.forte.simbot.component.qguild.internal.*
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
 import love.forte.simbot.component.qguild.message.QGReceiveMessageContent
 import love.forte.simbot.component.qguild.util.requestBy
@@ -34,7 +31,6 @@ import love.forte.simbot.qguild.api.channel.GetChannelApi
 import love.forte.simbot.qguild.api.member.GetMemberApi
 import love.forte.simbot.qguild.ifNotFoundThenNoSuch
 import love.forte.simbot.qguild.model.Message
-import love.forte.simbot.toTimestamp
 
 
 /**
@@ -46,7 +42,7 @@ internal class QGAtMessageCreateEventImpl(
     override val eventRaw: String,
     override val sourceEventEntity: Message
 ) : QGAtMessageCreateEvent() {
-    override val id: ID = "${sourceEventEntity.guildId}.${sourceEventEntity.channelId}.${sourceEventEntity.id}.${sourceEventEntity.timestamp.epochSecond}".ID
+    override val id: ID = "${sourceEventEntity.guildId}.${sourceEventEntity.channelId}.${sourceEventEntity.id}.${sourceEventEntity.timestamp.epochSeconds}".ID
 
     override val timestamp: Timestamp = sourceEventEntity.timestamp.toTimestamp()
 
