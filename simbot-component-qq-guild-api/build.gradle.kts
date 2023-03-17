@@ -20,8 +20,8 @@ plugins {
     `qq-guild-multiplatform-maven-publish`
 //    id("simbot-tencent-guild.module-conventions")
 //    id("simbot-tencent-guild.maven-publish")
-    `qq-guild-dokka-partial-configure`
     kotlin("plugin.serialization")
+    `qq-guild-dokka-partial-configure`
 }
 
 repositories {
