@@ -28,3 +28,15 @@ plugins {
 
 logger.info("=== Current version: {} ===", version)
 
+allprojects {
+    repositories {
+        mavenCentral()
+        love.forte.gradle.common.core.repository.Repositories.Snapshot.Default.apply {
+            configMaven {
+                mavenContent {
+                    snapshotsOnly()
+                }
+            }
+        }
+    }
+}
