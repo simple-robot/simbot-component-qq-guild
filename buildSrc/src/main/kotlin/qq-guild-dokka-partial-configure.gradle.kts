@@ -33,7 +33,7 @@ tasks.withType<DokkaTaskPartial>().configureEach {
         fun checkModule(projectFileName: String): Boolean {
             val moduleMdFile = project.file(projectFileName)
             if (moduleMdFile.exists()) {
-                val isModuleHead = moduleMdFile.useLines { lines ->
+                moduleMdFile.useLines { lines ->
                     val head = lines.first { it.isNotBlank() }.trim()
                     if (head == "# Module ${project.name}") {
                         includes.from(projectFileName)
@@ -66,7 +66,6 @@ tasks.withType<DokkaTaskPartial>().configureEach {
             matchingRegex.set(".*internal.*") // will match all .internal packages and sub-packages
             suppress.set(true)
         }
-
 
 
         fun externalDocumentation(docUrl: URL) {

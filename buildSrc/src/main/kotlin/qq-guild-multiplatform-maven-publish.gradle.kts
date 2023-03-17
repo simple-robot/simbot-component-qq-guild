@@ -16,6 +16,7 @@
  */
 
 import love.forte.gradle.common.core.Gpg
+import love.forte.gradle.common.core.project.setup
 import love.forte.gradle.common.core.property.systemProp
 import love.forte.gradle.common.publication.configure.multiplatformConfigPublishing
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -33,8 +34,9 @@ tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
 }
 
-val p = project
+setup(P.ComponentQQGuild)
 
+val p = project
 multiplatformConfigPublishing {
     project = P.ComponentQQGuild
 
@@ -43,7 +45,6 @@ multiplatformConfigPublishing {
         archiveClassifier.set("javadoc")
         from(tasks.findByName("dokkaHtml"))
     }
-
     artifact(jarJavadoc)
     isSnapshot = project.version.toString().contains("SNAPSHOT", true)
     releasesRepository = ReleaseRepository
