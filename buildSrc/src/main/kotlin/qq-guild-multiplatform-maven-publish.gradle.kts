@@ -35,6 +35,9 @@ tasks.withType<JavaCompile> {
 }
 
 setup(P.ComponentQQGuild)
+if (isSnapshot()) {
+    version = P.ComponentQQGuild.snapshotVersion.toString()
+}
 
 val p = project
 multiplatformConfigPublishing {
