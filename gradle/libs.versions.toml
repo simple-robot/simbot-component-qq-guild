@@ -1,6 +1,8 @@
 [versions]
 kotlinx-coroutines = "1.6.4"
 kotlinx-serialization = "1.5.0-RC"
+kotlinx-datetime = "0.4.0"
+okio = "3.3.0"
 ktor = "2.2.3"
 openjdk-jmh = "1.35"
 log4j = "2.14.1"
@@ -31,6 +33,9 @@ kotlinx-serialization-cbor = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 kotlinx-serialization-properties = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-properties", version.ref = "kotlinx-serialization" }
 charleskorn-kaml = "com.charleskorn.kaml:kaml:0.49.0"
 
+# kotlinx-datetime
+kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinx-datetime" }
+
 # ktor
 ktor-serialization-kotlinxJson = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-server-contentNegotiation = { group = "io.ktor", name = "ktor-server-content-negotiation", version.ref = "ktor" }
@@ -41,6 +46,12 @@ ktor-client-serialization = { group = "io.ktor", name = "ktor-client-serializati
 ktor-client-ws = { group = "io.ktor", name = "ktor-client-websockets", version.ref = "ktor" }
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
 ktor-client-cio = { group = "io.ktor", name = "ktor-client-cio", version.ref = "ktor" }
+ktor-client-js = { group = "io.ktor", name = "ktor-client-js", version.ref = "ktor" }
+ktor-client-curl = { group = "io.ktor", name = "ktor-client-curl", version.ref = "ktor" }
+ktor-client-winhttp = { group = "io.ktor", name = "ktor-client-winhttp", version.ref = "ktor" }
+
+# nodejs
+#kotlinx-nodejs = ""
 
 # log4j
 log4j-api = { group = "org.apache.logging.log4j", name = "log4j-api", version.ref = "log4j" }

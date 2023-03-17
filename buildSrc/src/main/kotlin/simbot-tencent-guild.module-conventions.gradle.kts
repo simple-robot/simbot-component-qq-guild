@@ -1,13 +1,18 @@
 /*
  * Copyright (c) 2022-2023. ForteScarlet.
  *
- * This file is part of simbot-component-tencent-guild.
+ * This file is part of simbot-component-qq-guild.
  *
- * simbot-component-tencent-guild is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
  *
- * simbot-component-tencent-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with simbot-component-tencent-guild. If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild.
+ * If not, see <https://www.gnu.org/licenses/>.
  */
 import love.forte.gradle.common.core.project.setup
 import love.forte.gradle.common.core.repository.Repositories
@@ -24,9 +29,9 @@ plugins {
     idea
 }
 
-setup(P.ComponentTencentGuild)
+setup(P.ComponentQQGuild)
 if (isSnapshot()) {
-    version = P.ComponentTencentGuild.snapshotVersion.toString()
+    version = P.ComponentQQGuild.snapshotVersion.toString()
 }
 
 repositories {
@@ -102,7 +107,7 @@ logger.info("========================================================")
 // dokka config
 tasks.withType<DokkaTaskPartial>().configureEach {
     dokkaSourceSets.configureEach {
-        version = P.ComponentTencentGuild.version.toString()
+        version = P.ComponentQQGuild.version.toString()
         documentedVisibilities.set(listOf(DokkaConfiguration.Visibility.PUBLIC, DokkaConfiguration.Visibility.PROTECTED))
         fun checkModule(projectFileName: String): Boolean {
             val moduleMdFile = project.file(projectFileName)
@@ -132,7 +137,7 @@ tasks.withType<DokkaTaskPartial>().configureEach {
         sourceLink {
             localDirectory.set(projectDir.resolve("src"))
             val relativeTo = projectDir.relativeTo(rootProject.projectDir)
-            remoteUrl.set(URL("${P.ComponentTencentGuild.HOMEPAGE}/tree/main/$relativeTo/src"))
+            remoteUrl.set(URL("${P.ComponentQQGuild.HOMEPAGE}/tree/main/$relativeTo/src"))
             remoteLineSuffix.set("#L")
         }
         

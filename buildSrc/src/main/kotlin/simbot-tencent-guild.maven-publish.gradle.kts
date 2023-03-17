@@ -18,7 +18,6 @@
 import love.forte.gradle.common.core.Gpg
 import love.forte.gradle.common.publication.configure.jvmConfigPublishing
 import util.checkPublishConfigurable
-import util.systemProp
 
 
 plugins {
@@ -35,7 +34,7 @@ logger.info("isPublishConfigurable: $isPublishConfigurable")
 
 checkPublishConfigurable {
     jvmConfigPublishing {
-        project = P.ComponentTencentGuild
+        project = P.ComponentQQGuild
         publicationName = "tencentGuildDist"
         val jarSources by tasks.registering(Jar::class) {
             archiveClassifier.set("sources")
@@ -60,7 +59,7 @@ checkPublishConfigurable {
     if (isSnapshot()) {
         publishing {
             publications.withType<MavenPublication> {
-                version = P.ComponentTencentGuild.snapshotVersion.toString()
+                version = P.ComponentQQGuild.snapshotVersion.toString()
             }
         }
     }

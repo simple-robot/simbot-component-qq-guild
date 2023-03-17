@@ -19,7 +19,7 @@
 tasks.create("createChangelog") {
     group = "documentation"
     doFirst {
-        val realVersion = P.ComponentTencentGuild.version.toString()
+        val realVersion = P.ComponentQQGuild.version.toString()
         val version = "v$realVersion"
         logger.info("Generate change log for {} ...", version)
         // configurations.runtimeClasspath

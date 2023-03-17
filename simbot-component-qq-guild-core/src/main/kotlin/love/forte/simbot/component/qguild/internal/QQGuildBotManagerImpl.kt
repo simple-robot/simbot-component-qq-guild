@@ -65,9 +65,6 @@ internal class QQGuildBotManagerImpl(
     override val logger: Logger
         get() = LOGGER
 
-
-    // private val isCanceled = AtomicBoolean(false)
-
     private val lock = ReentrantReadWriteLock()
 
     override val isActive: Boolean

@@ -22,6 +22,7 @@ plugins {
     id("simbot-tencent-guild.nexus-publish")
 }
 
+
 //group = P.ComponentTencentGuild.GROUP
 //version = P.ComponentTencentGuild.versionIfSnap
 

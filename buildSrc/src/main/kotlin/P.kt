@@ -61,7 +61,7 @@ object P {
         const val GROUP = "love.forte.simbot"
     }
 
-    object ComponentTencentGuild : ProjectDetail() {
+    object ComponentQQGuild : ProjectDetail() {
         const val GROUP = "love.forte.simbot.component"
         const val DESCRIPTION = "Simple Robot框架下针对QQ频道的组件实现"
         const val HOMEPAGE = "https://github.com/simple-robot/simbot-component-qq-guild"
@@ -114,7 +114,7 @@ object P {
         override val scm: Scm = scm {
             url = HOMEPAGE
             connection = "scm:git:$HOMEPAGE.git"
-            developerConnection = "scm:git:ssh://git@github.com/simple-robot/simbot-component-tencent-guild.git"
+            developerConnection = "scm:git:ssh://git@github.com/simple-robot/simbot-component-qq-guild.git"
         }
     }
 
