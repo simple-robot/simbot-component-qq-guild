@@ -94,7 +94,7 @@ jobs:
         with:
           personal_token: ${{ secrets.PUSH_TOKEN }}
           external_repository: simple-robot-library/simbot3-api-docs
-          publish_branch: kdoc-deploy/snapshot/component-qq-guild
+          publish_branch: kdoc-deploy/snapshots/component-qq-guild
           publish_dir: ./build/dokka/html
           # deploy to sub dir
-          destination_dir: snapshot/components/qq-guild
+          destination_dir: snapshots/components/qq-guild

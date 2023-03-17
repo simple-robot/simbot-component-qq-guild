@@ -6,33 +6,53 @@
 
 api模块仅包含以下依赖：
 
+- kotlinx.coroutines
 - ktor
   - client-core
-  - client-cio
   - client-content-negotiation
   - serialization-kotlinx-json
 - kotlinx.serialization-json
+- kotlinx.datetime
+- SLF4J API (JVM Only, provided by simbot-logger)
 
 ## 使用
 
 **Gradle Kotlin DSL**
 
+`api` 模块是多平台模块，在Gradle中需要使用 `kotlin` 插件来引用正确的平台。这并不代表你需要使用Kotlin语言编写。
+
 ```kotlin
-implementation("love.forte.simbot.component:simbot-component-qq-guild-api:$VERSION")
+plugin {
+  kotlin("jvm") version "$KOTLIN_VERSION" // 比如 1.8.10
+}
+
+dependencies {
+    implementation("love.forte.simbot.component:simbot-component-qq-guild-api:$VERSION")
+}
 ```
 
 **Gradle Groovy**
 
+`api` 模块是多平台模块，在Gradle中需要使用 `kotlin` 插件来引用正确的平台。这并不代表你需要使用Kotlin语言编写。
+
 ```groovy
-implementation 'love.forte.simbot.component:simbot-component-qq-guild-api:$VERSION'
+plugin {
+  id "org.jetbrains.kotlin.jvm" version "$KOTLIN_VERSION" // 比如 1.8.10
+}
+
+dependencies {
+    implementation 'love.forte.simbot.component:simbot-component-qq-guild-api:$VERSION'
+}
 ```
 
 **Maven**
 
+`api` 模块是多平台模块，在Maven中需要增加 `-jvm` 后缀来使用JVM平台库。
+
 ```xml
 <dependency>
     <groupId>love.forte.simbot.component</groupId>
-    <artifactId>simbot-component-qq-guild-api</artifactId>
+    <artifactId>simbot-component-qq-guild-api-jvm</artifactId>
     <version>${VERSION}</version>
 </dependency>
 ```
@@ -42,9 +62,18 @@ implementation 'love.forte.simbot.component:simbot-component-qq-guild-api:$VERSI
 
 与[QQ频道开发者文档](https://bot.q.qq.com/wiki/develop/api/)中定义的API进行对照实现的模块。
 
+# Package love.forte.simbot.qguild.event
+
+QQ频道的事件相关内容，包括[事件订阅](https://bot.q.qq.com/wiki/develop/api/gateway/intents.html)、
+[opcode](https://bot.q.qq.com/wiki/develop/api/gateway/opcode.html)
+以及推送的各种事件消息体等。
 
 # Package love.forte.simbot.qguild.model
 
-用于存放QQ频道中各API的**响应数据模型**定义。
+用于存放QQ频道中各API的**响应数据模型**。
 
 数据模型与文档中定义的类型基本对应，以不可变数据类 (`immutable data class`) 的形式定义实现，并通过API模块下的各API响应结果对外提供。 
+
+# Package love.forte.simbot.qguild.time
+
+用于兼容多平台的部分**时间相关**类型。
