@@ -21,6 +21,7 @@ import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.component.qguild.event.QGAtMessageCreateEvent
 import love.forte.simbot.component.qguild.internal.*
+import love.forte.simbot.component.qguild.message.MessageParsers
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
 import love.forte.simbot.component.qguild.message.QGReceiveMessageContent
 import love.forte.simbot.component.qguild.util.requestBy
@@ -29,6 +30,7 @@ import love.forte.simbot.message.MessageReceipt
 import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.api.channel.GetChannelApi
 import love.forte.simbot.qguild.api.member.GetMemberApi
+import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.qguild.ifNotFoundThenNoSuch
 import love.forte.simbot.qguild.model.Message
 
@@ -42,27 +44,43 @@ internal class QGAtMessageCreateEventImpl(
     override val eventRaw: String,
     override val sourceEventEntity: Message
 ) : QGAtMessageCreateEvent() {
-    override val id: ID = "${sourceEventEntity.guildId}.${sourceEventEntity.channelId}.${sourceEventEntity.id}.${sourceEventEntity.timestamp.epochSeconds}".ID
+    override val id: ID =
+        "${sourceEventEntity.guildId}.${sourceEventEntity.channelId}.${sourceEventEntity.id}.${sourceEventEntity.timestamp.epochSeconds}".ID
 
     override val timestamp: Timestamp = sourceEventEntity.timestamp.toTimestamp()
 
     override val messageContent: QGReceiveMessageContentImpl = QGReceiveMessageContentImpl(sourceEventEntity)
 
+
     override suspend fun reply(message: love.forte.simbot.message.Message): QGMessageReceipt {
-        TODO("Not yet implemented")
+        val bodyBuilder = MessageParsers.parse(message) {
+            if (msgId == null) {
+                msgId = sourceEventEntity.id
+            }
+        }
+
+        return reply0(bodyBuilder.build())
     }
 
     override suspend fun reply(message: MessageContent): MessageReceipt {
         if (message is QGReceiveMessageContent) {
-            message.sourceMessage // TODO
+            val body = MessageSendApi.Body {
+                fromMessage(message.sourceMessage)
+            }
+            return reply0(body)
         }
-        return super.reply(message)
+
+        return reply(message.messages)
     }
 
     override suspend fun reply(text: String): MessageReceipt {
-        // TODO
-        return super.reply(text)
+        return reply0(MessageSendApi.Body {
+            content = text // TODO 转义，不允许特殊字符
+        })
     }
+
+    private suspend fun reply0(body: MessageSendApi.Body): QGMessageReceipt =
+        MessageSendApi.create(sourceEventEntity.channelId, body).requestBy(bot).asReceipt()
 
     override suspend fun author(): QGMemberImpl {
         val member =
@@ -72,7 +90,7 @@ internal class QGAtMessageCreateEventImpl(
                 apiEx.ifNotFoundThenNoSuch { "member(id=${sourceEventEntity.author.id})" }
             }
 
-        return QGMemberImpl(bot, member , sourceEventEntity.guildId.ID)
+        return QGMemberImpl(bot, member, sourceEventEntity.guildId.ID)
     }
 
     override suspend fun channel(): QGChannelImpl {

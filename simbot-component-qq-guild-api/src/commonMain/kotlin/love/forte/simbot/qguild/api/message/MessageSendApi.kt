@@ -37,6 +37,7 @@ import love.forte.simbot.qguild.api.QQGuildApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimplePostApiDescription
 import love.forte.simbot.qguild.api.message.MessageSendApi.Body.Builder
+import love.forte.simbot.qguild.message.*
 import love.forte.simbot.qguild.model.Message
 import kotlin.jvm.JvmStatic
 import kotlin.jvm.JvmSynthetic
@@ -112,6 +113,8 @@ import kotlin.jvm.JvmSynthetic
  * | `&` | `&amp;` |
  * | `<` | `&lt;` |
  * | `>` | `&gt;` |
+ *
+ * 可参考使用 [ContentTextDecoder] 和 [ContentTextEncoder]
  *
  * 更多参考 [文档](https://bot.q.qq.com/wiki/develop/api/openapi/message/message_format.html)
  *

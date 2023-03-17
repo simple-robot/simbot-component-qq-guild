@@ -24,10 +24,12 @@ import love.forte.simbot.component.qguild.QGGuild
 import love.forte.simbot.component.qguild.QGMember
 import love.forte.simbot.component.qguild.message.MessageParsers
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
+import love.forte.simbot.component.qguild.message.QGReceiveMessageContent
 import love.forte.simbot.component.qguild.util.requestBy
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.qguild.api.message.MessageSendApi
+import love.forte.simbot.qguild.message.ContentTextEncoder
 import kotlin.coroutines.CoroutineContext
 import love.forte.simbot.qguild.model.Channel as QGSourceChannel
 
@@ -66,15 +68,28 @@ internal class QGChannelImpl internal constructor(
             }
         }
 
-        return MessageSendApi.create(source.id, builder.build()).requestBy(bot).asReceipt()
+        return send0(builder.build())
     }
 
     override suspend fun send(message: MessageContent): QGMessageReceipt {
-        return super.send(message)
+        if (message is QGReceiveMessageContent) {
+            return send0(MessageSendApi.Body {
+                msgId = currentMsgId
+                fromMessage(message.sourceMessage)
+            })
+        }
+        return send(message.messages)
     }
 
     override suspend fun send(text: String): QGMessageReceipt {
-        return super.send(text)
+        return send0(MessageSendApi.Body {
+            msgId = currentMsgId
+            content = ContentTextEncoder.encode(text)
+        })
+    }
+
+    private suspend fun send0(body: MessageSendApi.Body): QGMessageReceipt {
+        return MessageSendApi.create(source.id, body).requestBy(bot).asReceipt()
     }
 
     override fun toString(): String {

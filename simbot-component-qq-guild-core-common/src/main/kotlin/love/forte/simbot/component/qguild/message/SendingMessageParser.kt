@@ -3,11 +3,16 @@
  *
  * This file is part of simbot-component-qq-guild.
  *
- * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
  *
- * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild. If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild.
+ * If not, see <https://www.gnu.org/licenses/>.
  */
 
 package love.forte.simbot.component.qguild.message
@@ -30,7 +35,7 @@ import love.forte.simbot.message.Message as SimbotMessage
 public fun interface SendingMessageParser :
     suspend (Int, SimbotMessage.Element<*>, Messages?, MessageSendApi.Body.Builder) -> Unit {
     /**
-     * 将 [Message.Element] 拼接到 [TencentMessageForSendingBuilder] 中。
+     * 将 [SimbotMessage.Element] 拼接到 [MessageSendApi.Body.Builder] 中。
      *
      * @param index 当前消息链中的数据.
      */
@@ -45,19 +50,23 @@ public fun interface SendingMessageParser :
 /**
  * 将一个 [Message] 转化为 [Message].
  */
-public fun interface ReceivingMessageParser : (Message, Messages) -> Messages {
+public fun interface ReceivingMessageParser {
 
     /**
-     * 将一个 [Message] 接入到 [Messages] 中，并在最后作为 [ReceivedMessageContent] 输出至事件。
-     * 对于第一个转化器来讲，[messages] 是一个 [EmptyMessages].
+     * 解析一个 [Message], 并将其内部信息并入 [Context] 中。
+     */
+    public operator fun invoke(qgMessage: Message, context: Context): Context
+
+    /**
+     * 消息链和正文文本内容的容器，用于 [ReceivingMessageParser.invoke] 中进行传递解析。
      *
      */
-    override fun invoke(qgMessage: Message, messages: Messages): Messages
+    public data class Context(public var messages: Messages, public var plainTextBuilder: StringBuilder)
 }
 
 
 /**
- * 将一个 [Message.Element] 拼接到 [TencentMessageForSendingBuilder] 中，或者将一个 [Message] 转化为 [Message].
+ * 将一个 [Message.Element][SimbotMessage.Element] 拼接到 [MessageSendApi.Body.Builder] 中。
  */
 public object MessageParsers {
     @ExperimentalSimbotApi
@@ -88,7 +97,8 @@ public object MessageParsers {
 
     @OptIn(ExperimentalSimbotApi::class)
     @JvmOverloads
-    public suspend fun parse(
+    @JvmName("parse")
+    public suspend inline fun parse(
         message: SimbotMessage,
         builderInitProcess: MessageSendApi.Body.Builder.() -> Unit = {},
         builderPostProcess: MessageSendApi.Body.Builder.() -> Unit = {},
@@ -120,9 +130,9 @@ public object MessageParsers {
     public fun parse(
         message: Message,
         messagesInit: Messages = emptyMessages(),
-    ): Messages {
-        return receivingParsers.fold(messagesInit) { messages, parser ->
-            parser(message, messages)
+    ): ReceivingMessageParser.Context {
+        return receivingParsers.fold(ReceivingMessageParser.Context(messagesInit, StringBuilder())) { context, parser ->
+            parser(message, context)
         }
     }
 

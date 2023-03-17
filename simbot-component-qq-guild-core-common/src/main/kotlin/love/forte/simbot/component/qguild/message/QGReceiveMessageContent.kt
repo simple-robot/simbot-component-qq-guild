@@ -3,16 +3,23 @@
  *
  * This file is part of simbot-component-qq-guild.
  *
- * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
  *
- * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild. If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild.
+ * If not, see <https://www.gnu.org/licenses/>.
  */
 
 package love.forte.simbot.component.qguild.message
 
 import love.forte.simbot.ID
+import love.forte.simbot.message.At
+import love.forte.simbot.message.AtAll
 import love.forte.simbot.message.Messages
 import love.forte.simbot.message.ReceivedMessageContent
 import love.forte.simbot.qguild.model.Message as QGSourceMessage
@@ -30,7 +37,16 @@ public abstract class QGReceiveMessageContent : ReceivedMessageContent() {
     abstract override val messageId: ID
 
     /**
-     * 转化消息列表
+     * 转化消息列表。
+     *
+     * 消息列表中第一个元素必然是 [QGContentText], 其内容为 [sourceMessage.content][QGSourceMessage.content]，
+     * 而后则是通过 [sourceMessage] 中解析而来的内容。
+     * 其中：
+     * - [sourceMessage.mentionEveryone][QGSourceMessage.mentionEveryone] 会被解析为 [AtAll] (如果为 `true`)
+     * - [sourceMessage.mentions][QGSourceMessage.mentions] 会被解析为 [At]
+     * - [sourceMessage.ark][QGSourceMessage.ark] 会被解析为 [QGArk] (如果有)
+     * - [sourceMessage.attachments][QGSourceMessage.attachments] 会被解析为 [QGAttachmentMessage] (如果有)
+     *
      */
     abstract override val messages: Messages
 
