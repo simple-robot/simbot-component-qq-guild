@@ -32,6 +32,7 @@ import love.forte.simbot.qguild.api.channel.GetChannelApi
 import love.forte.simbot.qguild.api.member.GetMemberApi
 import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.qguild.ifNotFoundThenNoSuch
+import love.forte.simbot.qguild.message.ContentTextEncoder
 import love.forte.simbot.qguild.model.Message
 
 
@@ -75,7 +76,7 @@ internal class QGAtMessageCreateEventImpl(
 
     override suspend fun reply(text: String): MessageReceipt {
         return reply0(MessageSendApi.Body {
-            content = text // TODO 转义，不允许特殊字符
+            content = ContentTextEncoder.encode(text) // 转义，不允许特殊字符
         })
     }
 

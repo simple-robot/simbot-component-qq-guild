@@ -25,6 +25,7 @@ import love.forte.simbot.component.qguild.QGMember
 import love.forte.simbot.component.qguild.QGRole
 import love.forte.simbot.component.qguild.message.MessageParsers
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
+import love.forte.simbot.component.qguild.message.QGReceiveMessageContent
 import love.forte.simbot.component.qguild.util.requestBy
 import love.forte.simbot.literal
 import love.forte.simbot.message.Message
@@ -32,6 +33,7 @@ import love.forte.simbot.message.MessageContent
 import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.qguild.api.message.direct.CreateDmsApi
 import love.forte.simbot.qguild.api.message.direct.DmsSendApi
+import love.forte.simbot.qguild.message.ContentTextEncoder
 import love.forte.simbot.qguild.model.DirectMessageSession
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.effectedFlowItems
@@ -96,42 +98,31 @@ internal class QGMemberImpl(
 
     @JvmSynthetic
     override suspend fun send(message: Message): QGMessageReceipt {
-        val dms = getDms()
-//        val currentCoroutineContext = currentCoroutineContext()
-
-        val builder = MessageParsers.parse(message) {
-            // TODO try auto-include msgId
-            if (this.msgId == null) {
-//              val currentEvent =
-//                  currentCoroutineContext[EventProcessingContext]?.event?.takeIf { it is QGEvent<*> } as? QGEvent<*>
-//
-//              val msgId = currentEvent?.sourceEventEntity?.id
-//              if (msgId != null) {
-//                  this.msgId = msgId
-//              }
-            }
-        }
-
-        return DmsSendApi.create(dms.guildId, builder.build()).requestBy(bot).asReceipt()
+        val builder = MessageParsers.parse(message)
+        return send0(builder.build())
     }
 
     override suspend fun send(text: String): QGMessageReceipt {
-        val dms = getDms()
-
-//        val currentEvent =
-//            currentCoroutineContext()[EventProcessingContext]?.event?.takeIf { it is QGChannelAtMessageEvent } as? QGChannelAtMessageEvent
-//        val msgId = currentEvent?.sourceEventEntity?.id
-
-        val body = MessageSendApi.Body {
-            content = text // TODO 转义
-        }
-
-        return DmsSendApi.create(dms.guildId, body).requestBy(bot).asReceipt()
+        return send0(MessageSendApi.Body {
+            content = ContentTextEncoder.encode(text) // 转义
+        })
     }
 
 
     override suspend fun send(message: MessageContent): QGMessageReceipt {
+        if (message is QGReceiveMessageContent) {
+            val body = MessageSendApi.Body {
+                fromMessage(message.sourceMessage)
+            }
+            return send0(body)
+        }
+
         return send(message.messages)
+    }
+
+    private suspend fun send0(body: MessageSendApi.Body): QGMessageReceipt {
+        val dms = getDms()
+        return DmsSendApi.create(dms.guildId, body).requestBy(bot).asReceipt()
     }
 
     override fun toString(): String {

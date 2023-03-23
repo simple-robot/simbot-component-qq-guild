@@ -105,13 +105,6 @@ internal class QGBotImpl(
 
 
 
-    // TODO check permissions (event signs)
-    // TODO 内建缓存的ID hash 需要根据 shard 来
-    //  https://bot.q.qq.com/wiki/develop/api/gateway/shard.html
-    //  分片是按照频道id进行哈希的，同一个频道的信息会固定从同一个链接推送。具体哈希计算规则如下：
-    //  shard_id = (guild_id >> 22) % num_shards
-    //  ...你妈的
-
     /*
         如果为null，则说明没有订阅guild相关的事件
      */

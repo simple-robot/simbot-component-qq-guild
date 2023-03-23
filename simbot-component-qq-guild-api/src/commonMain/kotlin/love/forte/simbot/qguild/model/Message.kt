@@ -101,7 +101,7 @@ public data class Message(
      *
      * 子频道消息 seq，用于消息间的排序，seq 在同一子频道中按从先到后的顺序递增，不同的子频道之间消息无法排序
      */
-    @SerialName("seq_in_channel") public val seqInChannel: Long,
+    @SerialName("seq_in_channel") public val seqInChannel: String,
 
     /**
      * 引用消息对象

@@ -3,11 +3,16 @@
  *
  * This file is part of simbot-component-qq-guild.
  *
- * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
  *
- * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild. If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild.
+ * If not, see <https://www.gnu.org/licenses/>.
  */
 
 package love.forte.simbot.component.qguild.config
@@ -23,7 +28,7 @@ import love.forte.simbot.qguild.event.Signal
 
 // 仅用于文件序列化
 /**
- * 标记一个类型为仅用于配置序列化的类型。
+ * 标记一个类型为**仅用于配置序列化**的类型。
  *
  * 被标记的类型在除了配置序列化场景以外的情况下均不保证兼容和稳定，
  * 并且序列化的稳定以 `JSON` 格式为主要目标。
@@ -175,7 +180,7 @@ public data class QGBotFileConfiguration(
          *
          *
          */
-        public val clientProperties: Map<String, String> = emptyMap(),
+        public val clientProperties: Map<String, String>? = null,
 
         ) {
         public companion object {
@@ -198,8 +203,8 @@ public data class QGBotFileConfiguration(
 
                 configuration.shard = shardConfig.shard
                 configuration.intents = intentsConfig.intents
+                clientProperties?.also { configuration.clientProperties = it }
 
-                // TODO?
             }
         }
     }
