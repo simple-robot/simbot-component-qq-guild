@@ -56,6 +56,8 @@ internal object QGMessageParser : ReceivingMessageParser {
     override fun invoke(qgMessage: Message, context: ReceivingMessageParser.Context): ReceivingMessageParser.Context {
         val messageList = mutableListOf<SimbotMessage.Element<*>>()
 
+        // TODO 解析content，拆解并拼接各元素
+
         // at and text
         val content = qgMessage.content
 
