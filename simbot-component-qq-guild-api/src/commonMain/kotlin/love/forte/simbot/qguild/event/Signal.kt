@@ -144,7 +144,7 @@ public sealed class Signal<D>(@Serializable(Opcode.SerializerByCode::class) publ
     /**
      * 推送的事件。
      *
-     * 具体的事件类型参考其各实现类。
+     * 具体的事件类型参考各实现类。
      *
      * @see love.forte.simbot.qguild.event
      *

@@ -22,6 +22,15 @@ import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.model.Message
 import love.forte.simbot.qguild.model.MessageAudited
 
+/**
+ * 与 `message` 相关的事件类型。[data] 类型为 [Message]
+ */
+public sealed class MessageDispatch : Signal.Dispatch() {
+    /**
+     * 此事件收到的消息对象。
+     */
+    abstract override val data: Message
+}
 
 /**
  * 消息事件
@@ -35,31 +44,7 @@ import love.forte.simbot.qguild.model.MessageAudited
  */
 @Serializable
 @SerialName(EventIntents.PublicGuildMessages.AT_MESSAGE_CREATE_TYPE)
-public data class AtMessageCreate(override val s: Long, @SerialName("d") override val data: Message) : Signal.Dispatch()
-
-/**
- * 消息审核事件
- * [`MESSAGE_AUDIT_PASS（intents MESSAGE_AUDIT）`](https://bot.q.qq.com/wiki/develop/api/gateway/message.html#message-audit-pass-intents-message-audit)
- *
- * ## 发送时机
- * - 消息审核通过
- *
- */
-@Serializable
-@SerialName(EventIntents.MessageAudit.MESSAGE_AUDIT_PASS_TYPE)
-public data class MessageAuditPass(override val s: Long, @SerialName("d") override val data: MessageAudited) : Signal.Dispatch()
-
-/**
- * 消息审核事件
- * [`MESSAGE_AUDIT_REJECT（intents MESSAGE_AUDIT）`](https://bot.q.qq.com/wiki/develop/api/gateway/message.html#message-audit-reject-intents-message-audit)
- *
- * ## 发送时机
- * - 消息审核不通过
- *
- */
-@Serializable
-@SerialName(EventIntents.MessageAudit.MESSAGE_AUDIT_REJECT_TYPE)
-public data class MessageAuditReject(override val s: Long, @SerialName("d") override val data: MessageAudited) : Signal.Dispatch()
+public data class AtMessageCreate(override val s: Long, @SerialName("d") override val data: Message) : MessageDispatch()
 
 /**
  * 私信消息事件
@@ -71,4 +56,38 @@ public data class MessageAuditReject(override val s: Long, @SerialName("d") over
  */
 @Serializable
 @SerialName(EventIntents.DirectMessage.DIRECT_MESSAGE_CREATE_TYPE)
-public data class DirectMessageCreate(override val s: Long, @SerialName("d") override val data: Message) : Signal.Dispatch()
+public data class DirectMessageCreate(override val s: Long, @SerialName("d") override val data: Message) : MessageDispatch()
+
+/**
+ * 与 [MessageAudited] 相关的事件类型。[data] 类型为 [MessageAudited]。
+ */
+public sealed class MessageAuditedDispatch : Signal.Dispatch() {
+    /**
+     * 事件收到的审核信息
+     */
+    abstract override val data: MessageAudited
+}
+
+/**
+ * 消息审核事件
+ * [`MESSAGE_AUDIT_PASS（intents MESSAGE_AUDIT）`](https://bot.q.qq.com/wiki/develop/api/gateway/message.html#message-audit-pass-intents-message-audit)
+ *
+ * ## 发送时机
+ * - 消息审核通过
+ *
+ */
+@Serializable
+@SerialName(EventIntents.MessageAudit.MESSAGE_AUDIT_PASS_TYPE)
+public data class MessageAuditPass(override val s: Long, @SerialName("d") override val data: MessageAudited) : MessageAuditedDispatch()
+
+/**
+ * 消息审核事件
+ * [`MESSAGE_AUDIT_REJECT（intents MESSAGE_AUDIT）`](https://bot.q.qq.com/wiki/develop/api/gateway/message.html#message-audit-reject-intents-message-audit)
+ *
+ * ## 发送时机
+ * - 消息审核不通过
+ *
+ */
+@Serializable
+@SerialName(EventIntents.MessageAudit.MESSAGE_AUDIT_REJECT_TYPE)
+public data class MessageAuditReject(override val s: Long, @SerialName("d") override val data: MessageAudited) : MessageAuditedDispatch()

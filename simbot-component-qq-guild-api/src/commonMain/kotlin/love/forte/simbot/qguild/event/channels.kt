@@ -23,6 +23,17 @@ import love.forte.simbot.qguild.ApiModel
 import love.forte.simbot.qguild.model.*
 
 /**
+ * channel相关的事件类型。[data] 类型为 [EventChannel]。
+ *
+ */
+public sealed class ChannelDispatch : Signal.Dispatch() {
+    /**
+     * 事件中涉及到的频道类型。
+     */
+    abstract override val data: EventChannel
+}
+
+/**
  * 子频道事件 [CHANNEL_CREATE](https://bot.q.qq.com/wiki/develop/api/gateway/channel.html#channel-create)
  *
  * ## 发送时机
@@ -31,7 +42,7 @@ import love.forte.simbot.qguild.model.*
 @Serializable
 @SerialName(EventIntents.Guilds.CHANNEL_CREATE_TYPE)
 public data class ChannelCreate(override val s: Long, @SerialName("d") override val data: EventChannel) :
-    Signal.Dispatch()
+    ChannelDispatch()
 
 /**
  * 子频道事件 [CHANNEL_UPDATE](https://bot.q.qq.com/wiki/develop/api/gateway/channel.html#channel-update)
@@ -42,7 +53,7 @@ public data class ChannelCreate(override val s: Long, @SerialName("d") override 
 @Serializable
 @SerialName(EventIntents.Guilds.CHANNEL_UPDATE_TYPE)
 public data class ChannelUpdate(override val s: Long, @SerialName("d") override val data: EventChannel) :
-    Signal.Dispatch()
+    ChannelDispatch()
 
 /**
  * 子频道事件 [CHANNEL_DELETE](https://bot.q.qq.com/wiki/develop/api/gateway/channel.html#channel-delete)
@@ -53,7 +64,7 @@ public data class ChannelUpdate(override val s: Long, @SerialName("d") override 
 @Serializable
 @SerialName(EventIntents.Guilds.CHANNEL_DELETE_TYPE)
 public data class ChannelDelete(override val s: Long, @SerialName("d") override val data: EventChannel) :
-    Signal.Dispatch()
+    ChannelDispatch()
 
 
 /**

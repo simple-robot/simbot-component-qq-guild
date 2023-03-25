@@ -24,9 +24,12 @@ import love.forte.simbot.qguild.ApiModel
 import love.forte.simbot.qguild.model.Guild
 
 /**
- * 代表 [Signal.Dispatch.data] 类型为 [EventGuild] 的事件类型。
+ * Guild相关事件类型。[data] 类型为 [EventGuild]。
  */
 public sealed class EventGuildDispatch : Signal.Dispatch() {
+    /**
+     * 事件中的频道服务器实例。
+     */
     abstract override val data: EventGuild
 }
 

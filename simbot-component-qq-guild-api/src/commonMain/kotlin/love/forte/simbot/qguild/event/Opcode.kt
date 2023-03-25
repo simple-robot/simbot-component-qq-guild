@@ -22,9 +22,24 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
 
+/**
+ * 用于标记 [Opcode] 中对应的往来类型为可接收类型。
+ *
+ * _参考 [文档](https://bot.q.qq.com/wiki/develop/api/gateway/opcode.html) 中的 "客户端操作含义"_
+ */
 public sealed interface ReceiveAble
+
+/**
+ * 用于标记 [Opcode] 中对应的往来类型为可发送类型。
+ *
+ * _参考 [文档](https://bot.q.qq.com/wiki/develop/api/gateway/opcode.html) 中的 "客户端操作含义"_
+ */
 public sealed interface SendAble
 
+/**
+ * [`opcode`](https://bot.q.qq.com/wiki/develop/api/gateway/opcode.html) 常量类。
+ *
+ */
 public object Opcodes {
     /** 服务端进行消息推送 */
     public const val Dispatch: Int = 0
@@ -50,6 +65,9 @@ public object Opcodes {
     public const val HeartbeatACK: Int = 11
 }
 
+/**
+ * 针对 [Opcodes] 中各 `opcode` 的实例类型。
+ */
 @Serializable(Opcode.SerializerByCode::class)
 public sealed class Opcode(public val code: Int) {
     public val isReceive: Boolean get() = this is ReceiveAble

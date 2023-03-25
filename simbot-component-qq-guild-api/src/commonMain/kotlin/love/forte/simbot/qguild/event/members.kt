@@ -67,7 +67,7 @@ public data class EventMember(
     /**
      * 用户的频道基础信息
      */
-    override val user: User, // 好像事件里也会填充
+    override val user: User, 
     /**
      * 用户的昵称
      */
