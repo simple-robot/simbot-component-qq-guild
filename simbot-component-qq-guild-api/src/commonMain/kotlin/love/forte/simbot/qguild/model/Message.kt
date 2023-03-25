@@ -19,6 +19,11 @@ package love.forte.simbot.qguild.model
 
 import kotlinx.datetime.Instant
 import kotlinx.serialization.*
+import kotlinx.serialization.builtins.MapSerializer
+import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import love.forte.simbot.*
 import love.forte.simbot.qguild.ApiModel
 import kotlin.jvm.JvmStatic
@@ -78,6 +83,29 @@ public data class Message(
      */
     public val attachments: List<Attachment> = emptyList(),
 
+    /*
+        图片：
+        "attachments": [{
+			"content_type": "image/png",
+			"filename": "{FF889886-687E-8027-14D8-9A5BC6620CF8}.png",
+			"height": 187,
+			"id": "2649174084",
+			"size": 44182,
+			"url": "gchat.qpic.cn/qmeetpic/47750961638939775/1701030-2649174084-FF889886687E802714D89A5BC6620CF8/0",
+			"width": 236
+		}],
+
+		"attachments": [{
+			"content_type": "image/gif",
+			"filename": "{59CA8472-3FBB-98E9-9284-FB9D3D3148BC}.jpg",
+			"height": 240,
+			"id": "2249362854",
+			"size": 499562,
+			"url": "gchat.qpic.cn/qmeetpic/47750961638939775/1701030-2249362854-59CA84723FBB98E99284FB9D3D3148BC/0",
+			"width": 240
+		}],
+     */
+
     /**
      * embeds	MessageEmbed 对象数组	embed
      */
@@ -90,8 +118,10 @@ public data class Message(
 
     /**
      * Member 对象	消息创建者的member信息
+     *
+     * 发送消息的回执中不存在此 member
      */
-    public val member: MessageMember, // 此处不会填充 user
+    public val member: MessageMember? = null,
 
     /**
      * ark消息对象	ark消息
@@ -117,7 +147,7 @@ public data class Message(
 
 ) {
     init {
-        member.user = author
+        member?.user = author
     }
 
     /**
@@ -179,13 +209,35 @@ public data class Message(
 
     /**
      * [MessageAttachment](https://bot.q.qq.com/wiki/develop/api/openapi/message/model.html#messageattachment)
+     *
+     * 在接收的时候似乎会针对不同类型存在额外的 [properties]，
+     * 例如对于图片文件接收到的信息实际为：
+     *
+     * ```json
+     * {
+     *    "content_type": "image/gif",
+     *    "filename": "{59CA8472-3FBB-98E9-9284-FB9D3D3148BC}.jpg",
+     *    "height": 240,
+     *    "id": "2249362854",
+     *    "size": 499562,
+     *    "url": "gchat.qpic.cn/qmeetpic/47750961638939775/1701030-2249362854-59CA84723FBB98E99284FB9D3D3148BC/0",
+     *    "width": 240
+     * }
+     * ```
+     * 因此 [Attachment] 的实际序列化借助 k/v 均为 [String] 的 [Map] 进行，并尝试从其中提取 `url` 属性赋于 [url] 中。
+     *
      */
-    @Serializable
+    @Serializable(MessageAttachmentSerializer::class)
     public data class Attachment(
         /**
          * 下载地址
          */
-        public val url: String
+        public val url: String,
+
+        /**
+         * 此 attachment 中接收到的所有属性。
+         */
+        public val properties: Map<String, String> = emptyMap()
     )
 
 
@@ -302,7 +354,7 @@ public data class Message(
  */
 @ApiModel
 @Serializable
-public data class MessageMember internal constructor(
+public data class MessageMember(
     override val nick: String,
     override val roles: List<String> = emptyList(),
     @SerialName("joined_at")
@@ -327,3 +379,28 @@ public data class MessageMember internal constructor(
 }
 
 
+
+internal object MessageAttachmentSerializer : KSerializer<Message.Attachment> {
+    private val serializer = MapSerializer(String.serializer(), String.serializer())
+
+    @ExperimentalSerializationApi
+    override fun deserialize(decoder: Decoder): Message.Attachment {
+        val properties = serializer.deserialize(decoder)
+        val url = properties["url"] ?: throw MissingFieldException("url", "Message.Attachment")
+        return Message.Attachment(url, properties)
+    }
+
+    override val descriptor: SerialDescriptor = serializer.descriptor
+
+    override fun serialize(encoder: Encoder, value: Message.Attachment) {
+        var map = value.properties
+        if ("url" !in map) {
+            map = buildMap(map.size) {
+                putAll(map)
+                put("url", value.url)
+            }
+        }
+
+        serializer.serialize(encoder, map)
+    }
+}

@@ -23,6 +23,7 @@ import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
 import love.forte.simbot.*
 import love.forte.simbot.component.qguild.message.*
+import love.forte.simbot.message.At
 import love.forte.simbot.message.Message
 
 
@@ -70,7 +71,24 @@ public class QQGuildComponent : Component {
          */
         @Deprecated("Unused")
         public val componentID: CharSequenceID = ID_VALUE.ID
-        
+
+        /**
+         * 在 [QGReceiveMessageContent] 中提及 `channel` 的时候，被转化的 [At] 所使用的 [At.type]。
+         *
+         * ```kotlin
+         * // 在QQ频道相关事件中
+         * val at = ...
+         * if (at.type = AT_CHANNEL_TYPE) {
+         *    // at是提及的channel类型
+         * }
+         * ```
+         *
+         * _需要注意的是在不同的组件中 at type 是可能重复的。_
+         *
+         */
+        public const val AT_CHANNEL_TYPE: String = "channel"
+
+
         /**
          * 作为注册器时的标识。
          */

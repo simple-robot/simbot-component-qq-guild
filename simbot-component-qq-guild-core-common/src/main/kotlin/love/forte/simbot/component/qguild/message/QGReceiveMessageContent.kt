@@ -18,7 +18,9 @@
 package love.forte.simbot.component.qguild.message
 
 import love.forte.simbot.ID
+import love.forte.simbot.component.qguild.QQGuildComponent
 import love.forte.simbot.message.*
+import love.forte.simbot.qguild.message.ContentTextDecoder
 import love.forte.simbot.qguild.model.Message as QGSourceMessage
 
 /**
@@ -33,21 +35,30 @@ public abstract class QGReceiveMessageContent : ReceivedMessageContent() {
      */
     abstract override val messageId: ID
 
-
-    // TODO no, 就是顺序解析
     /**
-     * 转化消息列表。
+     * 通过 [sourceMessage] 转化后的消息元素链。
      *
-     * 消息列表中第一个元素必然是 [QGContentText], 其内容为 [sourceMessage.content][QGSourceMessage.content]，
-     * 而后则是通过 [sourceMessage] 中解析而来的内容。
-     * 其中：
-     * - [sourceMessage.mentionEveryone][QGSourceMessage.mentionEveryone] 会被解析为 [AtAll] (如果为 `true`)
-     * - [sourceMessage.mentions][QGSourceMessage.mentions] 会被解析为 [At]
-     * - [sourceMessage.ark][QGSourceMessage.ark] 会被解析为 [QGArk] (如果有)
-     * - [sourceMessage.attachments][QGSourceMessage.attachments] 会被解析为 [QGAttachmentMessage] (如果有)
+     * 如果中 [sourceMessage] 的 [content][QGSourceMessage.content] 没有任何可匹配特殊的内嵌格式，
+     * 则 [messages] 的第一个元素会直接根据 [content][QGSourceMessage.content] 拼接为 [QGContentText]，
+     * 否则会解析 `content` 并将其中的内容**依次顺序地**根据类型转化为以下可能的类型：
+     * - [Text]: 根据解析的 `content` 中非内嵌格式文本的[**解码**][ContentTextDecoder.decode]结果。
+     * - [At]: 当存在提及用户的内嵌格式时（例如 `<@123456>`）。
+     * 按理说会与 [sourceMessage.mentions][QGSourceMessage.mentions] 对应。
+     * - [At(type=channel)][At]: 当存在提及频道的内嵌格式时（例如 `<#123456>`）。
+     * 类型同样为 [At], 但是 [At.type] 的值为 [QQGuildComponent.AT_CHANNEL_TYPE]。
+     * - [AtAll]: 当 [sourceMessage.mentionEveryone][QGSourceMessage.mentionEveryone] == true 时，
+     * 会将所有的 `@everyone` 视为提及所有而被转化为 [AtAll]；而如果为 `false` 则不会转化并被视为普通的文本字符串。
+     * - [Face]: 当 `content` 中存在系统表情时（例如 `<emoji:5>`）会被转化为 [Face] 类型。
+     * 注意并不是转化为 [Emoji]，因为其代表的是**系统表情**。
+     *
+     * 上述解析结束后，会再根据 [sourceMessage] 中的其他可转化属性在结果后面继续追加如下可能的类型：
+     * - [QGArk]: 来自于 [sourceMessage.ark][QGSourceMessage.ark]
+     * - [QGAttachmentMessage]: 来自于 [sourceMessage.attachments][QGSourceMessage.attachments]，可能有多个
      *
      */
     abstract override val messages: Messages
+
+    // TODO attachment image 类型解析为 QGImage
 
     /**
      * 事件接收到的原始的消息对象 [Message][QGSourceMessage]
@@ -132,6 +143,8 @@ public abstract class QGReceiveMessageContent : ReceivedMessageContent() {
      * ```kotlin
      * val contentText = receiveContent.sourceMessage.content
      * ```
+     *
+     * @see messages
      *
      */
     abstract override val plainText: String

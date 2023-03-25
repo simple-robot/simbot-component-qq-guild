@@ -16,7 +16,7 @@
  */
 
 @file:Suppress("MemberVisibilityCanBePrivate")
-package love.forte.simbot.qguild
+package love.forte.simbot.qguild.message
 
 import love.forte.simbot.*
 import love.forte.simbot.qguild.model.Message

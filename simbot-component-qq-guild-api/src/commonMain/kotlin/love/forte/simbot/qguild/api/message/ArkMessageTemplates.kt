@@ -17,7 +17,7 @@
 
 package love.forte.simbot.qguild.api.message
 
-import love.forte.simbot.qguild.buildArk
+import love.forte.simbot.qguild.message.buildArk
 import love.forte.simbot.qguild.model.Message
 
 

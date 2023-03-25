@@ -23,11 +23,17 @@ api模块仅包含以下依赖：
 
 ```kotlin
 plugin {
+  java // 你仍然可以使用Java
   kotlin("jvm") version "$KOTLIN_VERSION" // 比如 1.8.10
+  // 或者使用其他平台，例如 kotlin("js")
 }
 
 dependencies {
     implementation("love.forte.simbot.component:simbot-component-qq-guild-api:$VERSION")
+
+    // 你需要自行选择一个想要使用的 ktor-http-client, 例如 cio 或 okhttp 等
+    // 更多选择参考 https://ktor.io/docs/http-client-engines.html
+    runtimeOnly("io.ktor:ktor-client-cio:$KTOR_VERSION")
 }
 ```
 
@@ -37,11 +43,17 @@ dependencies {
 
 ```groovy
 plugin {
+  java // 你仍然可以使用Java
   id "org.jetbrains.kotlin.jvm" version "$KOTLIN_VERSION" // 比如 1.8.10
+  // 或者使用其他平台，例如 kotlin("js")
 }
 
 dependencies {
     implementation 'love.forte.simbot.component:simbot-component-qq-guild-api:$VERSION'
+
+    // 你需要自行选择一个想要使用的 ktor-http-client, 例如 cio 或 okhttp 等
+    // 更多选择参考 https://ktor.io/docs/http-client-engines.html
+    runtimeOnly 'io.ktor:ktor-client-cio:$KTOR_VERSION' 
 }
 ```
 
@@ -55,8 +67,23 @@ dependencies {
     <artifactId>simbot-component-qq-guild-api-jvm</artifactId>
     <version>${VERSION}</version>
 </dependency>
+
+<!--
+  你需要自行选择一个想要使用的 ktor-http-client, 例如 cio 或 okhttp 等
+  更多选择参考 https://ktor.io/docs/http-client-engines.html
+-->
+<dependency>
+  <groupId>io.ktor</groupId>
+  <artifactId>ktor-client-cio</artifactId>
+  <version>${KTOR_VERSION}</version>
+  <scope>runtime</scope>
+</dependency>
 ```
 
+
+# Package love.forte.simbot.qguild
+
+api模块下的部分顶层内容，例如部分标记性注解、模块定义的异常类型、模块使用的常量类等。
 
 # Package love.forte.simbot.qguild.api
 
@@ -64,9 +91,13 @@ dependencies {
 
 # Package love.forte.simbot.qguild.event
 
-QQ频道的事件相关内容，包括[事件订阅](https://bot.q.qq.com/wiki/develop/api/gateway/intents.html)、
+QQ频道的事件相关内容，包括 [事件订阅](https://bot.q.qq.com/wiki/develop/api/gateway/intents.html) 、
 [opcode](https://bot.q.qq.com/wiki/develop/api/gateway/opcode.html)
 以及推送的各种事件消息体等。
+
+# Package love.forte.simbot.qguild.message
+
+一些与消息相关的内容，例如针对 [内嵌格式](https://bot.q.qq.com/wiki/develop/api/openapi/message/message_format.html) 的高效编码/解码器。
 
 # Package love.forte.simbot.qguild.model
 

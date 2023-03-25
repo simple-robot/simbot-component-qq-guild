@@ -13,7 +13,7 @@
 package test
 
 import kotlinx.serialization.json.Json
-import love.forte.simbot.qguild.buildArk
+import love.forte.simbot.qguild.message.buildArk
 import love.forte.simbot.qguild.model.Message
 import kotlin.test.Test
 

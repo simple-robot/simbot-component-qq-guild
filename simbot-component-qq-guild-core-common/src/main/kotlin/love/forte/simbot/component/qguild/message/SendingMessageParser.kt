@@ -61,7 +61,7 @@ public fun interface ReceivingMessageParser {
      * 消息链和正文文本内容的容器，用于 [ReceivingMessageParser.invoke] 中进行传递解析。
      *
      */
-    public data class Context(public var messages: Messages)
+    public data class Context(public var messages: Messages, public var plainTextBuilder: StringBuilder)
 }
 
 
@@ -131,7 +131,7 @@ public object MessageParsers {
         message: Message,
         messagesInit: Messages = emptyMessages(),
     ): ReceivingMessageParser.Context {
-        return receivingParsers.fold(ReceivingMessageParser.Context(messagesInit)) { context, parser ->
+        return receivingParsers.fold(ReceivingMessageParser.Context(messagesInit, StringBuilder(message.content.length))) { context, parser ->
             parser(message, context)
         }
     }

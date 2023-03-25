@@ -171,7 +171,7 @@ public class MessageSendApi private constructor(
      *
      */
     @Serializable
-    public class Body internal constructor(
+    public data class Body internal constructor(
         /**
          * 选填，消息内容，文本内容，支持[内嵌格式](https://bot.q.qq.com/wiki/develop/api/openapi/message/message_format.html)
          */

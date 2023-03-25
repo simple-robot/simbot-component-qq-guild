@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2023. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -15,16 +15,17 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = "qq-guild"
+package love.forte.simbot.component.qguild.message
 
 
-//include(":builder-generator")
-include(":simbot-component-qq-guild-api")
-//include(":simbot-component-qq-guild-api-multi")
-include(":simbot-component-qq-guild-stdlib")
-include(":simbot-component-qq-guild-core-common")
-include(":simbot-component-qq-guild-core")
-include(":simbot-component-qq-guild-benchmark")
-//include(":simbot-component-qq-guild-core-simple")
+/**
+ * 用于发送的图片类型
+ */
+public class QGOfflineImage
 
 
+/**
+ * 图片类型
+ *
+ */
+public class QGImage

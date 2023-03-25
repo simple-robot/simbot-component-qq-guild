@@ -66,6 +66,7 @@ internal class QGAtMessageCreateEventImpl(
     override suspend fun reply(message: MessageContent): MessageReceipt {
         if (message is QGReceiveMessageContent) {
             val body = MessageSendApi.Body {
+                msgId = sourceEventEntity.id
                 fromMessage(message.sourceMessage)
             }
             return reply0(body)
@@ -76,6 +77,7 @@ internal class QGAtMessageCreateEventImpl(
 
     override suspend fun reply(text: String): MessageReceipt {
         return reply0(MessageSendApi.Body {
+            msgId = sourceEventEntity.id
             content = ContentTextEncoder.encode(text) // 转义，不允许特殊字符
         })
     }

@@ -3,11 +3,16 @@
  *
  * This file is part of simbot-component-qq-guild.
  *
- * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
  *
- * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild. If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild.
+ * If not, see <https://www.gnu.org/licenses/>.
  */
 
 package love.forte.simbot.component.qguild.message
@@ -23,6 +28,8 @@ import love.forte.simbot.qguild.model.Message
 import love.forte.simbot.message.Message as SimbotMessage
 
 
+// TODO image support
+
 /**
  * 附件的 [SimbotMessage.Element] 实现，
  * 仅支持在 接收的消息中。
@@ -31,7 +38,7 @@ import love.forte.simbot.message.Message as SimbotMessage
  */
 @SerialName("qg.attachment")
 @Serializable
-public data class QGAttachmentMessage(public val url: String) : QGMessageElement<QGAttachmentMessage> {
+public data class QGAttachmentMessage @JvmOverloads constructor(public val url: String, public val properties: Map<String, String> = emptyMap()) : QGMessageElement<QGAttachmentMessage> {
 
     @Deprecated("Just get url", ReplaceWith("url.ID", "love.forte.simbot.ID"))
     public val id: ID get() = url.ID
@@ -45,8 +52,8 @@ public data class QGAttachmentMessage(public val url: String) : QGMessageElement
 }
 
 
-public fun Message.Attachment.toMessage(): QGAttachmentMessage = QGAttachmentMessage(url)
-public fun QGAttachmentMessage.toAttachment(): Message.Attachment = Message.Attachment(url)
+public fun Message.Attachment.toMessage(): QGAttachmentMessage = QGAttachmentMessage(url, properties)
+public fun QGAttachmentMessage.toAttachment(): Message.Attachment = Message.Attachment(url, properties)
 
 
 internal object AttachmentParser : SendingMessageParser {

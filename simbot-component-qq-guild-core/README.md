@@ -1,31 +1,42 @@
-# core
+# core组件模块
 
 请先阅读 [**模块说明**](Module.md) .
+
+## 命名说明
+
+在QQ频道组件中，所有相关的类型（包括但不限于事件、频道、子频道等相关对象）均会以 `QG` 为前缀命名 (例如 `QGGuild` 、`QGBot`)，代表 `QQ-Guild`。
+其中除了 `Component` 的实现 `QQGuildComponent`。组件的实现使用全名 `QQGuild` 作为前缀。
+
 
 ## 事件支持
 
 目前，组件支持的事件有：
 
-| 事件                                 | 描述          |
-|:-----------------------------------|:------------|
-| `QGGuildEvent`                     | 频道服务器相关事件   |
-| -> `QGGuildCreateEvent`            | 频道服务器进入     |
-| -> `QGGuildUpdateEvent`            | 频道服务器信息更新   |
-| -> `QGGuildDeleteEvent`            | 频道服务器离开     |
-| `QGChannelEvent`                   | 子频道相关事件     |
-| -> `QGChannelCreateEvent`          | 子频道新增       |
-| -> `QGChannelUpdateEvent`          | 子频道信息变更     |
-| -> `QGChannelDeleteEvent`          | 子频道删除       |
-| -> `QGChannelCategoryCreateEvent`  | 子频道分类新增     |
-| -> `QGChannelCategoryUpdateEvent`  | 子频道分类信息变更   |
-| -> `QGChannelCategoryDeleteEvent`  | 子频道分类删除     |
-| `QGMemberEvent`                    | 成员相关事件      |
-| ->  `QGMemberAddEvent`             | 新增频道成员      |
-| ->  `QGMemberUpdateEvent`          | 频道成员信息更新    |
-| ->  `QGMemberRemoveEvent`          | 频道成员离开/移除   |
+| 事件                                | 描述              |
+|:----------------------------------|:----------------|
+| `QGGuildEvent`                    | 频道服务器相关事件       |
+| -> `QGGuildCreateEvent`           | 频道服务器进入         |
+| -> `QGGuildUpdateEvent`           | 频道服务器信息更新       |
+| -> `QGGuildDeleteEvent`           | 频道服务器离开         |
+| `QGChannelEvent`                  | 子频道相关事件         |
+| -> `QGChannelCreateEvent`         | 子频道新增           |
+| -> `QGChannelUpdateEvent`         | 子频道信息变更         |
+| -> `QGChannelDeleteEvent`         | 子频道删除           |
+| -> `QGChannelCategoryCreateEvent` | 子频道分类新增         |
+| -> `QGChannelCategoryUpdateEvent` | 子频道分类信息变更       |
+| -> `QGChannelCategoryDeleteEvent` | 子频道分类删除         |
+| `QGMemberEvent`                   | 成员相关事件          |
+| ->  `QGMemberAddEvent`            | 新增频道成员          |
+| ->  `QGMemberUpdateEvent`         | 频道成员信息更新        |
+| ->  `QGMemberRemoveEvent`         | 频道成员离开/移除       |
+| `QGMessageEvent`                  | 消息事件            |
+| -> `QGAtMessageCreateEvent`       | At消息（公域消息）事件    |
 
+以及一个用于兜底儿的 `QGUnsupportedEvent` 类型事件。
 
 ## 示例
+
+### 直接使用
 
 ```kotlin
 suspend fun main() {
@@ -33,6 +44,7 @@ suspend fun main() {
         useQQGuild()
     }
 
+    // 注册事件
     app.eventListenerManager.listeners {
         // 监听事件: 频道成员信息变更事件
         QGMemberUpdateEvent { event ->
@@ -41,6 +53,20 @@ suspend fun main() {
             println("operator: ${event.operator()}")
             println("guild:    ${event.guild()}")
         }
+        
+        // 公域消息事件
+        // 也可以使用 ChannelMessageEvent -> 这是来自 simbot 标准API的事件类型，也是 QGAtMessageCreateEvent 的父类
+        QGAtMessageCreateEvent { event ->
+            event.reply("纯文本消息，<会自动转义>")
+            event.reply(QGContentText("content文本消息，不会转义，会引发内嵌格式 <#123456>"))
+
+            // 使用消息链
+            event.reply(Face(1.ID) + "纯文本".toText() + QGContentText("content文本") + AtAll)
+            
+            // 也可以使用 send 发送消息
+            event.channel().send("纯文本")
+        }
+        
     }
 
     // 注册qq频道bot
@@ -156,12 +182,9 @@ application.joinBlocking();
 
 </details>
 
-## Spring Boot
+### Spring Boot
 
 如果希望使用 Spring Boot，参考 https://simbot.forte.love/docs/quick-start/spring-boot-starter 中的说明。
-QQ频道组件实现了 `simbot` 的 `SPI`，支持自动加载。 
+QQ频道组件实现了 `simbot` 约定的 `service SPI`，支持自动加载。 
 
 ## 注意事项
-
-### 权限不足
-

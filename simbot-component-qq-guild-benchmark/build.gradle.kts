@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2023. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -15,16 +15,14 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = "qq-guild"
+plugins {
+    kotlin("jvm")
+    kotlin("kapt")
+}
 
-
-//include(":builder-generator")
-include(":simbot-component-qq-guild-api")
-//include(":simbot-component-qq-guild-api-multi")
-include(":simbot-component-qq-guild-stdlib")
-include(":simbot-component-qq-guild-core-common")
-include(":simbot-component-qq-guild-core")
-include(":simbot-component-qq-guild-benchmark")
-//include(":simbot-component-qq-guild-core-simple")
-
-
+dependencies {
+    implementation(project(":simbot-component-qq-guild-api"))
+    implementation("org.openjdk.jmh:jmh-core:1.35")
+    annotationProcessor("org.openjdk.jmh:jmh-generator-annprocess:1.35")
+    kapt("org.openjdk.jmh:jmh-generator-annprocess:1.35")
+}

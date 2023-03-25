@@ -140,7 +140,7 @@ internal fun QGBotImpl.registerEventProcessor(): DisposableHandle {
 
             // 消息
             is AtMessageCreate -> {
-                QGAtMessageCreateEventImpl(bot, raw, event.data)
+                pushEvent(QGAtMessageCreateEvent) { QGAtMessageCreateEventImpl(bot, raw, event.data) }
             }
 
 
