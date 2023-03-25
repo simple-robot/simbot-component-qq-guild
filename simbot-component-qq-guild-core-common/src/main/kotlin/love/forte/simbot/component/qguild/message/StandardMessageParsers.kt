@@ -51,6 +51,22 @@ internal object ContentParser : SendingMessageParser {
 
 
 internal object QGMessageParser : ReceivingMessageParser {
+    private const val AT_USER_GROUP = "ur"
+    private const val AT_USER_VALUE = "uv"
+
+    private const val AT_EVERYONE_GROUP = "all"
+    private const val MENTION_CHANNEL_GROUP = "cl"
+    private const val MENTION_CHANNEL_VALUE = "cv"
+
+    private const val EMOJI_GROUP = "ej"
+    private const val EMOJI_VALUE = "ev"
+
+    private val replaceRegex = Regex(
+        "(?<$AT_USER_GROUP><@!?(?<$AT_USER_VALUE>\\d+)>)" +
+                "|(?<$AT_EVERYONE_GROUP>@everyone)" +
+                "|(?<$MENTION_CHANNEL_GROUP><#(?<$MENTION_CHANNEL_VALUE>\\d+)>)" +
+                "|(?<$EMOJI_GROUP><emoji:(?<$EMOJI_VALUE>\\d+)>)"
+    )
 
 
     override fun invoke(qgMessage: Message, context: ReceivingMessageParser.Context): ReceivingMessageParser.Context {

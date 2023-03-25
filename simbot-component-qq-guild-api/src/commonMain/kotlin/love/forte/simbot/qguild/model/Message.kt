@@ -21,6 +21,8 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.*
 import love.forte.simbot.*
 import love.forte.simbot.qguild.ApiModel
+import kotlin.jvm.JvmStatic
+import kotlin.jvm.JvmSynthetic
 
 /**
  * [消息对象(Message)](https://bot.q.qq.com/wiki/develop/api/openapi/message/model.html)
@@ -89,7 +91,7 @@ public data class Message(
     /**
      * Member 对象	消息创建者的member信息
      */
-    public val member: SimpleMember, // TODO
+    public val member: MessageMember, // 此处不会填充 user
 
     /**
      * ark消息对象	ark消息
@@ -114,7 +116,9 @@ public data class Message(
     @SerialName("src_guild_id") val srcGuildId: String? = null
 
 ) {
-
+    init {
+        member.user = author
+    }
 
     /**
      * [MessageEmbed](https://bot.q.qq.com/wiki/develop/api/openapi/message/model.html#messageembed)
@@ -290,9 +294,36 @@ public data class Message(
             val values: List<String>
         )
     }
-
-
 }
 
+/**
+ * 在 [MessageMember] 中使用的 [Member] 实现。
+ * 其中的 [user] 来自 [Message.author]
+ */
+@ApiModel
+@Serializable
+public data class MessageMember internal constructor(
+    override val nick: String,
+    override val roles: List<String> = emptyList(),
+    @SerialName("joined_at")
+    override val joinedAt: Instant
+) : Member {
+
+    @Transient
+    @set:JvmSynthetic // hide setter
+    override lateinit var user: User
+        internal set
+
+    public companion object {
+
+        /**
+         * 将任意 [Member] 类型转化为 [MessageMember].
+         * 如果类型本身即为 [MessageMember] 则返回自身，否则得到新的实例。
+         */
+        @JvmStatic
+        public fun Member.asMessageMember(): MessageMember =
+            if (this is MessageMember) this else MessageMember(nick, roles, joinedAt).also { it.user = user }
+    }
+}
 
 

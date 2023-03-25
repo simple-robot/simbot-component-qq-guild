@@ -27,7 +27,12 @@ import love.forte.simbot.qguild.ApiModel
  */
 public interface Member {
 
-    public val user: User // TODO 不确定是否真的可以不为null
+    /*
+        在 AT MESSAGE 中不会填充user
+        但是会填充 author, 可以事后补充
+     */
+
+    public val user: User
 
     /**
      * 用户的昵称

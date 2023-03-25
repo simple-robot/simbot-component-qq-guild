@@ -34,6 +34,7 @@ dependencies {
     api(simbotLoggerSlf4jImpl)
     api(simbotUtilLoop)
     api(libs.ktor.client.ws)
+    testRuntimeOnly(libs.ktor.client.cio)
 //    implementation(project(":builder-generator"))
 //    ksp(project(":builder-generator"))
 //    testCompileOnly(project(":builder-generator"))

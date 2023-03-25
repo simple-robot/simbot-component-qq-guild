@@ -16,12 +16,20 @@ stdlib模块仅对BOT相关功能进行**较低限度**的实现，不会有过�
 
 ```kotlin
 implementation("love.forte.simbot.component:simbot-component-qq-guild-stdlib:$VERSION")
+
+// 你需要自行选择一个想要使用的 ktor-http-client, 例如 cio 或 okhttp 等
+// 更多选择参考 https://ktor.io/docs/http-client-engines.html
+runtimeOnly("io.ktor:ktor-client-cio:$KTOR_VERSION")
 ```
 
 **Gradle Groovy**
 
 ```groovy
 implementation 'love.forte.simbot.component:simbot-component-qq-guild-stdlib:$VERSION'
+
+// 你需要自行选择一个想要使用的 ktor-http-client, 例如 cio 或 okhttp 等
+// 更多选择参考 https://ktor.io/docs/http-client-engines.html
+runtimeOnly 'io.ktor:ktor-client-cio:$KTOR_VERSION'
 ```
 
 **Maven**
@@ -31,5 +39,17 @@ implementation 'love.forte.simbot.component:simbot-component-qq-guild-stdlib:$VE
     <groupId>love.forte.simbot.component</groupId>
     <artifactId>simbot-component-qq-guild-stdlib</artifactId>
     <version>${VERSION}</version>
+</dependency>
+
+<!--
+你需要自行选择一个想要使用的 ktor-http-client, 例如 cio 或 okhttp 等
+更多选择参考 https://ktor.io/docs/http-client-engines.html
+-->
+
+<dependency>
+    <groupId>io.ktor</groupId>
+    <artifactId>ktor-client-cio</artifactId>
+    <version>${KTOR_VERSION}</version>
+    <scope>runtime</scope>
 </dependency>
 ```
