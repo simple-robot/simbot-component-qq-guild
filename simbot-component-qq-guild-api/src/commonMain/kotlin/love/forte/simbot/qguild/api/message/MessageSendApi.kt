@@ -319,7 +319,8 @@ public class MessageSendApi private constructor(
  */
 @InternalApi
 public expect abstract class BaseMessageSendBodyBuilder() {
-    protected open var fileImage: Any?
+    public open var fileImage: Any?
+    protected set
     /*
         追加额外的平台功能，但是不能有抽象方法
      */

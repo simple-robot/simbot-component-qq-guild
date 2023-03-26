@@ -22,14 +22,10 @@ import love.forte.simbot.component.qguild.QGChannel
 import love.forte.simbot.component.qguild.QGChannelCategoryId
 import love.forte.simbot.component.qguild.QGGuild
 import love.forte.simbot.component.qguild.QGMember
-import love.forte.simbot.component.qguild.message.MessageParsers
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
-import love.forte.simbot.component.qguild.message.QGReceiveMessageContent
-import love.forte.simbot.component.qguild.util.requestBy
+import love.forte.simbot.component.qguild.message.sendMessage
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
-import love.forte.simbot.qguild.api.message.MessageSendApi
-import love.forte.simbot.qguild.message.ContentTextEncoder
 import kotlin.coroutines.CoroutineContext
 import love.forte.simbot.qguild.model.Channel as QGSourceChannel
 
@@ -62,34 +58,27 @@ internal class QGChannelImpl internal constructor(
     override suspend fun owner(): QGMember = guild().owner()
 
     override suspend fun send(message: Message): QGMessageReceipt {
-        val builder = MessageParsers.parse(message) {
-            if (this.msgId == null && currentMsgId != null) {
-                this.msgId = currentMsgId
+        return bot.sendMessage(source.id, message) {
+            if (msgId == null) {
+                msgId = currentMsgId
             }
         }
-
-        return send0(builder.build())
     }
 
     override suspend fun send(message: MessageContent): QGMessageReceipt {
-        if (message is QGReceiveMessageContent) {
-            return send0(MessageSendApi.Body {
+        return bot.sendMessage(source.id, message) {
+            if (msgId == null) {
                 msgId = currentMsgId
-                fromMessage(message.sourceMessage)
-            })
+            }
         }
-        return send(message.messages)
     }
 
     override suspend fun send(text: String): QGMessageReceipt {
-        return send0(MessageSendApi.Body {
-            msgId = currentMsgId
-            content = ContentTextEncoder.encode(text)
-        })
-    }
-
-    private suspend fun send0(body: MessageSendApi.Body): QGMessageReceipt {
-        return MessageSendApi.create(source.id, body).requestBy(bot).asReceipt()
+        return bot.sendMessage(source.id, text) {
+            if (msgId == null) {
+                msgId = currentMsgId
+            }
+        }
     }
 
     override fun toString(): String {

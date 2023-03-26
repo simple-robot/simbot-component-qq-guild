@@ -23,7 +23,6 @@ import love.forte.simbot.ID
 import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.message.Messages
 import love.forte.simbot.message.doSafeCast
-import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.qguild.model.Message
 import love.forte.simbot.message.Message as SimbotMessage
 
@@ -31,14 +30,26 @@ import love.forte.simbot.message.Message as SimbotMessage
 // TODO image support
 
 /**
- * 附件的 [SimbotMessage.Element] 实现，
- * 仅支持在 接收的消息中。
+ * 附件消息。
+ *
+ * _仅支持在接收的消息中出现，暂不支持发送。_
  *
  * @author ForteScarlet
  */
 @SerialName("qg.attachment")
 @Serializable
 public data class QGAttachmentMessage @JvmOverloads constructor(public val url: String, public val properties: Map<String, String> = emptyMap()) : QGMessageElement<QGAttachmentMessage> {
+
+    private lateinit var _source: Message.Attachment
+
+    /**
+     * 得到当前消息可对应的原始类型 [Message.Attachment].
+     *
+     * 需要注意的是 [Message.Attachment.url] **有可能** 没有 `https://` 前缀。
+     *
+     */
+    public val source: Message.Attachment
+        get() = if (::_source.isInitialized) _source else Message.Attachment(url, properties).also { _source = it }
 
     @Deprecated("Just get url", ReplaceWith("url.ID", "love.forte.simbot.ID"))
     public val id: ID get() = url.ID
@@ -48,12 +59,27 @@ public data class QGAttachmentMessage @JvmOverloads constructor(public val url: 
 
     public companion object Key : SimbotMessage.Key<QGAttachmentMessage> {
         override fun safeCast(value: Any): QGAttachmentMessage? = doSafeCast(value)
+
+        /**
+         * 将 [Message.Attachment] 转化为 [QGAttachmentMessage].
+         *
+         * _注意：如果 [Message.Attachment.url] 不是以 `http` 开头，则会追加一个前缀 `https://` 。_
+         *
+         */
+        @JvmStatic
+        @JvmName("of")
+        public fun Message.Attachment.toMessage(): QGAttachmentMessage {
+            val url0 = if (!url.startsWith("http")) "https://$url" else url
+            return QGAttachmentMessage(url0, properties)
+        }
     }
 }
 
-
-public fun Message.Attachment.toMessage(): QGAttachmentMessage = QGAttachmentMessage(url, properties)
-public fun QGAttachmentMessage.toAttachment(): Message.Attachment = Message.Attachment(url, properties)
+/**
+ * @suppress
+ */
+@Deprecated("Use QGAttachmentMessage.source", ReplaceWith("source"))
+public fun QGAttachmentMessage.toAttachment(): Message.Attachment =  source
 
 
 internal object AttachmentParser : SendingMessageParser {
@@ -62,7 +88,7 @@ internal object AttachmentParser : SendingMessageParser {
         index: Int,
         element: SimbotMessage.Element<*>,
         messages: Messages?,
-        builder: MessageSendApi.Body.Builder,
+        builderContext: SendingMessageParser.BuilderContext
     ) {
         if (element is QGAttachmentMessage) {
             logger.warn("Attachment message is not yet supported for sending")

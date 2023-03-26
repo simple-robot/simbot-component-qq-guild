@@ -63,8 +63,9 @@ public sealed class QGMessageEvent : QGEvent<QGSourceMessage>(), MessageEvent {
     /**
      * 基于当前事件进行消息回复。
      *
-     * 对于公域bot来说，也理应这么回复。[reply] 会默认根据当前事件填充回复的目标（`msg_id` 或 `event_id`），
-     * 而不会追加其他任何默认行为。
+     * 对于公域bot来说，也理应这么回复。[reply] 会默认根据当前事件为当前可能产生的所有消息体填充回复的目标（`msg_id` 或 `event_id`），
+     * 并且与 `send` 相比会默认追加一个 [引用效果][Message.messageReference] （如果 [message] 中存在 [自定义reference][love.forte.simbot.component.qguild.message.QGReference]
+     * 则在其影响范围内不会自动填充）。
      *
      * @throws QQGuildApiException 请求失败，例如无权限
      */

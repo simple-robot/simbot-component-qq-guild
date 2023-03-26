@@ -26,6 +26,9 @@ import love.forte.simbot.qguild.model.Message
 import love.forte.simbot.resources.Resource
 import java.util.*
 import java.util.concurrent.*
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import love.forte.simbot.message.Message as SimbotMessage
 
 
@@ -33,7 +36,7 @@ import love.forte.simbot.message.Message as SimbotMessage
  * 通过消息体和message builder, 以责任链的形式构建消息体。
  */
 public fun interface SendingMessageParser :
-    suspend (Int, SimbotMessage.Element<*>, Messages?, MessageSendApi.Body.Builder) -> Unit {
+    suspend (Int, SimbotMessage.Element<*>, Messages?, SendingMessageParser.BuilderContext) -> Unit {
     /**
      * 将 [SimbotMessage.Element] 拼接到 [MessageSendApi.Body.Builder] 中。
      *
@@ -43,8 +46,31 @@ public fun interface SendingMessageParser :
         index: Int,
         element: SimbotMessage.Element<*>,
         messages: Messages?,
-        builder: MessageSendApi.Body.Builder,
+        builderContext: BuilderContext,
     )
+
+    public data class BuilderContext(
+        val builderFactory: () -> MessageSendApi.Body.Builder
+    ) {
+        public val builders: Deque<MessageSendApi.Body.Builder>
+        init {
+            builders = ConcurrentLinkedDeque()
+            builders.add(builderFactory())
+        }
+        val builder: MessageSendApi.Body.Builder get() = builders.peekLast()
+        public fun newBuilder(): MessageSendApi.Body.Builder {
+            return builderFactory().also { builders.addLast(it) }
+        }
+
+        /**
+         * 如果符合 [check] 的条件，得到 [builder], 否则使用 [newBuilder] 构建一个新的builder。
+         *
+         */
+        public inline fun builderOrNew(check: (MessageSendApi.Body.Builder) -> Boolean): MessageSendApi.Body.Builder {
+            return builder.takeIf(check) ?: newBuilder()
+        }
+
+    }
 }
 
 /**
@@ -77,6 +103,7 @@ public object MessageParsers {
         add(AttachmentParser)
         add(ReplyToParser)
         add(ImageParser)
+        add(ReferenceParser)
     }
 
     @ExperimentalSimbotApi
@@ -95,33 +122,77 @@ public object MessageParsers {
         receivingParsers.add(parser)
     }
 
-    @OptIn(ExperimentalSimbotApi::class)
+    /**
+     * 将 [message] 解析为一个或多个 [MessageSendApi.Body.Builder]。
+     *
+     * ## 消息拆分
+     *
+     * 当按照顺序解析且出现无法被叠加的消息元素时，
+     * 例如：
+     * - [ark][MessageSendApi.Body.ark]
+     * - [messageReference][MessageSendApi.Body.messageReference]
+     * - [embed][MessageSendApi.Body.embed]
+     * - [image][MessageSendApi.Body.image] / [fileImage][[MessageSendApi.Body.fileImage]
+     * - 使用模板的 [markdown][MessageSendApi.Body.markdown]
+     *
+     * 会先当前已经解析完毕的内容构建一个 [MessageSendApi.Body.Builder], 然后再构建一个新的继续解析，
+     * 直到结果全部解析完毕。
+     *
+     * 部分可叠加的消息元素，例如：
+     * - [content][MessageSendApi.Body.content]
+     * - 使用 [Markdown.content][Message.Markdown.content] 的 [markdown][MessageSendApi.Body.markdown]
+     *
+     * 会尝试直接拼接/叠加而不是构建新的 builder。
+     *
+     * ## 注意避免
+     *
+     * 但是虽然说可以尝试着进行 Builder 的拆分，但是仍请尽可能确保使用的消息内容不会出现冲突。
+     * 因为拆分后的消息体并不能保证可以进行发送，它们有可能会因为缺失部分属性而导致发送失败、进而导致预期外的行为或异常。
+     *
+     * 举个例子，当解析的消息链中存在 [QGReplyTo] 时，其会尝试将当前已经解析出来的所有结果的 [msgId][MessageSendApi.Body.msgId]
+     * 进行覆盖，但是它因无法影响到后续**可能**会继续被拆分出来的新的消息体而存在隐患。
+     *
+     * @return 解析结果的 [MessageSendApi.Body.Builder] 序列。
+     */
+    @OptIn(ExperimentalSimbotApi::class, ExperimentalContracts::class)
     @JvmOverloads
     @JvmName("parse")
     public suspend inline fun parse(
         message: SimbotMessage,
-        builderInitProcess: MessageSendApi.Body.Builder.() -> Unit = {},
-        builderPostProcess: MessageSendApi.Body.Builder.() -> Unit = {},
-    ): MessageSendApi.Body.Builder {
-        val builder = MessageSendApi.Body.Builder().also(builderInitProcess)
+        crossinline onEachPre: MessageSendApi.Body.Builder.() -> Unit = {},
+        onEachPost: MessageSendApi.Body.Builder.() -> Unit = {},
+    ): List<MessageSendApi.Body.Builder> {
+        contract {
+            callsInPlace(onEachPre, InvocationKind.AT_LEAST_ONCE)
+            callsInPlace(onEachPost, InvocationKind.AT_LEAST_ONCE)
+        }
+
+//        val builder = MessageSendApi.Body.Builder().also(onEachPre)
+
+        val context = SendingMessageParser.BuilderContext { MessageSendApi.Body.Builder().also(onEachPre) }
 
         when (message) {
             is SimbotMessage.Element<*> -> {
                 for (parser in sendingParsers) {
-                    parser(0, message, null, builder)
+                    parser(0, message, null, context)
                 }
             }
 
             is Messages -> {
                 message.forEachIndexed { index, element ->
                     for (parser in sendingParsers) {
-                        parser(index, element, message, builder)
+                        parser(index, element, message, context)
                     }
                 }
             }
         }
 
-        return builder.also(builderPostProcess)
+        val builders = context.builders
+        if (builders.size <= 1) {
+            return listOf(builders.first.also(onEachPost))
+        }
+
+        return builders.mapTo(ArrayList(builders.size)) { it.also(onEachPost) }
     }
 
 
@@ -131,7 +202,12 @@ public object MessageParsers {
         message: Message,
         messagesInit: Messages = emptyMessages(),
     ): ReceivingMessageParser.Context {
-        return receivingParsers.fold(ReceivingMessageParser.Context(messagesInit, StringBuilder(message.content.length))) { context, parser ->
+        return receivingParsers.fold(
+            ReceivingMessageParser.Context(
+                messagesInit,
+                StringBuilder(message.content.length)
+            )
+        ) { context, parser ->
             parser(message, context)
         }
     }

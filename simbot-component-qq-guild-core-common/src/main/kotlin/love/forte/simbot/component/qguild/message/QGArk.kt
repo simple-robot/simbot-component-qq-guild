@@ -24,7 +24,6 @@ import love.forte.simbot.component.qguild.message.QGArk.Key.byArk
 import love.forte.simbot.literal
 import love.forte.simbot.message.Messages
 import love.forte.simbot.message.doSafeCast
-import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.qguild.message.buildArk
 import love.forte.simbot.qguild.model.Message
 import love.forte.simbot.message.Message as SimbotMessage
@@ -80,11 +79,11 @@ internal object ArkParser : SendingMessageParser {
         index: Int,
         element: SimbotMessage.Element<*>,
         messages: Messages?,
-        builder: MessageSendApi.Body.Builder
+        builderContext: SendingMessageParser.BuilderContext
     ) {
         if (element is QGArk) {
             val realArk = element.toRealArk()
-            builder.ark = buildArk(realArk.templateId) { from(realArk) }
+            builderContext.builderOrNew { it.ark == null }.ark = buildArk(realArk.templateId) { from(realArk) }
         }
     }
 }

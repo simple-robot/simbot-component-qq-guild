@@ -23,9 +23,11 @@ import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.component.qguild.QGMember
 import love.forte.simbot.component.qguild.QGRole
+import love.forte.simbot.component.qguild.internal.message.asReceipt
 import love.forte.simbot.component.qguild.message.MessageParsers
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
 import love.forte.simbot.component.qguild.message.QGReceiveMessageContent
+import love.forte.simbot.component.qguild.message.sendMessage
 import love.forte.simbot.component.qguild.util.requestBy
 import love.forte.simbot.literal
 import love.forte.simbot.message.Message
@@ -33,7 +35,6 @@ import love.forte.simbot.message.MessageContent
 import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.qguild.api.message.direct.CreateDmsApi
 import love.forte.simbot.qguild.api.message.direct.DmsSendApi
-import love.forte.simbot.qguild.message.ContentTextEncoder
 import love.forte.simbot.qguild.model.DirectMessageSession
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.effectedFlowItems
@@ -99,13 +100,11 @@ internal class QGMemberImpl(
     @JvmSynthetic
     override suspend fun send(message: Message): QGMessageReceipt {
         val builder = MessageParsers.parse(message)
-        return send0(builder.build())
+        return send0(builder)
     }
 
     override suspend fun send(text: String): QGMessageReceipt {
-        return send0(MessageSendApi.Body {
-            content = ContentTextEncoder.encode(text) // 转义
-        })
+        return bot.sendMessage(dms.guildId, text)
     }
 
 
@@ -123,6 +122,18 @@ internal class QGMemberImpl(
     private suspend fun send0(body: MessageSendApi.Body): QGMessageReceipt {
         val dms = getDms()
         return DmsSendApi.create(dms.guildId, body).requestBy(bot).asReceipt()
+    }
+    private suspend fun send0(bodyList: List<MessageSendApi.Body.Builder>): QGMessageReceipt {
+        val dms = getDms()
+
+        if (bodyList.size == 1) {
+            val body = bodyList[0].build()
+            return DmsSendApi.create(dms.guildId, body).requestBy(bot).asReceipt()
+        }
+
+        return bodyList.map {
+            DmsSendApi.create(dms.guildId, it.build()).requestBy(bot)
+        }.asReceipt()
     }
 
     override fun toString(): String {

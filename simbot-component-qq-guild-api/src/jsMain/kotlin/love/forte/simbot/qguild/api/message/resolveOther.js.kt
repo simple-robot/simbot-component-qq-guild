@@ -39,5 +39,6 @@ public actual fun FormBuilder.resolveOther(fileImage: Any?) {
  */
 @InternalApi
 public actual abstract class BaseMessageSendBodyBuilder actual constructor() {
-    protected actual open var fileImage: Any? = null
+    public actual open var fileImage: Any? = null
+    protected set
 }

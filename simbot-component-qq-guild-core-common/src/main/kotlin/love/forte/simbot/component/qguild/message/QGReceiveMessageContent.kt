@@ -54,11 +54,12 @@ public abstract class QGReceiveMessageContent : ReceivedMessageContent() {
      * 上述解析结束后，会再根据 [sourceMessage] 中的其他可转化属性在结果后面继续追加如下可能的类型：
      * - [QGArk]: 来自于 [sourceMessage.ark][QGSourceMessage.ark]
      * - [QGAttachmentMessage]: 来自于 [sourceMessage.attachments][QGSourceMessage.attachments]，可能有多个
+     * - [QGReference]: 来自于 [sourceMessage.messageReference][QGSourceMessage.messageReference]
      *
      */
     abstract override val messages: Messages
 
-    // TODO attachment image 类型解析为 QGImage
+    // TODO attachment image 类型解析为 QGImage?
 
     /**
      * 事件接收到的原始的消息对象 [Message][QGSourceMessage]

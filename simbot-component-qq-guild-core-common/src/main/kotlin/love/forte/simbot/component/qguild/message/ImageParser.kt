@@ -3,11 +3,16 @@
  *
  * This file is part of simbot-component-qq-guild.
  *
- * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
  *
- * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild. If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild.
+ * If not, see <https://www.gnu.org/licenses/>.
  */
 
 package love.forte.simbot.component.qguild.message
@@ -17,7 +22,6 @@ import io.ktor.utils.io.streams.*
 import love.forte.simbot.message.Image
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.Messages
-import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.resources.ByteArrayResource
 import love.forte.simbot.resources.FileResource
 import love.forte.simbot.resources.PathResource
@@ -33,29 +37,31 @@ public object ImageParser : SendingMessageParser {
         index: Int,
         element: Message.Element<*>,
         messages: Messages?,
-        builder: MessageSendApi.Body.Builder,
+        builderContext: SendingMessageParser.BuilderContext
     ) {
+        // TODO attachment?
+
         when (element) {
             is Image -> {
                 when (val resource = element.resource()) {
                     is FileResource -> {
-                        builder.setFileImage(resource.file)
+                        builderContext.builderOrNew { it.fileImage == null }.setFileImage(resource.file)
                     }
 
                     is PathResource -> {
-                        builder.setFileImage(resource.path)
+                        builderContext.builderOrNew { it.fileImage == null }.setFileImage(resource.path)
                     }
 
                     is ByteArrayResource -> {
-                        builder.setFileImage(resource.bytes)
+                        builderContext.builderOrNew { it.fileImage == null }.setFileImage(resource.bytes)
                     }
 
                     is URLResource -> {
-                        builder.image = resource.url.toString()
+                        builderContext.builderOrNew { it.image == null }.image = resource.url.toString()
                     }
 
                     else -> {
-                        builder.setFileImage(InputProvider { resource.openStream().asInput() })
+                        builderContext.builderOrNew { it.fileImage == null }.setFileImage(InputProvider { resource.openStream().asInput() })
                     }
                 }
             }

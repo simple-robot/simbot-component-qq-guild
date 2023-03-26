@@ -19,8 +19,9 @@ package love.forte.simbot.component.qguild.message
 
 import love.forte.simbot.ID
 import love.forte.simbot.component.qguild.QQGuildComponent
+import love.forte.simbot.component.qguild.message.QGAttachmentMessage.Key.toMessage
+import love.forte.simbot.component.qguild.message.QGReference.Key.toMessage
 import love.forte.simbot.message.*
-import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.qguild.message.ContentTextDecoder
 import love.forte.simbot.qguild.message.ContentTextEncoder
 import love.forte.simbot.qguild.model.Message
@@ -32,16 +33,16 @@ internal object ContentParser : SendingMessageParser {
         index: Int,
         element: SimbotMessage.Element<*>,
         messages: Messages?,
-        builder: MessageSendApi.Body.Builder
+        builderContext: SendingMessageParser.BuilderContext
     ) {
         when (element) {
             is Text -> {
                 // 转义为无内嵌格式的文本
-                builder.appendContent(ContentTextEncoder.encode(element.text))
+                builderContext.builder.appendContent(ContentTextEncoder.encode(element.text))
             }
 
             is QGContentText -> {
-                builder.appendContent(element.content)
+                builderContext.builder.appendContent(element.content)
             }
         }
     }
@@ -160,7 +161,9 @@ internal object QGMessageParser : ReceivingMessageParser {
         qgMessage.attachments.mapTo(messageList) { it.toMessage() }
 
         // TODO embeds?
-        // TODO reference?
+
+        // reference
+        qgMessage.messageReference?.also { messageList.add(it.toMessage()) }
 
         context.messages += messageList
         return context

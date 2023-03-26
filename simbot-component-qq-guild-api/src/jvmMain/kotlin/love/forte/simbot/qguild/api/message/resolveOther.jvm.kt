@@ -100,7 +100,8 @@ public actual abstract class BaseMessageSendBodyBuilder actual constructor() {
     /*
         追加额外的平台功能，但是不能有抽象方法
      */
-    protected actual open var fileImage: Any? = null
+    public actual open var fileImage: Any? = null
+    protected set
 
 
     public fun setFileImage(file: File) {

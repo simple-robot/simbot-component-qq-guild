@@ -15,24 +15,15 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package love.forte.simbot.qguild.api.message
-
-import io.ktor.client.request.forms.*
-import love.forte.simbot.qguild.InternalApi
+package love.forte.simbot.component.qguild.message
 
 /**
- * native平台没有额外的类型支持
+ * 标记一个QQ频道中的消息元素实现类为一个**仅用于发送**的消息类型。
+ * 被标记的类型不会在 [QGReceiveMessageContent.messages] 被解析出现。
  *
+ * _此注解仅用于标记_
  */
-public actual fun FormBuilder.resolveOther(fileImage: Any?) {
-}
-
-/**
- * 提供一些需要由不同平台额外实现的基类。
- * 主要针对 `fileImage`。
- */
-@InternalApi
-public actual abstract class BaseMessageSendBodyBuilder actual constructor() {
-    public actual open var fileImage: Any? = null
-    protected set
-}
+@Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.CLASS)
+@MustBeDocumented
+public annotation class QGSendOnly

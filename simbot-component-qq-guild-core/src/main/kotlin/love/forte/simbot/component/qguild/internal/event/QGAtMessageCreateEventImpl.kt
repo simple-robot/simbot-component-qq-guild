@@ -20,10 +20,14 @@ package love.forte.simbot.component.qguild.internal.event
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.component.qguild.event.QGAtMessageCreateEvent
-import love.forte.simbot.component.qguild.internal.*
-import love.forte.simbot.component.qguild.message.MessageParsers
+import love.forte.simbot.component.qguild.internal.QGBotImpl
+import love.forte.simbot.component.qguild.internal.QGChannelImpl
+import love.forte.simbot.component.qguild.internal.QGMemberImpl
+import love.forte.simbot.component.qguild.internal.message.QGReceiveMessageContentImpl
+import love.forte.simbot.component.qguild.internal.message.asReceipt
+import love.forte.simbot.component.qguild.internal.toTimestamp
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
-import love.forte.simbot.component.qguild.message.QGReceiveMessageContent
+import love.forte.simbot.component.qguild.message.sendMessage
 import love.forte.simbot.component.qguild.util.requestBy
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.message.MessageReceipt
@@ -32,7 +36,6 @@ import love.forte.simbot.qguild.api.channel.GetChannelApi
 import love.forte.simbot.qguild.api.member.GetMemberApi
 import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.qguild.ifNotFoundThenNoSuch
-import love.forte.simbot.qguild.message.ContentTextEncoder
 import love.forte.simbot.qguild.model.Message
 
 
@@ -54,32 +57,39 @@ internal class QGAtMessageCreateEventImpl(
 
 
     override suspend fun reply(message: love.forte.simbot.message.Message): QGMessageReceipt {
-        val bodyBuilder = MessageParsers.parse(message) {
+        var ref: Message.Reference? = null
+        return bot.sendMessage(sourceEventEntity.channelId, message) {
             if (msgId == null) {
                 msgId = sourceEventEntity.id
             }
+            if (messageReference == null) {
+                messageReference = ref ?: Message.Reference(sourceEventEntity.id).also { ref = it }
+            }
         }
-
-        return reply0(bodyBuilder.build())
     }
 
     override suspend fun reply(message: MessageContent): MessageReceipt {
-        if (message is QGReceiveMessageContent) {
-            val body = MessageSendApi.Body {
+        var ref: Message.Reference? = null
+        return bot.sendMessage(sourceEventEntity.channelId, message) {
+            if (msgId == null) {
                 msgId = sourceEventEntity.id
-                fromMessage(message.sourceMessage)
             }
-            return reply0(body)
+            if (messageReference == null) {
+                messageReference = ref ?: Message.Reference(sourceEventEntity.id).also { ref = it }
+            }
         }
-
-        return reply(message.messages)
     }
 
     override suspend fun reply(text: String): MessageReceipt {
-        return reply0(MessageSendApi.Body {
-            msgId = sourceEventEntity.id
-            content = ContentTextEncoder.encode(text) // 转义，不允许特殊字符
-        })
+        var ref: Message.Reference? = null
+        return bot.sendMessage(sourceEventEntity.channelId, text) {
+            if (msgId == null) {
+                msgId = sourceEventEntity.id
+            }
+            if (messageReference == null) {
+                messageReference = ref ?: Message.Reference(sourceEventEntity.id).also { ref = it }
+            }
+        }
     }
 
     private suspend fun reply0(body: MessageSendApi.Body): QGMessageReceipt =
