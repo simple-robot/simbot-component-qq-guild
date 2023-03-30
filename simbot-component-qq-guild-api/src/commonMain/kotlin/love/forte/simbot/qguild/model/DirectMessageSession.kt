@@ -17,7 +17,6 @@
 
 package love.forte.simbot.qguild.model
 
-import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -41,6 +40,6 @@ public data class DirectMessageSession(
      * 创建私信会话时间戳
      */
     @SerialName("create_time")
-    val createTime: Instant,
+    val createTime: String,
 )
 

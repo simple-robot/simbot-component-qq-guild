@@ -10,6 +10,9 @@ on:
       - '**src/main/kotlin/**.kt'
       - 'buildSrc/**'
       - '**src/main/java/**.java'
+      -
+  # 手动触发工作流
+  workflow_dispatch:
 
 env:
   IS_CI: true

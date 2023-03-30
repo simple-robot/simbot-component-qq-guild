@@ -18,7 +18,6 @@
 package love.forte.simbot.qguild.api.guild.mute
 
 import io.ktor.http.*
-import kotlinx.datetime.Instant
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.builtins.serializer
 import love.forte.simbot.qguild.api.QQGuildApi
@@ -60,19 +59,6 @@ public class MuteAllApi private constructor(guildId: String, body: MuteBody) : B
     public companion object Factory : SimpleApiDescription(
         HttpMethod.Patch, "/guilds/{guild_id}/mute"
     ) {
-        /**
-         * 使用 `mute_end_timestamp` 的方式构建 [MuteAllApi]
-         *
-         * @param muteEndTimestamp 禁言到期时间戳，绝对时间戳。
-         * _Tip: Java可以通过 `kotlinx.datetime.ConvertersKt.toKotlinInstant(Instant)` 将 `java.time.Instant` 转化为 [KtInstant][Instant] 。_
-         *
-         */
-        @JvmStatic
-        public fun create(guildId: String, muteEndTimestamp: Instant): MuteAllApi =
-            when (val second = muteEndTimestamp.epochSeconds) {  // 单位：秒
-                0L -> MuteAllApi(guildId, MuteBody.Unmute) // 单位：秒
-                else -> MuteAllApi(guildId, MuteBody(muteEndTimestamp = second.toString()))
-            }
 
         /**
          * 使用 `mute_seconds` 的方式构建 [MuteAllApi]
@@ -106,7 +92,7 @@ public class MuteAllApi private constructor(guildId: String, body: MuteBody) : B
         private fun createBySeconds(guildId: String, seconds: Long): MuteAllApi {
             return when {
                 seconds == 0L -> MuteAllApi(guildId, MuteBody.Unmute)
-                seconds < 0L -> MuteAllApi(guildId, MuteBody(muteSeconds = seconds.toString()))
+                seconds > 0L -> MuteAllApi(guildId, MuteBody(muteSeconds = seconds.toString()))
                 else -> throw IllegalStateException("mute seconds must >= 0, but $seconds")
             }
         }

@@ -22,6 +22,9 @@ plugins {
 
 dependencies {
     implementation(project(":simbot-component-qq-guild-api"))
+    implementation(project(":simbot-component-qq-guild-core"))
+    implementation(simbotCore)
+    implementation(libs.kotlinx.datetime)
     implementation("org.openjdk.jmh:jmh-core:1.35")
     annotationProcessor("org.openjdk.jmh:jmh-generator-annprocess:1.35")
     kapt("org.openjdk.jmh:jmh-generator-annprocess:1.35")

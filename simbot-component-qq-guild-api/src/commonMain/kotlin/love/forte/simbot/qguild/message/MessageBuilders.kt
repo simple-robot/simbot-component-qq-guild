@@ -18,7 +18,6 @@
 @file:Suppress("MemberVisibilityCanBePrivate")
 package love.forte.simbot.qguild.message
 
-import love.forte.simbot.*
 import love.forte.simbot.qguild.model.Message
 import kotlin.jvm.JvmOverloads
 
@@ -180,7 +179,7 @@ public class EmbedBuilder {
      * 缩略图
      */
     public lateinit var thumbnail: Message.Embed.Thumbnail
-    // TODO?
+
 
     /**
      * MessageEmbedField 对象数组	字段信息

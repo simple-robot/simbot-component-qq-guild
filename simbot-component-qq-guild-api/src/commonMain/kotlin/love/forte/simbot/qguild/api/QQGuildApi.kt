@@ -27,7 +27,10 @@ import kotlinx.serialization.StringFormat
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
 import love.forte.simbot.logger.LoggerFactory
+import love.forte.simbot.logger.isDebugEnabled
 import love.forte.simbot.qguild.ErrInfo
+import love.forte.simbot.qguild.InternalApi
+import love.forte.simbot.qguild.QQGuild
 import love.forte.simbot.qguild.QQGuildApiException
 import kotlin.jvm.JvmSynthetic
 
@@ -51,25 +54,52 @@ private const val TRACE_ID_HEAD = "X-Tps-trace-ID"
  * 在JVM平台和JS平台中分别提供对应的 blocking/async 兼容函数。
  * 但是不应追加新的抽象函数。
  *
- * @suppress
+ * _仅内部平台实现用_
+ *
+ * @see QQGuildApi
  */
-public expect abstract class BaseQQGuildApi<out R>() {
+@InternalApi
+public expect abstract class PlatformQQGuildApi<out R>() {
 
     /**
-     * 使用此api发起一次请求，并得到预期中的结果。如果返回了代表错误的响应值
+     * 使用此api发起一次请求，并得到预期中的结果。
      *
-     * @see ErrInfo
+     * @param client 用于本次http请求的client。默认使用 [QQGuildApi.DefaultHttpClient]。
+     * @param server 请求目标服务器。See also: [QQGuild.URL]、[QQGuild.SANDBOX_URL]。
+     * @param token 用于本次请求鉴权的token。
+     * @param decoder 用于本次请求结果的反序列化器。不出意外的话应该是 [Json] 序列化器，默认使用 [QQGuildApi.DefaultJsonDecoder]。
      *
      * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
-     * @throws love.forte.simbot.qguild.QQGuildApiException 请求过程中出现了错误。
+     * @throws love.forte.simbot.qguild.QQGuildApiException 请求过程中出现了错误（http状态码 !in 200 .. 300）
+     *
+     * @see ErrInfo
      */
     @JvmSynthetic
     public abstract suspend fun doRequest(
-        client: HttpClient,
+        client: HttpClient = QQGuildApi.DefaultHttpClient,
         server: Url,
         token: String,
-        decoder: StringFormat = Json,
+        decoder: StringFormat = QQGuildApi.DefaultJsonDecoder,
     ): R
+
+    /**
+     * 使用此api发起一次请求，并得到响应结果的字符串。
+     *
+     * @param client 用于本次http请求的client。默认使用 [QQGuildApi.DefaultHttpClient]。
+     * @param server 请求目标服务器。See also: [QQGuild.URL]、[QQGuild.SANDBOX_URL]。
+     * @param token 用于本次请求鉴权的token。
+     *
+     * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
+     * @throws love.forte.simbot.qguild.QQGuildApiException 请求过程中出现了错误（http状态码 !in 200 .. 300）
+     *
+     * @see ErrInfo
+     */
+    @JvmSynthetic
+    public abstract suspend fun doRequestRaw(
+        client: HttpClient = QQGuildApi.DefaultHttpClient,
+        server: Url,
+        token: String,
+    ): String
 
     public companion object
 }
@@ -97,12 +127,8 @@ public expect abstract class BaseQQGuildApi<out R>() {
  * ```
  * -Dsimbot.qguild.api.logger.color.enable=false
  * ```
- *
- *
- *
- * @see QQGuildCacheableApi
  */
-public abstract class QQGuildApi<out R> : BaseQQGuildApi<R>() {
+public abstract class QQGuildApi<out R> : PlatformQQGuildApi<R>() {
 
     /**
      * 得到响应值的反序列化器.
@@ -130,17 +156,23 @@ public abstract class QQGuildApi<out R> : BaseQQGuildApi<R>() {
 
 
     /**
-     * Do something after resp.
+     * 当通过 [doRequest] 得到成功结果后进行的操作。
      */
     public open fun post(resp: @UnsafeVariance R) {}
 
     /**
-     * 使用此api发起一次请求，并得到预期中的结果。如果返回了代表错误的响应值
+     * 使用此api发起一次请求，并得到预期中的结果。
      *
-     * @see ErrInfo
+     *
+     * @param client 用于本次http请求的client。默认使用 [QQGuildApi.DefaultHttpClient]。
+     * @param server 请求目标服务器。See also: [QQGuild.URL]、[QQGuild.SANDBOX_URL]。
+     * @param token 用于本次请求鉴权的token。
+     * @param decoder 用于本次请求结果的反序列化器。不出意外的话应该是 [Json] 序列化器，默认使用 [QQGuildApi.DefaultJsonDecoder]。
      *
      * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
      * @throws love.forte.simbot.qguild.QQGuildApiException 请求过程中出现了错误。
+     *
+     * @see ErrInfo
      */
     @JvmSynthetic
     public override suspend fun doRequest(
@@ -149,24 +181,87 @@ public abstract class QQGuildApi<out R> : BaseQQGuildApi<R>() {
         token: String,
         decoder: StringFormat,
     ): R {
+        val text = doRequestRaw(client, server, token)
+
+        return decodeResponse(decoder, text)
+    }
+
+
+    /**
+     * 使用此api发起一次请求，并得到响应结果的字符串。
+     *
+     * @see ErrInfo
+     *
+     * @param client 用于本次http请求的client。默认使用 [QQGuildApi.DefaultHttpClient]。
+     * @param server 请求目标服务器。See also: [QQGuild.URL]、[QQGuild.SANDBOX_URL]。
+     * @param token 用于本次请求鉴权的token。
+     *
+     * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
+     * @throws love.forte.simbot.qguild.QQGuildApiException 请求过程中出现了错误（http状态码 !in 200 .. 300）
+     */
+    @JvmSynthetic
+    override suspend fun doRequestRaw(client: HttpClient, server: Url, token: String): String {
         val resp = request0(client, server, token)
 
         val text = resp.bodyAsText()
 
-        val traceId = resp.headers[TRACE_ID_HEAD]
-        apiLogger.debug(
-            "[{} {}] <===== status: {}, body: {}, traceID: {}",
-            method.logName,
-            resp.request.url.encodedPath,
-            resp.status,
-            text,
-            traceId
-        )
+        if (apiLogger.isDebugEnabled) {
+            val traceId = resp.headers[TRACE_ID_HEAD]
+            apiLogger.debug(
+                "[{} {}] <===== status: {}, body: {}, traceID: {}",
+                method.logName,
+                resp.request.url.encodedPath,
+                resp.status,
+                text,
+                traceId
+            )
+        }
 
-        checkStatus(text, decoder, resp.status)
+        checkStatus(text, DefaultErrInfoDecoder, resp.status)
 
-        // decode
-        return decodeResponse(decoder, text)
+        return text
+    }
+
+    public companion object {
+
+        /**
+         * 可以使用的默认 [HttpClient]。
+         *
+         * 通过 [`HttpClient()`][HttpClient] 构建懒加载并没有任何额外配置。
+         *
+         * JVM平台下需要添加可用的引擎依赖到classpath中以支持自动加载。
+         *
+         */
+        public val DefaultHttpClient: HttpClient by lazy {
+            HttpClient()
+        }
+
+        private val DefaultErrInfoDecoder = Json {
+            isLenient = true
+            ignoreUnknownKeys = true
+            allowSpecialFloatingPointValues = true
+            allowStructuredMapKeys = true
+            prettyPrint = false
+            useArrayPolymorphism = false
+        }
+
+        /**
+         * 部分API中默认使用的Json序列化器。
+         *
+         * ```kotlin
+         * Json {
+         *     isLenient = true
+         *     ignoreUnknownKeys = true
+         *     allowSpecialFloatingPointValues = true
+         *     allowStructuredMapKeys = true
+         *     prettyPrint = false
+         *     useArrayPolymorphism = false
+         * }
+         * ```
+         *
+         */
+        @InternalApi
+        public val DefaultJsonDecoder: Json = Json(DefaultErrInfoDecoder) {}
     }
 }
 

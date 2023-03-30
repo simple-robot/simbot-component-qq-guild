@@ -17,11 +17,11 @@
 
 package love.forte.simbot.component.qguild
 
-import io.ktor.http.*
 import kotlinx.coroutines.Job
-import love.forte.simbot.*
+import love.forte.simbot.Attribute
 import love.forte.simbot.application.ApplicationConfiguration
 import love.forte.simbot.application.EventProviderFactory
+import love.forte.simbot.attribute
 import love.forte.simbot.bot.BotManager
 import love.forte.simbot.bot.BotVerifyInfo
 import love.forte.simbot.bot.ComponentMismatchException
@@ -87,7 +87,7 @@ public abstract class BaseQQGuildBotManager : BotManager<QGBot>() {
      * 但不会有硬性关联，这种通知是通过 [Job.invokeOnCompletion][kotlinx.coroutines.Job.invokeOnCompletion] 实现的，
      * 参考 [Job.registerRootJob]。
      *
-     * 如果 [coroutineContext] 中不存在自定义的Job，则会直接使用 [QGBotManager] 内的 [Job] 作为 parent Job 。
+     * 如果 [coroutineContext] 中不存在自定义的Job，则会直接使用 [QQGuildBotManager][love.forte.simbot.component.qguild.QQGuildBotManager] 内的 [Job] 作为 parent Job 。
      *
      */
     public abstract fun register(
@@ -115,7 +115,7 @@ public annotation class QGBotManagerConfigurationDsl
 
 
 /**
- * [QGBotManager] 使用的配置类描述。
+ * [QQGuildBotManager][love.forte.simbot.component.qguild.QQGuildBotManager] 使用的配置类描述。
  */
 public interface QQGuildBotManagerConfiguration {
 

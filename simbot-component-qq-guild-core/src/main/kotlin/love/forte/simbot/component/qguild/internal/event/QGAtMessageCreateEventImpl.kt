@@ -17,6 +17,7 @@
 
 package love.forte.simbot.component.qguild.internal.event
 
+import love.forte.simbot.ExperimentalSimbotApi
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.component.qguild.event.QGAtMessageCreateEvent
@@ -48,10 +49,13 @@ internal class QGAtMessageCreateEventImpl(
     override val eventRaw: String,
     override val sourceEventEntity: Message
 ) : QGAtMessageCreateEvent() {
-    override val id: ID =
-        "${sourceEventEntity.guildId}.${sourceEventEntity.channelId}.${sourceEventEntity.id}.${sourceEventEntity.timestamp.epochSeconds}".ID
 
-    override val timestamp: Timestamp = sourceEventEntity.timestamp.toTimestamp()
+    @OptIn(ExperimentalSimbotApi::class)
+    override val timestamp: Timestamp get() = sourceEventEntity.timestamp.toTimestamp()
+
+    override val id: ID =
+        "${sourceEventEntity.guildId}.${sourceEventEntity.channelId}.${sourceEventEntity.id}.${timestamp.second}".ID
+
 
     override val messageContent: QGReceiveMessageContentImpl = QGReceiveMessageContentImpl(sourceEventEntity)
 

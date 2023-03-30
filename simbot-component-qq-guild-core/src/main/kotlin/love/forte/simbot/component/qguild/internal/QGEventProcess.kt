@@ -17,7 +17,6 @@
 
 package love.forte.simbot.component.qguild.internal
 
-import kotlinx.coroutines.DisposableHandle
 import love.forte.simbot.FragileSimbotApi
 import love.forte.simbot.ID
 import love.forte.simbot.component.qguild.event.*
@@ -25,6 +24,7 @@ import love.forte.simbot.component.qguild.internal.QGGuildImpl.Companion.qgGuild
 import love.forte.simbot.component.qguild.internal.event.*
 import love.forte.simbot.component.qguild.util.requestBy
 import love.forte.simbot.event.Event
+import love.forte.simbot.qguild.DisposableHandle
 import love.forte.simbot.qguild.api.channel.GetChannelApi
 import love.forte.simbot.qguild.event.*
 import love.forte.simbot.qguild.model.isCategory

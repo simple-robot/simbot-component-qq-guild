@@ -22,6 +22,7 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.*
+import love.forte.simbot.ExperimentalSimbotApi
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.component.qguild.QGChannel
@@ -30,7 +31,7 @@ import love.forte.simbot.component.qguild.QGGuild
 import love.forte.simbot.component.qguild.util.requestBy
 import love.forte.simbot.literal
 import love.forte.simbot.logger.LoggerFactory
-import love.forte.simbot.qguild.*
+import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.api.apipermission.ApiPermissions
 import love.forte.simbot.qguild.api.apipermission.GetApiPermissionListApi
 import love.forte.simbot.qguild.api.channel.GetChannelApi
@@ -39,9 +40,9 @@ import love.forte.simbot.qguild.api.member.GetGuildMemberListApi
 import love.forte.simbot.qguild.api.member.GetMemberApi
 import love.forte.simbot.qguild.api.member.createFlow
 import love.forte.simbot.qguild.api.role.GetGuildRoleListApi
-import love.forte.simbot.qguild.event.*
-import love.forte.simbot.qguild.model.*
-import love.forte.simbot.toTimestamp
+import love.forte.simbot.qguild.ifNotFoundThenNull
+import love.forte.simbot.qguild.model.ChannelType
+import love.forte.simbot.qguild.model.isCategory
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.effectOn
 import love.forte.simbot.utils.item.effectedFlowItems
@@ -71,6 +72,7 @@ internal class QGGuildImpl private constructor(
     override val ownerId: ID = source.ownerId.ID
 
     override val maximumChannel: Int get() = -1
+    @OptIn(ExperimentalSimbotApi::class)
     override val joinTime: Timestamp get() = source.joinedAt.toTimestamp()
     override val currentMember: Int get() = source.memberCount
     override val description: String get() = source.description
@@ -118,6 +120,7 @@ internal class QGGuildImpl private constructor(
         return member?.let { info -> QGMemberImpl(baseBot, info, this@QGGuildImpl.id) }
     }
 
+    @ExperimentalSimbotApi
     override val roles: Items<QGRoleImpl>
         get() = bot.effectedFlowItems {
             GetGuildRoleListApi.create(source.id).requestBy(baseBot).roles.forEach { info ->

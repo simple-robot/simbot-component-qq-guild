@@ -17,7 +17,6 @@
 
 package love.forte.simbot.qguild.event
 
-import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.ApiModel
@@ -97,7 +96,7 @@ public data class EventGuild(
     /** 描述 */
     override val description: String,
     /** 加入时间 */
-    @SerialName("joined_at") override val joinedAt: Instant,
+    @SerialName("joined_at") override val joinedAt: String,
     /** 操作人 */
     @SerialName("op_user_id") val opUserId: String
 ) : Guild

@@ -32,21 +32,13 @@ kotlin {
 }
 
 dependencies {
-    api(project(":simbot-component-qq-guild-stdlib")) {
-        exclude(SIMBOT_GROUP, "simbot-logger-slf4j-impl")
-    }
     api(project(":simbot-component-qq-guild-core-common"))
-    implementation(simbotCore)
-    api(libs.ktor.client.core)
-    api(libs.ktor.client.cio)
-    api(libs.ktor.client.ws)
-    api(libs.ktor.client.contentNegotiation)
-    api(libs.ktor.serialization.kotlinxJson)
-    api(libs.kotlinx.serialization.json)
+    compileOnly(simbotCore)
 
     compileOnly(libs.kotlinx.serialization.properties)
     compileOnly(libs.charleskorn.kaml)
 
+    testImplementation(simbotCore)
     testImplementation(libs.charleskorn.kaml)
     testImplementation("love.forte.simbot:simbot-logger-slf4j-impl:3.0.0-RC.3")
 

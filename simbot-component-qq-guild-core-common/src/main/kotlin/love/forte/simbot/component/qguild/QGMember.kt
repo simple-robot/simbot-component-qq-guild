@@ -18,7 +18,9 @@
 package love.forte.simbot.component.qguild
 
 import kotlinx.coroutines.CoroutineScope
+import love.forte.simbot.ExperimentalSimbotApi
 import love.forte.simbot.ID
+import love.forte.simbot.component.qguild.message.QGContentText
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
 import love.forte.simbot.definition.GuildMember
 import love.forte.simbot.message.Message
@@ -58,14 +60,11 @@ public interface QGMember : GuildMember, CoroutineScope, QGObjectiveContainer<QG
     /**
      * 成员拥有的角色
      */
+    @ExperimentalSimbotApi
     override val roles: Items<QGRole>
 
     /**
      * 向目标成员发送私聊消息。
-     *
-     * ### 内嵌格式
-     *
-     * 如果想允许内嵌格式，请使用 [ContentText] 消息类型而不是纯文本或 [Text] TODO
      */
     @JST
     override suspend fun send(message: Message): QGMessageReceipt
@@ -76,11 +75,12 @@ public interface QGMember : GuildMember, CoroutineScope, QGObjectiveContainer<QG
      * [text] 的内容会根据 [内嵌格式](https://bot.q.qq.com/wiki/develop/api/openapi/message/message_format.html)
      * 自动转义，发送出去的内容将会是原本的纯文本字符串，不会触发内嵌格式的特殊格式。
      *
-     * 如果希望允许内嵌格式，请使用 [ContentText] 消息类型而不是纯文本或 [Text] TODO
+     * 如果希望允许内嵌格式，请使用 [QGContentText] 消息类型而不是纯文本或 [Text] 。
+     *
+     * @see QGContentText
      */
     @JST
     override suspend fun send(text: String): QGMessageReceipt
-
 
     /**
      * 向目标成员发送私聊消息。

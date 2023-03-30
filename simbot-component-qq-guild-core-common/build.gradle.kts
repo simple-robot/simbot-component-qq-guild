@@ -29,7 +29,7 @@ dependencies {
         exclude(SIMBOT_GROUP, "simbot-logger-slf4j-impl")
     }
 
-    implementation(simbotCore)
+    compileOnly(simbotCore)
     api(libs.ktor.client.core)
     api(libs.ktor.client.cio)
     api(libs.ktor.client.ws)
@@ -40,6 +40,7 @@ dependencies {
     compileOnly(libs.kotlinx.serialization.properties)
     compileOnly(libs.charleskorn.kaml)
 
+    testImplementation(simbotCore)
     testImplementation(libs.charleskorn.kaml)
     testImplementation(simbotLoggerSlf4jImpl)
 

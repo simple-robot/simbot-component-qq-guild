@@ -22,13 +22,22 @@ plugins {
     id("simbot-tencent-guild.nexus-publish")
 }
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath("org.jetbrains.kotlinx:atomicfu-gradle-plugin:0.20.1")
+    }
+}
 
 //group = P.ComponentTencentGuild.GROUP
 //version = P.ComponentTencentGuild.versionIfSnap
 
 logger.info("=== Current version: {} ===", version)
 
-allprojects {
+subprojects {
     repositories {
         mavenCentral()
         love.forte.gradle.common.core.repository.Repositories.Snapshot.Default.apply {

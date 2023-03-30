@@ -18,7 +18,6 @@
 package love.forte.simbot.qguild
 
 import io.ktor.http.*
-import io.ktor.util.internal.*
 import io.ktor.websocket.*
 import kotlinx.serialization.Serializable
 
@@ -65,7 +64,6 @@ private class QQGuildApiExceptionCopied : QQGuildApiException {
 /**
  * @suppress
  */
-@Suppress("NOTHING_TO_INLINE")
 public fun QQGuildApiException.copyCurrent(): QQGuildApiException {
     return if (this is QQGuildApiExceptionCopied) {
         this
@@ -124,8 +122,7 @@ public data class ErrInfo(val code: Int, val message: String)
  *
  * @throws QQGuildApiException 由 [CloseReason] 构建而来的异常
  */
-@Suppress("NOTHING_TO_INLINE")
-public inline fun CloseReason?.err(e: Throwable? = null): Nothing {
+public fun CloseReason?.err(e: Throwable? = null): Nothing {
     if (this == null) {
         if (e != null) {
             throw QQGuildApiException(-1, "No reason").apply { initCause0(e) }

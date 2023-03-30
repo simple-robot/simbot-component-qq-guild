@@ -19,6 +19,7 @@ package love.forte.simbot.component.qguild.internal
 
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import love.forte.simbot.ExperimentalSimbotApi
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.component.qguild.QGMember
@@ -56,6 +57,7 @@ internal class QGMemberImpl(
 
     override val id: ID = user.id.ID
 
+    @OptIn(ExperimentalSimbotApi::class)
     override val joinTime: Timestamp
         get() = source.joinedAt.toTimestamp()
 
@@ -84,6 +86,7 @@ internal class QGMemberImpl(
         }
     }
 
+    @ExperimentalSimbotApi
     override val roles: Items<QGRole>
         get() {
             // TODO

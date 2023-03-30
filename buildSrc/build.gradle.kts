@@ -26,9 +26,9 @@ repositories {
 
 val kotlinVersion = "1.8.10"
 val dokkaPluginVersion = "1.8.10"
-val suspendTransformVersion = "0.2.2"
+val suspendTransformVersion = "0.2.7"
 val gradleCommon = "0.0.11"
-val atomicfuVersion = "0.20.0"
+//val atomicfuVersion = "0.20.0"
 
 dependencies {
     implementation(kotlin("gradle-plugin", kotlinVersion))
@@ -37,7 +37,7 @@ dependencies {
     implementation("org.jetbrains.dokka:dokka-base:$dokkaPluginVersion")
 
     // https://github.com/Kotlin/kotlinx-atomicfu
-    implementation("org.jetbrains.kotlinx:atomicfu-gradle-plugin:$atomicfuVersion")
+//    implementation("org.jetbrains.kotlinx:atomicfu-gradle-plugin:$atomicfuVersion")
 
     // see https://github.com/gradle-nexus/publish-plugin
     implementation("io.github.gradle-nexus:publish-plugin:1.1.0")

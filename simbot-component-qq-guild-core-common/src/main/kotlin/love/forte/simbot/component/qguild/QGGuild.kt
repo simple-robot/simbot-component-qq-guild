@@ -18,6 +18,7 @@
 package love.forte.simbot.component.qguild
 
 import kotlinx.coroutines.CoroutineScope
+import love.forte.simbot.ExperimentalSimbotApi
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.definition.Guild
@@ -204,6 +205,7 @@ public interface QGGuild : Guild, CoroutineScope, QGObjectiveContainer<QGSourceG
      *
      * @throws QQGuildApiException 请求失败，例如没有权限
      */
+    @ExperimentalSimbotApi
     override val roles: Items<QGRole>
 
     //// Impls

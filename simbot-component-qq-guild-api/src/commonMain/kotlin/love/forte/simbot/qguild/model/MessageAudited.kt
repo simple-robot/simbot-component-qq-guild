@@ -17,7 +17,6 @@
 
 package love.forte.simbot.qguild.model
 
-import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -37,9 +36,9 @@ public data class MessageAudited(
     /** 子频道 id */
     @SerialName("channel_id") val channelId: String,
     /** 消息审核时间 */
-    @SerialName("audit_time") val auditTime: Instant,
+    @SerialName("audit_time") val auditTime: String,
     /** 消息创建时间 */
-    @SerialName("create_time") val createTime: Instant,
+    @SerialName("create_time") val createTime: String,
     /** 子频道消息 seq，用于消息间的排序，seq 在同一子频道中按从先到后的顺序递增，不同的子频道之间消息无法排序 */
     @SerialName("seq_in_channel") val seqInChannel: String
 )

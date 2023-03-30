@@ -18,7 +18,6 @@
 package love.forte.simbot.qguild.api.guild.mute
 
 import io.ktor.http.*
-import kotlinx.datetime.Instant
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -46,18 +45,6 @@ public class MuteMultiMemberApi private constructor(guildId: String, body: MuteB
     public companion object Factory : SimpleApiDescription(
         HttpMethod.Patch, "/guilds/{guild_id}/mute"
     ) {
-
-        /**
-         * 使用 `mute_end_timestamp` 的方式构建 [MuteMultiMemberApi]
-         * @param muteEndTimestamp 禁言到期时间戳，绝对时间戳。
-         */
-        @JvmStatic
-        public fun create(guildId: String, muteEndTimestamp: Instant): MuteMultiMemberApi =
-            when (val second = muteEndTimestamp.epochSeconds) {  // 单位：秒
-                0L -> MuteMultiMemberApi(guildId, MuteBody.Unmute) // 单位：秒
-                else -> MuteMultiMemberApi(guildId, MuteBody(muteEndTimestamp = second.toString()))
-            }
-
 
         /**
          * 使用 `mute_seconds` 的方式构建 [MuteMultiMemberApi]
@@ -91,7 +78,7 @@ public class MuteMultiMemberApi private constructor(guildId: String, body: MuteB
         private fun createBySeconds(guildId: String, seconds: Long): MuteMultiMemberApi {
             return when {
                 seconds == 0L -> MuteMultiMemberApi(guildId, MuteBody.Unmute)
-                seconds < 0L -> MuteMultiMemberApi(guildId, MuteBody(muteSeconds = seconds.toString()))
+                seconds > 0L -> MuteMultiMemberApi(guildId, MuteBody(muteSeconds = seconds.toString()))
                 else -> throw IllegalStateException("mute seconds must >= 0, but $seconds")
             }
         }

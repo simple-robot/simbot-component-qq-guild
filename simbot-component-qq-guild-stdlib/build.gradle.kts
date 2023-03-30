@@ -15,31 +15,175 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+
+
 plugins {
-    `simbot-tcg-suspend-transform-configure`
-    id("simbot-tencent-guild.module-conventions")
-    id("simbot-tencent-guild.maven-publish")
+    kotlin("multiplatform")
+    `qq-guild-multiplatform-maven-publish`
     kotlin("plugin.serialization")
-//    id("com.google.devtools.ksp") version "1.8.10-1.0.9"
     `qq-guild-dokka-partial-configure`
+    `simbot-tcg-suspend-transform-configure`
+    id("kotlinx-atomicfu")
 }
 
 repositories {
     mavenCentral()
 }
 
-dependencies {
-    compileOnly(simbotApi) // use @Api4J annotation
-    api(project(":simbot-component-qq-guild-api"))
-    api(simbotLoggerSlf4jImpl)
-    api(simbotUtilLoop)
-    api(libs.ktor.client.ws)
-    testRuntimeOnly(libs.ktor.client.cio)
-//    implementation(project(":builder-generator"))
-//    ksp(project(":builder-generator"))
-//    testCompileOnly(project(":builder-generator"))
-//    kspTest(project(":builder-generator"))
-//    implementation("io.ktor:ktor-client-content-negotiation:2.2.3")
-//    implementation("io.ktor:ktor-serialization-jackson:2.2.3")
+
+kotlin {
+    explicitApi()
+
+    sourceSets.configureEach {
+        languageSettings {
+            optIn("love.forte.simbot.qguild.InternalApi")
+        }
+    }
+
+    jvm {
+        withJava()
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = "1.8"
+                javaParameters = true
+                freeCompilerArgs = freeCompilerArgs + listOf("-Xjvm-default=all")
+            }
+        }
+        testRuns["test"].executionTask.configure {
+            useJUnitPlatform()
+        }
+    }
+
+    js(IR) {
+        nodejs {
+            testTask {
+                useMocha {
+                    timeout = "30m"
+                }
+            }
+        }
+    }
+
+
+    val mainPresets = mutableSetOf<org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet>()
+    val testPresets = mutableSetOf<org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet>()
+
+    // TODO https://kotlinlang.org/docs/native-target-support.html
+    // 针对 kotlin target support 中的列表结合 ktor-client 平台的支持提供的平台能力。
+    val supportTargets = setOf(
+        // Tier 1
+        "linuxX64",
+        "macosX64",
+        "macosArm64",
+        "iosSimulatorArm64",
+        "iosX64",
+
+        // Tier 2
+//        "linuxArm64",
+        "watchosSimulatorArm64",
+        "watchosX64",
+        "watchosArm32",
+        "watchosArm64",
+        "tvosSimulatorArm64",
+        "tvosX64",
+        "tvosArm64",
+        "iosArm64",
+        // Tier 3
+//        "androidNativeArm32",
+//        "androidNativeArm64",
+//        "androidNativeX86",
+//        "androidNativeX64",
+        "mingwX64",
+//        "watchosDeviceArm64",
+    )
+
+
+    targets {
+        presets.filterIsInstance<org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeTargetPreset<*>>()
+            .filter { it.name in supportTargets }
+            .forEach { presets ->
+                val target = fromPreset(presets, presets.name)
+                val mainSourceSet = target.compilations["main"].kotlinSourceSets.first()
+                val testSourceSet = target.compilations["test"].kotlinSourceSets.first()
+
+                val tn = target.name
+                when {
+                    // win
+                    tn.startsWith("mingw") -> {
+                        testSourceSet.dependencies {
+                            // TODO ws connect timeout?
+                            implementation(libs.ktor.client.winhttp)
+                        }
+                    }
+                    // linux: nothing
+
+                    // darwin based
+                    tn.startsWith("macos")
+                            || tn.startsWith("ios")
+                            || tn.startsWith("watchos")
+                            || tn.startsWith("tvos") -> {
+                        testSourceSet.dependencies {
+                            implementation(libs.ktor.client.darwin)
+                        }
+                    }
+                }
+
+                mainPresets.add(mainSourceSet)
+                testPresets.add(testSourceSet)
+            }
+    }
+
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                api(project(":simbot-component-qq-guild-api"))
+                api(simbotLogger)
+                api(simbotUtilLoop)
+                api(libs.ktor.client.ws)
+            }
+        }
+
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation(libs.kotlinx.coroutines.test)
+            }
+        }
+
+        getByName("jvmMain") {
+            dependencies {
+                compileOnly(simbotApi) // use @Api4J annotation
+            }
+        }
+
+        getByName("jvmTest") {
+            dependencies {
+                runtimeOnly(libs.ktor.client.cio)
+                implementation(simbotApi) // use @Api4J annotation
+                implementation(libs.log4j.api)
+                implementation(libs.log4j.core)
+                implementation(libs.log4j.slf4jImpl)
+            }
+        }
+
+        getByName("jsMain") {
+            dependencies {
+                implementation(libs.ktor.client.js)
+            }
+        }
+
+        val nativeMain by creating {
+            dependsOn(commonMain)
+        }
+
+        val nativeTest by creating {
+            dependsOn(commonTest)
+        }
+
+        configure(mainPresets) { dependsOn(nativeMain) }
+        configure(testPresets) { dependsOn(nativeTest) }
+
+    }
+
 }
 

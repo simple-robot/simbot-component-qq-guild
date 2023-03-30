@@ -17,10 +17,10 @@
 
 package love.forte.simbot.qguild.model
 
-import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.ApiModel
+import love.forte.simbot.qguild.time.ZERO_ISO_INSTANT
 
 /**
  * [成员对象(Member)](https://bot.q.qq.com/wiki/develop/api/openapi/member/model.html)
@@ -47,7 +47,7 @@ public interface Member {
     /**
      * 用户加入频道的时间
      */
-    public val joinedAt: Instant
+    public val joinedAt: String
 }
 
 /**
@@ -86,7 +86,7 @@ public data class SimpleMember(
     /**
      * 用户加入频道的时间
      */
-    @SerialName("joined_at") override val joinedAt: Instant
+    @SerialName("joined_at") override val joinedAt: String
 ) : Member
 
 /**
@@ -117,7 +117,7 @@ public data class SimpleMemberWithGuildId(
     /**
      * 用户加入频道的时间
      *
-     * 如果属性缺失则会使用 [Instant.DISTANT_PAST]
+     * 如果属性缺失则会使用 [ZERO_ISO_INSTANT]
      */
-    @SerialName("join_at") override val joinedAt: Instant = Instant.DISTANT_PAST
+    @SerialName("join_at") override val joinedAt: String = ZERO_ISO_INSTANT
 ) : MemberWithGuildId

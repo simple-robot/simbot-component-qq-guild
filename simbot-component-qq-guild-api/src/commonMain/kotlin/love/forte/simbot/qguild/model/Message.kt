@@ -17,14 +17,12 @@
 
 package love.forte.simbot.qguild.model
 
-import kotlinx.datetime.Instant
 import kotlinx.serialization.*
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import love.forte.simbot.*
 import love.forte.simbot.qguild.ApiModel
 import kotlin.jvm.JvmStatic
 import kotlin.jvm.JvmSynthetic
@@ -61,12 +59,12 @@ public data class Message(
     /**
      * ISO8601 timestamp	消息创建时间
      */
-    public val timestamp: Instant,
+    public val timestamp: String,
 
     /**
      * ISO8601 timestamp	消息编辑时间
      */
-    @SerialName("edited_timestamp") public val editedTimestamp: Instant? = null,
+    @SerialName("edited_timestamp") public val editedTimestamp: String? = null,
 
     /**
      * 是否是@全员消息
@@ -200,9 +198,11 @@ public data class Message(
 
             /**
              * 字段值
-             * // TODO 似乎已经不存在了
+             *
+             * _Note: 似乎已经不存在了_
              */
-            public val value: String,
+            @Deprecated("not exists", level = DeprecationLevel.HIDDEN)
+            public val value: String = "",
         )
     }
 
@@ -358,7 +358,7 @@ public data class MessageMember(
     override val nick: String,
     override val roles: List<String> = emptyList(),
     @SerialName("joined_at")
-    override val joinedAt: Instant
+    override val joinedAt: String
 ) : Member {
 
     @Transient

@@ -22,7 +22,9 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import love.forte.simbot.ID
-import love.forte.simbot.component.qguild.*
+import love.forte.simbot.component.qguild.QGBot
+import love.forte.simbot.component.qguild.QQGuildBotManager
+import love.forte.simbot.component.qguild.QQGuildComponent
 import love.forte.simbot.component.qguild.config.QGBotComponentConfiguration
 import love.forte.simbot.component.qguild.event.QGBotStartedEvent
 import love.forte.simbot.component.qguild.internal.QGGuildImpl.Companion.qgGuild
@@ -31,18 +33,15 @@ import love.forte.simbot.component.qguild.util.requestBy
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.literal
 import love.forte.simbot.logger.LoggerFactory
-import love.forte.simbot.qguild.Bot
-import love.forte.simbot.qguild.QQGuildApiException
+import love.forte.simbot.qguild.*
+import love.forte.simbot.qguild.DisposableHandle
 import love.forte.simbot.qguild.api.guild.GetGuildApi
 import love.forte.simbot.qguild.api.user.GetBotGuildListApi
-import love.forte.simbot.qguild.ifNotFoundThenNull
 import love.forte.simbot.qguild.model.SimpleGuild
 import love.forte.simbot.qguild.model.User
-import love.forte.simbot.qguild.requestBy
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.effectOn
 import love.forte.simbot.utils.item.itemsByFlow
-import java.util.*
 import kotlin.coroutines.CoroutineContext
 import love.forte.simbot.qguild.model.User as QGUser
 
@@ -195,4 +194,5 @@ internal class QGBotImpl(
 /**
  * 从 [QGBot] 中分配一个拥有新的 [SupervisorJob] 的 [CoroutineContext].
  */
-internal fun QGBot.newSupervisorCoroutineContext(): CoroutineContext = coroutineContext + SupervisorJob(coroutineContext[Job])
+internal fun QGBot.newSupervisorCoroutineContext(): CoroutineContext =
+    coroutineContext + SupervisorJob(coroutineContext[Job])

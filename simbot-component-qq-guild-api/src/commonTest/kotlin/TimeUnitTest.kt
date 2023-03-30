@@ -8,7 +8,7 @@ import kotlin.test.assertEquals
 class TimeUnitTest {
 
     @Test
-    fun abc() {
+    fun timeUnitTest() {
         assertEquals(TimeUnit.DAYS.toSeconds(30), TimeUnit.HOURS.toSeconds(30 * 24))
     }
 

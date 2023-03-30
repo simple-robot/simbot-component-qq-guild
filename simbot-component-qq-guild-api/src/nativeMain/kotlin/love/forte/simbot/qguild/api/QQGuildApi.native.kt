@@ -21,15 +21,15 @@ import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.serialization.StringFormat
+import love.forte.simbot.qguild.ErrInfo
+import love.forte.simbot.qguild.InternalApi
 
 
 /**
  * 用于多平台实现的最小目标。
- * 不变。
- *
- * @suppress
  */
-public actual abstract class BaseQQGuildApi<out R> actual constructor() {
+@InternalApi
+public actual abstract class PlatformQQGuildApi<out R> actual constructor() {
 
     /**
      * 使用此api发起一次请求，并得到预期中的结果。如果返回了代表错误的响应值
@@ -45,6 +45,21 @@ public actual abstract class BaseQQGuildApi<out R> actual constructor() {
         token: String,
         decoder: StringFormat
     ): R
+
+
+    /**
+     * 使用此api发起一次请求，并得到响应结果的字符串。
+     *
+     * @see ErrInfo
+     *
+     * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
+     * @throws love.forte.simbot.qguild.QQGuildApiException 请求过程中出现了错误（http状态码 !in 200 .. 300）
+     */
+    public actual abstract suspend fun doRequestRaw(
+        client: HttpClient,
+        server: Url,
+        token: String,
+    ): String
 
     public actual companion object
 }

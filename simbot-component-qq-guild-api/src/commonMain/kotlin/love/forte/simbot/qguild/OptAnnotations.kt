@@ -26,6 +26,13 @@ package love.forte.simbot.qguild
 @MustBeDocumented
 @RequiresOptIn("API marked for Java use, not recommended for Kotlin.", level = RequiresOptIn.Level.WARNING)
 public annotation class Api4J
+/**
+ * 一个仅服务于JS的API。对于Kotlin来讲通常有更优选择。
+ */
+@Retention(AnnotationRetention.BINARY)
+@MustBeDocumented
+@RequiresOptIn("API marked for JS use, not recommended for Kotlin.", level = RequiresOptIn.Level.WARNING)
+public annotation class Api4JS
 
 // 好吧可能 OptIn 的 annotation 不能用 actual
 

@@ -17,12 +17,31 @@
 
 package love.forte.simbot.component.qguild.internal
 
-import kotlinx.datetime.Instant
+import love.forte.simbot.ExperimentalSimbotApi
 import love.forte.simbot.Timestamp
+import java.time.Instant
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoField
 
+/**
+ * Parse iso 8601 datetime string to [Timestamp]
+ */
+@ExperimentalSimbotApi
+public fun String.toTimestamp(): Timestamp {
+    return DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(this) { temporal ->
+        when (temporal) {
+            is OffsetDateTime -> Timestamp.bySecond(temporal.toEpochSecond(), temporal.toLocalTime().nano)
+            is Instant -> Timestamp.byInstant(temporal)
+            else -> {
+                val instantSecs = temporal.getLong(ChronoField.INSTANT_SECONDS)
+                val nanoOfSecond = temporal[ChronoField.NANO_OF_SECOND]
 
-internal fun Instant.toTimestamp(): Timestamp =
-    Timestamp.bySecond(epochSeconds, nanosecondsOfSecond)
+                Timestamp.bySecond(instantSecs, nanoOfSecond)
+            }
+        }
+    }
+}
 
 
 

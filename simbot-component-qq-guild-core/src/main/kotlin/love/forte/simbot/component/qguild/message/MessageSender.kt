@@ -23,13 +23,31 @@ import love.forte.simbot.component.qguild.internal.message.asReceipt
 import love.forte.simbot.component.qguild.util.requestBy
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
+import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.qguild.api.message.direct.DmsSendApi
 import love.forte.simbot.qguild.message.ContentTextEncoder
 
 /**
- * TODO
+ * 使用当前 [QGBot] 向 [channelId] 通过 [MessageSendApi] 发送一个消息，
+ * 消息内容为 [message] 的解析结果。
  *
+ * [message] 会通过 [MessageParsers.parse] 解析为一个或多个 [MessageSendApi.Body.Builder]。
+ * 当解析结果数量为1时，[sendMessage] 的结果为 [QGSingleMessageReceipt] 类型的回执。
+ * 相反如果结果大于1，则 [sendMessage] 会得到实际为 [QGAggregatedMessageReceipt] 类型的结果。
+ *
+ * 需要注意如果 [message] 的解析结果最终没有任何可用元素（例如元素为空）则可能会引发API请求异常。
+ *
+ * @param channelId 目标频道ID
+ * @param message 解析消息
+ * @param onEachPre 对于每个 [MessageSendApi.Body.Builder] 被构造后的初始化行为
+ * @param onEachPost 对于每个 [MessageSendApi.Body.Builder] 最终执行的收尾行为
+ *
+ * @see MessageParsers.parse
+ *
+ * @throws QQGuildApiException 请求得到了异常的结果
+ *
+ * @return 发送后的回执
  */
 @InternalSimbotApi
 public suspend inline fun QGBot.sendMessage(
@@ -49,8 +67,26 @@ public suspend inline fun QGBot.sendMessage(
 }
 
 /**
- * TODO
+ * 使用当前 [QGBot] 向 [channelId] 通过 [MessageSendApi] 发送一个消息，
+ * 消息内容为 [messageContent] 的解析结果。
  *
+ * 如果 [messageContent] 是其他QQ频道事件收到的消息（即为 [QGReceiveMessageContent] 类型），
+ * 则会直接通过 [MessageSendApi.Body.Builder.fromMessage] 转义内部信息而不会尝试解析 [MessageContent.messages]。
+ *
+ * **注意:** 在转化的过程中会丢失不支持发送的消息（例如附件、图片等）。
+ *
+ * 如果类型不是上述情况，则行为与使用 [MessageContent.messages] 一致。
+ *
+ * @param channelId 目标频道ID
+ * @param messageContent 解析消息本体
+ * @param onEachPre 对于每个 [MessageSendApi.Body.Builder] 被构造后的初始化行为
+ * @param onEachPost 对于每个 [MessageSendApi.Body.Builder] 最终执行的收尾行为
+ *
+ * @see MessageParsers.parse
+ *
+ * @throws QQGuildApiException 请求得到了异常的结果
+ *
+ * @return 发送后的回执
  */
 @InternalSimbotApi
 public suspend inline fun QGBot.sendMessage(
@@ -73,8 +109,24 @@ public suspend inline fun QGBot.sendMessage(
 }
 
 /**
- * TODO
+ * 使用当前 [QGBot] 向 [channelId] 通过 [MessageSendApi] 发送一个消息，
+ * 消息内容为通过 [ContentTextEncoder.encode] 转义后的无特殊含义 [text] 文本。
  *
+ * [text] 会通过 [ContentTextEncoder.encode] 进行转义来消除其中可能存在的[内嵌格式](https://bot.q.qq.com/wiki/develop/api/openapi/message/message_format.html)文本。
+ * 如果你希望保留内嵌格式，参考使用 [QGContentText] 而不是纯文本内容。
+ *
+ *
+ * @param channelId 目标频道ID
+ * @param text 纯文本消息
+ * @param onEachPre 对于每个 [MessageSendApi.Body.Builder] 被构造后的初始化行为
+ * @param onEachPost 对于每个 [MessageSendApi.Body.Builder] 最终执行的收尾行为
+ *
+ * @see MessageParsers.parse
+ * @see QGContentText
+ *
+ * @throws QQGuildApiException 请求得到了异常的结果
+ *
+ * @return 发送后的回执
  */
 @InternalSimbotApi
 public suspend inline fun QGBot.sendMessage(

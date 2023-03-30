@@ -17,7 +17,6 @@
 
 package love.forte.simbot.qguild.model
 
-import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.ApiModel
@@ -54,7 +53,7 @@ public interface Guild {
     public val description: String
 
     /** 加入时间 */
-    public val joinedAt: Instant
+    public val joinedAt: String
 }
 
 
@@ -82,6 +81,6 @@ public data class SimpleGuild(
     override val description: String,
 
     /** 加入时间 */
-    @SerialName("joined_at") override val joinedAt: Instant
+    @SerialName("joined_at") override val joinedAt: String
 ) : Guild
 
