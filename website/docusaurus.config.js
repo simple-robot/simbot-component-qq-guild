@@ -9,8 +9,8 @@ const firstYear = 2022
 const currentYear = new Date().getFullYear()
 const copyrightYear = currentYear === firstYear ? firstYear : firstYear + '-' + currentYear
 
-// forte, forte-scarlet, fortescarlet, simbot, simple-robot, bot, qq-bot, qq-guild, QQ频道, QQ机器人, simbot-qq-guild, simbot-tencent-guild, simbot组件
-const keywords = ['forte', 'forte scarlet', 'fortescarlet', 'simbot', 'bot', 'qq bot', 'qq guild', 'qq频道', 'QQ机器人', 'simbot-qq-guild', 'simbot-tencent-guild', 'simbot组件']
+// forte, forte-scarlet, fortescarlet, simbot, simple-robot, bot, qq-bot, qq-guild, QQ频道, QQ机器人, simbot-qq-guild, simbot-qq-guild, simbot组件
+const keywords = ['simbot', 'bot', 'qq bot', 'qq guild', 'qq频道', 'QQ机器人', 'simbot-qq-guild', 'simbot-tencent-guild', 'simbot组件', 'forte', 'forte scarlet', 'fortescarlet']
 
 /** @type {import('@docusaurus/types').Config} */
 async function config() {
@@ -25,7 +25,7 @@ async function config() {
 
     // Set the /<baseUrl>/ pathname under which your site is served
     // For GitHub pages deployment, it is often '/<projectName>/'
-    baseUrl: '/simbot-component-tencent-guild/',
+    baseUrl: '/simbot-component-qq-guild/',
 
     // GitHub pages deployment config.
     // If you aren't using GitHub pages, you don't need these.

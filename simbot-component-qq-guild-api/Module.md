@@ -1,4 +1,4 @@
-# Module simbot-component-tencent-guild-api
+# Module simbot-component-qq-guild-api
 
 对[QQ频道API](https://bot.q.qq.com/wiki/develop/api/)的最基本封装，不包含额外的功能性实现（比如bot、事件调度等）。
 
