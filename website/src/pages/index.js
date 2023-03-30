@@ -22,7 +22,7 @@ function HomepageHeader() {
           <div className={styles.buttons}>
               <Link
                   className="button button--outline button--md"
-                  to="https://github.com/simple-robot/simbot-component-tencent-guild">
+                  to="https://github.com/simple-robot/simbot-component-qq-guild">
                   {<><span className="bi-github"> GitHub</span> </>}
               </Link>
           </div>

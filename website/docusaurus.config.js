@@ -57,7 +57,7 @@ async function config() {
             sidebarPath: require.resolve('./sidebars.js'),
             routeBasePath: 'docs',
             editUrl:
-                'https://github.com/simple-robot/simbot-component-tencent-guild/tree/main/website',
+                'https://github.com/simple-robot/simbot-component-qq-guild/tree/main/website',
             breadcrumbs: true,
             showLastUpdateTime: true,
             lastVersion: 'current',
@@ -149,7 +149,7 @@ async function config() {
                 dropdownActiveClassDisabled: true,
               },
               {
-                href: 'https://github.com/simple-robot/simbot-component-tencent-guild',
+                href: 'https://github.com/simple-robot/simbot-component-qq-guild',
                 position: 'right',
                 className: 'bi-github',
                 'aria-label': 'GitHub',
@@ -177,7 +177,7 @@ async function config() {
                 items: [
                   {
                     label: 'GitHub ',
-                    href: 'https://github.com/simple-robot/simbot-component-tencent-guild',
+                    href: 'https://github.com/simple-robot/simbot-component-qq-guild',
                   },
                   {
                     label: 'simbot官网 🏠',
