@@ -17,6 +17,8 @@ import love.forte.simbot.qguild.api.message.ArkMessageTemplates
 import love.forte.simbot.qguild.model.Message
 import kotlin.test.Test
 
+private val json = Json { prettyPrint = true }
+
 /**
  *
  * @author ForteScarlet
@@ -33,7 +35,7 @@ class MessageTemplateTest {
                 ArkMessageTemplates.TextLinkList.Desc("DESC", "https://sss")
             )
         )
-        println(Json { prettyPrint = true }.encodeToString(Message.Ark.serializer(), t23.ark))
+        println(json.encodeToString(Message.Ark.serializer(), t23.ark))
 
 
     }

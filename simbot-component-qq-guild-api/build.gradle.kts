@@ -166,7 +166,7 @@ kotlin {
 
         getByName("jsMain") {
             dependencies {
-                implementation(libs.ktor.client.js)
+                api(libs.ktor.client.js)
             }
         }
 
