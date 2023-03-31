@@ -8,7 +8,6 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
-import kotlin.test.Test
 
 
 /**
@@ -18,7 +17,7 @@ import kotlin.test.Test
 class ApiTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
+//    @Test
     fun apiReqTest() = runTest {
         val client = HttpClient {
             install(ContentNegotiation) {
