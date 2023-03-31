@@ -40,14 +40,23 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           gradle-version: 7.6
+          arguments: assemble test
+          cache: 'gradle'
+
+      # setup Gradle
+      - name: Publish Release
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: 7.6
           arguments: |
-            build
-            allTests
             publishToSonatype
             closeAndReleaseStagingRepository
+            --info 
             --warning-mode all
-            --info
+            -x test
+            --build-cache
             -Porg.gradle.jvmargs="-XX:MaxMetaspaceSize=1g -Dfile.encoding=UTF-8"
+
         env:
           SIMBOT_IS_SNAPSHOT: false
           SIMBOT_RELEASES_ONLY: true
@@ -130,7 +139,14 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           gradle-version: 7.6
-          arguments: publishToSonatype closeAndReleaseStagingRepository
+          arguments: |
+            publishToSonatype
+            closeAndReleaseStagingRepository
+            --info
+            --warning-mode all
+            -x test
+            --build-cache
+            -Porg.gradle.jvmargs="-XX:MaxMetaspaceSize=1g -Dfile.encoding=UTF-8"
         env:
           SIMBOT_IS_SNAPSHOT: true
           SIMBOT_SNAPSHOT_ONLY: true
@@ -159,14 +175,13 @@ jobs:
         with:
           gradle-version: 7.6
           arguments: |
-            -Porg.gradle.jvmargs="-Xmx4g -Xms4g -XX:MaxMetaspaceSize=2g -Dfile.encoding=UTF-8" 
-            -Porg.gradle.daemon=false
-            -DisSnapshot=false
+            dokkaHtmlMultiModule
             --info 
             --warning-mode all
             -x test
             --build-cache
-            dokkaHtmlMultiModule
+            -Porg.gradle.jvmargs="-XX:MaxMetaspaceSize=1g -Dfile.encoding=UTF-8" 
+            -Porg.gradle.daemon=false
 
       - name: Push to doc repository
         uses: peaceiris/actions-gh-pages@v3
