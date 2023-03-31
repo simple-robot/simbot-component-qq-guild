@@ -21,7 +21,7 @@ jobs:
     name: Run test and publish
     strategy:
       matrix:
-        os: [ macos-latest, windows-latest ] # , ubuntu-latest
+        os: [ macos-latest, windows-latest, ubuntu-latest ]
     runs-on: ${{ matrix.os }}
     steps:
       # 检出仓库代码
