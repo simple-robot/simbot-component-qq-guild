@@ -18,6 +18,8 @@
 import love.forte.gradle.common.core.Gpg
 import love.forte.gradle.common.publication.configure.jvmConfigPublishing
 import util.checkPublishConfigurable
+import util.isCi
+import util.isLinux
 
 
 plugins {
@@ -32,46 +34,51 @@ logger.info("isSnapshotOnly: $isSnapshotOnly")
 logger.info("isReleaseOnly: $isReleaseOnly")
 logger.info("isPublishConfigurable: $isPublishConfigurable")
 
-checkPublishConfigurable {
-    jvmConfigPublishing {
-        project = P.ComponentQQGuild
-        publicationName = "tencentGuildDist"
-        val jarSources by tasks.registering(Jar::class) {
-            archiveClassifier.set("sources")
-            from(sourceSets["main"].allSource)
+
+
+if (!isCi || isLinux) {
+    checkPublishConfigurable {
+        jvmConfigPublishing {
+            project = P.ComponentQQGuild
+            publicationName = "tencentGuildDist"
+            val jarSources by tasks.registering(Jar::class) {
+                archiveClassifier.set("sources")
+                from(sourceSets["main"].allSource)
+            }
+
+            val jarJavadoc by tasks.registering(Jar::class) {
+                archiveClassifier.set("javadoc")
+            }
+
+            artifact(jarSources)
+            artifact(jarJavadoc)
+
+            isSnapshot = isSnapshot().also {
+                logger.info("jvmConfigPublishing.isSnapshot: {}", it)
+            }
+            releasesRepository = ReleaseRepository
+            snapshotRepository = SnapshotRepository
+            gpg = if (isSnapshot()) null else Gpg.ofSystemPropOrNull()
         }
 
-        val jarJavadoc by tasks.registering(Jar::class) {
-            archiveClassifier.set("javadoc")
-        }
-
-        artifact(jarSources)
-        artifact(jarJavadoc)
-
-        isSnapshot = isSnapshot().also {
-            logger.info("jvmConfigPublishing.isSnapshot: {}", it)
-        }
-        releasesRepository = ReleaseRepository
-        snapshotRepository = SnapshotRepository
-        gpg = if (isSnapshot()) null else Gpg.ofSystemPropOrNull()
-    }
-
-    if (isSnapshot()) {
-        publishing {
-            publications.withType<MavenPublication> {
-                version = P.ComponentQQGuild.snapshotVersion.toString()
+        if (isSnapshot()) {
+            publishing {
+                publications.withType<MavenPublication> {
+                    version = P.ComponentQQGuild.snapshotVersion.toString()
+                }
             }
         }
-    }
 
-    publishing {
-        publications.withType<MavenPublication> {
-            show()
+        publishing {
+            publications.withType<MavenPublication> {
+                show()
+            }
         }
+
+
     }
-
-
 }
+
 
 //
 //if (isPublishConfigurable) {
