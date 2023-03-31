@@ -107,18 +107,10 @@ kotlin {
                             implementation(libs.ktor.client.winhttp)
                         }
                     }
-                    // linux: curl
-                    // CIO not support HTTP/2
+                    // linux: CIO..?
                     tn.startsWith("linux") -> {
-                        if ("Linux" in System.getProperty("os.name")) {
-                            // win开发系统上懒得装 curl 环境了装半天都没啥效果没法编译
-                            testSourceSet.dependencies {
-                                implementation(libs.ktor.client.curl)
-                            }
-                        } else {
-                            testSourceSet.dependencies {
-                                implementation(libs.ktor.client.cio)
-                            }
+                        testSourceSet.dependencies {
+                            implementation(libs.ktor.client.cio)
                         }
                     }
 
