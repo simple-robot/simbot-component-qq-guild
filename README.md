@@ -3,43 +3,47 @@
 <div align="center">
 <img src=".simbot/logo.png" alt="logo" style="width:230px; height:230px; border-radius:50%; " />
 <h2>
-    ~ simple-robot for tencent-guild ~ 
+    ~ simple-robot for qq-guild ~ 
 </h2>
-<a href="https://github.com/simple-robot/simbot-component-tencent-guild/releases/latest"><img alt="release" src="https://img.shields.io/github/v/release/simple-robot/simbot-component-tencent-guild" /></a>
-<a href="https://repo1.maven.org/maven2/love/forte/simbot/component/simbot-component-tencent-guild-api/" target="_blank">
-  <img alt="release" src="https://img.shields.io/maven-central/v/love.forte.simbot.component/simbot-component-tencent-guild-api" /></a>
+<a href="https://github.com/simple-robot/simbot-component-qq-guild/releases/latest"><img alt="release" src="https://img.shields.io/github/v/release/simple-robot/simbot-component-qq-guild" /></a>
+<a href="https://repo1.maven.org/maven2/love/forte/simbot/component/simbot-component-qq-guild-api/" target="_blank">
+  <img alt="release" src="https://img.shields.io/maven-central/v/love.forte.simbot.component/simbot-component-qq-guild-api" /></a>
 <a href="https://www.yuque.com/simpler-robot/simpler-robot-doc" target="_blank">
   <img alt="doc" src="https://img.shields.io/badge/doc-yuque-brightgreen" /></a>
    <hr>
-   <img alt="stars" src="https://img.shields.io/github/stars/simple-robot/simbot-component-tencent-guild" />
-   <img alt="forks" src="https://img.shields.io/github/forks/simple-robot/simbot-component-tencent-guild" />
-   <img alt="watchers" src="https://img.shields.io/github/watchers/simple-robot/simbot-component-tencent-guild" />
-   <img alt="repo size" src="https://img.shields.io/github/repo-size/simple-robot/simbot-component-tencent-guild" />
-   <img alt="lines" src="https://img.shields.io/tokei/lines/github/simple-robot/simbot-component-tencent-guild" />
-   <img alt="issues" src="https://img.shields.io/github/issues-closed/simple-robot/simbot-component-tencent-guild?color=green" />
-   <img alt="last commit" src="https://img.shields.io/github/last-commit/simple-robot/simbot-component-tencent-guild" />
-   <a href="./COPYING"><img alt="copying" src="https://img.shields.io/github/license/simple-robot/simbot-component-tencent-guild" /></a>
+   <img alt="stars" src="https://img.shields.io/github/stars/simple-robot/simbot-component-qq-guild" />
+   <img alt="forks" src="https://img.shields.io/github/forks/simple-robot/simbot-component-qq-guild" />
+   <img alt="watchers" src="https://img.shields.io/github/watchers/simple-robot/simbot-component-qq-guild" />
+   <img alt="repo size" src="https://img.shields.io/github/repo-size/simple-robot/simbot-component-qq-guild" />
+   <img alt="lines" src="https://img.shields.io/tokei/lines/github/simple-robot/simbot-component-qq-guild" />
+   <img alt="issues" src="https://img.shields.io/github/issues-closed/simple-robot/simbot-component-qq-guild?color=green" />
+   <img alt="last commit" src="https://img.shields.io/github/last-commit/simple-robot/simbot-component-qq-guild" />
+   <a href="./COPYING"><img alt="copying" src="https://img.shields.io/github/license/simple-robot/simbot-component-qq-guild" /></a>
 
 </div>
 
-这是 [simbot3](https://github.com/ForteScarlet/simpler-robot)
-下的子项目， 本库提供对 [腾讯频道机器人](https://bot.q.qq.com/wiki/develop/api/) 中`API`内容的完整实现以及事件相关的信令实现， 以及BOT对于事件的监听与交互。
-本库中的api响应数据会一定程度实现 `simple-robot` 的`v3.x`api模块接口。 (下文 `simple-robot` 简称 `simbot` )
+这是 [simbot3](https://github.com/simple-robot/simpler-robot)
+下的子项目， 本库提供对 [QQ频道机器人](https://bot.q.qq.com/wiki/develop/api/) 中`API`内容的完整实现以及事件相关的信令实现， 以及BOT对于事件的监听与交互。
+
+_下文 `simple-robot v3.x` 简称为 `simbot3`_
 
 <br>
 
-> 了解simbot3: [simple-robot文档](https://www.yuque.com/simpler-robot/simpler-robot-doc/mudleb)
+## 文档
+
+了解simbot3: [simbot3官网](https://simbot.forte.love)
+
+KDoc(JavaDoc): [文档引导站点](https://docs.simbot.forte.love) 中的 [QQ频道KDoc站点](https://docs.simbot.forte.love/components/qq-guild)
 
 <br>
 
-> ⚠️ 目前README中的各种代码示例或说明严重**滞后**于当前版本，仅供参考。
-
-*本库通过 `kotlin` 协程达成全异步的高效实现，基于 `ktor` 进行网络交互，基于 `kotlinx-serialization` 进行数据序列化/反序列化。*
-
+本库通过 [`Kotlin`](https://kotlinlang.org/) 提供多平台/JVM平台(core模块) 实现； 
+基于 [`kotlinx.coroutines`](https://github.com/Kotlin/kotlinx.coroutines) 与
+[`Ktor`](https://ktor.io/)
+提供高效易用的API；
+基于 [`kotlinx.serialization`](https://github.com/Kotlin/kotlinx.serialization) 进行数据序列化/反序列化操作。
 
 <br>
-
-*以及，这个README看上去挺乱的，等一切安好之后会再考虑优化一下。*
 
 ## 前言
 
@@ -48,70 +52,54 @@
 如果你想要协助我们对当前仓库或者 [simbot3](https://github.com/ForteScarlet/simpler-robot/tree/v3-dev)
 的建设，欢迎通过issue提出宝贵意见或者通过pr参与到建设当中，十分感谢。
 
-## 文档
-你可以参考 [语雀说明文档](https://www.yuque.com/simpler-robot) 的 `simbot3` 部分，或者查看simbot3-腾讯频道组件的 [API Doc](https://simple-robot-library.github.io/simbot3-component-tencent-guild-apiDoc/) .
+## 模块引导
 
-## ⚠ 注意
+### API模块
 
-我们目前正在全力追求 [核心库API](https://github.com/simple-robot/simpler-robot) 的稳定，因此当前仓库可能**暂时**的无法及时发现问题或跟进官方的更新。
-如果你有任何问题或建议，欢迎前往 [社区](https://github.com/orgs/simple-robot/discussions) 讨论，或通过 [PR](https://github.com/simple-robot/simbot-component-tencent-guild/pulls) 协助我们，非常感谢！
+> JVM/JS/Native
 
+基于 `Ktor` 针对 [QQ频道API](https://bot.q.qq.com/wiki/develop/api/) 的基本完整的封装实现，
+是一个简单高效轻量级的API实现模块。
 
+此模块基本不会提供什么多余的实现，其目标为在提供封装的情况下尽可能地保留原始API的使用手感，不做过多的封装。
 
-## 模块简介
+👉 [前往模块](simbot-component-qq-guild-api) 了解更多。
 
-## Api
+### 标准库模块
 
-腾讯频道官方提供了很多api定义，它们可能是http接口，或是一个数据类型格式，又或者是对于事件信令（opcode）的对应描述，诸如此类的API和定义相关的内容，它们会被囊括在 [api](simbot-component-tencent-guild-api) 模块中。
+> JVM/JS/Native
 
-api模块的实现是一种**底层**实现，它不会提供过多的便利方法，旨在更加贴近原生的调用这些api，甚至于调用他们的 `HttpClient` 实例和token也需要你主动传递。
+基于 [API模块](simbot-component-qq-guild-api) 针对bot的"登录"鉴权实现简单高效轻量级的事件订阅功能。
 
-如果你只是希望不再去定义这些api的封装，但是不需要其他过多的花里胡哨的东西，那么你可以考虑单独使用此模块。
+此模块在API模块的基础上提供了针对事件相关的功能实现，包括事件订阅的能力。
+同样的，其目标为在提供封装的情况下尽可能地保留原始API的使用手感，不做过多的封装。
 
-<hr>
+👉 [前往模块](simbot-component-qq-guild-stdlib) 了解更多。
 
-**详情与示例前往 >>>** [**api模块**](simbot-component-tencent-guild-api)
+### 核心组件模块
 
-<br>
+> JVM Only
 
-## Stdlib模块
+基于 [标准库模块](simbot-component-qq-guild-stdlib) 对 [simbot3核心库](https://github.com/simple-robot/simpler-robot) 的组件实现，
+是一个相对高度封装的模块，并提供simbot3大部分能力，包括事件监听、多组件协同、Spring Boot Starter 等。
 
-在上述的api模块中，其只提供了针对于BOT和部分事件的**定义**，但是并没有给出BOT连接、事件监听等内容的**具体实现**。那么这些实现由谁来做呢？ 这些偏向于功能性的内容将会交由 [stdlib](simbot-component-tencent-guild-stdlib) 模块来进行实现。
-
-stdlib模块提供了对于bot连接以及事件监听、处理的简易实现，如果你只需要一个简单的轻量级频道bot，只要能有最基础的事件监听就好，并且希望能够原生的使用api（上述api模块）， 那么你便可以选择使用stdlib模块。
-
-stdlib模块还针对bot调用api的情况提供了较为友善的扩展函数，可以省去中间提供client、token等原生参数的步骤。
-
-<hr>
-
-**详情与示例前往 >>>** [**stdlib模块**](simbot-component-tencent-guild-stdlib)
-
-<br>
-
-## Component-core模块
-
-一开始就提到，当前仓库是 `simbot 3.x` 的子项目，那么此仓库也必然会存在一个针对 `simbot` 的 **组件**。了解simbot的朋友一定对simbot的组件概念不陌生， 组件便是一个至少基于 `simbot-core`
-模块并实现 `simbot-api` 中提供的各类标准接口而产生的内容。
-
-简单来说，`simbot-api` 是一套通用标准，`simbot-core` 为这套通用标准提供通用实现（例如统一事件调度、BOT管理），并将所有的**组件**进行统一管理，尽可能减少不同平台间的差异，
-以达成可以以一套标准代码为多个不同组件实现功能的目的。
-
-而 [component模块](simbot-component-tencent-guild-core) 便是这样的标准实现下的组件之一。`component` 模块实现simple-robot的标准事件并可以使用`simbot`提供的诸多特性（例如统一事件调度）
+👉 [前往模块](simbot-component-qq-guild-core) 了解更多。
 
 
-<hr>
+## License
 
-**详情与示例前往 >>>** [**component模块**](simbot-component-tencent-guild-core)
+`simbot-component-qq-guild` 使用 `LGPLv3` 许可证开源。
 
-<hr>
+```
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General 
+Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) 
+any later version.
 
-## Component-boot模块
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+details.
 
-上述说到了，当前仓库是 `simple-robot 3.x` (下文简称 `simbot`) 的子项目。作为 `simbot` 的传统，simbot终究会提供一套可以以注解形式的开发形式进行开发的模式库，在3.x版本中，它便是 `boot`
-库。 tencent-guild库提供了对 `boot` 库的支持。
+You should have received a copy of the GNU Lesser General Public License along with this program. 
+If not, see <https://www.gnu.org/licenses/>.
+```
 
-简单来说，simbot的boot库是区别于core库的原生写法，而是以注解+自动扫描为主的，更适合较大工程级的库，并且会提供对 `springboot` 的整合支持。
-
-<hr>
-
-**详情与示例前往 >>>** [**component-boot模块**](simbot-component-tencent-guild-boot)

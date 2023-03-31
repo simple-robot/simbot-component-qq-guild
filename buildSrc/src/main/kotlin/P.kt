@@ -1,4 +1,22 @@
+/*
+ * Copyright (c) 2023. ForteScarlet.
+ *
+ * This file is part of simbot-component-qq-guild.
+ *
+ * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ *
+ * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 import love.forte.gradle.common.core.project.ProjectDetail
+import love.forte.gradle.common.core.project.Version
 import love.forte.gradle.common.core.project.minus
 import love.forte.gradle.common.core.project.version as v
 
@@ -19,16 +37,20 @@ import love.forte.gradle.common.core.project.version as v
  *
  */
 
-val simbotVersion = v(3, 0, 0) - v("M5")
+val simbotVersion = v(3, 0, 0) - v("RC", 3)
 
 fun simbot(name: String, version: String = simbotVersion.toString()): String = "love.forte.simbot:simbot-$name:$version"
 fun simboot(name: String, version: String = simbotVersion.toString()): String = "love.forte.simbot.boot:simboot-$name:$version"
 
 val simbotApi = simbot("api")
 val simbotCore = simbot("core")
-val simbootApi = simboot("api")
-val simbootCore = simboot("core")
+val simbotLogger = simbot("logger")
+val simbotLoggerJvm = simbot("logger-jvm")
+val simbotLoggerSlf4jImpl = simbot("logger-slf4j-impl")
+
 val simbotUtilLoop = "love.forte.simbot.util:simbot-util-stage-loop:$simbotVersion"
+
+const val SIMBOT_GROUP = "love.forte.simbot"
 
 /**
  * Project versions.
@@ -39,10 +61,10 @@ object P {
         const val GROUP = "love.forte.simbot"
     }
 
-    object ComponentTencentGuild : ProjectDetail() {
+    object ComponentQQGuild : ProjectDetail() {
         const val GROUP = "love.forte.simbot.component"
         const val DESCRIPTION = "Simple Robot框架下针对QQ频道的组件实现"
-        const val HOMEPAGE = "https://github.com/simple-robot/simbot-component-tencent-guild"
+        const val HOMEPAGE = "https://github.com/simple-robot/simbot-component-qq-guild"
 
         override val group: String get() = GROUP
         override val description: String get() = DESCRIPTION
@@ -54,10 +76,10 @@ object P {
             0, 0
         )
 
-        private val alphaSuffix = v("alpha", 3)
+        private val alphaSuffix = v("alpha", 4)
 
         override val version = baseVersion - alphaSuffix
-        val snapshotVersion = baseVersion - (alphaSuffix - love.forte.gradle.common.core.project.Version.SNAPSHOT)
+        val snapshotVersion = baseVersion - (alphaSuffix - Version.SNAPSHOT)
 
         val versionIfSnap get() = (if (isSnapshot()) snapshotVersion else version).toString()
 
@@ -92,18 +114,19 @@ object P {
         override val scm: Scm = scm {
             url = HOMEPAGE
             connection = "scm:git:$HOMEPAGE.git"
-            developerConnection = "scm:git:ssh://git@github.com/simple-robot/simbot-component-tencent-guild.git"
+            developerConnection = "scm:git:ssh://git@github.com/simple-robot/simbot-component-qq-guild.git"
         }
     }
 
 
 }
+private val _isSnapshot by lazy { initIsSnapshot() }
 
-fun isSnapshot(): Boolean {
-    val property = System.getProperty("simbot.snapshot")?.toBoolean() ?: false
-    val env = System.getenv(Env.IS_SNAPSHOT)?.toBoolean() ?: false
-    println("Is snapshot from System.property:  $property")
-    println("Is snapshot from System.env:       $env")
+private fun initIsSnapshot(): Boolean {
+    val property = System.getProperty("simbot.snapshot").toBoolean()
+    val env = System.getenv(Env.IS_SNAPSHOT).toBoolean()
 
     return property || env
 }
+
+fun isSnapshot(): Boolean = _isSnapshot
