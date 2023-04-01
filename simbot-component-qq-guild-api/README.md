@@ -116,3 +116,26 @@ guildList.forEach { guild ->
     println(guild)
 }
 ```
+
+## API实现情况
+
+下述列表基本与 [QQ频道机器人文档](https://bot.q.qq.com/wiki/develop/api/) 中内容对应，如有遗漏或错误还望谅解并可通过 [issues](https://github.com/simple-robot/simbot-component-qq-guild/issues) 反馈。
+
+- [x] 用户 API
+- [x] 频道 API
+- [x] 子频道 API
+- [x] 成员 API
+- [x] 频道身分组 API
+- [x] 子频道权限 API
+- [x] 消息 API
+- [x] 消息频率 API
+- [x] 私信 API
+- [x] 禁言 API
+- [x] 公告 API
+- [ ] 精华消息 API
+- [ ] 日程 API
+- [ ] 表情表态 API
+- [ ] 音频 API
+- [ ] 帖子 API
+- [x] API接口权限 API
+- [x] WebSocket API
