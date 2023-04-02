@@ -738,12 +738,12 @@ private data class EventData(val raw: String, val event: Signal.Dispatch)
 
 
 private class AtomicLongRef(initValue: Long = 0) {
-    val atomicValue: AtomicLong = atomic(initValue)
-    inline var value: Long
+    private val atomicValue: AtomicLong = atomic(initValue)
+    var value: Long
         get() = atomicValue.value
         set(value) {
             atomicValue.value = value
         }
 
-    inline fun updateAndGet(function: (Long) -> Long): Long = atomicValue.updateAndGet(function)
+    fun updateAndGet(function: (Long) -> Long): Long = atomicValue.updateAndGet(function)
 }

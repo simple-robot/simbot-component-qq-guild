@@ -88,14 +88,28 @@ internal object QGMessageParser : ReceivingMessageParser {
         val textBuilder = StringBuilder()
 
         fun appendText(value: String, startIndex: Int, endIndex: Int) {
-            ContentTextDecoder.decodeTo(value, startIndex, endIndex, textBuilder)
+            ContentTextDecoder.decodeTo(value, startIndex, endIndex, object : Appendable {
+                override fun append(csq: CharSequence?): Appendable = also {
+                    textBuilder.append(csq)
+                    context.plainTextBuilder.append(csq)
+                }
+
+                override fun append(csq: CharSequence?, start: Int, end: Int): Appendable = also {
+                    textBuilder.append(csq, start, end)
+                    context.plainTextBuilder.append(csq, start, end)
+                }
+
+                override fun append(c: Char): Appendable = also {
+                    textBuilder.append(c)
+                    context.plainTextBuilder.append(c)
+                }
+            })
         }
 
         fun flushText() {
             if (textBuilder.isNotEmpty()) {
                 val text = textBuilder.toString()
                 messageList.add(text.toText())
-                context.plainTextBuilder.append(text)
                 textBuilder.clear()
             }
         }

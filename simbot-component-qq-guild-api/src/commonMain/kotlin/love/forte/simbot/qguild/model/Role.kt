@@ -17,8 +17,13 @@
 
 package love.forte.simbot.qguild.model
 
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import love.forte.simbot.qguild.ApiModel
 import kotlin.jvm.JvmStatic
 
@@ -37,7 +42,7 @@ public data class Role(
     /** 名称 */
     val name: String,
     /** ARGB的HEX十六进制颜色值转换后的十进制数值 */
-    val color: Int,
+    @Serializable(ColorIntSerializer::class) val color: Int,
     /** 是否在成员列表中单独展示: 0-否, 1-是 */
     val hoist: Int,
     /** 人数 */
@@ -115,4 +120,19 @@ public data class Role(
     }
 }
 
+/**
+ *
+ */
+public object ColorIntSerializer : KSerializer<Int> {
+    private val serializer = UInt.serializer()
 
+    override fun deserialize(decoder: Decoder): Int {
+        return serializer.deserialize(decoder).toInt()
+    }
+
+    override val descriptor: SerialDescriptor = serializer.descriptor
+
+    override fun serialize(encoder: Encoder, value: Int) {
+        serializer.serialize(encoder, value.toUInt())
+    }
+}

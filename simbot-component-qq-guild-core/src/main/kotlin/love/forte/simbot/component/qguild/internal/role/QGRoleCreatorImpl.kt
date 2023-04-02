@@ -24,6 +24,7 @@ import love.forte.simbot.component.qguild.role.QGRoleCreator
 import love.forte.simbot.component.qguild.util.requestBy
 import love.forte.simbot.literal
 import love.forte.simbot.qguild.api.role.CreateGuildRoleApi
+import love.forte.simbot.qguild.api.role.ModifyGuildRoleApi
 
 
 /**
@@ -41,9 +42,15 @@ internal class QGRoleCreatorImpl(private val guild: QGGuildImpl) : QGRoleCreator
             throw IllegalArgumentException("No Parameters are set")
         }
 
-        val created = CreateGuildRoleApi.create(guild.id.literal, name, color, isHoist?.let { if (it) 1 else 0 })
+        val hoist = isHoist?.let { if (it) 1 else 0 }
+        val created = CreateGuildRoleApi.create(guild.id.literal, name, color, hoist)
             .requestBy(guild.baseBot)
 
-        return QGGuildRoleImpl(guild.baseBot, guild.id, created.role, guild)
+        val role = created.role ?: ModifyGuildRoleApi.create(guild.id.literal, created.roleId, name, color, hoist)
+            .requestBy(guild.baseBot).role
+//            ?: GetGuildRoleListApi.create(guild.id.literal).requestBy(guild.baseBot)
+//                .roles.find { it.id == created.roleId }!!
+
+        return QGGuildRoleImpl(guild.baseBot, guild.id, role, guild)
     }
 }
