@@ -5,7 +5,7 @@ on:
 
 env:
   IS_CI: true
-  GRADLE_OPTS: "-Xmx8g -Xms2g -Dfile.encoding=UTF-8"
+  GRADLE_OPTS: "-Dfile.encoding=UTF-8"
 
 jobs:
   build-test:
