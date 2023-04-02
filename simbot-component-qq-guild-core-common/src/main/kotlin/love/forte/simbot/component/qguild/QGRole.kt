@@ -20,33 +20,98 @@ package love.forte.simbot.component.qguild
 import kotlinx.coroutines.CoroutineScope
 import love.forte.simbot.ExperimentalSimbotApi
 import love.forte.simbot.ID
+import love.forte.simbot.component.qguild.role.QGGuildRole
+import love.forte.simbot.component.qguild.role.QGMemberRole
+import love.forte.simbot.component.qguild.role.QGRoleUpdater
+import love.forte.simbot.definition.GuildInfoContainer
 import love.forte.simbot.definition.Role
 import love.forte.simbot.qguild.model.Role.Companion.isDefault
 import love.forte.simbot.qguild.model.Role as QGSourceRole
 
 /**
- * QQ频道中所使用的角色类型。
+ * QQ频道中所使用的基础角色
+ * （[身份组](https://bot.q.qq.com/wiki/develop/api/openapi/guild/role_model.html)）
+ * 类型。
+ *
+ * 对于角色所处环境的不同 [QGRole] 分为 [QGGuildRole] 和 [QGMemberRole] 两个子类型。
+ *
+ * @see QGGuildRole
+ * @see QGMemberRole
+ *
  * @author ForteScarlet
  */
 @ExperimentalSimbotApi
-public interface QGRole : Role, CoroutineScope, QGObjectiveContainer<QGSourceRole> {
+public interface QGRole : Role, CoroutineScope, GuildInfoContainer, QGObjectiveContainer<QGSourceRole> {
+    /**
+     * 身份组ID
+     */
     override val id: ID
+
+    /**
+     * 原始的身份组对象。
+     */
     override val source: QGSourceRole
 
+    /**
+     * 当前角色所属频道服务器ID。
+     */
+    public val guildId: ID
+
+    /**
+     * 得到当前角色所属频道服务器。
+     */
+    @JSTP
+    override suspend fun guild(): QGGuild
+
+    /**
+     * 角色名称
+     */
     override val name: String get() = source.name
+
+    /**
+     * ARGB的HEX十六进制颜色值转换后的十进制数值
+     */
     public val color: Int get() = source.color
+
+    /**
+     * 是否在成员列表中单独展示。
+     */
     public val isHoist: Boolean get() = source.isHoistBool
+
+    /**
+     * 人数
+     */
     public val number: Int get() = source.number
+
+    /**
+     * 成员上限
+     */
     public val memberLimit: Int get() = source.memberLimit
 
     /**
      * 判断是拥有管理员权限。
      *
-     * 判断标准为是 [默认角色][QGSourceRole.isDefault] 且不是 [全体成员][QGSourceRole.DEFAULT_ID_ALL_MEMBER]。
+     * 判断标准为是某个 [默认角色][QGSourceRole.isDefault] 且不是 [全体成员][QGSourceRole.DEFAULT_ID_ALL_MEMBER]。
      *
      */
     override val isAdmin: Boolean get() = source.isDefault && source.id != QGSourceRole.DEFAULT_ID_ALL_MEMBER
+
+    /**
+     * 基于当前 [QGRole] 得到一个 [QGRoleUpdater]。
+     *
+     * 得到的 [QGRoleUpdater] 会与当前角色对象关联，当 [QGRoleUpdater.update]
+     * 成功时会同时刷新当前对象内的对应属性。
+     * 此刷新只会对当前对象实例和其可能关联的 [QGMemberRole] (对 [QGGuildRole] 来说) 有效。
+     *
+     */
+    public fun updater(): QGRoleUpdater
 }
 
-// TODO Guild Role
-// TODO Member Role
+/**
+ * 更新指定的 [QGRole] 信息。
+ *
+ */
+@ExperimentalSimbotApi
+public suspend inline fun QGRole.update(block: QGRoleUpdater.() -> Unit) {
+    updater().also(block).update()
+}

@@ -28,6 +28,9 @@ import love.forte.simbot.Timestamp
 import love.forte.simbot.component.qguild.QGChannel
 import love.forte.simbot.component.qguild.QGChannelCategoryId
 import love.forte.simbot.component.qguild.QGGuild
+import love.forte.simbot.component.qguild.internal.role.QGGuildRoleImpl
+import love.forte.simbot.component.qguild.internal.role.QGRoleCreatorImpl
+import love.forte.simbot.component.qguild.role.QGRoleCreator
 import love.forte.simbot.component.qguild.util.requestBy
 import love.forte.simbot.literal
 import love.forte.simbot.logger.LoggerFactory
@@ -121,14 +124,17 @@ internal class QGGuildImpl private constructor(
     }
 
     @ExperimentalSimbotApi
-    override val roles: Items<QGRoleImpl>
+    override val roles: Items<QGGuildRoleImpl>
         get() = bot.effectedFlowItems {
             GetGuildRoleListApi.create(source.id).requestBy(baseBot).roles.forEach { info ->
-                val roleImpl = QGRoleImpl(baseBot, info)
+                val roleImpl = QGGuildRoleImpl(baseBot, id, info, this@QGGuildImpl)
                 emit(roleImpl)
             }
         }
 
+
+    @ExperimentalSimbotApi
+    override fun roleCreator(): QGRoleCreator = QGRoleCreatorImpl(this)
 
     override val currentChannel: Int get() = -1
 

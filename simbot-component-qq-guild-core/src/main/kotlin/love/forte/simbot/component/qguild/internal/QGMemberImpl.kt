@@ -23,8 +23,8 @@ import love.forte.simbot.ExperimentalSimbotApi
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.component.qguild.QGMember
-import love.forte.simbot.component.qguild.QGRole
 import love.forte.simbot.component.qguild.internal.message.asReceipt
+import love.forte.simbot.component.qguild.internal.role.QGMemberRoleImpl
 import love.forte.simbot.component.qguild.message.MessageParsers
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
 import love.forte.simbot.component.qguild.message.QGReceiveMessageContent
@@ -87,13 +87,13 @@ internal class QGMemberImpl(
     }
 
     @ExperimentalSimbotApi
-    override val roles: Items<QGRole>
+    override val roles: Items<QGMemberRoleImpl>
         get() {
             // TODO
             return effectedFlowItems {
                 guild().roles.collect {
                     if (it.id.literal in roleIdSet) {
-                        emit(it)
+                        emit(QGMemberRoleImpl(it, this@QGMemberImpl))
                     }
                 }
             }
