@@ -93,7 +93,7 @@ internal class QGMemberImpl(
             return effectedFlowItems {
                 guild().roles.collect {
                     if (it.id.literal in roleIdSet) {
-                        emit(QGMemberRoleImpl(it, this@QGMemberImpl))
+                        emit(QGMemberRoleImpl(it, this@QGMemberImpl.id, this@QGMemberImpl))
                     }
                 }
             }

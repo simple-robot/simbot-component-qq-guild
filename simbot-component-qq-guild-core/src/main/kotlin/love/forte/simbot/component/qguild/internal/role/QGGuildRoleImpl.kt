@@ -19,9 +19,9 @@ package love.forte.simbot.component.qguild.internal.role
 
 import love.forte.simbot.ExperimentalSimbotApi
 import love.forte.simbot.ID
-import love.forte.simbot.component.qguild.QGBot
 import love.forte.simbot.component.qguild.QGGuild
 import love.forte.simbot.component.qguild.QGMember
+import love.forte.simbot.component.qguild.internal.QGBotImpl
 import love.forte.simbot.component.qguild.internal.QGGuildImpl
 import love.forte.simbot.component.qguild.internal.newSupervisorCoroutineContext
 import love.forte.simbot.component.qguild.role.QGGuildRole
@@ -40,7 +40,7 @@ import kotlin.coroutines.CoroutineContext
  */
 @OptIn(ExperimentalSimbotApi::class)
 internal class QGGuildRoleImpl(
-    override val bot: QGBot,
+    override val bot: QGBotImpl,
     override val guildId: ID,
     @Volatile override var source: Role,
     private val sourceGuild: QGGuildImpl

@@ -60,7 +60,7 @@ import love.forte.simbot.qguild.model.Guild as QGSourceGuild
  * @author ForteScarlet
  */
 internal class QGGuildImpl private constructor(
-    private val baseBot: QGBotImpl,
+    internal val baseBot: QGBotImpl,
     override val source: QGSourceGuild,
     override val coroutineContext: CoroutineContext,
 

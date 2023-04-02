@@ -42,8 +42,8 @@ internal class QGRoleCreatorImpl(private val guild: QGGuildImpl) : QGRoleCreator
         }
 
         val created = CreateGuildRoleApi.create(guild.id.literal, name, color, isHoist?.let { if (it) 1 else 0 })
-            .requestBy(guild.bot)
+            .requestBy(guild.baseBot)
 
-        return QGGuildRoleImpl(guild.bot, guild.id, created.role, guild)
+        return QGGuildRoleImpl(guild.baseBot, guild.id, created.role, guild)
     }
 }
