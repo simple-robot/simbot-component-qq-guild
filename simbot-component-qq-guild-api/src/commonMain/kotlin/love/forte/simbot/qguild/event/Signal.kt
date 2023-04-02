@@ -212,7 +212,6 @@ public sealed class Signal<D>(@Serializable(Opcode.SerializerByCode::class) publ
          * [Unknown] 的构建仅由内部完成。
          *
          */
-        @SerialName("_UNKNOWN")
         public data class Unknown @InternalApi constructor(override val s: Long, override val data: JsonElement, val raw: String) : Dispatch()
 
     }
