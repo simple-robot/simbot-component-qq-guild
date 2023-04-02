@@ -34,6 +34,7 @@ import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonObject
@@ -639,39 +640,45 @@ internal class BotImpl(
                 return
             }
 
-            logger.trace("Received next frame: {}", frame)
-            val raw = (frame as? Frame.Text)?.readText() ?: run {
-                logger.debug("Not Text frame {}, skip.", frame)
-                loop.appendStage(this) // next: this
-                return
-            }
-            logger.debug("Received text frame raw: {}", raw)
-            val json = wsDecoder.parseToJsonElement(raw)
-            when (val opcode = json.getOpcode()) {
-                Opcodes.Dispatch -> {
-                    // event
-                    val dispatch = wsDecoder.decodeFromJsonElement(Signal.Dispatch.serializer(), json)
-                    logger.debug("Received dispatch: {}", dispatch)
-                    val dispatchSeq = dispatch.seq
-
-                    // 推送事件
-                    eventSharedFlow.emit(EventData(raw, dispatch))
-
-                    // seq留下最大值
-                    val currentSeq = seq.updateAndGet { pref -> max(pref, dispatchSeq) }
-                    logger.trace("Current seq: {}", currentSeq)
-                }
-
-                Opcodes.Reconnect -> {
-                    // 重新连接
-                    logger.debug("Received reconnect signal. Do Resume.")
-                    loop.appendStage(Resume(client))
+            try {
+                logger.trace("Received next frame: {}", frame)
+                val raw = (frame as? Frame.Text)?.readText() ?: run {
+                    logger.debug("Not Text frame {}, skip.", frame)
+                    loop.appendStage(this) // next: this
                     return
                 }
+                logger.debug("Received text frame raw: {}", raw)
+                val json = wsDecoder.parseToJsonElement(raw)
+                when (val opcode = json.getOpcode()) {
+                    Opcodes.Dispatch -> {
+                        // event
+                        val dispatch = wsDecoder.decodeFromJsonElement(Signal.Dispatch.serializer(), json)
+                        logger.debug("Received dispatch: {}", dispatch)
+                        val dispatchSeq = dispatch.seq
 
-                else -> {
-                    logger.debug("Received other signal with opcode: {}, raw: {}", opcode, raw)
+                        // 推送事件
+                        eventSharedFlow.emit(EventData(raw, dispatch))
+
+                        // seq留下最大值
+                        val currentSeq = seq.updateAndGet { pref -> max(pref, dispatchSeq) }
+                        logger.trace("Current seq: {}", currentSeq)
+                    }
+
+                    Opcodes.Reconnect -> {
+                        // 重新连接
+                        logger.debug("Received reconnect signal. Do Resume.")
+                        loop.appendStage(Resume(client))
+                        return
+                    }
+
+                    else -> {
+                        logger.debug("Received other signal with opcode: {}, raw: {}", opcode, raw)
+                    }
                 }
+            } catch (serEx: SerializationException) {
+                logger.error("Serialization exception: {}", serEx.message, serEx)
+            } catch (other: Throwable) {
+                logger.error("Exception: {}", other.message, other)
             }
 
             // next: self
