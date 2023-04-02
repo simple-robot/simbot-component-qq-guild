@@ -26,6 +26,8 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
+import love.forte.simbot.qguild.InternalApi
+import love.forte.simbot.qguild.event.Signal.Dispatch.Unknown
 import love.forte.simbot.qguild.event.Signal.Resume.Data
 import kotlin.jvm.JvmField
 
@@ -150,6 +152,8 @@ public sealed class Signal<D>(@Serializable(Opcode.SerializerByCode::class) publ
      *
      * 具体的事件类型参考各实现类。
      *
+     * 当一个事件的解析出现异常或存在未知的 `type` 时，可被解析为 [Unknown] 并仅携带原始信息。
+     *
      * @see love.forte.simbot.qguild.event
      *
      */
@@ -199,8 +203,23 @@ public sealed class Signal<D>(@Serializable(Opcode.SerializerByCode::class) publ
         }
 
 
+
+        /**
+         * 用于承载未知类型事件的事件类型。
+         *
+         * 当bot接收到了一个事件但是其类型未知时将会被包装为 [Unknown]。
+         *
+         * [Unknown] 的构建仅由内部完成。
+         *
+         */
+        @SerialName("_UNKNOWN")
+        public data class Unknown @InternalApi constructor(override val s: Long, override val data: JsonElement, val raw: String) : Dispatch()
+
     }
 }
+
+
+
 
 /**
  * 获取当前json结构体中的 `op` 字段。
