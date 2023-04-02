@@ -35,10 +35,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.SerializationException
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.int
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.*
 import love.forte.simbot.logger.Logger
 import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.logger.isDebugEnabled
@@ -652,7 +649,21 @@ internal class BotImpl(
                 when (val opcode = json.getOpcode()) {
                     Opcodes.Dispatch -> {
                         // event
-                        val dispatch = wsDecoder.decodeFromJsonElement(Signal.Dispatch.serializer(), json)
+                        val dispatch = try {
+                            wsDecoder.decodeFromJsonElement(Signal.Dispatch.serializer(), json)
+                        } catch (serEx: SerializationException) {
+                            if (serEx.message?.startsWith("Polymorphic serializer was not found for") == true) {
+                                // 未知的事件类型
+                                val disSeq = runCatching { json.jsonObject["s"]?.jsonPrimitive?.longOrNull ?: seq.value }.getOrElse { seq.value }
+                                Signal.Dispatch.Unknown(disSeq, json, raw).also {
+                                    val t = kotlin.runCatching { json.jsonObject[Signal.Dispatch.DISPATCH_CLASS_DISCRIMINATOR]?.jsonPrimitive?.content }
+                                    logger.warn("Unknown event type {}, decode it as Unknown: {}", t, it)
+                                }
+                            } else {
+                                // throw out
+                                throw serEx
+                            }
+                        }
                         logger.debug("Received dispatch: {}", dispatch)
                         val dispatchSeq = dispatch.seq
 

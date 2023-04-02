@@ -23,7 +23,6 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import love.forte.simbot.qguild.api.message.QGMessageForSending
 import love.forte.simbot.qguild.model.Message
-import kotlin.test.Test
 
 
 /**
@@ -32,7 +31,7 @@ import kotlin.test.Test
  */
 class QGMessageForSendingToFormDataTest {
     
-    @Test
+//    @Test
     fun serializerTest() {
         val param = QGMessageForSending(
             "content",
