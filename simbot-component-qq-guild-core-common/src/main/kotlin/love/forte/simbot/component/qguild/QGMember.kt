@@ -22,6 +22,7 @@ import love.forte.simbot.ExperimentalSimbotApi
 import love.forte.simbot.ID
 import love.forte.simbot.component.qguild.message.QGContentText
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
+import love.forte.simbot.component.qguild.role.QGMemberRole
 import love.forte.simbot.definition.GuildMember
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
@@ -61,7 +62,7 @@ public interface QGMember : GuildMember, CoroutineScope, QGObjectiveContainer<QG
      * 成员拥有的角色
      */
     @ExperimentalSimbotApi
-    override val roles: Items<QGRole>
+    override val roles: Items<QGMemberRole>
 
     /**
      * 向目标成员发送私聊消息。

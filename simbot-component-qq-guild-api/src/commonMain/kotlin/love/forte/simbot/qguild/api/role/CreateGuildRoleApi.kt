@@ -17,7 +17,6 @@
 
 package love.forte.simbot.qguild.api.role
 
-import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -25,6 +24,7 @@ import love.forte.simbot.qguild.ApiModel
 import love.forte.simbot.qguild.api.PostQQGuildApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimplePostApiDescription
+import love.forte.simbot.qguild.model.ColorIntSerializer
 import love.forte.simbot.qguild.model.Role
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
@@ -82,7 +82,7 @@ public class CreateGuildRoleApi private constructor(
     @Serializable
     private data class NewBody(
         val name: String?,
-        val color: Int?,
+        @Serializable(ColorIntSerializer::class) val color: Int?,
         val hoist: Int?,
     ) {
         init {
@@ -106,7 +106,9 @@ public data class GuildRoleCreated(
     /**
      * 所创建的频道身份组对象
      */
-    val role: Role
+    val role: Role? = null
+    // TODO 与文档描述不符，实际上为null
+    //  see https://qun.qq.com/qqweb/qunpro/share?_wv=3&_wwv=128&appChannel=share&inviteCode=1ZCS7xZH0UF&contentID=1jDEHr&businessType=2&from=181174&shareSource=5&biz=ka
 )
 
 

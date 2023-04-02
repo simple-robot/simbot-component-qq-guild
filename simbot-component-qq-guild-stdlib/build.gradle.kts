@@ -140,6 +140,7 @@ kotlin {
                 api(simbotLogger)
                 api(simbotUtilLoop)
                 api(libs.ktor.client.ws)
+                api("org.jetbrains.kotlinx:atomicfu:${libs.versions.atomicfu.get()}")
             }
         }
 
@@ -187,3 +188,8 @@ kotlin {
 
 }
 
+atomicfu {
+    transformJvm = true
+    transformJs = true
+    jvmVariant = "FU"
+}

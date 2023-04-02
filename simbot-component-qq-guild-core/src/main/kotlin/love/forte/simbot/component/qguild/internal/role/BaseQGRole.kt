@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2023. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -15,25 +15,20 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package love.forte.simbot.component.qguild.internal
+package love.forte.simbot.component.qguild.internal.role
 
 import love.forte.simbot.ExperimentalSimbotApi
-import love.forte.simbot.ID
+import love.forte.simbot.component.qguild.QGBot
 import love.forte.simbot.component.qguild.QGRole
-import kotlin.coroutines.CoroutineContext
-import love.forte.simbot.qguild.model.Role as QGSourceRole
+import love.forte.simbot.qguild.model.Role
+
 
 /**
  *
  * @author ForteScarlet
  */
-@OptIn(ExperimentalSimbotApi::class)
-internal class QGRoleImpl(
-    @Suppress("unused")
-    private val bot: QGBotImpl,
-    override val source: QGSourceRole,
-) : QGRole {
-    override val coroutineContext: CoroutineContext = bot.newSupervisorCoroutineContext()
-    override val id: ID = source.id.ID
-
+@ExperimentalSimbotApi
+internal abstract class BaseQGRole : QGRole {
+    abstract val bot: QGBot
+    abstract override var source: Role
 }

@@ -24,6 +24,7 @@ import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.api.QQGuildApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleApiDescription
+import love.forte.simbot.qguild.model.ColorIntSerializer
 import love.forte.simbot.qguild.model.Role
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
@@ -78,7 +79,7 @@ public class ModifyGuildRoleApi private constructor(
     override val body: Any get() = _body
 
     @Serializable
-    private data class Body(val name: String?, val color: Int?, val hoist: Int?) {
+    private data class Body(val name: String?, @Serializable(ColorIntSerializer::class) val color: Int?, val hoist: Int?) {
         init {
             require(name != null || color != null || hoist != null) {
                 "At least one of the parameters should not be null"

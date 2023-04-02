@@ -6,6 +6,7 @@ okio = "3.3.0"
 ktor = "2.2.3"
 openjdk-jmh = "1.35"
 log4j = "2.14.1"
+atomicfu = "0.20.1"
 
 [libraries]
 # jetbrains-annotation

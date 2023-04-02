@@ -23,8 +23,10 @@ import io.ktor.client.statement.*
 import io.ktor.client.utils.*
 import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.StringFormat
 import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.json.Json
 import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.logger.isDebugEnabled
@@ -219,6 +221,10 @@ public abstract class QQGuildApi<out R> : PlatformQQGuildApi<R>() {
 
         checkStatus(text, DefaultErrInfoDecoder, resp.status)
 
+        if (text.isEmpty() && resp.status.isSuccess()) {
+            return "{}"
+        }
+
         return text
     }
 
@@ -301,9 +307,19 @@ private suspend fun QQGuildApi<*>.request0(client: HttpClient, server: Url, toke
 }
 
 
+@Suppress("UNCHECKED_CAST")
+@OptIn(ExperimentalSerializationApi::class)
 private fun <R> QQGuildApi<R>.decodeResponse(
     decoder: StringFormat, remainingText: String
 ): R {
+    if (resultDeserializer === Unit.serializer()) {
+        return Unit as R
+    }
+
+    if (remainingText.isEmpty() && resultDeserializer.descriptor.kind is StructureKind.OBJECT) {
+        return decoder.decodeFromString(resultDeserializer, "{}")
+    }
+
     return decoder.decodeFromString(resultDeserializer, remainingText)
 }
 
