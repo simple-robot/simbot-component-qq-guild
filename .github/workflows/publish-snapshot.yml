@@ -1,4 +1,4 @@
-name: Publish
+name: Publish Snapshot
 on:
   push:
     branches:
@@ -8,9 +8,9 @@ on:
 
     paths:
       - '**src/main/kotlin/**.kt'
-      - 'buildSrc/**'
       - '**src/main/java/**.java'
-      -
+      - 'buildSrc/**'
+
   # 手动触发工作流
   workflow_dispatch:
 

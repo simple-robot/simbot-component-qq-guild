@@ -159,7 +159,7 @@ public data class QGBotFileConfiguration(
          *
          * @see IntentsConfig
          */
-        @SerialName("intents")
+        @SerialName("intents") // TODO type: ALL?
         val intentsConfig: IntentsConfig = IntentsConfig.Raw(
             EventIntents.Guilds.intents
              + EventIntents.GuildMembers.intents
