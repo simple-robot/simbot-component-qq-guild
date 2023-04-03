@@ -58,6 +58,8 @@ jobs:
             closeAndReleaseStagingRepository
             --info
             --warning-mode all
+            -Porg.gradle.jvmargs="-Xmx8g -Xms2g -XX:MaxMetaspaceSize=1g -Dfile.encoding=UTF-8" 
+            -Porg.gradle.daemon=false
 
   deploy-doc:
     name: Deploy-doc

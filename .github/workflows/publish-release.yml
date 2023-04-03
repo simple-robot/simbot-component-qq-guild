@@ -13,7 +13,7 @@ env:
   OSSRH_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
   SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
   SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-  GRADLE_OPTS: "-Xmx8g -Xms2g -Dfile.encoding=UTF-8"
+  GRADLE_OPTS: "-Xmx8g -Xms2g -XX:MaxMetaspaceSize=1g -Dfile.encoding=UTF-8"
 
 
 jobs:
@@ -41,7 +41,7 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           gradle-version: 7.6
-          arguments: assemble test
+          arguments: assemble test -Porg.gradle.daemon=false
 
       # setup Gradle
       - name: Publish Release
@@ -55,7 +55,8 @@ jobs:
             --warning-mode all
             -x test
             --build-cache
-            -Porg.gradle.jvmargs="-XX:MaxMetaspaceSize=1g -Dfile.encoding=UTF-8"
+            -Porg.gradle.jvmargs="-Xmx8g -Xms2g -XX:MaxMetaspaceSize=1g -Dfile.encoding=UTF-8"
+            -Porg.gradle.daemon=false
 
         env:
           SIMBOT_IS_SNAPSHOT: false
@@ -112,7 +113,8 @@ jobs:
             --warning-mode all
             -x test
             --build-cache
-            -Porg.gradle.jvmargs="-XX:MaxMetaspaceSize=1g -Dfile.encoding=UTF-8"
+            -Porg.gradle.jvmargs="-Xmx8g -Xms2g -XX:MaxMetaspaceSize=1g -Dfile.encoding=UTF-8"
+            -Porg.gradle.daemon=false
         env:
           SIMBOT_IS_SNAPSHOT: true
           SIMBOT_SNAPSHOT_ONLY: true
@@ -146,7 +148,7 @@ jobs:
             --warning-mode all
             -x test
             --build-cache
-            -Porg.gradle.jvmargs="-XX:MaxMetaspaceSize=1g -Dfile.encoding=UTF-8" 
+            -Porg.gradle.jvmargs="-Xmx8g -Xms2g -XX:MaxMetaspaceSize=1g -Dfile.encoding=UTF-8" 
             -Porg.gradle.daemon=false
 
       - name: Push to doc repository
