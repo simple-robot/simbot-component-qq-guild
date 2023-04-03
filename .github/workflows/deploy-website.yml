@@ -2,8 +2,10 @@ name: Deploy Website
 on:
   push:
     branches:
-#      - main
-      - dev/ver/v**
+      - main
+      - dev/ver/**
+      - dev/main
+
     paths:
       - 'website/**'
 

@@ -194,5 +194,5 @@ internal class QGBotImpl(
 /**
  * 从 [QGBot] 中分配一个拥有新的 [SupervisorJob] 的 [CoroutineContext].
  */
-internal fun QGBot.newSupervisorCoroutineContext(): CoroutineContext =
+internal fun CoroutineScope.newSupervisorCoroutineContext(): CoroutineContext =
     coroutineContext + SupervisorJob(coroutineContext[Job])

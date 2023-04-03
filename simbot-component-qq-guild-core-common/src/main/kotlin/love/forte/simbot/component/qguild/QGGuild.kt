@@ -21,6 +21,8 @@ import kotlinx.coroutines.CoroutineScope
 import love.forte.simbot.ExperimentalSimbotApi
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
+import love.forte.simbot.component.qguild.role.QGGuildRole
+import love.forte.simbot.component.qguild.role.QGRoleCreator
 import love.forte.simbot.definition.Guild
 import love.forte.simbot.definition.Organization
 import love.forte.simbot.qguild.QQGuildApiException
@@ -206,7 +208,13 @@ public interface QGGuild : Guild, CoroutineScope, QGObjectiveContainer<QGSourceG
      * @throws QQGuildApiException 请求失败，例如没有权限
      */
     @ExperimentalSimbotApi
-    override val roles: Items<QGRole>
+    override val roles: Items<QGGuildRole>
+
+    /**
+     * 得到一个角色构造器。
+     */
+    @ExperimentalSimbotApi
+    public fun roleCreator(): QGRoleCreator
 
     //// Impls
 
@@ -228,3 +236,12 @@ public interface QGGuild : Guild, CoroutineScope, QGObjectiveContainer<QGSourceG
     @JvmSynthetic
     override suspend fun previous(): Organization? = null
 }
+
+/**
+ * 构造一个 [QGRole]。
+ *
+ * @see QGRoleCreator
+ */
+@ExperimentalSimbotApi
+public suspend inline fun QGGuild.createRole(block: QGRoleCreator.() -> Unit): QGGuildRole =
+    roleCreator().also(block).create()

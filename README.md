@@ -31,9 +31,11 @@ _下文 `simple-robot v3.x` 简称为 `simbot3`_
 
 ## 文档
 
-了解simbot3: [simbot3官网](https://simbot.forte.love)
+了解simbot3: [**simbot3官网**](https://simbot.forte.love)
 
-KDoc(JavaDoc): [文档引导站点](https://docs.simbot.forte.love) 中的 [QQ频道KDoc站点](https://docs.simbot.forte.love/components/qq-guild)
+**QQ频道组件**文档网站（尚在建设中，暂未配置域名）：https://simple-robot.github.io/simbot-component-qq-guild/
+
+**KDoc(JavaDoc)**: [**文档引导站点**](https://docs.simbot.forte.love) 中的 [QQ频道KDoc站点](https://docs.simbot.forte.love/components/qq-guild)
 
 <br>
 

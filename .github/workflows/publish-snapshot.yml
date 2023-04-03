@@ -1,16 +1,16 @@
-name: Publish
+name: Publish Snapshot
 on:
   push:
     branches:
       - main
-      - dev-snapshot**
-      - v*.**.**.**
-      - dev/pref/**
+      - dev/ver/**
+      - dev/main
+
     paths:
       - '**src/main/kotlin/**.kt'
-      - 'buildSrc/**'
       - '**src/main/java/**.java'
-      -
+      - 'buildSrc/**'
+
   # 手动触发工作流
   workflow_dispatch:
 
@@ -58,6 +58,8 @@ jobs:
             closeAndReleaseStagingRepository
             --info
             --warning-mode all
+            -Porg.gradle.jvmargs="-Xmx8g -Xms2g -XX:MaxMetaspaceSize=1g -Dfile.encoding=UTF-8" 
+            -Porg.gradle.daemon=false
 
   deploy-doc:
     name: Deploy-doc

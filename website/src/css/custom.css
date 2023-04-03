@@ -1,3 +1,5 @@
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.2/font/bootstrap-icons.css");
+
 /**
  * Any CSS included here will be global. The classic template
  * bundles Infima by default. Infima is a CSS framework designed to
@@ -7,11 +9,22 @@
 /* You can override the default Infima variables here. */
 @font-face {
     font-family: "JetBrains Mono";
-    src: url("/font/JetBrainsMono-SemiBold.woff2");
-    /*src: url("/font/JetBrainsMono.ttf");*/
+    src: url("JetBrainsMono-SemiBold.woff2");
 }
 
-@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.2/font/bootstrap-icons.css");
+@font-face {
+    font-family: "iconfont";
+    src: url("iconfont.ttf?t=1680524259075") format('truetype');
+}
+
+a:not([class])::before {
+    content: '\f010b';
+    font-family: "iconfont", serif !important;
+    font-size: 0.75em;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
 
 strong[dark-theme='dark'] {
     text-decoration-line: underline;
@@ -24,27 +37,27 @@ strong {
 
 }
 
-
 strong code {
     text-decoration-line: underline;
-    text-decoration-color: #ef5d84;
+    text-decoration-color: var(--ifm-color-primary-dark);
+    /*#ef5d84*/
     /*#ef5d84: rgba(239,93,132,0.25)*/
 }
 
 strong code[dark-theme='dark'] {
     text-decoration-line: underline;
-    text-decoration-color: #f339a9;
+    text-decoration-color: var(--ifm-color-primary-light);
     /*#f339a9*/
 }
 
 code {
     border-color: rgba(0, 0, 0, 0.02);
-    color: #f339a9;
+    color: var(--ifm-color-primary-light); /*#f339a9;*/
 
 }
 code[dark-theme='dark'] {
     border-color: rgba(0, 0, 0, 0.02);
-    color: #ef5d84;
+    color: var(--ifm-color-primary-dark); /*#ef5d84;*/
 }
 
 :root {

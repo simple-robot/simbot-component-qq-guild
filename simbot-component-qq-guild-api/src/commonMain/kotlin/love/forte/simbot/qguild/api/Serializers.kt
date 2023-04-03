@@ -24,12 +24,11 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
-
 /**
  * - `0` -> false
  * - other -> true, decode true to `1`
  */
-public object BooleanToNumber : KSerializer<Boolean> {
+public object BooleanToNumberSerializer : KSerializer<Boolean> {
     override fun deserialize(decoder: Decoder): Boolean {
         return decoder.decodeInt() != 0
     }
@@ -37,7 +36,11 @@ public object BooleanToNumber : KSerializer<Boolean> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("BooleanToInt", PrimitiveKind.BOOLEAN)
 
     override fun serialize(encoder: Encoder, value: Boolean) {
-        encoder.encodeByte(if (value) 1 else 0)
+        encoder.encodeInt(value.toNumber())
     }
 
+    /**
+     * 将 [Boolean] 转为 [Int]。
+     */
+    public fun Boolean.toNumber(): Int = if (this) 1 else 0
 }
