@@ -10,7 +10,6 @@
 @font-face {
     font-family: "JetBrains Mono";
     src: url("JetBrainsMono-SemiBold.woff2");
-    /*src: url("/font/JetBrainsMono.ttf");*/
 }
 
 @font-face {
@@ -18,11 +17,10 @@
     src: url("iconfont.ttf?t=1680524259075") format('truetype');
 }
 
-
 a:not([class])::before {
     content: '\f010b';
-    font-family: "iconfont" !important;
-    font-size: 16px;
+    font-family: "iconfont", serif !important;
+    font-size: 0.75em;
     font-style: normal;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
