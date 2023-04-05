@@ -115,15 +115,15 @@ async function config() {
                     }
                 },
                 // 公告
-                // announcementBar: {
-                //   id: 'announcementBar-still_under_construction',
-                //   content: `文档尚不完全，但也够用 🍵 v3.0.0 发布在即，可前往 <a href="https://github.com/orgs/simple-robot/discussions" target="_blank"><b>社区</b></a> 交流或通过 <a href="https://github.com/simple-robot/simpler-robot/issues" target="_blank"><b>Issues</b></a> 反馈问题 😊😊😊‍`,
-                //   // backgroundColor: '#FFB906',
-                //   // backgroundColor: 'linear-gradient(0deg,red 50%,green 50%)',
-                //   // textColor: '#142F48',
-                //   isCloseable: true
-                //
-                // },
+                announcementBar: {
+                  id: 'announcementBar-still_alpha',
+                  content: `⚒️🛠️👷QQ频道组件仍处于ALPHA阶段，欢迎积极<a href="https://github.com/simple-robot/simpler-robot/issues/new?template=bug-report.yml">反馈问题</a>或<a href="https://github.com/simple-robot/simbot-component-qq-guild/pulls">协助我们</a>，非常感谢🙇‍`,
+                  // backgroundColor: '#FFB906',
+                  // backgroundColor: 'linear-gradient(0deg,red 50%,green 50%)',
+                  // textColor: '#142F48',
+                  isCloseable: false
+
+                },
                 navbar: {
                     title: 'Simple Robot | QQ频道组件',
                     logo: {
