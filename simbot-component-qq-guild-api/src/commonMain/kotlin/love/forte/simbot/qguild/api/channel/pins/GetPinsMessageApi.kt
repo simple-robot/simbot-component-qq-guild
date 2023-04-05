@@ -21,44 +21,38 @@ import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
 import love.forte.simbot.qguild.api.QQGuildApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
-import love.forte.simbot.qguild.api.SimpleApiDescription
+import love.forte.simbot.qguild.api.SimpleGetApiDescription
 import love.forte.simbot.qguild.model.PinsMessage
 import kotlin.jvm.JvmStatic
 
 
 /**
- * [添加精华消息](https://bot.q.qq.com/wiki/develop/api/openapi/pins/put_pins_message.html)
+ * [获取精华消息](https://bot.q.qq.com/wiki/develop/api/openapi/pins/get_pins_message.html)
  *
- * 用于添加子频道 `channel_id` 内的精华消息。
- *
- * - 精华消息在一个子频道内最多只能创建 `20` 条。
- * - 只有可见的消息才能被设置为精华消息。
- * - 接口返回对象中 `message_ids` 为当前请求后子频道内所有精华消息 `message_id` 数组。
+ * 用于获取子频道 `channel_id` 内的精华消息。
  *
  * @author ForteScarlet
  */
-public class AddPinsMessageApi private constructor(
-    channelId: String, messageId: String
+public class GetPinsMessageApi private constructor(
+    channelId: String
 ) : QQGuildApi<PinsMessage>() {
-    public companion object Factory : SimpleApiDescription(HttpMethod.Put, "/channels/{channel_id}/pins/{message_id}") {
+    public companion object Factory : SimpleGetApiDescription("/channels/{channel_id}/pins") {
 
         /**
-         * 构造一个 [AddPinsMessageApi]
+         * 构造一个 [GetPinsMessageApi]
          *
          * @param channelId 目标频道ID
-         * @param messageId 目标消息ID
          */
         @JvmStatic
-        public fun create(channelId: String, messageId: String): AddPinsMessageApi =
-            AddPinsMessageApi(channelId, messageId)
+        public fun create(channelId: String): GetPinsMessageApi = GetPinsMessageApi(channelId)
     }
 
-    private val path = arrayOf("channels", channelId, "pins", messageId)
+    private val path = arrayOf("channels", channelId, "pins")
 
 
     override val resultDeserializer: DeserializationStrategy<PinsMessage> get() = PinsMessage.serializer()
 
-    override val method: HttpMethod get() = HttpMethod.Put
+    override val method: HttpMethod get() = HttpMethod.Get
 
     override fun route(builder: RouteInfoBuilder) {
         builder.apiPath = path

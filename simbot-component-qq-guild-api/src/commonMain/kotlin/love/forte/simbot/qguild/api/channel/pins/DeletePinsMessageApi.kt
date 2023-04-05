@@ -20,7 +20,7 @@ package love.forte.simbot.qguild.api.channel.pins
 import io.ktor.http.*
 import love.forte.simbot.qguild.api.QQGuildApiWithoutResult
 import love.forte.simbot.qguild.api.RouteInfoBuilder
-import love.forte.simbot.qguild.api.SimplePostApiDescription
+import love.forte.simbot.qguild.api.SimpleApiDescription
 import love.forte.simbot.qguild.api.channel.pins.DeletePinsMessageApi.Factory.DELETE_ALL_MESSAGE_ID
 import kotlin.jvm.JvmStatic
 
@@ -37,7 +37,7 @@ import kotlin.jvm.JvmStatic
 public class DeletePinsMessageApi private constructor(
     channelId: String, messageId: String
 ) : QQGuildApiWithoutResult() {
-    public companion object Factory : SimplePostApiDescription("/channels/{channel_id}/pins/{message_id}") {
+    public companion object Factory : SimpleApiDescription(HttpMethod.Delete, "/channels/{channel_id}/pins/{message_id}") {
 
         /**
          * 当要删除的目标为全部时使用的 `message_id` 。
