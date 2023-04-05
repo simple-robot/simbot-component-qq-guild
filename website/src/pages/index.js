@@ -36,7 +36,7 @@ export default function Home() {
   return (
     <Layout
       title={`欢迎!`}
-      description="提供QQ频道平台功能的simbot组件实现库 <head />">
+      description="提供QQ频道平台功能的simbot组件实现 <head />">
       <HomepageHeader />
       <main>
         <HomepageFeatures />

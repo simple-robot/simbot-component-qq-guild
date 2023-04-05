@@ -9,13 +9,13 @@ const currentYear = new Date().getFullYear()
 const copyrightYear = currentYear === firstYear ? firstYear : firstYear + '-' + currentYear
 
 // forte, forte-scarlet, fortescarlet, simbot, simple-robot, bot, qq-bot, qq-guild, QQ频道, QQ机器人, simbot-qq-guild, simbot-qq-guild, simbot组件
-const keywords = ['simbot', 'bot', 'qq bot', 'qq guild', 'qq频道', 'QQ机器人', 'simbot-qq-guild', 'simbot-tencent-guild', 'simbot组件', 'forte', 'forte scarlet', 'fortescarlet']
+const keywords = ['simbot', 'bot', 'QQ bot', 'QQ guild', 'QQ频道', 'QQ频道机器人', 'QQ机器人', 'simbot-qq-guild', 'simbot-tencent-guild', 'simbot组件', 'forte', 'forte scarlet', 'fortescarlet']
 
 /** @type {import('@docusaurus/types').Config} */
 async function config() {
     return {
-        title: 'Simple Robot QQ频道组件库',
-        tagline: `实现QQ频道平台目标的simbot组件实现库`,
+        title: 'Simple Robot QQ频道组件',
+        tagline: `实现QQ频道平台目标的simbot组件实现`,
         favicon: 'img/favicon.png',
 
         // Set the production url of your site here
