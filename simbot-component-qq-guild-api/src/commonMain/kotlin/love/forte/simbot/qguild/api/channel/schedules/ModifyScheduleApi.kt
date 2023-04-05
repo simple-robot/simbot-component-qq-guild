@@ -45,6 +45,7 @@ public class ModifyScheduleApi private constructor(
          * 构造 [ModifyScheduleApi]
          *
          * @param channelId 日程子频道ID
+         * @param scheduleId 日程ID
          * @param body 创建目标
          *
          */
