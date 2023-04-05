@@ -22,32 +22,27 @@
 
 </div>
 
-这是 [simbot3](https://github.com/simple-robot/simpler-robot)
-下的子项目， 本库提供对 [QQ频道机器人](https://bot.q.qq.com/wiki/develop/api/) 中`API`内容的完整实现以及事件相关的信令实现， 以及BOT对于事件的监听与交互。
+这是 [**simple-robot v3.x**](https://github.com/simple-robot/simpler-robot)
+下的子项目，是针对 [**QQ频道机器人**](https://bot.q.qq.com/wiki/develop/api/) 各方面的实现，
+包括对 `API` 内容的实现、事件相关的实现以及BOT对于事件的监听与交互等。
 
-_下文 `simple-robot v3.x` 简称为 `simbot3`_
+- 基于 [`Kotlin`](https://kotlinlang.org/) 提供[多平台](https://kotlinlang.org/docs/multiplatform.html)/JVM平台(core模块) 特性
+- 基于 [`Kotlin coroutines`](https://github.com/Kotlin/kotlinx.coroutines) 与 [`Ktor`](https://ktor.io/) 提供高效易用的API；
+- 基于 [`Kotlin serialization`](https://github.com/Kotlin/kotlinx.serialization) 进行数据序列化/反序列化操作。
 
-<br>
+> _下文 `simple-robot v3.x` 简称为 `simbot3`_
 
 ## 文档
 
-了解simbot3: [**simbot3官网**](https://simbot.forte.love)
+- 了解simbot3: [**simbot3官网**](https://simbot.forte.love)
 
-**QQ频道组件**文档网站（尚在建设中，暂未配置域名）：https://simple-robot.github.io/simbot-component-qq-guild/
+- **QQ频道组件**文档网站：https://simple-robot.github.io/simbot-component-qq-guild/ （尚在 _🔧建设中_，暂未配置域名，未来可能会变化）
 
-**KDoc(JavaDoc)**: [**文档引导站点**](https://docs.simbot.forte.love) 中的 [QQ频道KDoc站点](https://docs.simbot.forte.love/components/qq-guild)
-
-<br>
-
-本库通过 [`Kotlin`](https://kotlinlang.org/) 提供多平台/JVM平台(core模块) 实现； 
-基于 [`kotlinx.coroutines`](https://github.com/Kotlin/kotlinx.coroutines) 与
-[`Ktor`](https://ktor.io/)
-提供高效易用的API；
-基于 [`kotlinx.serialization`](https://github.com/Kotlin/kotlinx.serialization) 进行数据序列化/反序列化操作。
+- **API文档**: [**文档引导站点**](https://docs.simbot.forte.love) 中QQ频道的 [**KDoc站点**](https://docs.simbot.forte.love/components/qq-guild)
 
 <br>
 
-## 前言
+## ⚠ 注意事项
 
 目前无论是当前仓库还是 `simbot3` 都处于紧张的早中期建设阶段，在正式版发布之前必然存在很多不可预知的问题，并且开发进度无法清晰预估，毕竟一天一共就24个小时，而我们团队的精力并非无限。
 
