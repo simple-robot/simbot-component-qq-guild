@@ -17,20 +17,27 @@
 
 package love.forte.simbot.component.qguild.internal.role
 
+import kotlinx.coroutines.flow.map
 import love.forte.simbot.ExperimentalSimbotApi
 import love.forte.simbot.ID
 import love.forte.simbot.component.qguild.QGGuild
 import love.forte.simbot.component.qguild.QGMember
 import love.forte.simbot.component.qguild.internal.QGBotImpl
 import love.forte.simbot.component.qguild.internal.QGGuildImpl
+import love.forte.simbot.component.qguild.internal.QGMemberImpl
 import love.forte.simbot.component.qguild.internal.newSupervisorCoroutineContext
 import love.forte.simbot.component.qguild.role.QGGuildRole
 import love.forte.simbot.component.qguild.role.QGRoleUpdater
 import love.forte.simbot.component.qguild.util.requestBy
 import love.forte.simbot.literal
+import love.forte.simbot.qguild.api.member.GetGuildRoleMemberListApi
+import love.forte.simbot.qguild.api.member.createFlow
 import love.forte.simbot.qguild.api.role.AddMemberRoleApi
 import love.forte.simbot.qguild.api.role.DeleteGuildRoleApi
 import love.forte.simbot.qguild.model.Role
+import love.forte.simbot.utils.item.Items
+import love.forte.simbot.utils.item.effectOn
+import love.forte.simbot.utils.item.itemsByFlow
 import kotlin.coroutines.CoroutineContext
 
 
@@ -76,4 +83,21 @@ internal class QGGuildRoleImpl(
         DeleteGuildRoleApi.create(guildId.literal, source.id).requestBy(bot)
         return true
     }
+
+    override val members: Items<QGMember>
+        get() {
+            val guildId = guildId
+            val guildIdLiteral = guildId.literal
+            val roleId = source.id
+
+            return itemsByFlow { prop ->
+                GetGuildRoleMemberListApi.createFlow(
+                    guildIdLiteral,
+                    roleId,
+                    prop.batch.takeIf { it < 1 } ?: GetGuildRoleMemberListApi.MAX_LIMIT
+                ) { requestBy(bot) }
+                    .let(prop::effectOn)
+                    .map { QGMemberImpl(bot, it, guildId) }
+            }
+        }
 }
