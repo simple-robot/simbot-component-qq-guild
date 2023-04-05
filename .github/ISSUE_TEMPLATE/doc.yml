@@ -15,7 +15,7 @@ body:
         <hr />
 
 
-  - type: download
+  - type: dropdown
     id: type
     attributes:
       label: 反馈内容类型
