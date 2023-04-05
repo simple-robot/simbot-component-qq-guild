@@ -33,7 +33,6 @@ import love.forte.simbot.component.qguild.internal.role.QGRoleCreatorImpl
 import love.forte.simbot.component.qguild.role.QGRoleCreator
 import love.forte.simbot.component.qguild.util.requestBy
 import love.forte.simbot.literal
-import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.api.apipermission.ApiPermissions
 import love.forte.simbot.qguild.api.apipermission.GetApiPermissionListApi
@@ -103,8 +102,7 @@ internal class QGGuildImpl private constructor(
         // 批次
         val batchLimit = prop.batch.takeIf { it > 0 } ?: GetGuildMemberListApi.MAX_LIMIT
         val flow =
-            GetGuildMemberListApi.createFlow(source.id, batchLimit) { requestBy(baseBot) }
-                .flatMapConcat { it.asFlow() }.let(prop::effectOn)
+            GetGuildMemberListApi.createFlow(guildId = source.id, batch = batchLimit) { requestBy(baseBot) }.let(prop::effectOn)
 
         emitAll(flow.map { m -> QGMemberImpl(baseBot, m, this@QGGuildImpl.id) })
     }
@@ -214,8 +212,8 @@ internal class QGGuildImpl private constructor(
 
 
     companion object {
-        private val logger =
-            LoggerFactory.getLogger("love.forte.simbot.component.qguild.internal.QGGuildImpl")
+//        private val logger =
+//            LoggerFactory.getLogger("love.forte.simbot.component.qguild.internal.QGGuildImpl")
 
         internal fun qgGuild(
             bot: QGBotImpl,

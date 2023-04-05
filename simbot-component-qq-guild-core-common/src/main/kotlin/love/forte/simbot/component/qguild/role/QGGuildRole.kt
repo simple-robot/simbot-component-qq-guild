@@ -105,4 +105,5 @@ public interface QGGuildRole : QGRole, DeleteSupport {
     @JST
     override suspend fun delete(): Boolean
 
+    // TODO get members
 }

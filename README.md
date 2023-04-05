@@ -82,6 +82,10 @@
 
 👉 [前往模块](simbot-component-qq-guild-core) 了解更多。
 
+## 法欧莉
+
+如果你想看一看通过 `simbot-qq-guild` 组件的具体作品，可以前往QQ频道添加亲爱的 [法欧莉斯卡雷特](https://qun.qq.com/qunpro/robot/share?robot_appid=101986850) 来体验。
+
 
 ## License
 
