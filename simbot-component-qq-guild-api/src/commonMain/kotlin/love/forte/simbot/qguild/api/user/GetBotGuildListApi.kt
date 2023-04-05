@@ -17,6 +17,8 @@
 
 package love.forte.simbot.qguild.api.user
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.builtins.ListSerializer
 import love.forte.simbot.qguild.api.GetQQGuildApi
@@ -131,5 +133,27 @@ public class GetBotGuildListApi private constructor(
 }
 
 
+/**
+ * 使用流的方式查询所有频道服务器。
+ *
+ * @param after 第一次查询的 after，默认为null代表从头查询
+ * @param batch 每次查询所使用的limit，默认为 [GetBotGuildListApi.DEFAULT_LIMIT]
+ */
+public inline fun GetBotGuildListApi.Factory.createFlow(
+    batch: Int = DEFAULT_LIMIT,
+    after: String? = null,
+    crossinline doRequest: suspend GetBotGuildListApi.() -> List<SimpleGuild>
+): Flow<SimpleGuild> {
+    return flow {
+        var after0 = after
+        while (true) {
+            val list = create(after = after0, limit = batch).doRequest()
+            if (list.isEmpty()) {
+                break
+            }
 
-
+            list.forEach { emit(it) }
+            after0 = list.last().id
+        }
+    }
+}

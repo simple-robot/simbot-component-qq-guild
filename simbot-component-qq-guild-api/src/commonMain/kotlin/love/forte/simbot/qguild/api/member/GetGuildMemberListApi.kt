@@ -110,19 +110,26 @@ public class GetGuildMemberListApi private constructor(
 }
 
 /**
- * 根据指定的批次大小 [batch] 作为每次查询的 [GetGuildMemberListApi.limit] 进行全量查询。
+ * 使用流的方式查询所有频道服务器中的成员。
+ *
+ * @param guildId 要查询的 guild id
+ * @param batch 每次查询所使用的 limit，默认为 [GetGuildMemberListApi.MAX_LIMIT]
+ * @param after 第一次查询的 after，默认为null代表从头查询
  */
-public suspend inline fun GetGuildMemberListApi.Factory.createFlow(
+public inline fun GetGuildMemberListApi.Factory.createFlow(
     guildId: String,
-    batch: Int,
+    batch: Int = MAX_LIMIT,
+    after: String? = null,
     crossinline doRequest: suspend GetGuildMemberListApi.() -> List<SimpleMember>
-): Flow<List<SimpleMember>> = flow {
-    var after: String? = null
-    do {
-        val list = create(guildId, after = after, limit = batch).doRequest()
-        if (list.isNotEmpty()) {
-            emit(list)
-            after = list.last().user.id
+): Flow<SimpleMember> = flow {
+    var after0: String? = after
+    while (true) {
+        val list = create(guildId, after = after0, limit = batch).doRequest()
+        if (list.isEmpty()) {
+            break
         }
-    } while (list.isNotEmpty())
+
+        list.forEach { emit(it) }
+        after0 = list.last().user.id
+    }
 }
