@@ -132,7 +132,7 @@ guildList.forEach { guild ->
 - [x] 私信 API
 - [x] 禁言 API
 - [x] 公告 API
-- [ ] 精华消息 API
+- [x] 精华消息 API
 - [ ] 日程 API
 - [ ] 表情表态 API
 - [ ] 音频 API
