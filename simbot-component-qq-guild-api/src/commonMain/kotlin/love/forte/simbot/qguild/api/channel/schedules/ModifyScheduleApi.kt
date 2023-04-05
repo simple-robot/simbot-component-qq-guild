@@ -17,64 +17,72 @@
 
 package love.forte.simbot.qguild.api.channel.schedules
 
+import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
-import love.forte.simbot.qguild.api.PostQQGuildApi
+import love.forte.simbot.qguild.api.QQGuildApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
-import love.forte.simbot.qguild.api.SimplePostApiDescription
+import love.forte.simbot.qguild.api.SimpleApiDescription
 import love.forte.simbot.qguild.api.channel.schedules.ScheduleRequestBody.Companion.toCreateBody
 import love.forte.simbot.qguild.model.Schedule
 import kotlin.jvm.JvmStatic
 
 
 /**
- * [创建日程](https://bot.q.qq.com/wiki/develop/api/openapi/schedule/post_schedule.html)
+ * [修改日程](https://bot.q.qq.com/wiki/develop/api/openapi/schedule/patch_schedule.html)
  *
- * 用于在 `channel_id` 指定的 `日程子频道` 下创建一个日程。
+ * 用于修改日程子频道 `channel_id` 下 `schedule_id` 指定的日程的详情。
  *
  * - 要求操作人具有 `管理频道` 的权限，如果是机器人，则需要将机器人设置为管理员。
- * - 创建成功后，返回创建成功的日程对象。
- * - 创建操作频次限制
- *     - 单个管理员每天限 `10` 次。
- *     - 单个频道每天 `100` 次。
  *
  * @author ForteScarlet
  */
-public class CreateScheduleApi private constructor(
-    channelId: String, override val body: ScheduleRequestBody
-) : PostQQGuildApi<Schedule>() {
-    public companion object Factory : SimplePostApiDescription("/channels/{channel_id}/schedules") {
+public class ModifyScheduleApi private constructor(
+    channelId: String, scheduleId: String, override val body: ScheduleRequestBody
+) : QQGuildApi<Schedule>() {
+    public companion object Factory : SimpleApiDescription(HttpMethod.Patch, "/channels/{channel_id}/schedules/{schedule_id}") {
 
         /**
-         * 构造 [CreateScheduleApi]
+         * 构造 [ModifyScheduleApi]
          *
          * @param channelId 日程子频道ID
          * @param body 创建目标
          *
          */
         @JvmStatic
-        public fun create(channelId: String, body: ScheduleRequestBody): CreateScheduleApi =
-            CreateScheduleApi(channelId, body)
+        public fun create(channelId: String, scheduleId: String, body: ScheduleRequestBody): ModifyScheduleApi =
+            ModifyScheduleApi(channelId, scheduleId, body)
 
         /**
-         * 构造 [CreateScheduleApi]
+         * 构造 [ModifyScheduleApi]
          *
          * @param channelId 日程子频道ID
+         * @param scheduleId 日程ID
          * @param schedule 创建目标，会通过 [toCreateBody] 转化
          *
          */
         @JvmStatic
-        public fun create(channelId: String, schedule: Schedule): CreateScheduleApi =
-            create(channelId, schedule.toCreateBody())
+        public fun create(channelId: String, scheduleId: String, schedule: Schedule): ModifyScheduleApi =
+            create(channelId, scheduleId, schedule.toCreateBody())
+
+        /**
+         * 构造 [ModifyScheduleApi]
+         *
+         * @param channelId 日程子频道ID
+         * @param schedule 创建目标，会使用 [Schedule.id] 作为目标并通过 [toCreateBody] 转化
+         *
+         */
+        @JvmStatic
+        public fun create(channelId: String, schedule: Schedule): ModifyScheduleApi =
+            create(channelId, schedule.id, schedule.toCreateBody())
 
     }
 
     override val resultDeserializer: DeserializationStrategy<Schedule> get() = Schedule.serializer()
+    override val method: HttpMethod get() = HttpMethod.Patch
 
-    private val path = arrayOf("channels", channelId, "schedules")
+    private val path = arrayOf("channels", channelId, "schedules", scheduleId)
 
     override fun route(builder: RouteInfoBuilder) {
         builder.apiPath = path
     }
-
-
 }
