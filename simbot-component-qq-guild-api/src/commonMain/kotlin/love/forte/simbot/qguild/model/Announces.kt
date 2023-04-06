@@ -23,6 +23,7 @@ import love.forte.simbot.qguild.Api4J
 import love.forte.simbot.qguild.ApiModel
 import kotlin.jvm.JvmName
 
+
 /**
  * [公告对象](https://bot.q.qq.com/wiki/develop/api/openapi/announces/model.html)
  */

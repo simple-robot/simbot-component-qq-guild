@@ -53,6 +53,7 @@ kotlin {
 
     js(IR) {
         nodejs()
+        binaries.library()
     }
 
 
