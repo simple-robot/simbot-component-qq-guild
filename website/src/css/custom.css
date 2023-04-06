@@ -53,11 +53,16 @@ strong code[dark-theme='dark'] {
 code {
     border-color: rgba(0, 0, 0, 0.02);
     color: var(--ifm-color-primary-light); /*#f339a9;*/
-
 }
+
 code[dark-theme='dark'] {
     border-color: rgba(0, 0, 0, 0.02);
     color: var(--ifm-color-primary-dark); /*#ef5d84;*/
+}
+
+code .token-line {
+    line-height: 24px;
+    /*Letter-spacing: 1px;*/
 }
 
 :root {

@@ -1,6 +1,6 @@
 ---
 title: 使用simbot核心库
-position: 3
+sidebar_position: 3
 ---
 
 :::info 其他参考
