@@ -114,7 +114,9 @@ public data class QGBotFileConfiguration(
          *
          * ```json
          * {
-         *   "serverUrl": "https://xxx.com"
+         *   "config": {
+         *     "serverUrl": "https://xxx.com"
+         *   }
          * }
          * ```
          *
@@ -122,7 +124,9 @@ public data class QGBotFileConfiguration(
          *
          * ```json
          * {
-         *   "serverUrl": "SANDBOX"
+         *   "config": {
+         *     "serverUrl": "SANDBOX"
+         *   }
          * }
          * ```
          */
@@ -133,22 +137,25 @@ public data class QGBotFileConfiguration(
          *
          * ```json
          * {
-         *   "shard": {...}
+         *   "config": {
+         *     "shard": {...}
+         *   }
          * }
          * ```
          *
          * @see ShardConfig
          *
          */
-        @SerialName("shard")
-        val shardConfig: ShardConfig = ShardConfig.Full,
+        @SerialName("shard") val shardConfig: ShardConfig = ShardConfig.Full,
 
         /**
          * 事件订阅配置。
          *
          * ```json
          * {
-         *    "intents": { ... }
+         *    "config": {
+         *      "intents": { ... }
+         *    }
          * }
          * ```
          *
@@ -161,9 +168,7 @@ public data class QGBotFileConfiguration(
          */
         @SerialName("intents") // TODO type: ALL?
         val intentsConfig: IntentsConfig = IntentsConfig.Raw(
-            EventIntents.Guilds.intents
-             + EventIntents.GuildMembers.intents
-             + EventIntents.PublicGuildMessages.intents
+            EventIntents.Guilds.intents + EventIntents.GuildMembers.intents + EventIntents.PublicGuildMessages.intents
         ),
 
         /**
@@ -171,9 +176,10 @@ public data class QGBotFileConfiguration(
          *
          * ```json
          * {
-         *   "clientProperties": {
-         *      "k1": "v1",
-         *      "foo": "bar"
+         *   "config": {
+         *     "clientProperties": {
+         *       "k1": "v1",
+         *       "foo": "bar"
          *   }
          * }
          * ```
@@ -182,17 +188,70 @@ public data class QGBotFileConfiguration(
          */
         public val clientProperties: Map<String, String>? = null,
 
+        /**
+         * 与部分超时相关的配置信息。
+         *
+         * ```json
+         * {
+         *   "config": {
+         *     "timeout": {
+         *       "apiHttpRequestTimeoutMillis": ...,
+         *       "apiHttpConnectTimeoutMillis": ...,
+         *       "apiHttpSocketTimeoutMillis": ...
+         *     }
+         *   }
+         * }
+         * ```
+         *
+         * @see BotConfiguration.apiHttpRequestTimeoutMillis
+         * @see BotConfiguration.apiHttpConnectTimeoutMillis
+         * @see BotConfiguration.apiHttpSocketTimeoutMillis
+         *
+         */
+        @SerialName("timeout") public val timeoutConfig: TimeoutConfig? = null,
+
         ) {
         public companion object {
             internal const val SERVER_URL_SANDBOX_VALUE: String = "SANDBOX"
         }
     }
 
+    /**
+     * 与部分超时相关的配置信息。
+     * ```json
+     * {
+     *   "config": {
+     *     "timeout": {
+     *       "apiHttpRequestTimeoutMillis": ...,
+     *       "apiHttpConnectTimeoutMillis": ...,
+     *       "apiHttpSocketTimeoutMillis": ...
+     *     }
+     *   }
+     * }
+     * ```
+     *
+     * @see BotConfiguration.apiHttpRequestTimeoutMillis
+     * @see BotConfiguration.apiHttpConnectTimeoutMillis
+     * @see BotConfiguration.apiHttpSocketTimeoutMillis
+     */
+    @Serializable
+    public data class TimeoutConfig(
+        /** @see BotConfiguration.apiHttpRequestTimeoutMillis */
+        val apiHttpRequestTimeoutMillis: Long? = null,
+        /** @see BotConfiguration.apiHttpConnectTimeoutMillis */
+        val apiHttpConnectTimeoutMillis: Long? = null,
+        /** @see BotConfiguration.apiHttpSocketTimeoutMillis */
+        val apiHttpSocketTimeoutMillis: Long? = null,
+    )
 
     internal fun includeConfig(cpConfiguration: QGBotComponentConfiguration) {
         cpConfiguration.botConfig {
             val configuration = this
             config?.apply {
+                configuration.shard = shardConfig.shard
+                configuration.intents = intentsConfig.intents
+                clientProperties?.also { configuration.clientProperties = it }
+
                 serverUrl?.also { su ->
                     if (su == Config.SERVER_URL_SANDBOX_VALUE) {
                         configuration.serverUrl = QQGuild.SANDBOX_URL
@@ -201,9 +260,12 @@ public data class QGBotFileConfiguration(
                     }
                 }
 
-                configuration.shard = shardConfig.shard
-                configuration.intents = intentsConfig.intents
-                clientProperties?.also { configuration.clientProperties = it }
+                timeoutConfig?.also { timeout ->
+                    configuration.apiHttpRequestTimeoutMillis = timeout.apiHttpRequestTimeoutMillis
+                    configuration.apiHttpConnectTimeoutMillis = timeout.apiHttpConnectTimeoutMillis
+                    configuration.apiHttpSocketTimeoutMillis = timeout.apiHttpSocketTimeoutMillis
+                }
+
 
             }
         }
