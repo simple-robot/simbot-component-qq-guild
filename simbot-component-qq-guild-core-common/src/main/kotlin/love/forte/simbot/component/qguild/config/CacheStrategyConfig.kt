@@ -19,6 +19,7 @@ package love.forte.simbot.component.qguild.config
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import love.forte.simbot.utils.item.Items
 
 
 /**
@@ -41,9 +42,17 @@ public sealed class CacheStrategyConfig {
 
 }
 
-// TODO?
+/**
+ * 缓存相关配置。
+ *
+ */
 @Serializable
 public data class CacheConfig(
+    /**
+     * 是否启用，默认为 `true`。
+     */
+    val enable: Boolean = true,
+
     /**
      * '传递性' 缓存。
      *
@@ -64,14 +73,14 @@ public data class CacheConfig(
      * @see TransmitCacheConfig
      */
     @SerialName("transmit")
-    val transmitCacheConfig: TransmitCacheConfig = TransmitCacheConfig(),
+    val transmitCacheConfig: TransmitCacheConfig? = null,
 
     /**
      * 动态缓存配置。
      *
      */
     @SerialName("dynamic")
-    val dynamicCacheConfig: DynamicCacheConfig = DynamicCacheConfig(false),
+    val dynamicCacheConfig: DynamicCacheConfig? = null,
 ) {
 
 }
@@ -80,26 +89,29 @@ public data class CacheConfig(
 /**
  * '传递性' 缓存。
  *
- *  举个例子：
+ *  举个简单的例子：
  * ```kotlin
- * bot.guild().channels.collect {           // 1
- *     val category = it.category.resolve() // 2
- *     val guild = category.guild()         // 3
+ * bot.guild().channels.collect { channel -> // 1
+ *     val guild = channel.guild()           // 2
  * }
  * ```
  *
- * 如上，步骤为：
+ * 如上步骤：
  *
  * 1. 在一个 `guild` 中获取所有的 `channel`
- * 2. 然后再获取每一个 `channel` 的分组详情
- * 3. 然后再获取这个子频道的所属 `guild`
+ * 2. 遍历所有的 `channel` ，并在循环中再次获取 `channel` 的所属 `guild`。
  *
- * 在这个过程中，步骤 `3` 中获取的 `guild` 已经确定为步骤 `1` 中的 `guild`，
+ * 在这个过程中，步骤 `2` 中获取的 `guild` 已经确定为步骤 `1` 中的 `guild`，
  * 因此如果不是为了 `guild` 信息的绝对 _"实时"_ ，它们的查询实际上并没有必要。
  *
  * 传递性缓存即用于处理此种情况，当一个存在从属关系的子信息可以使用其所属的来源信息时，则直接将其传递而非再次查询。
  *
- * 传递性缓存不会应用于任何序列/列表，只会生效于有从属关系的单属性API中。
+ * 传递性缓存不会应用于任何序列/列表本身。因此无论何时而获取到的 [Items] 类型始终都会是全新的类型。（不过其中的元素可能会携带可传递缓存）
+ *
+ * 传递性缓存涉及到 `channel` 、`channel category` 、 `member` 、 `role`，
+ * 一般来说传递的是 `guild`，少部分API会传递其他内容，例如 `memberRole` 可能会传递 `channel` 。
+ *
+ * _内部实际可能传递的信息并不固定，它可能会随着版本的更新不断完善或修改，因此无法在此处一一列举。_
  *
  */
 @Serializable
@@ -116,4 +128,4 @@ public data class TransmitCacheConfig(val enable: Boolean = true)
  * TODO
  */
 @Serializable
-public data class DynamicCacheConfig(val enable: Boolean = true, )
+public data class DynamicCacheConfig(val enable: Boolean = true)

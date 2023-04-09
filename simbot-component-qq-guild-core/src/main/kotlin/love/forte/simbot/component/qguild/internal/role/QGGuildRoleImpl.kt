@@ -50,13 +50,15 @@ internal class QGGuildRoleImpl(
     override val bot: QGBotImpl,
     override val guildId: ID,
     @Volatile override var source: Role,
-    private val sourceGuild: QGGuildImpl
+    private val sourceGuild: QGGuildImpl? = null
 ) : BaseQGRole(), QGGuildRole {
     override val coroutineContext: CoroutineContext = bot.newSupervisorCoroutineContext()
     override val id: ID = source.id.ID
 
     override suspend fun guild(): QGGuild =
-        sourceGuild // ?: bot.guild(guildId) ?: throw NoSuchElementException("Guild($guildId)")
+        sourceGuild
+            ?: bot.guild(guildId)
+            ?: throw NoSuchElementException("Guild($guildId)")
 
     override fun updater(): QGRoleUpdater = QGRoleUpdaterImpl(this)
 
@@ -84,7 +86,7 @@ internal class QGGuildRoleImpl(
         return true
     }
 
-    override val members: Items<QGMember>
+    override val members: Items<QGMemberImpl>
         get() {
             val guildId = guildId
             val guildIdLiteral = guildId.literal
@@ -97,7 +99,14 @@ internal class QGGuildRoleImpl(
                     prop.batch.takeIf { it < 1 } ?: GetGuildRoleMemberListApi.MAX_LIMIT
                 ) { requestBy(bot) }
                     .let(prop::effectOn)
-                    .map { QGMemberImpl(bot, it, guildId) }
+                    .map {
+                        QGMemberImpl(
+                            bot = bot,
+                            source = it,
+                            guildId = guildId,
+                            sourceGuild = this.sourceGuild
+                        )
+                    }
             }
         }
 }

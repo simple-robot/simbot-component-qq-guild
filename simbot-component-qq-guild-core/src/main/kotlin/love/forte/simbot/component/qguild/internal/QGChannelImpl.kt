@@ -36,15 +36,17 @@ import love.forte.simbot.qguild.model.Channel as QGSourceChannel
 internal class QGChannelImpl internal constructor(
     override val bot: QGGuildBotImpl,
     override val source: QGSourceChannel,
+    private val sourceGuild: QGGuild? = null,
     override val category: QGChannelCategoryId = QGChannelCategoryIdImpl(
-        bot,
-        source.guildId.ID,
-        source.parentId.ID
+        bot = bot,
+        guildId = source.guildId.ID,
+        id = source.parentId.ID,
+        sourceGuild = sourceGuild,
     ),
     /**
      * 如果是从一个事件而来，提供可用于消息回复的 msgId 来避免 event.channel().send(...) 出现问题
      */
-    private val currentMsgId: String? = null
+    private val currentMsgId: String? = null,
 ) : QGChannel {
     override val coroutineContext: CoroutineContext = bot.newSupervisorCoroutineContext()
     override val id: ID = source.id.ID
@@ -52,7 +54,8 @@ internal class QGChannelImpl internal constructor(
 
 
     override suspend fun guild(): QGGuild =
-        bot.guild(guildId)?.also { it.currentMsgId = currentMsgId }
+        sourceGuild
+            ?: bot.guild(guildId, currentMsgId)
             ?: throw NoSuchElementException("guild(id=$guildId)")
 
     override suspend fun owner(): QGMember = guild().owner()
@@ -82,7 +85,7 @@ internal class QGChannelImpl internal constructor(
     }
 
     override fun toString(): String {
-        return "QGChannelImpl(id=$id, name=$name, source=$source)"
+        return "QGChannelImpl(id=$id, name=$name, source=$source, category=$category)"
     }
 }
 

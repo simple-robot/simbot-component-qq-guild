@@ -74,6 +74,14 @@ public interface QGChannelCategoryId : Category, BotContainer, GuildInfoContaine
      * 根据当前ID**初始化**并得到一个具体的分组对象实例 [QGChannelCategory].
      *
      * [resolve] 只会最多生效一次并记录其结果，内部通过 [锁][Mutex] 控制并发。
+     *
+     * 如下：
+     * ```kotlin
+     * category.resolve().resolve()
+     * ```
+     *
+     * **至多** 只会请求一次API。参考 [QGChannelCategory.resolve]。
+     *
      * 如果在初始化阶段出现异常（例如无权限或未找到），则下次仍然会发起请求（且仍然会得到可能的任何异常）。
      *
      * @throws NoSuchElementException 当未查询到结果（例如查询时分组已被删除）
@@ -136,7 +144,7 @@ public interface QGChannelCategory : Category, BotContainer, GuildInfoContainer,
     override suspend fun guild(): QGGuild
 
     /**
-     * 得到自身。
+     * 直接得到自身 ( `this` )。
      */
     @JvmSynthetic
     override suspend fun resolve(): QGChannelCategory
