@@ -33,7 +33,7 @@ private fun QGBotImpl.guild0(eventGuild: EventGuild): QGGuildImpl = qgGuild(this
 
 private suspend fun QGBotImpl.channel0(eventChannel: EventChannel): QGChannelImpl {
     val channel = GetChannelApi.create(eventChannel.id).requestBy(this)
-    return QGChannelImpl(this.inGuild(channel.guildId), channel)
+    return QGChannelImpl(bot = this.inGuild(channel.guildId), source = channel)
 }
 
 private fun QGBotImpl.member0(eventMember: EventMember): QGMemberImpl =

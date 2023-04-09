@@ -50,6 +50,7 @@ internal class QGMemberImpl(
     override val bot: QGBotImpl,
     override val source: QGSourceMember,
     private val guildId: ID,
+    private val sourceGuild: QGGuildImpl? = null
 ) : QGMember {
     override val coroutineContext: CoroutineContext = bot.newSupervisorCoroutineContext()
 
@@ -62,7 +63,8 @@ internal class QGMemberImpl(
         get() = source.joinedAt.toTimestamp()
 
 
-    override suspend fun guild(): QGGuildImpl = bot.guild(guildId) ?: throw NoSuchElementException("guild(id=$guildId)")
+    override suspend fun guild(): QGGuildImpl =
+        sourceGuild ?: bot.guild(guildId) ?: throw NoSuchElementException("guild(id=$guildId)")
 
     private val roleIdSet = source.roles.toSet()
 
@@ -89,11 +91,16 @@ internal class QGMemberImpl(
     @ExperimentalSimbotApi
     override val roles: Items<QGMemberRoleImpl>
         get() {
-            // TODO
             return effectedFlowItems {
                 guild().roles.collect {
                     if (it.id.literal in roleIdSet) {
-                        emit(QGMemberRoleImpl(it, this@QGMemberImpl.id, this@QGMemberImpl))
+                        emit(
+                            QGMemberRoleImpl(
+                                guildRole = it,
+                                memberId = this@QGMemberImpl.id,
+                                sourceMember = bot.checkIfTransmitCacheable(this@QGMemberImpl)
+                            )
+                        )
                     }
                 }
             }
@@ -126,6 +133,7 @@ internal class QGMemberImpl(
         val dms = getDms()
         return DmsSendApi.create(dms.guildId, body).requestBy(bot).asReceipt()
     }
+
     private suspend fun send0(bodyList: List<MessageSendApi.Body.Builder>): QGMessageReceipt {
         val dms = getDms()
 

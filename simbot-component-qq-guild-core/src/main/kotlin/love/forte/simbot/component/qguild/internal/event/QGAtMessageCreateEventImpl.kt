@@ -25,7 +25,6 @@ import love.forte.simbot.component.qguild.internal.QGBotImpl
 import love.forte.simbot.component.qguild.internal.QGChannelImpl
 import love.forte.simbot.component.qguild.internal.QGMemberImpl
 import love.forte.simbot.component.qguild.internal.message.QGReceiveMessageContentImpl
-import love.forte.simbot.component.qguild.internal.message.asReceipt
 import love.forte.simbot.component.qguild.internal.toTimestamp
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
 import love.forte.simbot.component.qguild.message.sendMessage
@@ -35,7 +34,6 @@ import love.forte.simbot.message.MessageReceipt
 import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.api.channel.GetChannelApi
 import love.forte.simbot.qguild.api.member.GetMemberApi
-import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.qguild.ifNotFoundThenNoSuch
 import love.forte.simbot.qguild.model.Message
 
@@ -96,9 +94,6 @@ internal class QGAtMessageCreateEventImpl(
         }
     }
 
-    private suspend fun reply0(body: MessageSendApi.Body): QGMessageReceipt =
-        MessageSendApi.create(sourceEventEntity.channelId, body).requestBy(bot).asReceipt()
-
     override suspend fun author(): QGMemberImpl {
         val member =
             try {
@@ -118,6 +113,10 @@ internal class QGAtMessageCreateEventImpl(
                 apiEx.ifNotFoundThenNoSuch { "channel(id=${sourceEventEntity.channelId})" }
             }
 
-        return QGChannelImpl(bot.inGuild(sourceEventEntity.guildId), channel, currentMsgId = sourceEventEntity.id)
+        return QGChannelImpl(
+            bot = bot.inGuild(sourceEventEntity.guildId),
+            source = channel,
+            currentMsgId = sourceEventEntity.id
+        )
     }
 }

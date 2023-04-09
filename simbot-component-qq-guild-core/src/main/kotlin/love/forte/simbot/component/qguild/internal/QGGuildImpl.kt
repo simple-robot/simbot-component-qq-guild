@@ -18,10 +18,12 @@
 package love.forte.simbot.component.qguild.internal
 
 import kotlinx.coroutines.CompletableJob
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 import love.forte.simbot.ExperimentalSimbotApi
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
@@ -44,6 +46,7 @@ import love.forte.simbot.qguild.api.member.createFlow
 import love.forte.simbot.qguild.api.role.GetGuildRoleListApi
 import love.forte.simbot.qguild.ifNotFoundThenNull
 import love.forte.simbot.qguild.model.ChannelType
+import love.forte.simbot.qguild.model.Guild
 import love.forte.simbot.qguild.model.isCategory
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.effectOn
@@ -51,7 +54,6 @@ import love.forte.simbot.utils.item.effectedFlowItems
 import love.forte.simbot.utils.item.flowItems
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.CoroutineContext
-import love.forte.simbot.qguild.model.Guild as QGSourceGuild
 
 
 /**
@@ -60,20 +62,15 @@ import love.forte.simbot.qguild.model.Guild as QGSourceGuild
  */
 internal class QGGuildImpl private constructor(
     internal val baseBot: QGBotImpl,
-    override val source: QGSourceGuild,
-    override val coroutineContext: CoroutineContext,
-
-    /**
-     * 如果是从一个事件而来，提供可用于消息回复的 msgId 来避免 event.channel().send(...) 出现问题
-     */
-    internal var currentMsgId: String? = null
+    override val source: Guild,
+    override val coroutineContext: CoroutineContext
 ) : QGGuild {
-
 
     override val id: ID = source.id.ID
     override val ownerId: ID = source.ownerId.ID
 
     override val maximumChannel: Int get() = -1
+
     @OptIn(ExperimentalSimbotApi::class)
     override val joinTime: Timestamp get() = source.joinedAt.toTimestamp()
     override val currentMember: Int get() = source.memberCount
@@ -88,7 +85,11 @@ internal class QGGuildImpl private constructor(
 
     override suspend fun permissions(): ApiPermissions = GetApiPermissionListApi.create(source.id).requestBy(baseBot)
 
-    override val bot: QGGuildBotImpl = QGGuildBotImpl(baseBot, source.id, currentMsgId)
+    override val bot: QGGuildBotImpl = QGGuildBotImpl(
+        bot = baseBot,
+        guildId = source.id,
+        sourceGuild = baseBot.checkIfTransmitCacheable(this)
+    )
 
     override suspend fun owner(): QGMemberImpl {
         return member(ownerId) ?: throw NoSuchElementException("owner(id=$ownerId)")
@@ -97,14 +98,21 @@ internal class QGGuildImpl private constructor(
     override val members: Items<QGMemberImpl>
         get() = queryMembers()
 
-    @OptIn(FlowPreview::class)
     private fun queryMembers(): Items<QGMemberImpl> = flowItems { prop ->
         // 批次
         val batchLimit = prop.batch.takeIf { it > 0 } ?: GetGuildMemberListApi.MAX_LIMIT
         val flow =
-            GetGuildMemberListApi.createFlow(guildId = source.id, batch = batchLimit) { requestBy(baseBot) }.let(prop::effectOn)
+            GetGuildMemberListApi.createFlow(guildId = source.id, batch = batchLimit) { requestBy(baseBot) }
+                .let(prop::effectOn)
 
-        emitAll(flow.map { m -> QGMemberImpl(baseBot, m, this@QGGuildImpl.id) })
+        emitAll(flow.map { m ->
+            QGMemberImpl(
+                bot = baseBot,
+                source = m,
+                guildId = this@QGGuildImpl.id,
+                sourceGuild = baseBot.checkIfTransmitCacheable(this@QGGuildImpl)
+            )
+        })
     }
 
     override suspend fun member(id: ID): QGMemberImpl? = member(id.literal)
@@ -118,14 +126,27 @@ internal class QGGuildImpl private constructor(
             apiEx.ifNotFoundThenNull()
         }
 
-        return member?.let { info -> QGMemberImpl(baseBot, info, this@QGGuildImpl.id) }
+        return member?.let { info ->
+            QGMemberImpl(
+                bot = baseBot,
+                source = info,
+                guildId = this@QGGuildImpl.id,
+                sourceGuild = baseBot.checkIfTransmitCacheable(this)
+            )
+        }
     }
 
     @ExperimentalSimbotApi
     override val roles: Items<QGGuildRoleImpl>
         get() = bot.effectedFlowItems {
             GetGuildRoleListApi.create(source.id).requestBy(baseBot).roles.forEach { info ->
-                val roleImpl = QGGuildRoleImpl(baseBot, id, info, this@QGGuildImpl)
+                val roleImpl = QGGuildRoleImpl(
+                    bot = baseBot,
+                    guildId = id,
+                    source = info,
+                    sourceGuild = baseBot.checkIfTransmitCacheable(this@QGGuildImpl)
+                )
+
                 emit(roleImpl)
             }
         }
@@ -148,11 +169,16 @@ internal class QGGuildImpl private constructor(
             .create(source.id)
             .requestBy(baseBot)
             .asFlow()
-            .filterNot { info ->
+            .filter { info ->
                 if (info.type.isCategory) {
                     categoryMap.computeIfAbsent(info.parentId) {
-                        QGChannelCategoryImpl(bot, info)
+                        QGChannelCategoryImpl(
+                            bot = bot,
+                            source = info,
+                            sourceGuild = baseBot.checkIfTransmitCacheable(this@QGGuildImpl)
+                        )
                     }
+
                     false
                 } else {
                     true
@@ -160,9 +186,20 @@ internal class QGGuildImpl private constructor(
             }
             .map { info ->
                 val category = categoryMap.computeIfAbsent(info.parentId) { cid ->
-                    QGChannelCategoryIdImpl(bot, info.guildId.ID, cid.ID)
+                    QGChannelCategoryIdImpl(
+                        bot = bot,
+                        guildId = info.guildId.ID,
+                        id = cid.ID,
+                        sourceGuild = baseBot.checkIfTransmitCacheable(this@QGGuildImpl)
+                    )
                 }
-                QGChannelImpl(bot = bot, source = info, category = category, currentMsgId = currentMsgId)
+
+                QGChannelImpl(
+                    bot = bot,
+                    source = info,
+                    sourceGuild = baseBot.checkIfTransmitCacheable(this@QGGuildImpl),
+                    category = category,
+                )
             }
 
 
@@ -177,7 +214,11 @@ internal class QGGuildImpl private constructor(
             apiEx.ifNotFoundThenNull()
         } ?: return null
 
-        return QGChannelImpl(bot, channelInfo, currentMsgId = currentMsgId)
+        return QGChannelImpl(
+            bot = bot,
+            source = channelInfo,
+            sourceGuild = baseBot.checkIfTransmitCacheable(this)
+        )
     }
 
     override val categories: Items<QGChannelCategoryImpl>
@@ -190,7 +231,11 @@ internal class QGGuildImpl private constructor(
             .asFlow()
             .filter { it.type.isCategory }
             .map { info ->
-                QGChannelCategoryImpl(bot, info)
+                QGChannelCategoryImpl(
+                    bot = bot,
+                    source = info,
+                    sourceGuild = baseBot.checkIfTransmitCacheable(this@QGGuildImpl)
+                )
             }
 
         emitAll(flow)
@@ -207,23 +252,22 @@ internal class QGGuildImpl private constructor(
             throw IllegalStateException("The type of channel(id=${info.id}, name=${info.name}) in guild(id=${info.guildId}, name=$name) is not category, but ${info.type}(${info.type.value})")
         }
 
-        return info?.let { QGChannelCategoryImpl(bot, it) }
+        return info?.let {
+            QGChannelCategoryImpl(
+                bot = bot,
+                source = it,
+                sourceGuild = baseBot.checkIfTransmitCacheable(this@QGGuildImpl)
+            )
+        }
     }
 
 
     companion object {
-//        private val logger =
-//            LoggerFactory.getLogger("love.forte.simbot.component.qguild.internal.QGGuildImpl")
-
-        internal fun qgGuild(
-            bot: QGBotImpl,
-            guild: QGSourceGuild,
-            currentMsgId: String? = null
-        ): QGGuildImpl {
+        internal fun qgGuild(bot: QGBotImpl, guild: Guild): QGGuildImpl {
             val job: CompletableJob = SupervisorJob(bot.coroutineContext[Job])
             val coroutineContext: CoroutineContext = bot.coroutineContext + job
 
-            return QGGuildImpl(bot, guild, coroutineContext, currentMsgId)
+            return QGGuildImpl(bot, guild, coroutineContext)
         }
     }
 }

@@ -210,9 +210,28 @@ public data class QGBotFileConfiguration(
          */
         @SerialName("timeout") public val timeoutConfig: TimeoutConfig? = null,
 
+        /**
+         * 缓存相关配置。
+         *
+         * ```json
+         * {
+         *   "config": {
+         *     "cache": { ... }
+         *   }
+         * }
+         * ```
+         *
+         * 默认会启用 [TransmitCacheConfig]
+         *
+         * @see CacheConfig
+         *
+         */
+        @SerialName("cache") public val cacheConfig: CacheConfig? = DEFAULT.cacheConfig,
+
         ) {
         public companion object {
             internal const val SERVER_URL_SANDBOX_VALUE: String = "SANDBOX"
+            private val DEFAULT = QGBotComponentConfiguration()
         }
     }
 

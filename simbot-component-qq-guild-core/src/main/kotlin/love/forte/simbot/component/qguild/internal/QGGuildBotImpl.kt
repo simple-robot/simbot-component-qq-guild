@@ -17,10 +17,11 @@
 
 package love.forte.simbot.component.qguild.internal
 
-import love.forte.plugin.suspendtrans.annotation.JvmAsync
-import love.forte.plugin.suspendtrans.annotation.JvmBlocking
 import love.forte.simbot.ID
-import love.forte.simbot.component.qguild.*
+import love.forte.simbot.component.qguild.QGBot
+import love.forte.simbot.component.qguild.QGGuildBot
+import love.forte.simbot.component.qguild.QQGuildBotManager
+import love.forte.simbot.component.qguild.QQGuildComponent
 import love.forte.simbot.component.qguild.util.requestBy
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.literal
@@ -42,7 +43,8 @@ import kotlin.coroutines.CoroutineContext
 internal class QGGuildBotImpl(
     override val bot: QGBotImpl,
     private val guildId: String,
-    private val currentMsgId: String? = null
+    private val currentMsgId: String? = null,
+    private val sourceGuild: QGGuildImpl? = null,
 ) : QGGuildBot, QGBot {
     override suspend fun asMember(): QGMemberImpl {
         val member = try {
@@ -50,20 +52,18 @@ internal class QGGuildBotImpl(
         } catch (apiEx: QQGuildApiException) {
             if (apiEx.isNotFound) throw NoSuchElementException("bot member(id=${bot.userId})") else throw apiEx
         }
-        return QGMemberImpl(bot, member, guildId.ID)
+        return QGMemberImpl(bot, member, guildId.ID, sourceGuild)
     }
 
     override val userId: ID get() = bot.userId
     override val username: String get() = bot.username
     override val avatar: String get() = bot.avatar
 
-    @JvmBlocking(baseName = "getGuild", suffix = "")
-    @JvmAsync(baseName = "getGuild")
-    override suspend fun guild(id: ID): QGGuildImpl? = bot.guild(id)?.also {
-        it.currentMsgId = this.currentMsgId
-    }
+    override suspend fun guild(id: ID): QGGuildImpl? = guild(id, this.currentMsgId)
 
-    @JST
+    internal suspend fun guild(id: ID, currentMsgId: String? = this.currentMsgId): QGGuildImpl? =
+        bot.guild(id)
+
     override suspend fun resolveImage(id: ID): Image<*> = bot.resolveImage(id)
 
     override val coroutineContext: CoroutineContext get() = bot.coroutineContext
