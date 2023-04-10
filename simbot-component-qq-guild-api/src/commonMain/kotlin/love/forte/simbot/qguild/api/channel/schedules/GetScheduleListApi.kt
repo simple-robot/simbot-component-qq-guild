@@ -23,8 +23,8 @@ import love.forte.simbot.qguild.api.GetQQGuildApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleGetApiDescription
 import love.forte.simbot.qguild.model.Schedule
-import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
+import kotlin.jvm.JvmSynthetic
 
 
 /**
@@ -37,7 +37,7 @@ import kotlin.jvm.JvmStatic
  * @author ForteScarlet
  */
 public class GetScheduleListApi private constructor(
-    channelId: String, private val since: Long
+    channelId: String, private val since: ULong, private val sinceMark: Boolean
 ) : GetQQGuildApi<List<Schedule>>() {
     public companion object Factory : SimpleGetApiDescription("/channels/{channel_id}/schedules") {
         private val serializer = ListSerializer(Schedule.serializer())
@@ -46,13 +46,40 @@ public class GetScheduleListApi private constructor(
          * 构造 [GetScheduleListApi]。
          *
          * @param channelId 查询的目标频道
-         * @param since 若 [since] > 0，则返回在 [since] 对应当天的日程列表；否则默认返回今天的日程列表。
-         * [since] 默认为 `-1`，即回今天的日程列表。
+         * @param since 时间戳 (毫秒)。返回在 [since] 对应当天的日程列表
+         *
+         */
+        @JvmSynthetic
+        public fun create(channelId: String, since: ULong): GetScheduleListApi =
+            GetScheduleListApi(channelId, since, true)
+
+        /**
+         * 构造 [GetScheduleListApi]。默认返回当天的日程列表。
+         *
+         * @param channelId 查询的目标频道
          *
          */
         @JvmStatic
-        @JvmOverloads
-        public fun create(channelId: String, since: Long = -1): GetScheduleListApi = GetScheduleListApi(channelId, since)
+        public fun create(channelId: String): GetScheduleListApi =
+            GetScheduleListApi(channelId, 0u, false)
+
+
+        /**
+         * 构造 [GetScheduleListApi]。
+         *
+         * @param channelId 查询的目标频道
+         * @param since 若 [since] > 0，则返回在 [since] 对应当天的日程列表；否则默认返回今天的日程列表。
+         * 默认返回今天的日程列表。
+         *
+         */
+        @JvmStatic
+        public fun create(channelId: String, since: Long): GetScheduleListApi {
+            return if (since > 0) {
+                GetScheduleListApi(channelId, since.toULong(), true)
+            } else {
+                create(channelId)
+            }
+        }
     }
 
     override val resultDeserializer: DeserializationStrategy<List<Schedule>> get() = serializer
@@ -61,7 +88,7 @@ public class GetScheduleListApi private constructor(
 
     override fun route(builder: RouteInfoBuilder) {
         builder.apiPath = path
-        if (since > 0) {
+        if (sinceMark) {
             builder.parametersAppender.append("since", since)
         }
     }
