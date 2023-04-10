@@ -1,6 +1,7 @@
 # api模块
 
-先阅读 [模块说明](Module.md)
+> **Note**
+> 请先阅读 [模块说明](Module.md)
 
 api模块中，所有的API请求封装均在 `love.forte.simbot.qguild.api` 中，它们通常以 `Api` 结尾，例如 `GetGuildApi`。
 
