@@ -3,7 +3,7 @@
 <div align="center">
 <img src=".simbot/logo.png" alt="logo" style="width:230px; height:230px; border-radius:50%; " />
 <h2>
-    ~ simple-robot for qq-guild ~ 
+    ~ Simple Robot ~ <br/> <small>QQ频道组件</small>
 </h2>
 <a href="https://github.com/simple-robot/simbot-component-qq-guild/releases/latest"><img alt="release" src="https://img.shields.io/github/v/release/simple-robot/simbot-component-qq-guild" /></a>
 <a href="https://repo1.maven.org/maven2/love/forte/simbot/component/simbot-component-qq-guild-api/" target="_blank">
@@ -20,7 +20,7 @@
 
 </div>
 
-这是 [**simple-robot v3.x**](https://github.com/simple-robot/simpler-robot)
+这是 [**Simple Robot v3.x**](https://github.com/simple-robot/simpler-robot)
 下的子项目，是针对 [**QQ频道机器人**](https://bot.q.qq.com/wiki/develop/api/) 各方面的实现，
 包括对 `API` 内容的实现、事件相关的实现以及BOT对于事件的监听与交互等。
 
@@ -42,10 +42,10 @@
 
 ## ⚠ 注意事项
 
-目前无论是当前仓库还是 `simbot3` 都处于紧张的早中期建设阶段，在正式版发布之前必然存在很多不可预知的问题，并且开发进度无法清晰预估，毕竟一天一共就24个小时，而我们团队的精力并非无限。
+> Note: **目前无论是当前仓库还是 `simbot3` 都处于紧张的早中期建设阶段，在正式版发布之前必然存在很多不可预知的问题，并且开发进度无法清晰预估，毕竟一天一共就24个小时，而我们团队的精力并非无限。**
+> 
+> 如果你想要协助我们对当前仓库或者 [simbot3](https://github.com/ForteScarlet/simpler-robot/tree/v3-dev) 的建设，欢迎通过Issues提出宝贵意见或者通过PR参与到建设当中，十分感谢。
 
-如果你想要协助我们对当前仓库或者 [simbot3](https://github.com/ForteScarlet/simpler-robot/tree/v3-dev)
-的建设，欢迎通过issue提出宝贵意见或者通过pr参与到建设当中，十分感谢。
 
 ## 模块引导
 
