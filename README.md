@@ -30,7 +30,6 @@
 - 基于 [`Kotlin serialization`](https://github.com/Kotlin/kotlinx.serialization) 进行数据序列化/反序列化操作。
 
 > **Note**
-> 
 > _下文 `simple-robot v3.x` 简称为 `simbot3`_
 
 ## 文档
@@ -46,7 +45,6 @@
 ## ⚠ 注意事项
 
 > **Warning**
-> 
 > 目前无论是当前仓库还是 `simbot3` 都处于紧张的早中期建设阶段，在正式版发布之前必然存在很多不可预知的问题，并且开发进度无法清晰预估，毕竟一天一共就24个小时，而我们团队的精力并非无限。
 > 
 > 如果你想要协助我们对当前仓库或者 [simbot3](https://github.com/ForteScarlet/simpler-robot/tree/v3-dev) 的建设，欢迎通过Issues提出宝贵意见或者通过PR参与到建设当中，十分感谢。
