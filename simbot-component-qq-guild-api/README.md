@@ -1,6 +1,7 @@
 # api模块
 
-先阅读 [模块说明](Module.md)
+> **Note**
+> 请先阅读 [模块说明](Module.md)
 
 api模块中，所有的API请求封装均在 `love.forte.simbot.qguild.api` 中，它们通常以 `Api` 结尾，例如 `GetGuildApi`。
 
@@ -132,8 +133,8 @@ guildList.forEach { guild ->
 - [x] 私信 API
 - [x] 禁言 API
 - [x] 公告 API
-- [ ] 精华消息 API
-- [ ] 日程 API
+- [x] 精华消息 API (未测试)
+- [x] 日程 API (未测试)
 - [ ] 表情表态 API
 - [ ] 音频 API
 - [ ] 帖子 API

@@ -53,6 +53,7 @@ kotlin {
 
     js(IR) {
         nodejs()
+        binaries.library()
     }
 
 
@@ -156,7 +157,7 @@ kotlin {
 
         getByName("jvmTest") {
             dependencies {
-                runtimeOnly(libs.ktor.client.cio)
+                implementation(libs.ktor.client.cio)
                 implementation(simbotApi) // use @Api4J annotation
                 implementation(libs.log4j.api)
                 implementation(libs.log4j.core)

@@ -51,6 +51,12 @@ internal class QGRoleCreatorImpl(private val guild: QGGuildImpl) : QGRoleCreator
 //            ?: GetGuildRoleListApi.create(guild.id.literal).requestBy(guild.baseBot)
 //                .roles.find { it.id == created.roleId }!!
 
-        return QGGuildRoleImpl(guild.baseBot, guild.id, role, guild)
+
+        return QGGuildRoleImpl(
+            bot = guild.baseBot,
+            guildId = guild.id,
+            source = role,
+            sourceGuild = guild.baseBot.checkIfTransmitCacheable(guild)
+        )
     }
 }

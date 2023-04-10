@@ -1,6 +1,6 @@
 ---
 title: 使用SpringBoot
-position: 1 
+sidebar_position: 4 
 ---
 
 import Tabs from '@theme/Tabs';
@@ -17,7 +17,7 @@ import TabItem from '@theme/TabItem';
 
 ## 前提准备
 
-首先你应当有一个可用的 [QQ频道机器人](https://q.qq.com/bot) 。
+首先你应当准备至少一个可用的 [QQ频道机器人](https://q.qq.com/bot) 。
 
 ## 项目构建
 
@@ -29,10 +29,10 @@ import TabItem from '@theme/TabItem';
 
 :::info 保持住
 
-注意，在使用 Spring Boot 的时候你需要一些能够使程序保持运行的组件，例如通过 `spring-web` 启用一个服务器，否则程序可能会自动终止，
+注意，在使用 Spring Boot 的时候你需要一些能够使程序保持运行的组件，例如通过 `spring-web` 启用一个服务器，否则程序可能会自动终止。
 因为simbot的 starter 并不提供维持程序运行的能力。
 
-下述示例我们选择使用 `spring-boot-starter-webflux`，具体选择请根据你的自身实际需求选择。
+下述示例我们选择使用 `spring-boot-starter-webflux`，具体选择请根据你的实际需求决定。
 
 :::
 
@@ -49,7 +49,7 @@ import TabItem from '@theme/TabItem';
 ```kotlin
 plugins {
   java
-  kotlin("jvm") version "1.8.10" // 在Gradle中你需要使用Kotlin插件，但是必须要使用Kotlin语言开发。它的作用是运行Gradle自动根据环境选择多平台依赖的具体依赖。  
+  kotlin("jvm") version "1.8.10" // 在Gradle中你需要使用Kotlin插件，但是不代表一定要使用Kotlin语言开发。它的作用是运行Gradle自动根据环境选择多平台依赖的具体依赖。  
   id("org.springframework.boot") version "3.0.5"
   id("io.spring.dependency-management") version "1.1.0"
 }
@@ -88,7 +88,7 @@ plugins {
     java
     id 'org.springframework.boot' version '3.0.5'
     id 'io.spring.dependency-management' version '1.1.0'
-    id 'org.jetbrains.kotlin.jvm' version '1.8.10' // 在Gradle中你需要使用Kotlin插件，但是必须要使用Kotlin语言开发。它的作用是运行Gradle自动根据环境选择多平台依赖的具体依赖。  
+    id 'org.jetbrains.kotlin.jvm' version '1.8.10' // 在Gradle中你需要使用Kotlin插件，但是不代表一定要使用Kotlin语言开发。它的作用是运行Gradle自动根据环境选择多平台依赖的具体依赖。  
 }
 
 group = 'com.example'
@@ -288,7 +288,7 @@ public class App {
 
 此处我们监听 `ChannelMessageEvent`，也就是 **_子频道的消息事件_**。
 
-假设：要求bot必须**被AT**，并且说一句 `你好`，此时bot会**引用**用户发送的消息并回复 `你好!` ，类似于：
+假设：要求bot必须**被AT**，并且说一句 `你好`，此时bot会**引用**用户发送的消息并回复 `你也好!` ，类似于：
 
 ```
 用户: 
@@ -413,4 +413,6 @@ public class ExampleListener {
 
 ## 启动
 
-接下来，启动程序并在你的沙箱频道中@它试试看吧。当然，如果遇到了预期外的问题也不要慌，积极反馈问题才能使我们变得更好，可以前往 [issues](https://github.com/simple-robot/simpler-robot/issues) 反馈问题、[社区](https://github.com/orgs/simple-robot/discussions) 提出疑问。
+接下来，启动程序并在你的沙箱频道中@它试试看吧。
+
+当然，如果遇到了预期外的问题也不要慌，积极反馈问题才能使我们变得更好，可以前往 [Issues](https://github.com/simple-robot/simpler-robot/issues) 反馈问题、[社区](https://github.com/orgs/simple-robot/discussions) 提出疑问。

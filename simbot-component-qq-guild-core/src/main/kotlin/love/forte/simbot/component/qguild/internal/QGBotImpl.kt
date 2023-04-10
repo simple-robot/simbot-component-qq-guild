@@ -63,6 +63,8 @@ internal class QGBotImpl(
     override val coroutineContext: CoroutineContext
     private val intents = source.configuration.intents
 
+    private val cacheConfig = configuration.cacheConfig
+    private val cacheable = cacheConfig?.enable == true
 
     init {
         val context = source.coroutineContext
@@ -182,7 +184,10 @@ internal class QGBotImpl(
         }
     }
 
-    internal fun inGuild(guildId: String): QGGuildBotImpl = QGGuildBotImpl(this, guildId)
+    internal fun inGuild(guildId: String, currentMsgId: String? = null): QGGuildBotImpl =
+        QGGuildBotImpl(bot = this, guildId = guildId, currentMsgId = currentMsgId)
+
+    internal fun <T> checkIfTransmitCacheable(target: T): T? = target.takeIf { cacheable && cacheConfig?.transmitCacheConfig?.enable == true }
 
     override fun toString(): String {
         val uid = if (::botSelf.isInitialized) botSelf.id else "(NOT INIT)"

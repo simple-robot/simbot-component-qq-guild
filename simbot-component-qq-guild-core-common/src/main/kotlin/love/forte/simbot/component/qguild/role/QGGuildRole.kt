@@ -25,6 +25,7 @@ import love.forte.simbot.component.qguild.QGMember
 import love.forte.simbot.component.qguild.QGRole
 import love.forte.simbot.definition.GuildMember
 import love.forte.simbot.qguild.QQGuildApiException
+import love.forte.simbot.utils.item.Items
 
 /**
  * 一个[角色][QGRole]在某个频道服务器中的表现类型。
@@ -104,5 +105,10 @@ public interface QGGuildRole : QGRole, DeleteSupport {
      */
     @JST
     override suspend fun delete(): Boolean
+
+    /**
+     * 得到当前频道身份组下所有的频道成员。
+     */
+    public val members: Items<QGMember>
 
 }

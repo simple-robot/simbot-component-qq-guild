@@ -17,6 +17,8 @@
 
 package love.forte.simbot.qguild.api.member
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.Serializable
 import love.forte.simbot.logger.LoggerFactory
@@ -56,9 +58,9 @@ public class GetGuildRoleMemberListApi private constructor(
 ) : GetQQGuildApi<GuildRoleMemberList>() {
     init {
         require(limit > 0) { "limit must > 0, but $limit" }
-        if (limit > 400) {
+        if (limit > MAX_LIMIT) {
             // or throw error? or ignore?
-            logger.warn("The maximum value of the limit is 400, but {}", limit)
+            logger.warn("The maximum value of the limit is $MAX_LIMIT, but {}", limit)
         }
     }
 
@@ -68,12 +70,17 @@ public class GetGuildRoleMemberListApi private constructor(
         private val logger = LoggerFactory.logger<GetGuildRoleMemberListApi>()
 
         /**
+         * [limit] 的最大可能值
+         */
+        public const val MAX_LIMIT: Int = 400
+
+        /**
          * 构造 [GetGuildRoleMemberListApi]
          */
         @JvmStatic
         @JvmOverloads
         public fun create(
-            guildId: String, roleId: String, startIndex: String? = null, limit: Int = 1
+            guildId: String, roleId: String, startIndex: String? = null, limit: Int = MAX_LIMIT
         ): GetGuildRoleMemberListApi = GetGuildRoleMemberListApi(guildId, roleId, startIndex, limit)
 
         /**
@@ -115,3 +122,29 @@ public data class GuildRoleMemberList(
     val next: String
 )
 
+
+/**
+ * 使用流的方式查询所有频道服务器。
+ *
+ * @param guildId 要查询的 guild id
+ * @param batch 每次查询所使用的 limit，默认为 [GetGuildRoleMemberListApi.MAX_LIMIT]
+ * @param startIndex 第一次查询的 startIndex，默认为null代表从头查询
+ */
+public inline fun GetGuildRoleMemberListApi.Factory.createFlow(
+    guildId: String,
+    roleId: String,
+    batch: Int = MAX_LIMIT,
+    startIndex: String? = null,
+    crossinline doRequest: suspend GetGuildRoleMemberListApi.() -> GuildRoleMemberList
+): Flow<SimpleMember> = flow {
+    var after: String? = startIndex
+    while (true) {
+        val (list, next) = create(guildId = guildId, roleId = roleId, startIndex = after, limit = batch).doRequest()
+        if (list.isEmpty()) {
+            break
+        }
+
+        list.forEach { emit(it) }
+        after = next
+    }
+}

@@ -62,8 +62,6 @@ public object QQGuild {
     /**
      * 沙箱环境接口域名 `https://sandbox.api.sgroup.qq.com`
      *
-     * #SDK
-     *
      * @see SANDBOX_URL_STRING
      */
     @JvmField

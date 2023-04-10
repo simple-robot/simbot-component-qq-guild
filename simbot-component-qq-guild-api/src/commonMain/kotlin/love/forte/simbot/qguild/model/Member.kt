@@ -82,7 +82,7 @@ public data class SimpleMember(
     /**
      * 用户在频道内的身份组ID, 默认值可参考 [DefaultRoles](https://bot.q.qq.com/wiki/develop/api/openapi/guild/role_model.html#DefaultRoles)
      */
-    override val roles: List<String>,
+    override val roles: List<String> = emptyList(),
     /**
      * 用户加入频道的时间
      */

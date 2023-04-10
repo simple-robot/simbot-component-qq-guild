@@ -53,11 +53,16 @@ strong code[dark-theme='dark'] {
 code {
     border-color: rgba(0, 0, 0, 0.02);
     color: var(--ifm-color-primary-light); /*#f339a9;*/
-
 }
+
 code[dark-theme='dark'] {
     border-color: rgba(0, 0, 0, 0.02);
     color: var(--ifm-color-primary-dark); /*#ef5d84;*/
+}
+
+code .token-line {
+    line-height: 24px;
+    /*Letter-spacing: 1px;*/
 }
 
 :root {
@@ -122,25 +127,11 @@ code[dark-theme='dark'] {
 }
 
 /* 公告条 */
-div[class^='announcementBar_'] {
-    --site-announcement-bar-stripe-color1: hsl(210, 100%, 86%);
-    --site-announcement-bar-stripe-color2: hsl(0, 0%, 100%);
-    background: repeating-linear-gradient(
-            55deg,
-            var(--site-announcement-bar-stripe-color1),
-            var(--site-announcement-bar-stripe-color1) 20px,
-            var(--site-announcement-bar-stripe-color2) 10px,
-            var(--site-announcement-bar-stripe-color2) 40px
-    );
-    font-weight: bold;
-}
-
-/* warn配色 */
 /*div[class^='announcementBar_'] {*/
-/*    --site-announcement-bar-stripe-color1: hsl(52, 84%, 78%);*/
-/*    --site-announcement-bar-stripe-color2: hsl(28, 58%, 94%);*/
+/*    --site-announcement-bar-stripe-color1: hsl(210, 100%, 86%);*/
+/*    --site-announcement-bar-stripe-color2: hsl(0, 0%, 100%);*/
 /*    background: repeating-linear-gradient(*/
-/*            35deg,*/
+/*            55deg,*/
 /*            var(--site-announcement-bar-stripe-color1),*/
 /*            var(--site-announcement-bar-stripe-color1) 20px,*/
 /*            var(--site-announcement-bar-stripe-color2) 10px,*/
@@ -148,3 +139,17 @@ div[class^='announcementBar_'] {
 /*    );*/
 /*    font-weight: bold;*/
 /*}*/
+
+/* warn配色 */
+div[class^='announcementBar_'] {
+    --site-announcement-bar-stripe-color1: hsl(52, 84%, 78%);
+    --site-announcement-bar-stripe-color2: hsl(28, 58%, 94%);
+    background: repeating-linear-gradient(
+            35deg,
+            var(--site-announcement-bar-stripe-color1),
+            var(--site-announcement-bar-stripe-color1) 20px,
+            var(--site-announcement-bar-stripe-color2) 10px,
+            var(--site-announcement-bar-stripe-color2) 40px
+    );
+    font-weight: bold;
+}

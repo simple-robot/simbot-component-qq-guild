@@ -42,7 +42,7 @@ dependencies {
     // see https://github.com/gradle-nexus/publish-plugin
     implementation("io.github.gradle-nexus:publish-plugin:1.1.0")
 
-    implementation("love.forte.plugin.suspend-transform:suspend-transform-plugin-gradle:0.0.5")
+//    implementation("love.forte.plugin.suspend-transform:suspend-transform-plugin-gradle:0.0.5")
     implementation("love.forte.plugin.suspend-transform:suspend-transform-plugin-gradle:$suspendTransformVersion")
     implementation("love.forte.gradle.common:gradle-common-core:$gradleCommon")
     implementation("love.forte.gradle.common:gradle-common-kotlin-multiplatform:$gradleCommon")

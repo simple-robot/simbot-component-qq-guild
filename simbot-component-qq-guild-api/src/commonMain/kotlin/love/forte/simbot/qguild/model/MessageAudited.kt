@@ -30,7 +30,7 @@ public data class MessageAudited(
     /** 消息审核 id */
     @SerialName("audit_id") val auditId: String,
     /** 消息 id，只有审核通过事件才会有值 */
-    @SerialName("message_id") val messageId: String,
+    @SerialName("message_id") val messageId: String? = null,
     /** 频道 id */
     @SerialName("guild_id") val guildId: String,
     /** 子频道 id */

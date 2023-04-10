@@ -1,6 +1,7 @@
 # core-common
 
-参考 [simbot-component-qq-guild-core](../simbot-component-qq-guild-core) 模块
+> **Note**
+> 请参考 [simbot-component-qq-guild-core](../simbot-component-qq-guild-core) 模块
 
 `core-common` 是 `core` 模块中绝大部分的公开定义类型，此模块被 `core` 模块依赖，不能直接使用。如果需要使用，更多应用参考 [`simbot-component-tencent-guild-core` 模块](../simbot-component-qq-guild-core) 。
 

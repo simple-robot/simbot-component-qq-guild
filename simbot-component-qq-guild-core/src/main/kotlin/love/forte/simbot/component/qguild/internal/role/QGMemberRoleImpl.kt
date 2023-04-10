@@ -40,7 +40,9 @@ import kotlin.coroutines.CoroutineContext
  */
 @OptIn(ExperimentalSimbotApi::class)
 internal class QGMemberRoleImpl(
-    override val guildRole: QGGuildRoleImpl, override val memberId: ID, private val sourceMember: QGMember?
+    override val guildRole: QGGuildRoleImpl,
+    override val memberId: ID,
+    private val sourceMember: QGMember?,
 ) : BaseQGRole(), QGMemberRole {
     override val coroutineContext: CoroutineContext = guildRole.bot.newSupervisorCoroutineContext()
 
@@ -61,7 +63,8 @@ internal class QGMemberRoleImpl(
     override suspend fun guild(): QGGuild = guildRole.guild()
     override fun updater(): QGRoleUpdater = guildRole.updater()
     override suspend fun member(): QGMember {
-        return sourceMember ?: GetMemberApi.create(guildId.literal, memberId.literal).requestBy(bot).let { QGMemberImpl(bot, it, guildId) }
+        return sourceMember ?: GetMemberApi.create(guildId.literal, memberId.literal).requestBy(bot)
+            .let { QGMemberImpl(bot, it, guildId) }
     }
 
     override suspend fun delete(): Boolean = delete0(null)

@@ -30,6 +30,7 @@ internal class QGChannelCategoryIdImpl(
     override val bot: QGGuildBotImpl,
     private val guildId: ID,
     override val id: ID,
+    private val sourceGuild: QGGuild? = null
 ) : QGChannelCategoryId {
 
     @Volatile
@@ -47,8 +48,10 @@ internal class QGChannelCategoryIdImpl(
         }
     }
 
-    override suspend fun guild(): QGGuild = bot.guild(guildId)
-        ?: throw NoSuchElementException("guild(id=$guildId)")
+    override suspend fun guild(): QGGuild =
+        sourceGuild
+            ?: bot.guild(guildId)
+            ?: throw NoSuchElementException("guild(id=$guildId)")
 
     override fun toString(): String {
         return "QGChannelCategoryIdImpl(id=$id, name=$name, guild=$guildId)"
@@ -58,16 +61,15 @@ internal class QGChannelCategoryIdImpl(
 internal class QGChannelCategoryImpl(
     override val bot: QGGuildBotImpl,
     override val source: QGuildChannel,
+    private val sourceGuild: QGGuild? = null
 ) : QGChannelCategory {
 
-    override suspend fun guild(): QGGuild = bot.guild(guildId)
-        ?: throw NoSuchElementException("guild(id=$guildId)")
+    override suspend fun guild(): QGGuild =
+        sourceGuild
+            ?: bot.guild(guildId)
+            ?: throw NoSuchElementException("guild(id=$guildId)")
 
     override suspend fun resolve(): QGChannelCategory = this
-//    {
-//        return guild().category(id)
-//            ?: throw NoSuchElementException("category(id=$id)")
-//    }
 
     override val id: ID = source.id.ID
     override val ownerId: ID = source.ownerId.ID
