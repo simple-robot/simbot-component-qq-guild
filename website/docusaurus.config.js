@@ -56,7 +56,7 @@ async function config() {
                         sidebarPath: require.resolve('./sidebars.js'),
                         routeBasePath: 'docs',
                         editUrl:
-                            'https://github.com/simple-robot/simbot-component-qq-guild/tree/main/website',
+                            'https://github.com/simple-robot/simbot-component-qq-guild/tree/dev/main/website',
                         breadcrumbs: true,
                         showLastUpdateTime: true,
                         lastVersion: 'current',
