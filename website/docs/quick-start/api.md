@@ -5,54 +5,54 @@ sidebar_position: 1
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import CodeBlock from '@theme/CodeBlock';
+import {version} from '@site/static/version.json';
 
 API模块是独立的、多平台的，你可以单独使用它作为 [QQ频道API](https://bot.q.qq.com/wiki/develop/api/) 的封装库。
 
-:::info 版本?
-
-版本可前往 [**Releases**](https://github.com/simple-robot/simbot-component-qq-guild/releases) 查看并选择。
-
-:::
 
 ## 安装
 
 <Tabs groupId="use-dependency">
-
 <TabItem value="Gradle Kotlin DSL">
 
-```kotlin
+<CodeBlock language='kotlin'>{`
 // 不要忘记使用 Gradle 的 kotlin 插件来允许自动选择对应平台，比如JVM或JS等。
-
-implementation("love.forte.simbot.component:simbot-component-qq-gulid-api:$VERSION") // 版本参考前文所述的 Releases
-```
+implementation("love.forte.simbot.component:simbot-component-qq-gulid-api:${version}") // 或参考下文所述的 Releases
+`.trim()}</CodeBlock>
 
 </TabItem>
 
 <TabItem value="Gradle Groovy">
 
-```groovy
+<CodeBlock language='gradle'>{`
 // 不要忘记使用 Gradle 的 kotlin 插件来允许自动选择对应平台，比如JVM或JS等。
-
-implementation 'love.forte.simbot.component:simbot-component-qq-gulid-api:$VERSION' // 版本参考前文所述的 Releases
-```
+implementation 'love.forte.simbot.component:simbot-component-qq-gulid-api:${version}' // 版本参考下文所述的 Releases
+`.trim()}</CodeBlock>
 
 </TabItem>
 
 <TabItem value="Maven">
 
-```xml
+<CodeBlock language='xml'>{`
 <dependency>
     <groupId>love.forte.simbot.component</groupId>
     <!-- 在Maven中使用 '-jvm' 后缀来选择使用JVM平台库 -->
     <artifactId>simbot-component-qq-guild-api-jvm</artifactId>
-    <!-- 版本参考前文所述的 Releases -->
-    <version>${VERSION}</version>
+    <!-- 参考下文所述的 Releases -->
+    <version>${version}</version>
 </dependency>
-```
+`.trim()}</CodeBlock>
 
 </TabItem>
-
 </Tabs>
+
+
+:::info 版本参考
+
+版本可前往 [**Releases**](https://github.com/simple-robot/simbot-component-qq-guild/releases) 查阅。
+
+:::
 
 ## 使用
 

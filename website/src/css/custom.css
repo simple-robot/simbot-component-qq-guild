@@ -9,27 +9,27 @@
 /* You can override the default Infima variables here. */
 @font-face {
     font-family: "JetBrains Mono";
-    src: url("/static/fonts/JetBrainsMono-SemiBold.woff2");
+    src: url("/fonts/JetBrainsMono-SemiBold.woff2");
 }
 
 @font-face {
     font-family: "iconfont";
-    src: url("/static/fonts/iconfont.ttf?t=1680524259075") format('truetype');
+    src: url("/fonts/iconfont.ttf?t=1680524259075") format('truetype');
 }
 
 @font-face {
     font-family: "LXGWNeoXiHeiScreen";
-    src: url("/static/fonts/LXGWNeoXiHeiScreen.ttf");
+    src: url("/fonts/LXGWNeoXiHeiScreen.ttf");
 }
 
 @font-face {
     font-family: "SmileySans-Oblique";
-    src: url("/static/fonts/SmileySans-Oblique.otf.woff2");
+    src: url("/fonts/SmileySans-Oblique.otf.woff2");
 }
 
 @font-face {
     font-family: "ZCOOLKuaiLe-Regular";
-    src: url("/static/fonts/ZCOOLKuaiLe-Regular.ttf") format('truetype');
+    src: url("/fonts/ZCOOLKuaiLe-Regular.ttf") format('truetype');
 }
 
 body {

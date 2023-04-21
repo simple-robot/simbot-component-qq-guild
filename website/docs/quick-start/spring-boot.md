@@ -5,6 +5,8 @@ sidebar_position: 4
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import CodeBlock from '@theme/CodeBlock';
+import {version} from '@site/static/version.json';
 
 ## 前言
 
@@ -23,9 +25,7 @@ import TabItem from '@theme/TabItem';
 
 首先准备一个SpringBoot项目。可以考虑前往 [start.spring.io](https://start.spring.io) 或借助IDE等工具。
 
-然后添加两个我们需要的依赖：
-- `love.forte.simbot.boot:simboot-core-spring-boot-starter` ([**版本参考**](https://github.com/simple-robot/simpler-robot/releases))
-- `love.forte.simbot.component:simbot-component-qq-guild-core` ([**版本参考**](https://github.com/simple-robot/simbot-component-qq-guild/releases))
+然后再额外添加我们需要的依赖: 
 
 :::info 保持住
 
@@ -46,150 +46,56 @@ import TabItem from '@theme/TabItem';
 
 <TabItem value="Gradle Kotlin DSL">
 
-```kotlin
-plugins {
-  java
-  kotlin("jvm") version "1.8.10" // 在Gradle中你需要使用Kotlin插件，但是不代表一定要使用Kotlin语言开发。它的作用是运行Gradle自动根据环境选择多平台依赖的具体依赖。  
-  id("org.springframework.boot") version "3.0.5"
-  id("io.spring.dependency-management") version "1.1.0"
-}
-
-group = "com.example"
-version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_17
-
-repositories {
-  mavenCentral()
-}
-
-dependencies {
-  implementation("org.springframework.boot:spring-boot-starter-webflux")
-  testImplementation("org.springframework.boot:spring-boot-starter-test")
-  testImplementation("io.projectreactor:reactor-test")
-  
-  // simbot相关依赖
-  // simbot core starter  
-  implementation("love.forte.simbot.boot:simboot-core-spring-boot-starter:$SIMBOT_VERSION") // 版本请参考前文的参考链接
-  // QQ频道组件  
-  implementation("love.forte.simbot.component:simbot-component-qq-guild-core:$COMPONENT_VERSION") // 版本请参考前文的参考链接
-}
-
-tasks.withType<Test> {
-  useJUnitPlatform()
-}
-```
+<CodeBlock language='kotlin'>{`
+// simbot core starter  
+implementation("love.forte.simbot.boot:simboot-core-spring-boot-starter:$SIMBOT_VERSION") // 版本请参考下文的参考链接
+// QQ频道组件  
+implementation("love.forte.simbot.component:simbot-component-qq-guild-core:${version}") // 或参考下文的参考链接
+`.trim()}</CodeBlock>
 
 </TabItem>
 
 <TabItem value="Gradle Groovy">
 
-```groovy
-plugins {
-    java
-    id 'org.springframework.boot' version '3.0.5'
-    id 'io.spring.dependency-management' version '1.1.0'
-    id 'org.jetbrains.kotlin.jvm' version '1.8.10' // 在Gradle中你需要使用Kotlin插件，但是不代表一定要使用Kotlin语言开发。它的作用是运行Gradle自动根据环境选择多平台依赖的具体依赖。  
-}
+<CodeBlock language='gradle'>{`
+// simbot core starter  
+implementation 'love.forte.simbot.boot:simboot-core-spring-boot-starter:$SIMBOT_VERSION' // 版本请参考下文的参考链接
+// QQ频道组件  
+implementation 'love.forte.simbot.component:simbot-component-qq-guild-core:${version}' // 或参考下文的参考链接
+`.trim()}</CodeBlock>
 
-group = 'com.example'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17'
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-webflux'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'io.projectreactor:reactor-test'
-
-    // simbot相关依赖
-    // simbot core starter  
-    implementation 'love.forte.simbot.boot:simboot-core-spring-boot-starter:$SIMBOT_VERSION' // 版本请参考前文的参考链接
-    // QQ频道组件  
-    implementation 'love.forte.simbot.component:simbot-component-qq-guild-core:$COMPONENT_VERSION' // 版本请参考前文的参考链接
-}
-
-tasks.named('test') {
-    useJUnitPlatform()
-}
-```
 
 </TabItem>
 
 <TabItem value="Maven">
 
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.0.5</version>
-		<relativePath/> <!-- lookup parent from repository -->
-	</parent>
-	<groupId>com.example</groupId>
-	<artifactId>demo</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>demo</name>
-	<description>Demo project for Spring Boot</description>
-	<properties>
-		<java.version>17</java.version>
-	</properties>
-	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-webflux</artifactId>
-		</dependency>
+<CodeBlock language='xml'>{`
+<!-- simbot core starter -->
+<dependency>
+    <groupId>love.forte.simbot.boot</groupId>
+    <artifactId>simboot-core-spring-boot-starter</artifactId>
+    <version>\${SIMBOT_VERSION}</version><!-- 版本请参考下文的参考链接 -->
+</dependency>
+<!-- QQ频道组件 -->
+<dependency>
+    <groupId>love.forte.simbot.component</groupId>
+    <artifactId>simbot-component-qq-guild-core</artifactId>
+    <version>${version}</version><!-- 或参考下文的参考链接 -->
+</dependency>
+`.trim()}</CodeBlock>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.projectreactor</groupId>
-			<artifactId>reactor-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-        
-        <!-- simbot相关依赖 -->
-        <!-- simbot core starter -->
-        <dependency>
-            <groupId>love.forte.simbot.boot</groupId>
-            <artifactId>simboot-core-spring-boot-starter</artifactId>
-            <!-- 版本请参考前文的参考链接 -->
-            <version>${SIMBOT_VERSION}</version>
-        </dependency>
-        
-        <!-- QQ频道组件 -->
-        <dependency>
-            <groupId>love.forte.simbot.component</groupId>
-            <artifactId>simbot-component-qq-guild-core</artifactId>
-            <!-- 版本请参考前文的参考链接 -->
-            <version>${COMPONENT_VERSION}</version>
-        </dependency>
-        
-	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
-
-</project>
-```
 
 </TabItem>
 
 </Tabs>
+
+
+:::tip 版本参考
+
+- `love.forte.simbot.boot:simboot-core-spring-boot-starter` <br /> [**版本参考**](https://github.com/simple-robot/simpler-robot/releases)
+- `love.forte.simbot.component:simbot-component-qq-guild-core` <br /> [**版本参考**](https://github.com/simple-robot/simbot-component-qq-guild/releases)
+
+:::
 
 ## BOT配置
 
