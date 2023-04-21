@@ -50,7 +50,7 @@ public annotation class UsedOnlyForConfigSerialization
  *      "secret": "secret-value",
  *      "token": "token-value",
  *    },
- *    "config": { ... } // or null, or ignore
+ *    "config": null
  * }
  * ```
  *
