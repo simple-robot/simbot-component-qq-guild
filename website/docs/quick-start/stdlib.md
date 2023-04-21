@@ -9,7 +9,7 @@ import CodeBlock from '@theme/CodeBlock';
 import {version} from '@site/static/version.json';
 
 
-stdlib(标准库) 模块在 `API` 模块的基础上提供简单而轻量级的事件订阅能力。
+**stdlib(标准库)模块** 在 `API` 模块的基础上提供简单而轻量级的事件订阅能力。
 
 ## 前提准备
 
@@ -59,7 +59,7 @@ implementation 'love.forte.simbot.component:simbot-component-qq-gulid-stdlib:${v
 
 :::
 
-## BOT注册
+## BOT配置&注册
 
 环境准备完毕后，接下来我们注册一个bot。
 
@@ -73,6 +73,7 @@ val bot = BotFactory.create("APP ID", "secret", "token") {
     this.apiClientEngine = ...   // 使用API时所使用的 Ktor client 引擎，默认情况下会**尝试**自动加载，或直接手动指定一个支持 HTTP API 的引擎。
     this.serverUrl = QQGuild.URL // 使用正式环境，默认即为正式环境
     this.useSandboxServerUrl()   // 使用沙箱环境
+    this.intents = ...           // 要订阅的事件标记。默认订阅 频道、频道成员、公域消息 三种事件
     // 其他配置...
 }
 
@@ -89,6 +90,7 @@ Bot bot = BotFactory.create("APP ID", "secret", "token", (configuration) -> {
     configuration.setApiClientEngine(...);    // 使用API时所使用的 Ktor client 引擎，默认情况下会**尝试**自动加载，或直接手动指定一个支持 HTTP API 的引擎。
     configuration.setServerUrl(QQGuild.URL);  // 使用正式环境，默认即为正式环境
     configuration.useSandboxServerUrl();      // 使用沙箱环境
+    configuration.setIntentsValue(...);       // 要订阅的事件标记值。默认订阅 频道、频道成员、公域消息 三种事件
     // 其他配置...
         
     return Unit.INSTANCE; // 结束配置
@@ -107,6 +109,7 @@ Bot bot = BotFactory.create("APP ID", "secret", "token", (configuration) -> {
     configuration.setApiClientEngine(...);    // 使用API时所使用的 Ktor client 引擎，默认情况下会**尝试**自动加载，或直接手动指定一个支持 HTTP API 的引擎。
     configuration.setServerUrl(QQGuild.URL);  // 使用正式环境，默认即为正式环境
     configuration.useSandboxServerUrl();      // 使用沙箱环境
+    configuration.setIntentsValue(...);       // 要订阅的事件标记。默认订阅 频道、频道成员、公域消息 三种事件
     // 其他配置...
         
     return Unit.INSTANCE; // 结束配置
@@ -215,11 +218,110 @@ bot.registerAsyncProcessor(GuildMemberAdd.class, (GuildMemberAdd event, String r
 bot.startAsync().thenCompose(__ -> bot.joinAsync()).join();
 ```
 
+:::caution 你最好是 
+
+当你选择了使用异步API，那就要尽最大努力来避免再使用阻塞API。
+
+:::
+
 </TabItem>
 </Tabs>
 
-:::danger ⚠
+可以看到，在进行事件处理的时候，你可以得到两个参数：
+一个是接收到的事件类型 `event`，它是类型 `Signal.Dispatch` 的字类；
+另外一个是字符串 `raw`，它代表是这个事件原始的JSON字符串。
 
-施工中
+:::tip 可用的事件类型
+
+可以监听的事件类型参考 [`Signal.Dispatch`](https://docs.simbot.forte.love/components/qq-guild/simbot-component-qq-guild-api/love.forte.simbot.qguild.event/-signal/-dispatch/index.html)
+以及它的所有子类型 (`Inheritors`) 。
 
 :::
+
+
+在事件监听的过程中，配合使用 `API` 来实现你的功能。
+
+举个例子，当监听到 **子频道更新事件** (`ChannelUpdate`) 时，查询一下这个子频道所属的 **频道服务器** (`Guild`) 是什么。
+
+<Tabs groupId="code">
+<TabItem value="Kotlin">
+
+```kotlin
+val bot = BotFactory.create("APP ID", "secret", "token") {
+    // ...
+}
+
+// 订阅 ChannelUpdate
+// highlight-start
+bot.registerProcessor<ChannelUpdate> { raw -> // this: ChannelUpdate
+    // 查询这个子频道所属的频道服务器
+    val guild = GetGuildApi.create(this.data.guildId).requestBy(bot)
+    println("guild: $guild")
+}
+// highlight-end
+
+bot.start() // 启动bot
+bot.join()  // 挂起bot直到bot终止
+```
+
+</TabItem>
+<TabItem value="Java" label="Java Blocking">
+
+```java
+Bot bot = BotFactory.create("APP ID", "secret", "token", (configuration) -> {
+    // ...    
+    return Unit.INSTANCE; // 结束配置
+});
+
+// 订阅 ChannelUpdate
+// highlight-start
+bot.registerBlockingProcessor(ChannelUpdate.class, (event, raw) -> {
+    // 查询这个子频道所属的频道服务器
+    GetGuildApi getGuildApi = GetGuildApi.create(event.getData().getGuildId());
+    SimpleGuild guild = BotRequestUtil.requestBlocking(bot, getGuildApi);
+    System.out.println("guild: " + guild);
+});
+// highlight-end
+
+bot.startBlocking(); // 启动bot
+bot.joinBlocking();  // 阻塞直到bot终止
+```
+
+</TabItem>
+<TabItem value="Java Async">
+
+```java
+Bot bot = BotFactory.create("APP ID", "secret", "token", (configuration) -> {
+    // ...    
+    return Unit.INSTANCE; // 结束配置
+});
+
+// 订阅 ChannelUpdate
+// highlight-start
+bot.registerAsyncProcessor(ChannelUpdate.class, (event, raw) -> {
+    // 查询这个子频道所属的频道服务器
+    GetGuildApi getGuildApi = GetGuildApi.create(event.getData().getGuildId());
+    return BotRequestUtil.requestAsync(bot, getGuildApi).thenAccept(guild -> {
+        System.out.println("guild: " + guild);
+    });
+});
+// highlight-end
+
+// 阻塞直到bot终止
+bot.startAsync().thenCompose(__ -> bot.joinAsync()).join();
+```
+
+:::caution 你最好是
+
+当你选择了使用异步API，那就要尽最大努力来避免再使用阻塞API。
+
+:::
+
+</TabItem>
+</Tabs>
+
+## 启动
+
+接下来，启动程序并试试看吧。
+
+当然，如果遇到了预期外的问题也不要慌，积极反馈问题才能使我们变得更好，可以前往 [Issues](https://github.com/simple-robot/simpler-robot/issues) 反馈问题、[社区](https://github.com/orgs/simple-robot/discussions) 提出疑问。

@@ -8,7 +8,7 @@ import TabItem from '@theme/TabItem';
 import CodeBlock from '@theme/CodeBlock';
 import {version} from '@site/static/version.json';
 
-API模块是独立的、多平台的，你可以单独使用它作为 [QQ频道API](https://bot.q.qq.com/wiki/develop/api/) 的封装库。
+**API模块**是独立的、多平台的，你可以单独使用它作为 [QQ频道API](https://bot.q.qq.com/wiki/develop/api/) 的封装库。
 
 
 ## 安装

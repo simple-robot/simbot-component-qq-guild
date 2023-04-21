@@ -8,14 +8,7 @@ import TabItem from '@theme/TabItem';
 import CodeBlock from '@theme/CodeBlock';
 import {version} from '@site/static/version.json';
 
-## 前言
-
-本编文档介绍在JVM环境下使用:
-
-- `simboot-core-spring-boot-starter` _(`simbot3` 的 Spring Boot Starter)_
-- `simbot-component-qq-guild-core` _(`simbot3` QQ频道组件)_
-
-来编写一个QQ频道机器人。
+通过**core模块**配合 **simbot starter** 在 **Spring Boot** 中轻松使用。
 
 ## 前提准备
 
@@ -153,7 +146,7 @@ simbot:
 
 <TabItem value="Kotlin">
 
-```kotlin title='com.example.App.kt'
+```kotlin title='com.example.App'
 @EnableSimbot
 @SpringBootApplication
 class App
@@ -173,7 +166,7 @@ fun main(vararg args: String) {
 
 :::
 
-```java title='com.example.App.java'
+```java title='com.example.App'
 @EnableSimbot
 @SpringBootApplication
 public class App {
@@ -196,7 +189,7 @@ public class App {
 
 假设：要求bot必须**被AT**，并且说一句 `你好`，此时bot会**引用**用户发送的消息并回复 `你也好!` ，类似于：
 
-```
+```text
 用户: 
 @BOT 你好
 
@@ -247,7 +240,6 @@ public class ExampleListener {
     @Filter(value = "你好", targets = @Filter.Targets(atBot = true))
     @ContentTrim // 当匹配被at时，将'at'这个特殊消息移除后，剩余的文本消息大概率存在前后空格，通过此注解在匹配的时候忽略前后空格
     public void onChannelMessage(ChannelMessageEvent event) { // 将要监听的事件类型放在参数里，即代表监听此类型的消息
-        
         // Java中的阻塞式API
         event.replyBlocking("你也好!");
     }
@@ -273,7 +265,6 @@ public class ExampleListener {
     @Filter(value = "你好", targets = @Filter.Targets(atBot = true))
     @ContentTrim // 当匹配被at时，将'at'这个特殊消息移除后，剩余的文本消息大概率存在前后空格，通过此注解在匹配的时候忽略前后空格
     public CompletableFuture<?> onChannelMessage(ChannelMessageEvent event) { // 将要监听的事件类型放在参数里，即代表监听此类型的消息
-        
         // 将 CompletableFuture 作为返回值，simbot会以非阻塞的形式处理它
         return event.replyAsync("你也好!");
     }
@@ -305,7 +296,6 @@ public class ExampleListener {
     @Filter(value = "你好", targets = @Filter.Targets(atBot = true))
     @ContentTrim // 当匹配被at时，将'at'这个特殊消息移除后，剩余的文本消息大概率存在前后空格，通过此注解在匹配的时候忽略前后空格
     public Mono<?> onChannelMessage(ChannelMessageEvent event) { // 将要监听的事件类型放在参数里，即代表监听此类型的消息
-        
         // 将 Mono 等响应式类型作为返回值，simbot会以非阻塞的形式处理它
         return Mono.fromCompletionStage(event.replyAsync("你也好!"));
     }
