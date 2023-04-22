@@ -31,22 +31,14 @@ tasks.create("createChangelog") {
             file.createNewFile()
             val coreVersion = simbotVersion
             val autoGenerateText = """
-                > 对应核心版本: [**v$coreVersion**](https://github.com/ForteScarlet/simpler-robot/releases/tag/v$coreVersion)
+                > 对应核心版本: [**v$coreVersion**](https://github.com/simple-robot/simpler-robot/releases/tag/v$coreVersion)
                 
                 > **Warning**
                 > **目前版本仍处于 `ALPHA` 阶段，代表仍然可能存在大量[已知问题](https://github.com/simple-robot/simbot-component-qq-guild/issues)或未知问题，
                 以及未完善的内容和落后于官方更新的内容。**
                 
-                我们欢迎并期望着积极的[反馈](https://github.com/simple-robot/simbot-component-qq-guild/issues)或[协助](https://github.com/simple-robot/simbot-component-qq-guild/pulls)，
+                我们欢迎并期望着您的的[反馈](https://github.com/simple-robot/simbot-component-qq-guild/issues)或[协助](https://github.com/simple-robot/simbot-component-qq-guild/pulls)，
                 感谢您的贡献与支持！
-                
-                **仓库参考:**
-                
-                | **模块** | **repo1.maven** | **search.maven** |
-                |---------|-----------------|------------------|
-                ${repoRow("simbot-qq-guild-api", "love.forte.simbot.component", "simbot-component-qq-guild-api", realVersion)}
-                ${repoRow("simbot-qq-guild-stdlib", "love.forte.simbot.component", "simbot-component-qq-guild-stdlib", realVersion)}
-                ${repoRow("simbot-qq-guild-core", "love.forte.simbot.component", "simbot-component-qq-guild-core", realVersion)}
                 
             """.trimIndent()
 
