@@ -495,8 +495,9 @@ internal class BotImpl(
         val session: DefaultClientWebSocketSession
     ) : Stage() {
         override suspend fun invoke(loop: StageLoop<Stage>) {
-            // TODO capacity configurable?
-            val sharedFlow = MutableSharedFlow<EventData>(extraBufferCapacity = 16)
+            val eventBufferCapacity = configuration.eventBufferCapacity
+            logger.debug("Bot event buffer capacity: {}", eventBufferCapacity)
+            val sharedFlow = MutableSharedFlow<EventData>(extraBufferCapacity = eventBufferCapacity)
             launchEventProcessJob(sharedFlow)
 
             val client = ClientImpl(
