@@ -22,6 +22,7 @@ import io.ktor.client.engine.*
 import io.ktor.client.plugins.*
 import io.ktor.http.*
 import kotlinx.serialization.json.Json
+import love.forte.simbot.qguild.BotConfiguration.Companion.DEFAULT_EVENT_BUFFER_CAPACITY
 import love.forte.simbot.qguild.event.EventIntents
 import love.forte.simbot.qguild.event.Intents
 import love.forte.simbot.qguild.event.Shard
@@ -175,6 +176,17 @@ public class ConfigurableBotConfiguration : BotConfiguration {
      */
     override var apiDecoder: Json = defaultJson
 
+    /**
+     * BOT内接收到事件后推送到的缓冲区的容量。
+     *
+     * 缓冲区中堆积的事件如果已满则后续推送的事件会挂起等待缓冲区内元素的消费。
+     *
+     * 默认为 [`64`][DEFAULT_EVENT_BUFFER_CAPACITY]。
+     *
+     * @see DEFAULT_EVENT_BUFFER_CAPACITY
+     *
+     */
+    override var eventBufferCapacity: Int = DEFAULT_EVENT_BUFFER_CAPACITY
 
     public companion object {
         private val defaultJson = Json {
@@ -199,6 +211,7 @@ public class ConfigurableBotConfiguration : BotConfiguration {
         wsClientEngine = wsClientEngine,
         wsClientEngineFactory = wsClientEngineFactory,
         apiDecoder = apiDecoder,
+        eventBufferCapacity = eventBufferCapacity,
     )
 }
 
@@ -217,4 +230,5 @@ private class BotConfigurationImpl(
     override val wsClientEngine: HttpClientEngine?,
     override val wsClientEngineFactory: HttpClientEngineFactory<*>?,
     override val apiDecoder: Json,
+    override val eventBufferCapacity: Int,
 ) : BotConfiguration
