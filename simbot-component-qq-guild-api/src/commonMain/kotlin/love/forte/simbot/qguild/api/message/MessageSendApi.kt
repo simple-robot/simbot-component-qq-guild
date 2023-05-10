@@ -18,13 +18,8 @@
 
 package love.forte.simbot.qguild.api.message
 
-import io.ktor.client.*
-import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
-import io.ktor.http.content.*
-import io.ktor.serialization.kotlinx.json.*
-import io.ktor.util.cio.*
 import io.ktor.utils.io.core.*
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -32,12 +27,13 @@ import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
-import love.forte.simbot.qguild.*
+import love.forte.simbot.qguild.InternalApi
 import love.forte.simbot.qguild.api.QQGuildApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimplePostApiDescription
 import love.forte.simbot.qguild.api.message.MessageSendApi.Body.Builder
-import love.forte.simbot.qguild.message.*
+import love.forte.simbot.qguild.message.ContentTextDecoder
+import love.forte.simbot.qguild.message.ContentTextEncoder
 import love.forte.simbot.qguild.model.Message
 import kotlin.jvm.JvmStatic
 import kotlin.jvm.JvmSynthetic
@@ -297,6 +293,8 @@ public class MessageSendApi private constructor(
         public companion object {
 
             /**
+             * 构造一个 [Body].
+             *
              * ```kotlin
              * val body = Body {
              *   // ...
@@ -313,6 +311,22 @@ public class MessageSendApi private constructor(
 
 }
 
+
+/**
+ * 构造 [MessageSendApi]
+ *
+ * ```kotlin
+ * val api = MessageSendApi.create(channelId) {
+ *      // body builder
+ * }
+ * ```
+ *
+ */
+@JvmSynthetic
+public inline fun MessageSendApi.Factory.create(channelId: String, builder: Builder.() -> Unit): MessageSendApi =
+    create(channelId, MessageSendApi.Body.invoke(builder))
+
+
 /**
  * 提供一些需要由不同平台额外实现的基类。
  * 主要针对 `fileImage`。
@@ -322,7 +336,7 @@ public expect abstract class BaseMessageSendBodyBuilder() {
     public open var fileImage: Any?
     protected set
     /*
-        追加额外的平台功能，但是不能有抽象方法
+     * 追加额外的平台功能，但是不能有抽象方法
      */
 }
 
