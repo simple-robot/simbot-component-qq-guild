@@ -68,8 +68,9 @@ kotlin {
     val mainPresets = mutableSetOf<org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet>()
     val testPresets = mutableSetOf<org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet>()
 
-    // TODO https://kotlinlang.org/docs/native-target-support.html
+    // https://kotlinlang.org/docs/native-target-support.html
     // 针对 kotlin target support 中的列表结合 ktor-client 平台的支持提供的平台能力。
+    // 注释掉的内容是Ktor尚不支持的平台
     val supportTargets = setOf(
         // Tier 1
         "linuxX64",
@@ -77,7 +78,6 @@ kotlin {
         "macosArm64",
         "iosSimulatorArm64",
         "iosX64",
-
         // Tier 2
 //        "linuxArm64",
         "watchosSimulatorArm64",

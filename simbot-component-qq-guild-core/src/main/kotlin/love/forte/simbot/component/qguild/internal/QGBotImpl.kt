@@ -88,8 +88,7 @@ internal class QGBotImpl(
 
     override fun isMe(id: ID): Boolean {
         if (id == this.id) return true
-        if (::botSelf.isInitialized && botSelf.id == id.literal) return true
-        return false
+        return ::botSelf.isInitialized && botSelf.id == id.literal
     }
 
     override val username: String
@@ -111,7 +110,7 @@ internal class QGBotImpl(
 
     override suspend fun guild(id: ID): QGGuildImpl? = queryGuild(id.literal)
 
-    @OptIn(FlowPreview::class)
+    @OptIn(ExperimentalCoroutinesApi::class)
     override val guilds: Items<QGGuildImpl>
         get() = itemsByFlow { props ->
             props.effectOn(queryGuildList(props.batch).flatMapConcat { it.asFlow() }).map { qgGuild(this, it) }
