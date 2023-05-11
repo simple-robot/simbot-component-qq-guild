@@ -54,14 +54,13 @@ internal class QGBotImpl(
     override val manager: QQGuildBotManager,
     override val eventProcessor: EventProcessor,
     override val component: QQGuildComponent,
-    private val configuration: QGBotComponentConfiguration
+    configuration: QGBotComponentConfiguration
 ) : QGBot {
     override val logger =
         LoggerFactory.getLogger("love.forte.simbot.component.qguild.bot.${source.ticket.secret}")
 
     internal val job: CompletableJob
     override val coroutineContext: CoroutineContext
-    private val intents = source.configuration.intents
 
     private val cacheConfig = configuration.cacheConfig
     private val cacheable = cacheConfig?.enable == true
