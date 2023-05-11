@@ -5,7 +5,7 @@ kotlinx-datetime = "0.4.0"
 okio = "3.3.0"
 ktor = "2.3.0"
 openjdk-jmh = "1.35"
-log4j = "2.14.1"
+log4j = "2.20.0"
 atomicfu = "0.20.1"
 
 [libraries]
@@ -65,7 +65,7 @@ ktor-client-darwin = { group = "io.ktor", name = "ktor-client-darwin", version.r
 # log4j
 log4j-api = { group = "org.apache.logging.log4j", name = "log4j-api", version.ref = "log4j" }
 log4j-core = { group = "org.apache.logging.log4j", name = "log4j-core", version.ref = "log4j" }
-log4j-slf4jImpl = { group = "org.apache.logging.log4j", name = "log4j-slf4j-impl", version.ref = "log4j" }
+log4j-slf4j2 = { group = "org.apache.logging.log4j", name = "log4j-slf4j2-impl", version.ref = "log4j" }
 
 # jmh
 openjdk-jmh-core = { group = "org.openjdk.jmh", name = "jmh-core", version.ref = "openjdk-jmh" }
