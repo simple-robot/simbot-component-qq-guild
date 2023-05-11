@@ -47,7 +47,6 @@ import love.forte.simbot.qguild.api.GatewayInfo
 import love.forte.simbot.qguild.api.user.GetBotInfoApi
 import love.forte.simbot.qguild.event.*
 import love.forte.simbot.qguild.model.User
-import love.forte.simbot.util.stageloop.StageLoop
 import love.forte.simbot.util.stageloop.loop
 import kotlin.coroutines.CoroutineContext
 import kotlin.jvm.Volatile
@@ -267,18 +266,19 @@ internal class BotImpl(
 
         logger.debug("Request gateway {} by shard {}", gatewayInfo, shard)
 
-        val loop = StageLoop<Stage>()
+        val state = Connect(shard, gatewayInfo)
 
-        logger.debug("Create stage loop {}", loop)
+//        val loop = StageLoop<Stage>()
 
-        loop.appendStage(Connect(shard, gatewayInfo))
+        logger.debug("Create state loop {}", state)
 
         // TODO supervisor? or normal?
         val stageLoopJob: Job = launch(SupervisorJob(supervisorJob)) {
-            loop.loop { e ->
-                // TODO just throw?
-                throw e
-            }
+            state.loop()
+//            loop.loop { e ->
+//                // TODO just throw?
+//                throw e
+//            }
         }
 
         this.stageLoopJob.getAndUpdate { old ->
@@ -329,17 +329,18 @@ internal class BotImpl(
         }
     }
 
-    private abstract inner class Stage : love.forte.simbot.util.stageloop.Stage<Stage>()
 
     /**
-     * 根据 [gateway] 和 [shard] 连接到ws服务器。
+     * 流转的状态
      */
-    private inner class Connect(val shard: Shard, val gateway: GatewayInfo) : Stage() {
-        override suspend fun invoke(loop: StageLoop<Stage>) {
+    private abstract inner class State : love.forte.simbot.util.stageloop.State<State>()
+
+    private inner class Connect(val shard: Shard, val gateway: GatewayInfo) : State() {
+        override suspend fun invoke(): State {
             val intents = this@BotImpl.intents
             val properties = this@BotImpl.clientProperties
 
-            logger.debug("Connect intents: {}", intents)
+            logger.debug("Connect intents   : {}", intents)
             logger.debug("Connect properties: {}", properties)
 
             val identify = Signal.Identify(
@@ -355,23 +356,17 @@ internal class BotImpl(
             val session = wsClient.ws { gateway }
 
             // next: receive Hello
-            loop.appendStage(WaitingHello(session) { hello ->
+            return WaitingHello(session) { hello ->
                 WaitingReadyEvent(identify, hello.data, session)
-            })
+            }
         }
     }
 
-    /**
-     * 等待并接收 [Signal.Hello] .
-     *
-     * [2.鉴权连接](https://bot.q.qq.com/wiki/develop/api/gateway/reference.html#_2-%E9%89%B4%E6%9D%83%E8%BF%9E%E6%8E%A5)
-     *
-     */
     private inner class WaitingHello(
         val session: DefaultClientWebSocketSession,
-        val next: WaitingHello.(Signal.Hello) -> Stage?
-    ) : Stage() {
-        override suspend fun invoke(loop: StageLoop<Stage>) {
+        val next: WaitingHello.(Signal.Hello) -> State?
+    ) : State() {
+        override suspend fun invoke(): State? {
             var hello: Signal.Hello? = null
             while (session.isActive) {
                 val frame = session.incoming.receive() as? Frame.Text ?: continue
@@ -393,7 +388,7 @@ internal class BotImpl(
             logger.debug("Received Hello: {}", h)
 
             // 下一个阶段
-            next(this, h)?.also { loop.appendStage(it) }
+            return next(this, h)
         }
     }
 
@@ -406,8 +401,8 @@ internal class BotImpl(
         val identify: Signal.Identify,
         val hello: Signal.Hello.Data,
         val session: DefaultClientWebSocketSession
-    ) : Stage() {
-        override suspend fun invoke(loop: StageLoop<Stage>) {
+    ) : State() {
+        override suspend fun invoke(): State {
             // 发送 identify
             logger.debug("Send identify {}", identify)
             session.send(wsDecoder.encodeToString(Signal.Identify.serializer(), identify))
@@ -437,7 +432,7 @@ internal class BotImpl(
             logger.debug("Received Ready event: {}", r)
 
             // next: session
-            loop.appendStage(HeartbeatJob(hello, r.data, session))
+            return HeartbeatJob(hello, r.data, session)
         }
     }
 
@@ -446,8 +441,8 @@ internal class BotImpl(
         val hello: Signal.Hello.Data,
         val readyData: Ready.Data,
         val session: DefaultClientWebSocketSession
-    ) : Stage() {
-        override suspend fun invoke(loop: StageLoop<Stage>) {
+    ) : State() {
+        override suspend fun invoke(): State {
             val seq = AtomicLongRef(-1L)
 
             // 创建心跳任务
@@ -456,7 +451,7 @@ internal class BotImpl(
             val sessionInfo = SessionInfo(session, seq, heartbeatJob, logger, readyData)
 
             // next: process event
-            loop.appendStage(CreateClient(sessionInfo, session))
+            return CreateClient(sessionInfo, session)
         }
 
 
@@ -487,14 +482,15 @@ internal class BotImpl(
         }
     }
 
+
     /**
      * 创建 [ClientImpl], 并在异步中处理事件。
      */
     private inner class CreateClient(
         val botClientSession: SessionInfo,
         val session: DefaultClientWebSocketSession
-    ) : Stage() {
-        override suspend fun invoke(loop: StageLoop<Stage>) {
+    ) : State() {
+        override suspend fun invoke(): State {
             val eventBufferCapacity = configuration.eventBufferCapacity
             logger.debug("Bot event buffer capacity: {}", eventBufferCapacity)
             val sharedFlow = MutableSharedFlow<EventData>(extraBufferCapacity = eventBufferCapacity)
@@ -515,7 +511,7 @@ internal class BotImpl(
             }
 
             // next: receive events
-            loop.appendStage(ReceiveEvent(client, sharedFlow))
+            return ReceiveEvent(client, sharedFlow)
         }
 
         private fun launchEventProcessJob(flow: SharedFlow<EventData>): Job {
@@ -575,32 +571,30 @@ internal class BotImpl(
     private inner class ReceiveEvent(
         val client: ClientImpl,
         val eventSharedFlow: MutableSharedFlow<EventData>,
-    ) : Stage() {
+    ) : State() {
         // TODO session.incoming buffer
 
-        override suspend fun invoke(loop: StageLoop<Stage>) {
+        override suspend fun invoke(): State? {
             val session = client.wsSession
             val seq = client.sessionInfo.seq
             if (!session.isActive) {
                 val reason = session.closeReason.await()
                 logger.error("Session is closed. reason: {}. Try to resume", reason)
-                loop.appendStage(Resume(client))
-                return
+                return Resume0(client)
             }
 
-            suspend fun onCatchErr(e: Throwable) {
+            suspend fun onCatchErr(e: Throwable): State? {
                 val reason = session.closeReason.await()
                 if (reason == null) {
                     logger.debug("Session closed and reason is null, try to resume", e)
                     // try resume
-                    loop.appendStage(Resume(client))
-                    return
+                    return Resume0(client)
                 }
 
-                suspend fun doIdentify() {
+                suspend fun doIdentify(): State {
                     val gatewayInfo: GatewayInfo = GatewayApis.Normal.requestBy(this@BotImpl)
                     logger.debug("Reconnect gateway {} by shard {}", gatewayInfo, shard)
-                    loop.appendStage(Connect(shard, gatewayInfo))
+                    return Connect(shard, gatewayInfo)
                 }
 
                 val reasonCode = reason.code
@@ -608,51 +602,60 @@ internal class BotImpl(
                     canBeResumed(reasonCode) -> {
                         logger.debug("Session closed({}), try to resume", reason, e)
                         // try resume
-                        loop.appendStage(Resume(client))
-                        return
+                        return Resume0(client)
                     }
 
                     canBeIdentified(reasonCode) -> {
                         logger.debug("Session closed({}), try to reconnect", reason, e)
                         // try resume
-                        doIdentify()
-                        return
+                        return doIdentify()
                     }
 
                     else -> {
                         // 4914，4915 不可以连接，请联系官方解封
                         when (reasonCode.toInt()) {
-                            4914 -> logger.error("机器人已下架,只允许连接沙箱环境,请断开连接,检验当前连接环境 (reason={})", reason, e)
-                            4915 -> logger.error("机器人已封禁,不允许连接,请断开连接,申请解封后再连接 (reason={})", reason, e)
+                            4914 -> logger.error(
+                                "机器人已下架,只允许连接沙箱环境,请断开连接,检验当前连接环境 (reason={})",
+                                reason,
+                                e
+                            )
+
+                            4915 -> logger.error(
+                                "机器人已封禁,不允许连接,请断开连接,申请解封后再连接 (reason={})",
+                                reason,
+                                e
+                            )
+
                             else -> {
                                 logger.warn("Unknown reason({}), try to IDENTIFY", reason, e)
-                                doIdentify()
-                                return
+                                return doIdentify()
                             }
                         }
 
                         this@BotImpl.cancel(e)
                     }
                 }
+
+                // stop
+                return null
             }
 
             logger.trace("Receiving next frame ...")
             val frame = try {
                 session.incoming.receive()
             } catch (e: ClosedReceiveChannelException) {
-                onCatchErr(e)
-                return
+                return onCatchErr(e)
             } catch (e: CancellationException) {
-                onCatchErr(e)
-                return
+                return onCatchErr(e)
             }
 
             try {
                 logger.trace("Received next frame: {}", frame)
                 val raw = (frame as? Frame.Text)?.readText() ?: run {
                     logger.debug("Not Text frame {}, skip.", frame)
-                    loop.appendStage(this) // next: this
-                    return
+                    return this
+//                    loop.appendStage(this) // next: this
+//                    return
                 }
                 logger.debug("Received text frame raw: {}", raw)
                 val json = wsDecoder.parseToJsonElement(raw)
@@ -664,9 +667,13 @@ internal class BotImpl(
                         } catch (serEx: SerializationException) {
                             if (serEx.message?.startsWith("Polymorphic serializer was not found for") == true) {
                                 // 未知的事件类型
-                                val disSeq = runCatching { json.jsonObject["s"]?.jsonPrimitive?.longOrNull ?: seq.value }.getOrElse { seq.value }
+                                val disSeq = runCatching {
+                                    json.jsonObject["s"]?.jsonPrimitive?.longOrNull ?: seq.value
+                                }.getOrElse { seq.value }
                                 Signal.Dispatch.Unknown(disSeq, json, raw).also {
-                                    val t = kotlin.runCatching { json.jsonObject[Signal.Dispatch.DISPATCH_CLASS_DISCRIMINATOR]?.jsonPrimitive?.content }.getOrNull()
+                                    val t =
+                                        kotlin.runCatching { json.jsonObject[Signal.Dispatch.DISPATCH_CLASS_DISCRIMINATOR]?.jsonPrimitive?.content }
+                                            .getOrNull()
                                     logger.warn("Unknown event type {}, decode it as Unknown event: {}", t, it)
                                 }
                             } else {
@@ -688,8 +695,7 @@ internal class BotImpl(
                     Opcodes.Reconnect -> {
                         // 重新连接
                         logger.debug("Received reconnect signal. Do Resume.")
-                        loop.appendStage(Resume(client))
-                        return
+                        return Resume0(client)
                     }
 
                     else -> {
@@ -703,7 +709,8 @@ internal class BotImpl(
             }
 
             // next: self
-            loop.appendStage(this)
+            return this
+//            loop.appendStage(this)
         }
     }
 
@@ -715,10 +722,10 @@ internal class BotImpl(
      * 断开重连不需要发送Identify请求。在连接到 Gateway 之后，需要发送 Opcode 6 Resume消息
      *
      */
-    private inner class Resume(
+    private inner class Resume0(
         val client: ClientImpl,
-    ) : Stage() {
-        override suspend fun invoke(loop: StageLoop<Stage>) {
+    ) : State() {
+        override suspend fun invoke(): State {
             val newSession = connectLock.withLock {
                 // 关闭当前连接
                 client.cancelAndJoin()
@@ -731,15 +738,13 @@ internal class BotImpl(
                 }
             }
 
-            val nextStage = WaitingHello(newSession) { hello ->
+
+            return WaitingHello(newSession) { hello ->
                 // 跳过 wait ready, 直接HeartbeatJob
                 HeartbeatJob(hello.data, client.readyData, session)
             }
-            loop.appendStage(nextStage)
-
         }
     }
-
 
     private suspend inline fun HttpClient.ws(crossinline gatewayInfo: () -> GatewayInfo): DefaultClientWebSocketSession {
         return webSocketSession { url(gatewayInfo().url) }
