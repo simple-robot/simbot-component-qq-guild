@@ -54,7 +54,7 @@ public data class Thread(
      *
      * @see ThreadInfo
      */
-    @SerialName("tread_info")
+    @SerialName("thread_info")
     val threadInfo: ThreadInfo
 )
 
