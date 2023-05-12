@@ -188,7 +188,8 @@ internal class QGBotImpl(
     internal fun <T> checkIfTransmitCacheable(target: T): T? = target.takeIf { cacheable && cacheConfig?.transmitCacheConfig?.enable == true }
 
     override fun toString(): String {
-        val uid = if (::botSelf.isInitialized) botSelf.id else "(NOT INIT)"
+        // 还未初始化
+        val uid = if (::botSelf.isInitialized) botSelf.id else "(Not initialized yet)"
         return "QGBotImpl(appId=$id, userId=$uid, isActive=$isActive)"
     }
 }

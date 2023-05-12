@@ -92,5 +92,9 @@ internal class QGGuildBotImpl(
         get() = bot.guilds
 
     override suspend fun me(): User = bot.me()
+
+    override fun toString(): String {
+        return "QGGuildBotImpl(bot=$bot, guildId=$guildId)"
+    }
 }
 

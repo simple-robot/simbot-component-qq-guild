@@ -35,7 +35,7 @@ import love.forte.simbot.qguild.model.Channel as QGSourceChannel
  * [QGChannelCategoryId] 是一个**仅存在ID**的 QQ频道子频道分组实现。QQ频道对于子频道分组类型的变更不会推送事件，
  * 因此无法内建缓存，而如果每次事件都要实时查询channel的分组则可能有些多余 —— 毕竟分组可能并不是一个高频使用的对象。
  *
- * 因此在 [QGChannel.category] 中我们仅提供 [QGChannelCategoryId] 类型来直接提供分组ID，
+ * 因此在 [QGTextChannel.category] 中我们仅提供 [QGChannelCategoryId] 类型来直接提供分组ID，
  * 并在有需要的时候通过 [resolve] 查询并获取真正的对象实例。
  *
  * [QGChannelCategoryId] 中 [id] 为子频道分组的ID，[name] 由于需要通过API查询，
@@ -93,17 +93,19 @@ public interface QGChannelCategoryId : Category, BotContainer, GuildInfoContaine
 }
 
 
-
-
 /**
+ * 频道分组。[QGChannel] 的实现类型之一。
+ *
  * 当一个频道的 [QGSourceChannel.type] 的值等于 [ChannelType.CATEGORY] 时，
  * 此频道代表为一个分组。
  *
  * 可以通过 [QGGuild.categories] 或 [QGGuild.category] 查询获取。
  *
+ * @see QGChannel
+ *
  * @author ForteScarlet
  */
-public interface QGChannelCategory : Category, BotContainer, GuildInfoContainer, QGChannelCategoryId, QGObjectiveContainer<QGSourceChannel> {
+public interface QGChannelCategory : Category, QGChannel, BotContainer, GuildInfoContainer, QGChannelCategoryId, QGObjectiveContainer<QGSourceChannel> {
     /**
      * 所属BOT
      */
@@ -119,17 +121,10 @@ public interface QGChannelCategory : Category, BotContainer, GuildInfoContainer,
      */
     override val name: String get() = source.name
 
-    //// just like model Channel
-
     /**
      * 所属频道ID
      */
-    public val guildId: ID
-
-    /**
-     * 创建人ID
-     */
-    public val ownerId: ID
+    override val guildId: ID
 
     /**
      * 排序值。无法获取时得到 -1

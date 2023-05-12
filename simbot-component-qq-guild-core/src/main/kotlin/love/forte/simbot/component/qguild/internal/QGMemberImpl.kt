@@ -148,7 +148,7 @@ internal class QGMemberImpl(
     }
 
     override fun toString(): String {
-        return "QGMemberImpl(id=$id, nickname=$nickname, username=$username, guild=$guildId, source=$source)"
+        return "QGMemberImpl(id=$id, username=$username, nickname=$nickname, guildId=$guildId)"
     }
 }
 

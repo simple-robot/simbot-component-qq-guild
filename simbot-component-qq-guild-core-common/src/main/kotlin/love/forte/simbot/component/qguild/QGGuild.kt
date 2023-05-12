@@ -116,43 +116,67 @@ public interface QGGuild : Guild, CoroutineScope, QGObjectiveContainer<QGSourceG
     public suspend fun permissions(): ApiPermissions
 
     /**
-     * 得到此频道服务器下的所有子频道。
+     * 得到此频道中的所有子频道。
      *
      * _可以通过 [permissions] 手动检查是否存在 [GetGuildChannelListApi] 的权限。_
      *
-     * [channels] 的结果中不会出现 [子频道分类][QGChannelCategory]，毕竟它们是不同的类型。
-     * 获取子频道分类相关内容，参考 [categories] 或 [category].
+     * 如果希望获取用于发送消息的文字子频道可参考 [channels]。[QGChannel] 可能的类型参考其文档说明。
      *
+     * @see QGChannel
+     * @see channels
+     *
+     */
+    public val sourceChannels: Items<QGChannel>
+
+    /**
+     * 根据ID获取指定的子频道。
+     *
+     * @see QGChannel
+     */
+    @JST(blockingBaseName = "getSourceChannel", blockingSuffix = "", asyncBaseName = "getSourceChannel")
+    public suspend fun sourceChannel(id: ID): QGChannel?
+
+    // TODO QGChanel 是否实现 Channel ，然后不支持的调用send的时候报错？
+
+    /**
+     * 得到此频道服务器下的所有**文字子频道**。
+     *
+     * _可以通过 [permissions] 手动检查是否存在 [GetGuildChannelListApi] 的权限。_
+     *
+     * [channels] 的结果仅代表**文字子频道**类型。如果希望获取全部的子频道信息，请使用 [sourceChannels];
+     * 如果希望获取 _子频道分类_ ，参考 [categories]。
+     *
+     * @see QGTextChannel
      * @see channel
      * @see categories
      * @see category
      *
      * @throws QQGuildApiException 请求失败，例如没有权限
      */
-    override val channels: Items<QGChannel>
+    override val channels: Items<QGTextChannel>
 
     /**
-     * 获取指定ID的子频道。
+     * 获取指定ID的**文字子频道**。
      *
      * @throws QQGuildApiException 请求失败，例如没有权限
      */
     @JST(blockingBaseName = "getChannel", blockingSuffix = "", asyncBaseName = "getChannel")
-    override suspend fun channel(id: ID): QGChannel?
+    override suspend fun channel(id: ID): QGTextChannel?
 
     /**
-     * 得到此频道服务器下的所有子频道。同 [channels]。
+     * 得到此频道服务器下的所有**文字子频道**。同 [channels]。
      *
      * @see channels
      */
-    override val children: Items<QGChannel> get() = channels
+    override val children: Items<QGTextChannel> get() = channels
 
     /**
-     * 获取指定ID的子频道，同 [channel]
+     * 获取指定ID的**文字子频道**，同 [channel]
      *
      * @see channel
      */
     @JST(blockingBaseName = "getChild", blockingSuffix = "", asyncBaseName = "getChild")
-    override suspend fun child(id: ID): QGChannel? = channel(id)
+    override suspend fun child(id: ID): QGTextChannel? = channel(id)
 
     /**
      * 得到当前频道服务器下的所有频道分类。

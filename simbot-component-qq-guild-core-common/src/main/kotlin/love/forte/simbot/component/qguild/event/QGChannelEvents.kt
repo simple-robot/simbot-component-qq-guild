@@ -20,8 +20,8 @@ package love.forte.simbot.component.qguild.event
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.component.qguild.JSTP
-import love.forte.simbot.component.qguild.QGChannel
 import love.forte.simbot.component.qguild.QGGuild
+import love.forte.simbot.component.qguild.QGTextChannel
 import love.forte.simbot.event.*
 import love.forte.simbot.message.doSafeCast
 import love.forte.simbot.qguild.event.EventChannel
@@ -77,7 +77,7 @@ public abstract class QGChannelCreateEvent : QGChannelEvent(), StartPointEvent, 
     /**
      * 变更源。即发生变更的频道。
      */
-    abstract override suspend fun channel(): QGChannel
+    abstract override suspend fun channel(): QGTextChannel
 
     /**
      * 变更源。即发生的所在频道服务器
@@ -87,12 +87,12 @@ public abstract class QGChannelCreateEvent : QGChannelEvent(), StartPointEvent, 
     /**
      * 事件发生的频道。同 [channel].
      */
-    override suspend fun organization(): QGChannel = channel()
+    override suspend fun organization(): QGTextChannel = channel()
 
     /**
      * 被创建的频道。同 [source]。
      */
-    override suspend fun after(): QGChannel = channel()
+    override suspend fun after(): QGTextChannel = channel()
 
     /**
      * 始终为null。
@@ -122,7 +122,7 @@ public abstract class QGChannelUpdateEvent : QGChannelEvent(), ChangedEvent, Cha
     /**
      * 变更源。即发生变更的频道。
      */
-    abstract override suspend fun channel(): QGChannel
+    abstract override suspend fun channel(): QGTextChannel
 
     /**
      * 变更源。即发生的所在频道服务器
@@ -132,12 +132,12 @@ public abstract class QGChannelUpdateEvent : QGChannelEvent(), ChangedEvent, Cha
     /**
      * 事件发生的频道。同 [channel].
      */
-    override suspend fun organization(): QGChannel = channel()
+    override suspend fun organization(): QGTextChannel = channel()
 
     /**
      * 发生变更的频道。同 [source].
      */
-    override suspend fun after(): QGChannel = channel()
+    override suspend fun after(): QGTextChannel = channel()
 
     /**
      * 始终为null。
@@ -169,17 +169,17 @@ public abstract class QGChannelDeleteEvent : QGChannelEvent(), EndPointEvent, Ch
     /**
      * 被删除的频道
      */
-    abstract override suspend fun channel(): QGChannel
+    abstract override suspend fun channel(): QGTextChannel
 
     /**
      * 被删除的频道，同 [channel]
      */
-    override suspend fun before(): QGChannel = channel()
+    override suspend fun before(): QGTextChannel = channel()
 
     /**
      * 被删除的频道，同 [channel]
      */
-    override suspend fun organization(): QGChannel = channel()
+    override suspend fun organization(): QGTextChannel = channel()
 
     /**
      * 变更源。即发生的所在频道服务器

@@ -17,6 +17,7 @@
 
 package love.forte.simbot.component.qguild.forum
 
+import love.forte.simbot.component.qguild.QGChannel
 import love.forte.simbot.definition.BotContainer
 import love.forte.simbot.definition.GuildInfoContainer
 import love.forte.simbot.qguild.model.ChannelType
@@ -24,23 +25,24 @@ import love.forte.simbot.qguild.model.Channel as QGSourceChannel
 
 /**
  * 一个帖子类型的频道。
+ * 是 [QGChannel] 的子类型之一。
  *
- * [QGForum] 基于 [子频道][QGSourceChannel] 类型，
+ * [QGForumChannel] 内包含一个类型为 [ChannelType.FORUM] 的频道信息。
+ *
+ * [QGForumChannel] 基于 [子频道][QGSourceChannel] 类型，
  * 提供有关帖子的相关功能，包括查询帖子、发帖、删贴等。
  *
- * [QGForum] 内包含一个类型为 [ChannelType.FORUM] 的频道信息。
- *
- * 需要注意的是，[QGForum] 只会在构建时检测频道类型，当一个 [QGForum] 被持有，
+ * 需要注意的是，[QGForumChannel] 只会在构建时检测频道类型，当一个 [QGForumChannel] 被持有，
  * 而在此期间此频道类型发生了改变，那么后续继续调用API则可能会引发 [IllegalStateException] 异常。
  *
  * @author ForteScarlet
  */
-public interface QGForum : BotContainer, GuildInfoContainer {
+public interface QGForumChannel : BotContainer, GuildInfoContainer, QGChannel {
 
     /**
      * 表示此帖子频道的源频道。
      */
-    public val source: QGSourceChannel
+    override val source: QGSourceChannel
 
     // TODO 查、发、删
 
