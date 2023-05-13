@@ -24,10 +24,10 @@ repositories {
     gradlePluginPortal()
 }
 
-val kotlinVersion = "1.8.10"
+val kotlinVersion = "1.8.21"
 val dokkaPluginVersion = "1.8.10"
-val suspendTransformVersion = "0.2.7"
-val gradleCommon = "0.0.11"
+val suspendTransformVersion = "0.3.1"
+val gradleCommon = "0.1.0"
 //val atomicfuVersion = "0.20.0"
 
 dependencies {

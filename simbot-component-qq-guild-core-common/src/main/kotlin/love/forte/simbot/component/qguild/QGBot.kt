@@ -142,7 +142,7 @@ public interface QGBot : Bot {
         get() = source.isActive
 
     /**
-     * QQ频道BOT没有'群'概念
+     * Deprecated: QQ频道BOT没有'群'概念
      */
     @Deprecated(
         "Group related APIs are not supported",
@@ -152,9 +152,36 @@ public interface QGBot : Bot {
         get() = emptyItems()
 
     /**
+     * Deprecated: QQ频道BOT没有'群'概念
+     */
+    @Deprecated("Group related APIs are not supported", ReplaceWith("false"))
+    override val isGroupsSupported: Boolean
+        get() = false
+
+    /**
+     * Deprecated: QQ频道BOT没有'群'概念
+     */
+    @Deprecated("Group related APIs are not supported", ReplaceWith("0"))
+    @JvmSynthetic
+    override suspend fun groupCount(): Int = 0
+
+    /**
+     * 是否支持QQ频道相关API，如 [guilds]。始终得到 `true`。
+     */
+    override val isGuildsSupported: Boolean
+        get() = true
+
+    /**
      * 获取当前bot所在的频道服务器列表。
      */
     override val guilds: Items<QGGuild>
+
+    /**
+     * QQ频道数量。QQ频道不支持获取频道服务器数量，始终得到 `-1`。
+     */
+    @Deprecated("The guild count API is not supported.", ReplaceWith("-1"))
+    @JvmSynthetic
+    override suspend fun guildCount(): Int = -1
 
     /**
      * 根据ID尝试获取一个指定的guild。
@@ -163,7 +190,7 @@ public interface QGBot : Bot {
     override suspend fun guild(id: ID): QGGuild?
 
     /**
-     * QQ频道BOT不存在'联系人'列表
+     * Deprecated: QQ频道BOT不存在'联系人'列表，始终得到 [emptyItems]。
      */
     @Deprecated(
         "Contact related APIs are not supported",
@@ -172,8 +199,22 @@ public interface QGBot : Bot {
     override val contacts: Items<Contact>
         get() = emptyItems()
 
+
     /**
-     * QQ频道BOT不存在'联系人'列表
+     * Deprecated: QQ频道BOT不存在'联系人'列表，始终得到 `false`。
+     */
+    @Deprecated("Contact related APIs are not supported", ReplaceWith("null"))
+    override val isContactsSupported: Boolean
+        get() = false
+
+    /**
+     * Deprecated: QQ频道BOT不存在'联系人'列表，始终得到 `0`。
+     */
+    @Deprecated("Contact related APIs are not supported", ReplaceWith("0"))
+    override suspend fun contactCount(): Int = 0
+
+    /**
+     * Deprecated: QQ频道BOT不存在'联系人'列表，始终得到 `null`。
      */
     @Deprecated("Contact related APIs are not supported", ReplaceWith("null"))
     @JvmSynthetic

@@ -54,14 +54,13 @@ internal class QGBotImpl(
     override val manager: QQGuildBotManager,
     override val eventProcessor: EventProcessor,
     override val component: QQGuildComponent,
-    private val configuration: QGBotComponentConfiguration
+    configuration: QGBotComponentConfiguration
 ) : QGBot {
     override val logger =
         LoggerFactory.getLogger("love.forte.simbot.component.qguild.bot.${source.ticket.secret}")
 
     internal val job: CompletableJob
     override val coroutineContext: CoroutineContext
-    private val intents = source.configuration.intents
 
     private val cacheConfig = configuration.cacheConfig
     private val cacheable = cacheConfig?.enable == true
@@ -88,8 +87,7 @@ internal class QGBotImpl(
 
     override fun isMe(id: ID): Boolean {
         if (id == this.id) return true
-        if (::botSelf.isInitialized && botSelf.id == id.literal) return true
-        return false
+        return ::botSelf.isInitialized && botSelf.id == id.literal
     }
 
     override val username: String
@@ -111,7 +109,7 @@ internal class QGBotImpl(
 
     override suspend fun guild(id: ID): QGGuildImpl? = queryGuild(id.literal)
 
-    @OptIn(FlowPreview::class)
+    @OptIn(ExperimentalCoroutinesApi::class)
     override val guilds: Items<QGGuildImpl>
         get() = itemsByFlow { props ->
             props.effectOn(queryGuildList(props.batch).flatMapConcat { it.asFlow() }).map { qgGuild(this, it) }
@@ -184,13 +182,16 @@ internal class QGBotImpl(
         }
     }
 
-    internal fun inGuild(guildId: String, currentMsgId: String? = null): QGGuildBotImpl =
-        QGGuildBotImpl(bot = this, guildId = guildId, currentMsgId = currentMsgId)
+    internal fun inGuild(guildId: String): QGGuildBotImpl =
+        QGGuildBotImpl(bot = this, guildId = guildId)
 
-    internal fun <T> checkIfTransmitCacheable(target: T): T? = target.takeIf { cacheable && cacheConfig?.transmitCacheConfig?.enable == true }
+    private val isTransmitCacheable = cacheable && cacheConfig?.transmitCacheConfig?.enable == true
+
+    internal fun <T> checkIfTransmitCacheable(target: T): T? = target.takeIf { isTransmitCacheable }
 
     override fun toString(): String {
-        val uid = if (::botSelf.isInitialized) botSelf.id else "(NOT INIT)"
+        // 还未初始化
+        val uid = if (::botSelf.isInitialized) botSelf.id else "(Not initialized yet)"
         return "QGBotImpl(appId=$id, userId=$uid, isActive=$isActive)"
     }
 }

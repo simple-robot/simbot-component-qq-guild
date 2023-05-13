@@ -3,7 +3,8 @@
 const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
-const currentVersion = '3.0.0.0-ALPHA'
+const version = require('./static/version.json')
+const currentVersion = version.version
 const firstYear = 2022
 const currentYear = new Date().getFullYear()
 const copyrightYear = currentYear === firstYear ? firstYear : firstYear + '-' + currentYear
@@ -56,7 +57,7 @@ async function config() {
                         sidebarPath: require.resolve('./sidebars.js'),
                         routeBasePath: 'docs',
                         editUrl:
-                            'https://github.com/simple-robot/simbot-component-qq-guild/tree/main/website',
+                            'https://github.com/simple-robot/simbot-component-qq-guild/tree/dev/main/website',
                         breadcrumbs: true,
                         showLastUpdateTime: true,
                         lastVersion: 'current',
@@ -209,7 +210,7 @@ async function config() {
                     copyright: `Built with <a href="https://www.docusaurus.io/zh-CN/">Docusaurus</a>. <br> Copyright © ${copyrightYear} Forte Scarlet.`,
                 },
                 prism: {
-                    additionalLanguages: ['java', 'kotlin', 'groovy', 'properties'],
+                    additionalLanguages: ['java', 'kotlin', 'gradle', 'properties'],
                     theme: lightCodeTheme,
                     darkTheme: darkCodeTheme,
                     magicComments: [

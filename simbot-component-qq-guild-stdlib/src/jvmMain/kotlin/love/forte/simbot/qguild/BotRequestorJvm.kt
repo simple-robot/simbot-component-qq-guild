@@ -19,16 +19,36 @@
 
 package love.forte.simbot.qguild
 
+import kotlinx.coroutines.future.future
 import love.forte.simbot.qguild.api.QQGuildApi
-import love.forte.simbot.utils.runInNoScopeBlocking
+import java.util.concurrent.CompletableFuture
 
 
 /**
- * 直接通过bot进行请求。
+ * @see requestBlocking
+ * @suppress use [requestBlocking]
+ * @throws love.forte.simbot.qguild.QQGuildApiException 如果返回状态码不在 200..300之间。
+ */
+@Api4J
+@Deprecated("Use 'requestBlocking'", ReplaceWith("requestBlocking(bot, api)"))
+public fun <R> doRequest(bot: Bot, api: QQGuildApi<R>): R = requestBlocking(bot, api)
+
+/**
+ * 直接通过bot进行阻塞地请求。
  *
  * @throws love.forte.simbot.qguild.QQGuildApiException 如果返回状态码不在 200..300之间。
  */
 @Api4J
-public fun <R> doRequest(bot: Bot, api: QQGuildApi<R>): R = runInNoScopeBlocking {
+public fun <R> requestBlocking(bot: Bot, api: QQGuildApi<R>): R = runInNoScopeBlocking {
+    api.requestBy(bot)
+}
+
+/**
+ * 直接通过bot进行异步地请求。
+ *
+ * @throws love.forte.simbot.qguild.QQGuildApiException 如果返回状态码不在 200..300之间。
+ */
+@Api4J
+public fun <R> requestAsync(bot: Bot, api: QQGuildApi<R>): CompletableFuture<out R> = bot.future {
     api.requestBy(bot)
 }

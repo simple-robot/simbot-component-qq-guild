@@ -50,7 +50,7 @@ public annotation class UsedOnlyForConfigSerialization
  *      "secret": "secret-value",
  *      "token": "token-value",
  *    },
- *    "config": { ... } // or null, or ignore
+ *    "config": null
  * }
  * ```
  *
@@ -228,7 +228,22 @@ public data class QGBotFileConfiguration(
          */
         @SerialName("cache") public val cacheConfig: CacheConfig? = DEFAULT.cacheConfig,
 
-        ) {
+        /**
+         * 事件缓冲区容量。
+         *
+         * ```json
+         * {
+         *   "config": {
+         *     "eventBufferCapacity": 64
+         *   }
+         * }
+         * ```
+         *
+         * @see BotConfiguration.eventBufferCapacity
+         */
+        public val eventBufferCapacity: Int? = null
+
+    ) {
         public companion object {
             internal const val SERVER_URL_SANDBOX_VALUE: String = "SANDBOX"
             private val DEFAULT = QGBotComponentConfiguration()
@@ -283,6 +298,10 @@ public data class QGBotFileConfiguration(
                     configuration.apiHttpRequestTimeoutMillis = timeout.apiHttpRequestTimeoutMillis
                     configuration.apiHttpConnectTimeoutMillis = timeout.apiHttpConnectTimeoutMillis
                     configuration.apiHttpSocketTimeoutMillis = timeout.apiHttpSocketTimeoutMillis
+                }
+
+                eventBufferCapacity?.also {
+                    configuration.eventBufferCapacity = it
                 }
 
 

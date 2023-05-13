@@ -27,6 +27,7 @@ import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.qguild.api.message.toRealBody
 import love.forte.simbot.qguild.model.Message
 import kotlin.jvm.JvmStatic
+import kotlin.jvm.JvmSynthetic
 
 /**
  * [发送私信](https://bot.q.qq.com/wiki/develop/api/openapi/dms/post_dms_messages.html)
@@ -65,7 +66,6 @@ public class DmsSendApi private constructor(
          */
         @JvmStatic
         public fun create(guildId: String, body: MessageSendApi.Body): DmsSendApi = DmsSendApi(guildId, body)
-
     }
 
     override val body: Any = body.toRealBody(MessageSendApi.defaultJson)
@@ -85,3 +85,19 @@ public class DmsSendApi private constructor(
         }
     }
 }
+
+/**
+ * 构造 [CreateDmsApi]
+ *
+ * ```kotlin
+ * val api = DmsSendApi.create(guildId) {
+ *    // body builder
+ * }
+ * ```
+ */
+@JvmSynthetic
+public inline fun DmsSendApi.Factory.create(
+    guildId: String,
+    builder: MessageSendApi.Body.Builder.() -> Unit
+): DmsSendApi =
+    create(guildId, MessageSendApi.Body.invoke(builder))

@@ -21,6 +21,7 @@ import kotlinx.coroutines.CoroutineScope
 import love.forte.simbot.ExperimentalSimbotApi
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
+import love.forte.simbot.component.qguild.forum.QGForums
 import love.forte.simbot.component.qguild.role.QGGuildRole
 import love.forte.simbot.component.qguild.role.QGRoleCreator
 import love.forte.simbot.definition.Guild
@@ -120,9 +121,9 @@ public interface QGGuild : Guild, CoroutineScope, QGObjectiveContainer<QGSourceG
      *
      * _可以通过 [permissions] 手动检查是否存在 [GetGuildChannelListApi] 的权限。_
      *
-     * [channels] 的结果中不会出现 [子频道分类][QGChannelCategory]，毕竟它们是不同的类型。
-     * 获取子频道分类相关内容，参考 [categories] 或 [category].
+     * 注意: [channels] 的结果集中 **不会出现** 类型为分组类型 [ChannelType.CATEGORY] 的子频道。
      *
+     * @see QGTextChannel
      * @see channel
      * @see categories
      * @see category
@@ -215,6 +216,13 @@ public interface QGGuild : Guild, CoroutineScope, QGObjectiveContainer<QGSourceG
      */
     @ExperimentalSimbotApi
     public fun roleCreator(): QGRoleCreator
+
+    /**
+     * 得到针对 **帖子子频道** 的操作器。
+     *
+     * @see QGForums
+     */
+    public val forums: QGForums
 
     //// Impls
 

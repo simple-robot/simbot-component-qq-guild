@@ -1,5 +1,6 @@
 ---
 title: BOT配置文件
+toc_max_heading_level: 4
 ---
 
 :::caution 待施工
@@ -25,16 +26,35 @@ title: BOT配置文件
             "type": "raw",
             "intents": 1073741827
         },
+        "timeout": {
+          "apiHttpRequestTimeoutMillis": null,
+          "apiHttpConnectTimeoutMillis": null,
+          "apiHttpSocketTimeoutMillis": null
+        },
+        "cache": {
+          "enable": true,
+          "transmit": {
+            "enable": true
+          }
+        },
         "clientProperties": null
     }
 }
 ```
 
-#### `component`
+:::info 
+
+文件配置类的各属性定义可参考API文档: [`QGBotFileConfiguration`](https://docs.simbot.forte.love/components/qq-guild/simbot-component-qq-guild-core-common/love.forte.simbot.component.qguild.config/-q-g-bot-file-configuration/index.html)
+
+:::
+
+## 配置项
+
+### component
 
 固定值 `simbot.qqguild`，**必填**，代表此配置文件为QQ频道组件的。
 
-#### `ticket`
+### ticket
 
 bot的票据信息，**必填**。
 
@@ -42,11 +62,11 @@ bot的票据信息，**必填**。
 - `token`: 机器人令牌
 - `secret`: 机器人密钥 (目前暂时不会用到，可以用 `""` 代替)
 
-#### `config`
+### config
 
-其他配置，可选。
+其他配置，可选，默认为 `null`。
 
-##### `config.serverUrl`
+#### config.serverUrl
 
 内部进行API请求时的服务器地址，参考[官方文档](https://bot.q.qq.com/wiki/develop/api/)
 
@@ -70,7 +90,7 @@ bot的票据信息，**必填**。
 }
 ```
 
-##### `config.shard`
+#### config.shard
 
 [分片信息](https://bot.q.qq.com/wiki/develop/api/gateway/shard.html)，默认为 `type=full`，即使用 `[0, 1]` 的分片。
 
@@ -88,7 +108,7 @@ bot的票据信息，**必填**。
 }
 ```
 
-##### `config.intents`
+#### config.intents
 
 [订阅的事件](https://bot.q.qq.com/wiki/develop/api/gateway/intents.html)，默认情况下订阅：
 

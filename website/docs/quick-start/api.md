@@ -5,54 +5,52 @@ sidebar_position: 1
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import CodeBlock from '@theme/CodeBlock';
+import {version} from '@site/static/version.json';
 
-API模块是独立的、多平台的，你可以单独使用它作为 [QQ频道API](https://bot.q.qq.com/wiki/develop/api/) 的封装库。
+**API模块**是独立的、多平台的，你可以单独使用它作为 [QQ频道API](https://bot.q.qq.com/wiki/develop/api/) 的封装库。
 
-:::info 版本?
-
-版本可前往 [**Releases**](https://github.com/simple-robot/simbot-component-qq-guild/releases) 查看并选择。
-
-:::
 
 ## 安装
 
 <Tabs groupId="use-dependency">
+<TabItem value="Gradle Kotlin DSL" attributes={{'data-value': `Kts`}}>
 
-<TabItem value="Gradle Kotlin DSL">
-
-```kotlin
+<CodeBlock language='kotlin'>{`
 // 不要忘记使用 Gradle 的 kotlin 插件来允许自动选择对应平台，比如JVM或JS等。
-
-implementation("love.forte.simbot.component:simbot-component-qq-gulid-api:$VERSION") // 版本参考前文所述的 Releases
-```
+implementation("love.forte.simbot.component:simbot-component-qq-gulid-api:${version}") // 或参考下文所述的 Releases
+`.trim()}</CodeBlock>
 
 </TabItem>
+<TabItem value="Gradle Groovy" attributes={{'data-value': `Gradle`}}>
 
-<TabItem value="Gradle Groovy">
-
-```groovy
+<CodeBlock language='gradle'>{`
 // 不要忘记使用 Gradle 的 kotlin 插件来允许自动选择对应平台，比如JVM或JS等。
-
-implementation 'love.forte.simbot.component:simbot-component-qq-gulid-api:$VERSION' // 版本参考前文所述的 Releases
-```
+implementation 'love.forte.simbot.component:simbot-component-qq-gulid-api:${version}' // 版本参考下文所述的 Releases
+`.trim()}</CodeBlock>
 
 </TabItem>
+<TabItem value="Maven" attributes={{'data-value': `Maven`}}>
 
-<TabItem value="Maven">
-
-```xml
+<CodeBlock language='xml'>{`
 <dependency>
     <groupId>love.forte.simbot.component</groupId>
     <!-- 在Maven中使用 '-jvm' 后缀来选择使用JVM平台库 -->
     <artifactId>simbot-component-qq-guild-api-jvm</artifactId>
-    <!-- 版本参考前文所述的 Releases -->
-    <version>${VERSION}</version>
+    <!-- 参考下文所述的 Releases -->
+    <version>${version}</version>
 </dependency>
-```
+`.trim()}</CodeBlock>
 
 </TabItem>
-
 </Tabs>
+
+
+:::info 版本参考
+
+版本可前往 [**Releases**](https://github.com/simple-robot/simbot-component-qq-guild/releases) 查阅。
+
+:::
 
 ## 使用
 
@@ -72,8 +70,7 @@ API包装类的命名也存在一定的规律，比如一个 `获取某列表` �
 以 [获取用户（BOT）频道服务器列表](https://bot.q.qq.com/wiki/develop/api/openapi/user/guilds.html) 为例。
 
 <Tabs groupId="code">
-
-<TabItem value="Kotlin">
+<TabItem value="Kotlin" attributes={{'data-value': `Kotlin`}}>
 
 ```kotlin
 // 准备参数
@@ -113,8 +110,7 @@ guildFlow.collect { guild ->
 ```
 
 </TabItem>
-
-<TabItem value="Java" label="Java Blocking">
+<TabItem value="Java" attributes={{'data-value': `Java`}}>
 
 ```java
 // 准备参数
@@ -141,8 +137,7 @@ for (SimpleGuild guild : guildList) {
 ```
 
 </TabItem>
-
-<TabItem value="Java Async">
+<TabItem value="Java Async" attributes={{'data-value': `Java`}}>
 
 ```java
 // 准备参数
@@ -169,8 +164,7 @@ api.doRequestAsync(client, server, token).thenAccept(guildList -> {
 ```
 
 </TabItem>
-
-<TabItem value="Java Reactive">
+<TabItem value="Java Reactive" attributes={{'data-value': `Java`}}>
 
 ```java
 // 准备参数

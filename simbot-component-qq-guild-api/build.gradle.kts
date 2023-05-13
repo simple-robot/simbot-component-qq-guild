@@ -15,6 +15,25 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+import love.forte.gradle.common.kotlin.multiplatform.NativeTargets
+
+/*
+ * Copyright (c) 2023. ForteScarlet.
+ *
+ * This file is part of simbot-component-qq-guild.
+ *
+ * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ *
+ * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 plugins {
     kotlin("multiplatform")
     `qq-guild-multiplatform-maven-publish`
@@ -60,38 +79,42 @@ kotlin {
     val mainPresets = mutableSetOf<org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet>()
     val testPresets = mutableSetOf<org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet>()
 
-    // see https://kotlinlang.org/docs/native-target-support.html
-    val supportTargets = setOf(
-        // Tier 1
-        "linuxX64",
-        "macosX64",
-        "macosArm64",
-        "iosSimulatorArm64",
-        "iosX64",
+    // https://kotlinlang.org/docs/native-target-support.html
+    // 针对 kotlin target support 中的列表结合 ktor-client 平台的支持提供的平台能力。
+    // 注释掉的内容是Ktor尚不支持的平台
+//    val supportTargets = setOf(
+//        // Tier 1
+//        "linuxX64",
+//        "macosX64",
+//        "macosArm64",
+//        "iosSimulatorArm64",
+//        "iosX64",
+//
+//        // Tier 2
+////        "linuxArm64",
+//        "watchosSimulatorArm64",
+//        "watchosX64",
+//        "watchosArm32",
+//        "watchosArm64",
+//        "tvosSimulatorArm64",
+//        "tvosX64",
+//        "tvosArm64",
+//        "iosArm64",
+//
+//        // Tier 3
+////        "androidNativeArm32",
+////        "androidNativeArm64",
+////        "androidNativeX86",
+////        "androidNativeX64",
+//        "mingwX64",
+////        "watchosDeviceArm64",
+//    )
 
-        // Tier 2
-//        "linuxArm64",
-        "watchosSimulatorArm64",
-        "watchosX64",
-        "watchosArm32",
-        "watchosArm64",
-        "tvosSimulatorArm64",
-        "tvosX64",
-        "tvosArm64",
-        "iosArm64",
-
-        // Tier 3
-//        "androidNativeArm32",
-//        "androidNativeArm64",
-//        "androidNativeX86",
-//        "androidNativeX64",
-        "mingwX64",
-//        "watchosDeviceArm64",
-    )
+    val targets = NativeTargets.Official.all.intersect(NativeTargets.Ktor.all) + setOf("mingwX64")
 
     targets {
         presets.filterIsInstance<org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeTargetPreset<*>>()
-            .filter { it.name in supportTargets }
+            .filter { it.name in targets }
             .forEach { presets ->
                 val target = fromPreset(presets, presets.name)
                 val mainSourceSet = target.compilations["main"].kotlinSourceSets.first()
@@ -161,7 +184,7 @@ kotlin {
                 implementation(simbotApi) // use @Api4J annotation
                 implementation(libs.log4j.api)
                 implementation(libs.log4j.core)
-                implementation(libs.log4j.slf4jImpl)
+                implementation(libs.log4j.slf4j2)
             }
         }
 
