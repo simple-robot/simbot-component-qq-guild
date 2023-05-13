@@ -26,17 +26,26 @@ import love.forte.simbot.definition.*
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.qguild.QQGuildApiException
+import love.forte.simbot.qguild.model.ChannelType
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.flowItems
 import kotlin.time.Duration
 import love.forte.simbot.qguild.model.Channel as QGSourceChannel
 
-
 /**
- * 一个QQ频道中的子频道 `Channel` 类型。
+ * 一个QQ频道中的子频道 [Channel] 类型，
+ * 提供部分来自 [source channel][QGSourceChannel] 的属性获取。
  *
- * [QGChannel] 提供部分来自 [source channel][QGSourceChannel] 的属性获取。
-
+ * [QGChannel] 的主要类型有两个：
+ * - [QGTextChannel]
+ * - [QGNonTextChannel]
+ *
+ * 这两个类型分别代表了它们的类型是否属于 [ChannelType.TEXT]。
+ * 在 [QGTextChannel] 中，实现类型允许进行消息发送的能力，而在 [QGNonTextChannel] 中使用 [send]
+ * 会直接得到 [UnsupportedOperationException]。
+ *
+ * 而 [QGNonTextChannel] 下可能会有更多细分类型，详情参阅其文档注释的说明。
+ *
  *
  * @author ForteScarlet
  */
@@ -163,7 +172,7 @@ public interface QGChannel : BotContainer, CoroutineScope, QGObjectiveContainer<
      *
      */
     @JST
-    override suspend fun send(message: MessageContent):QGMessageReceipt
+    override suspend fun send(message: MessageContent): QGMessageReceipt
 
     /**
      * 子频道不能获取成员列表，考虑使用 [guild] 获取。

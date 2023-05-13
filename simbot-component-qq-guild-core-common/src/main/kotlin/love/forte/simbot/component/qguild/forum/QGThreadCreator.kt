@@ -18,6 +18,7 @@
 package love.forte.simbot.component.qguild.forum
 
 import love.forte.simbot.component.qguild.JST
+import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.api.forum.ThreadPublishFormat
 import love.forte.simbot.qguild.api.forum.ThreadPublishResult
 
@@ -74,9 +75,33 @@ public interface QGThreadCreator {
      */
     public fun format(format: ThreadPublishFormat): QGThreadCreator = also { this.formatType = format }
 
+    //// Common API
+
+    /**
+     * 使用 [ThreadPublishFormat.TEXT] 作为 [format]
+     */
+    public fun textFormat(): QGThreadCreator = also { format(ThreadPublishFormat.TEXT) }
+
+    /**
+     * 使用 [ThreadPublishFormat.HTML] 作为 [format]
+     */
+    public fun htmlFormat(): QGThreadCreator = also { format(ThreadPublishFormat.HTML) }
+
+    /**
+     * 使用 [ThreadPublishFormat.MARKDOWN] 作为 [format]
+     */
+    public fun markdownFormat(): QGThreadCreator = also { format(ThreadPublishFormat.MARKDOWN) }
+
+    /**
+     * 使用 [ThreadPublishFormat.JSON] 作为 [format]
+     */
+    public fun jsonFormat(): QGThreadCreator = also { format(ThreadPublishFormat.JSON) }
 
     /**
      * 发布此帖子。
+     *
+     * @throws QQGuildApiException api请求异常
+     * @throws IllegalArgumentException 某属性未设置值时
      *
      * @return 帖子发布后的回执
      */

@@ -325,7 +325,7 @@ public data class RichText(
     /**
      * 段落，一段落一行，段落内无元素的为空行
      */
-    val paragraphs: Paragraph
+    val paragraphs: List<Paragraph>
 )
 
 /**

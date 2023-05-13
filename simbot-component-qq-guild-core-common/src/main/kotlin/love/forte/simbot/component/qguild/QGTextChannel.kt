@@ -17,6 +17,7 @@
 
 package love.forte.simbot.component.qguild
 
+import love.forte.simbot.component.qguild.forum.QGForumChannel
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.qguild.model.ChannelType
@@ -43,12 +44,18 @@ public interface QGTextChannel : QGChannel
  * [QGNonTextChannel] 在默认情况下使用消息发送的API [send]
  * 会直接抛出 [UnsupportedOperationException] 异常。
  *
+ * [QGNonTextChannel] 可能会有进一步的子类型实现用来提供更多功能或用以描述它们的类型，
+ * 例如：
+ * - [QGChannelCategory]
+ * - [QGForumChannel]
+ *
  * @see QGTextChannel
  * @see QGChannel
+ * @see QGChannelCategory
+ * @see QGForumChannel
  *
  */
 public interface QGNonTextChannel : QGChannel {
-
     /**
      * 得到当前子频道所属频道服务器
      */

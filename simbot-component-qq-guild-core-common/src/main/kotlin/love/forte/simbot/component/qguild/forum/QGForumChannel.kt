@@ -18,12 +18,16 @@
 package love.forte.simbot.component.qguild.forum
 
 import love.forte.simbot.Api4J
+import love.forte.simbot.ID
 import love.forte.simbot.InternalSimbotApi
+import love.forte.simbot.component.qguild.JST
 import love.forte.simbot.component.qguild.QGChannel
 import love.forte.simbot.component.qguild.QGGuild
-import love.forte.simbot.definition.BotContainer
-import love.forte.simbot.definition.GuildInfoContainer
+import love.forte.simbot.component.qguild.QGNonTextChannel
+import love.forte.simbot.qguild.QQGuildApiException
+import love.forte.simbot.qguild.api.forum.ThreadPublishResult
 import love.forte.simbot.qguild.model.ChannelType
+import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.runInAsync
 import love.forte.simbot.utils.runInNoScopeBlocking
 import java.util.concurrent.CompletableFuture
@@ -43,7 +47,7 @@ import love.forte.simbot.qguild.model.Channel as QGSourceChannel
  *
  * @author ForteScarlet
  */
-public interface QGForumChannel : BotContainer, GuildInfoContainer, QGChannel {
+public interface QGForumChannel : QGNonTextChannel {
 
     /**
      * 表示此帖子频道的源频道。
@@ -68,6 +72,35 @@ public interface QGForumChannel : BotContainer, GuildInfoContainer, QGChannel {
     override val guildAsync: CompletableFuture<out QGGuild>
         get() = runInAsync(this) { guild() }
 
-    // TODO 查、发、删
+    /**
+     * 查询当前子频道中的所有 [主题帖][QGThread]
+     *
+     * @throws QQGuildApiException api请求异常
+     */
+    public val threads: Items<QGThread>
 
+    /**
+     * 根据ID查询 [主题帖][QGThread]
+     *
+     * @throws QQGuildApiException api请求异常
+     */
+    @JST(blockingBaseName = "getThread", blockingSuffix = "", asyncBaseName = "getThread")
+    public suspend fun thread(id: ID): QGThread?
+
+    /**
+     * 获取一个用于发布帖子的 [QGThreadCreator]。
+     *
+     * @see QGThreadCreator
+     */
+    public fun threadCreator(): QGThreadCreator
+}
+
+
+/**
+ * 发布一个 [Thread] 并得到其回执 [ThreadPublishResult]。
+ *
+ * @see QGForumChannel.threadCreator
+ */
+public suspend inline fun QGForumChannel.createThread(block: QGThreadCreator.() -> Unit): ThreadPublishResult {
+    return threadCreator().apply(block).publish()
 }

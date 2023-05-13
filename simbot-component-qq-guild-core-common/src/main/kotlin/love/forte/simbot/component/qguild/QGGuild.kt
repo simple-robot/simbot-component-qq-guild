@@ -121,6 +121,7 @@ public interface QGGuild : Guild, CoroutineScope, QGObjectiveContainer<QGSourceG
      *
      * _可以通过 [permissions] 手动检查是否存在 [GetGuildChannelListApi] 的权限。_
      *
+     * 注意: [channels] 的结果集中 **不会出现** 类型为分组类型 [ChannelType.CATEGORY] 的子频道。
      *
      * @see QGTextChannel
      * @see channel

@@ -38,17 +38,17 @@ import kotlin.jvm.JvmStatic
  * @author ForteScarlet
  */
 @PrivateDomainOnly
-public class GetThreadsApi private constructor(channelId: String) : GetQQGuildApi<ThreadListResult>() {
+public class GetThreadListApi private constructor(channelId: String) : GetQQGuildApi<ThreadListResult>() {
     public companion object Factory : SimpleGetApiDescription("/channels/{channel_id}/threads") {
 
         /**
-         * 构造 [GetThreadsApi].
+         * 构造 [GetThreadListApi].
          *
          * @param channelId 频道ID
          */
         @JvmStatic
-        public fun create(channelId: String): GetThreadsApi =
-            GetThreadsApi(channelId)
+        public fun create(channelId: String): GetThreadListApi =
+            GetThreadListApi(channelId)
     }
 
     private val path = arrayOf("channels", channelId, "threads")
@@ -63,7 +63,7 @@ public class GetThreadsApi private constructor(channelId: String) : GetQQGuildAp
 }
 
 /**
- * API [GetThreadsApi] 的响应体。
+ * API [GetThreadListApi] 的响应体。
  */
 @ApiModel
 @Serializable

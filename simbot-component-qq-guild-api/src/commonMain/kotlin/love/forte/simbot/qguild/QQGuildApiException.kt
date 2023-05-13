@@ -33,7 +33,7 @@ internal expect inline fun <reified T : Throwable> T.initCause0(cause: Throwable
  *
  */
 @Suppress("MemberVisibilityCanBePrivate")
-public open class QQGuildApiException : IllegalStateException {
+public open class QQGuildApiException : RuntimeException {
     public val info: ErrInfo?
     public val value: Int
     public val description: String
@@ -71,7 +71,7 @@ public fun QQGuildApiException.copyCurrent(): QQGuildApiException {
         QQGuildApiExceptionCopied(
             info, value, description
         ).apply {
-            initCause0(this)
+            initCause0(this@copyCurrent)
         }
     }
 }
