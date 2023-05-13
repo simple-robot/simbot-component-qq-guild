@@ -33,8 +33,7 @@ simbot核心库中的API大多是以**DSL风格**为主的。尽管其依旧是�
 ## 安装
 
 <Tabs groupId="use-dependency">
-
-<TabItem value="Gradle Kotlin DSL">
+<TabItem value="Gradle Kotlin DSL" attributes={{'data-value': `Kts`}}>
 
 <CodeBlock language='kotlin'>{`
 // simbot core starter  
@@ -44,8 +43,7 @@ implementation("love.forte.simbot.component:simbot-component-qq-guild-core:${ver
 `.trim()}</CodeBlock>
 
 </TabItem>
-
-<TabItem value="Gradle Groovy">
+<TabItem value="Gradle Groovy" attributes={{'data-value': `Gradle`}}>
 
 <CodeBlock language='gradle'>{`
 // simbot core starter  
@@ -56,8 +54,7 @@ implementation 'love.forte.simbot.component:simbot-component-qq-guild-core:${ver
 
 
 </TabItem>
-
-<TabItem value="Maven">
+<TabItem value="Maven" attributes={{'data-value': `Maven`}}>
 
 <CodeBlock language='xml'>{`
 <!-- simbot core -->
@@ -94,8 +91,7 @@ QQ频道组件版本可前往 [**Releases**](https://github.com/simple-robot/sim
 首先构建一个 simbot 的 `Application`，这里以 `SimpleApplication` (也就是最基础的实现) 为例: 
 
 <Tabs groupId="code">
-
-<TabItem value="Kotlin">
+<TabItem value="Kotlin" attributes={{'data-value': `Kotlin`}}>
 
 ```kotlin title='com.example.App'
 val application = createSimpleApplication {
@@ -119,7 +115,7 @@ application.join() // 挂起直到被关闭
 ```
 
 </TabItem>
-<TabItem value="Java" label="Java Blocking">
+<TabItem value="Java" attributes={{'data-value': `Java`}}>
 
 ```java title='com.example.App'
 final ApplicationLauncher<SimpleApplication> launcher = Applications.simbotApplication(Simple.INSTANCE, c -> { /* Application配置 */ }, (builder, configuration) -> {
@@ -134,7 +130,7 @@ application.joinBlocking(); // 阻塞直到被关闭
 ```
 
 </TabItem>
-<TabItem value="Java Async">
+<TabItem value="Java Async" attributes={{'data-value': `Java`}}>
 
 ```java title='com.example.App'
 final ApplicationLauncher<SimpleApplication> launcher = Applications.simbotApplication(Simple.INSTANCE, c -> { /* Application配置 */ }, (builder, configuration) -> {
@@ -174,8 +170,7 @@ BOT:
 :::
 
 <Tabs groupId="code">
-
-<TabItem value="Kotlin">
+<TabItem value="Kotlin" attributes={{'data-value': `Kotlin`}}>
 
 ```kotlin title='com.example.App'
 val application = createSimpleApplication {
@@ -203,7 +198,7 @@ application.join() // 挂起直到被关闭
 ```
 
 </TabItem>
-<TabItem value="Java" label="Java Blocking">
+<TabItem value="Java" attributes={{'data-value': `Java`}}>
 
 ```java title='com.example.App'
 final ApplicationLauncher<SimpleApplication> launcher = Applications.simbotApplication(Simple.INSTANCE, c -> { /* Application配置 */ }, (builder, configuration) -> {
@@ -243,7 +238,7 @@ application.joinBlocking(); // 阻塞直到被关闭
 ```
 
 </TabItem>
-<TabItem value="Java Async">
+<TabItem value="Java Async" attributes={{'data-value': `Java`}}>
 
 ```java title='com.example.App'
 final ApplicationLauncher<SimpleApplication> launcher = Applications.simbotApplication(Simple.INSTANCE, c -> { /* Application配置 */ }, (builder, configuration) -> {
@@ -294,8 +289,7 @@ launcher.launchAsync().thenCompose(application -> {
 当监听函数注册完了之后，我们就需要注册bot了。当bot被注册并启动后，它们收到的事件就会流入到Application中的事件处理器中被统一处理。
 
 <Tabs groupId="code">
-
-<TabItem value="Kotlin">
+<TabItem value="Kotlin" attributes={{'data-value': `Kotlin`}}>
 
 ```kotlin title='com.example.App'
 val application = createSimpleApplication {
@@ -359,7 +353,7 @@ application.join() // 挂起直到被关闭
 ```
 
 </TabItem>
-<TabItem value="Java" label="Java Blocking">
+<TabItem value="Java" attributes={{'data-value': `Java`}}>
 
 ```java title='com.example.App'
 final ApplicationLauncher<SimpleApplication> launcher = Applications.simbotApplication(Simple.INSTANCE, c -> { /* Application配置 */ }, (builder, configuration) -> {
@@ -398,7 +392,7 @@ application.joinBlocking(); // 阻塞直到被关闭
 ```
 
 </TabItem>
-<TabItem value="Java Async">
+<TabItem value="Java Async" attributes={{'data-value': `Java`}}>
 
 ```java title='com.example.App'
 final ApplicationLauncher<SimpleApplication> launcher = Applications.simbotApplication(Simple.INSTANCE, c -> { /* Application配置 */ }, (builder, configuration) -> {

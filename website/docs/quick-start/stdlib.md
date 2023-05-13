@@ -18,7 +18,7 @@ import {version} from '@site/static/version.json';
 ## 安装
 
 <Tabs groupId="use-dependency">
-<TabItem value="Gradle Kotlin DSL">
+<TabItem value="Gradle Kotlin DSL" attributes={{'data-value': `Kts`}}>
 
 <CodeBlock language='kotlin'>{`
 // 不要忘记使用 Gradle 的 kotlin 插件来允许自动选择对应平台，比如JVM或JS等。
@@ -27,8 +27,7 @@ implementation("love.forte.simbot.component:simbot-component-qq-gulid-stdlib:${v
 
 
 </TabItem>
-
-<TabItem value="Gradle Groovy">
+<TabItem value="Gradle Groovy" attributes={{'data-value': `Gradle`}}>
 
 <CodeBlock language='gradle'>{`
 // 不要忘记使用 Gradle 的 kotlin 插件来允许自动选择对应平台，比如JVM或JS等。
@@ -36,8 +35,7 @@ implementation 'love.forte.simbot.component:simbot-component-qq-gulid-stdlib:${v
 `.trim()}</CodeBlock>
 
 </TabItem>
-
-<TabItem value="Maven">
+<TabItem value="Maven" attributes={{'data-value': `Maven`}}>
 
 <CodeBlock language='xml'>{`
 <dependency>
@@ -64,7 +62,7 @@ implementation 'love.forte.simbot.component:simbot-component-qq-gulid-stdlib:${v
 环境准备完毕后，接下来我们注册一个bot。
 
 <Tabs groupId="code">
-<TabItem value="Kotlin">
+<TabItem value="Kotlin" attributes={{'data-value': `Kotlin`}}>
 
 ```kotlin
 val bot = BotFactory.create("APP ID", "secret", "token") {
@@ -82,7 +80,7 @@ bot.join()  // 挂起bot直到bot终止
 ```
 
 </TabItem>
-<TabItem value="Java" label="Java Blocking">
+<TabItem value="Java" attributes={{'data-value': `Java`}}>
 
 ```java
 Bot bot = BotFactory.create("APP ID", "secret", "token", (configuration) -> {
@@ -101,7 +99,7 @@ bot.joinBlocking();  // 阻塞t直到bot终止
 ```
 
 </TabItem>
-<TabItem value="Java Async">
+<TabItem value="Java Async" attributes={{'data-value': `Java`}}>
 
 ```java
 Bot bot = BotFactory.create("APP ID", "secret", "token", (configuration) -> {
@@ -137,7 +135,7 @@ bot.startAsync().thenCompose(__ -> bot.joinAsync()).join();
 在启动创建bot、启动bot这个过程中间，你可以注册一些**事件处理器**来对订阅的事件进行处理。
 
 <Tabs groupId="code">
-<TabItem value="Kotlin">
+<TabItem value="Kotlin" attributes={{'data-value': `Kotlin`}}>
 
 ```kotlin
 val bot = BotFactory.create("APP ID", "secret", "token") {
@@ -163,7 +161,7 @@ bot.join()  // 挂起bot直到bot终止
 ```
 
 </TabItem>
-<TabItem value="Java" label="Java Blocking">
+<TabItem value="Java" attributes={{'data-value': `Java`}}>
 
 ```java
 Bot bot = BotFactory.create("APP ID", "secret", "token", (configuration) -> {
@@ -190,7 +188,7 @@ bot.joinBlocking();  // 阻塞直到bot终止
 ```
 
 </TabItem>
-<TabItem value="Java Async">
+<TabItem value="Java Async" attributes={{'data-value': `Java`}}>
 
 ```java
 Bot bot = BotFactory.create("APP ID", "secret", "token", (configuration) -> {
@@ -244,7 +242,7 @@ bot.startAsync().thenCompose(__ -> bot.joinAsync()).join();
 举个例子，当监听到 **子频道更新事件** (`ChannelUpdate`) 时，查询一下这个子频道所属的 **频道服务器** (`Guild`) 是什么。
 
 <Tabs groupId="code">
-<TabItem value="Kotlin">
+<TabItem value="Kotlin" attributes={{'data-value': `Kotlin`}}>
 
 ```kotlin
 val bot = BotFactory.create("APP ID", "secret", "token") {
@@ -265,7 +263,7 @@ bot.join()  // 挂起bot直到bot终止
 ```
 
 </TabItem>
-<TabItem value="Java" label="Java Blocking">
+<TabItem value="Java" attributes={{'data-value': `Java`}}>
 
 ```java
 Bot bot = BotFactory.create("APP ID", "secret", "token", (configuration) -> {
@@ -288,7 +286,7 @@ bot.joinBlocking();  // 阻塞直到bot终止
 ```
 
 </TabItem>
-<TabItem value="Java Async">
+<TabItem value="Java Async" attributes={{'data-value': `Java`}}>
 
 ```java
 Bot bot = BotFactory.create("APP ID", "secret", "token", (configuration) -> {

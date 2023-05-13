@@ -14,7 +14,7 @@ import {version} from '@site/static/version.json';
 ## 安装
 
 <Tabs groupId="use-dependency">
-<TabItem value="Gradle Kotlin DSL">
+<TabItem value="Gradle Kotlin DSL" attributes={{'data-value': `Kts`}}>
 
 <CodeBlock language='kotlin'>{`
 // 不要忘记使用 Gradle 的 kotlin 插件来允许自动选择对应平台，比如JVM或JS等。
@@ -22,8 +22,7 @@ implementation("love.forte.simbot.component:simbot-component-qq-gulid-api:${vers
 `.trim()}</CodeBlock>
 
 </TabItem>
-
-<TabItem value="Gradle Groovy">
+<TabItem value="Gradle Groovy" attributes={{'data-value': `Gradle`}}>
 
 <CodeBlock language='gradle'>{`
 // 不要忘记使用 Gradle 的 kotlin 插件来允许自动选择对应平台，比如JVM或JS等。
@@ -31,8 +30,7 @@ implementation 'love.forte.simbot.component:simbot-component-qq-gulid-api:${vers
 `.trim()}</CodeBlock>
 
 </TabItem>
-
-<TabItem value="Maven">
+<TabItem value="Maven" attributes={{'data-value': `Maven`}}>
 
 <CodeBlock language='xml'>{`
 <dependency>
@@ -72,8 +70,7 @@ API包装类的命名也存在一定的规律，比如一个 `获取某列表` �
 以 [获取用户（BOT）频道服务器列表](https://bot.q.qq.com/wiki/develop/api/openapi/user/guilds.html) 为例。
 
 <Tabs groupId="code">
-
-<TabItem value="Kotlin">
+<TabItem value="Kotlin" attributes={{'data-value': `Kotlin`}}>
 
 ```kotlin
 // 准备参数
@@ -113,8 +110,7 @@ guildFlow.collect { guild ->
 ```
 
 </TabItem>
-
-<TabItem value="Java" label="Java Blocking">
+<TabItem value="Java" attributes={{'data-value': `Java`}}>
 
 ```java
 // 准备参数
@@ -141,8 +137,7 @@ for (SimpleGuild guild : guildList) {
 ```
 
 </TabItem>
-
-<TabItem value="Java Async">
+<TabItem value="Java Async" attributes={{'data-value': `Java`}}>
 
 ```java
 // 准备参数
@@ -169,8 +164,7 @@ api.doRequestAsync(client, server, token).thenAccept(guildList -> {
 ```
 
 </TabItem>
-
-<TabItem value="Java Reactive">
+<TabItem value="Java Reactive" attributes={{'data-value': `Java`}}>
 
 ```java
 // 准备参数

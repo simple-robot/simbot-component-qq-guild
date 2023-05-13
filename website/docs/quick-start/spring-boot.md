@@ -36,8 +36,7 @@ import {version} from '@site/static/version.json';
 :::
 
 <Tabs groupId="use-dependency">
-
-<TabItem value="Gradle Kotlin DSL">
+<TabItem value="Gradle Kotlin DSL" attributes={{'data-value': `Kts`}}>
 
 <CodeBlock language='kotlin'>{`
 // simbot core starter  
@@ -47,8 +46,7 @@ implementation("love.forte.simbot.component:simbot-component-qq-guild-core:${ver
 `.trim()}</CodeBlock>
 
 </TabItem>
-
-<TabItem value="Gradle Groovy">
+<TabItem value="Gradle Groovy" attributes={{'data-value': `Gradle`}}>
 
 <CodeBlock language='gradle'>{`
 // simbot core starter  
@@ -59,8 +57,7 @@ implementation 'love.forte.simbot.component:simbot-component-qq-guild-core:${ver
 
 
 </TabItem>
-
-<TabItem value="Maven">
+<TabItem value="Maven" attributes={{'data-value': `Maven`}}>
 
 <CodeBlock language='xml'>{`
 <!-- simbot core starter -->
@@ -117,8 +114,6 @@ simbot.bot-configuration-resources[0]=classpath:simbot-bots/*.bot*
 ```
 
 </TabItem>
-
-
 <TabItem value="yaml">
 
 ```yaml
@@ -143,8 +138,7 @@ simbot:
 像每一个 Spring Boot 应用一样，你需要一个启动类，并通过标注 `@EnableSimbot` 来启用 `simbot` ：
 
 <Tabs groupId="code">
-
-<TabItem value="Kotlin">
+<TabItem value="Kotlin" attributes={{'data-value': `Kotlin`}}>
 
 ```kotlin title='com.example.App'
 @EnableSimbot
@@ -157,8 +151,7 @@ fun main(vararg args: String) {
 ```
 
 </TabItem>
-
-<TabItem value="Java">
+<TabItem value="Java" attributes={{'data-value': `Java`}}>
 
 :::tip 早有预防
 
@@ -199,8 +192,7 @@ BOT:
 ```
 
 <Tabs groupId="code">
-
-<TabItem value="Kotlin">
+<TabItem value="Kotlin" attributes={{'data-value': `Kotlin`}}>
 
 ```kotlin title='com.example.listener.ExampleListener.kt'
 import love.forte.simboot.annotation.ContentTrim
@@ -223,8 +215,7 @@ class ExampleListener {
 ```
 
 </TabItem>
-
-<TabItem value="Java" label="Java Blocking">
+<TabItem value="Java" attributes={{'data-value': `Java`}}>
 
 
 ```java title='com.example.listener.ExampleListener.java'
@@ -248,8 +239,7 @@ public class ExampleListener {
 ```
 
 </TabItem>
-
-<TabItem value="Java Async">
+<TabItem value="Java Async" attributes={{'data-value': `Java`}}>
 
 
 ```java title='com.example.listener.ExampleListener.java'
@@ -273,8 +263,7 @@ public class ExampleListener {
 ```
 
 </TabItem>
-
-<TabItem value="Java Reactive">
+<TabItem value="Java Reactive" attributes={{'data-value': `Java`}}>
 
 :::tip 有要求
 

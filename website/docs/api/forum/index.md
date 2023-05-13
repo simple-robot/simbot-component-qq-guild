@@ -20,7 +20,7 @@ QQ频道中有一些针对 `帖子子频道` 的API。( [参考文档](https://b
 使用它们的方式都差不多，我们选其中一个 `GetThreadListApi` 作为示例：
 
 <Tabs groupId="code">
-<TabItem value="Kotlin">
+<TabItem value="Kotlin" attributes={{'data-value': `Kotlin`}}>
 
 ```kotlin
 // QQ频道API请求用的 token
@@ -43,7 +43,7 @@ result.threads.forEach { thread ->
 ```
 
 </TabItem>
-<TabItem value="Java" label="Java Blocking">
+<TabItem value="Java" attributes={{'data-value': `Java`}}>
 
 ```java
 // QQ频道API请求用的 token
@@ -67,7 +67,7 @@ for (Thread thread : result.getThreads()) {
 ```
 
 </TabItem>
-<TabItem value="Java Async">
+<TabItem value="Java Async" attributes={{'data-value': `Java`}}>
 
 ```java
 // QQ频道API请求用的 token
@@ -115,7 +115,7 @@ result.thenApply(ThreadListResult::getThreads)
 
 
 <Tabs groupId="code">
-<TabItem value="Kotlin">
+<TabItem value="Kotlin" attributes={{'data-value': `Kotlin`}}>
 
 ```kotlin
 val guild: QGGuild = ....
@@ -174,7 +174,7 @@ val forumChannel: QGForumChannel? = guild.forums.forumChannel("666".ID)
 ```
 
 </TabItem>
-<TabItem value="Java" label="Java Blocking">
+<TabItem value="Java" attributes={{'data-value': `Java`}}>
 
 ```java
 QGGuild guild = ...;
@@ -237,7 +237,7 @@ guild.getForums()
 ```
 
 </TabItem>
-<TabItem value="Java Async">
+<TabItem value="Java Async" attributes={{'data-value': `Java`}}>
 
 ```java
 QGGuild guild = ...;
