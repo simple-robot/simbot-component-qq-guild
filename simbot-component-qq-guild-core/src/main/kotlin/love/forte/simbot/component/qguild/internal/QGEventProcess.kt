@@ -31,9 +31,9 @@ import love.forte.simbot.qguild.model.isCategory
 
 private fun QGBotImpl.guild0(eventGuild: EventGuild): QGGuildImpl = qgGuild(this, eventGuild)
 
-private suspend fun QGBotImpl.channel0(eventChannel: EventChannel): QGChannelImpl {
+private suspend fun QGBotImpl.channel0(eventChannel: EventChannel): QGTextChannelImpl {
     val channel = GetChannelApi.create(eventChannel.id).requestBy(this)
-    return QGChannelImpl(bot = this.inGuild(channel.guildId), source = channel)
+    return QGTextChannelImpl(bot = this.inGuild(channel.guildId), source = channel)
 }
 
 private fun QGBotImpl.member0(eventMember: EventMember): QGMemberImpl =

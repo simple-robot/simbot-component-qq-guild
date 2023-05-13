@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2023. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -18,24 +18,26 @@
 package love.forte.simbot.component.qguild.internal
 
 import love.forte.simbot.ID
-import love.forte.simbot.component.qguild.QGChannel
 import love.forte.simbot.component.qguild.QGChannelCategoryId
 import love.forte.simbot.component.qguild.QGGuild
 import love.forte.simbot.component.qguild.QGMember
-import love.forte.simbot.component.qguild.message.QGMessageReceipt
-import love.forte.simbot.component.qguild.message.sendMessage
-import love.forte.simbot.message.Message
-import love.forte.simbot.message.MessageContent
+import love.forte.simbot.component.qguild.QGNonTextChannel
+import love.forte.simbot.qguild.InternalApi
+import love.forte.simbot.qguild.model.Channel
 import kotlin.coroutines.CoroutineContext
-import love.forte.simbot.qguild.model.Channel as QGSourceChannel
+
 
 /**
+ * [QGNonTextChannel] 基本实现，用于包装那些非特殊实现的非文字子频道类型。
+ *
+ * [QGNonTextChannelImpl] 类型作为 [QGNonTextChannel] 实现的默认替补，且不对外公开。
  *
  * @author ForteScarlet
  */
-internal class QGChannelImpl internal constructor(
+@InternalApi
+internal class QGNonTextChannelImpl(
     override val bot: QGGuildBotImpl,
-    override val source: QGSourceChannel,
+    override val source: Channel,
     private val sourceGuild: QGGuild? = null,
     override val category: QGChannelCategoryId = QGChannelCategoryIdImpl(
         bot = bot,
@@ -43,52 +45,20 @@ internal class QGChannelImpl internal constructor(
         id = source.parentId.ID,
         sourceGuild = sourceGuild,
     ),
-    /**
-     * 如果是从一个事件而来，提供可用于消息回复的 msgId 来避免 event.channel().send(...) 出现问题
-     */
-    private val currentMsgId: String? = null,
-) : QGChannel {
+) : QGNonTextChannel {
     override val coroutineContext: CoroutineContext = bot.newSupervisorCoroutineContext()
     override val id: ID = source.id.ID
     override val guildId: ID = source.guildId.ID
+    override val ownerId: ID = source.ownerId.ID
 
+    override suspend fun owner(): QGMember = guild().member(ownerId) ?: throw NoSuchElementException("owner(id=$ownerId)")
 
     override suspend fun guild(): QGGuild =
         sourceGuild
-            ?: bot.guild(guildId, currentMsgId)
+            ?: bot.guild(guildId)
             ?: throw NoSuchElementException("guild(id=$guildId)")
 
-    override suspend fun owner(): QGMember = guild().owner()
-
-    override suspend fun send(message: Message): QGMessageReceipt {
-        return bot.sendMessage(source.id, message) {
-            if (msgId == null) {
-                msgId = currentMsgId
-            }
-        }
-    }
-
-    override suspend fun send(message: MessageContent): QGMessageReceipt {
-        return bot.sendMessage(source.id, message) {
-            if (msgId == null) {
-                msgId = currentMsgId
-            }
-        }
-    }
-
-    override suspend fun send(text: String): QGMessageReceipt {
-        return bot.sendMessage(source.id, text) {
-            if (msgId == null) {
-                msgId = currentMsgId
-            }
-        }
-    }
-
     override fun toString(): String {
-        return "QGChannelImpl(id=$id, name=$name, source=$source, category=$category)"
+        return "QGNonTextChannelImpl(id=$id, name=$name, category=$category)"
     }
 }
-
-
-
-

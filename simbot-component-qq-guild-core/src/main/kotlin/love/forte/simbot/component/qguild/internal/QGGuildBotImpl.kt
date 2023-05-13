@@ -43,7 +43,6 @@ import kotlin.coroutines.CoroutineContext
 internal class QGGuildBotImpl(
     override val bot: QGBotImpl,
     private val guildId: String,
-    private val currentMsgId: String? = null,
     private val sourceGuild: QGGuildImpl? = null,
 ) : QGGuildBot, QGBot {
     override suspend fun asMember(): QGMemberImpl {
@@ -59,10 +58,7 @@ internal class QGGuildBotImpl(
     override val username: String get() = bot.username
     override val avatar: String get() = bot.avatar
 
-    override suspend fun guild(id: ID): QGGuildImpl? = guild(id, this.currentMsgId)
-
-    internal suspend fun guild(id: ID, currentMsgId: String? = this.currentMsgId): QGGuildImpl? =
-        bot.guild(id)
+    override suspend fun guild(id: ID): QGGuildImpl? = bot.guild(id)
 
     override suspend fun resolveImage(id: ID): Image<*> = bot.resolveImage(id)
 
@@ -92,5 +88,9 @@ internal class QGGuildBotImpl(
         get() = bot.guilds
 
     override suspend fun me(): User = bot.me()
+
+    override fun toString(): String {
+        return "QGGuildBotImpl(bot=$bot, guildId=$guildId)"
+    }
 }
 

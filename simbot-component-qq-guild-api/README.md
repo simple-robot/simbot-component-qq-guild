@@ -137,6 +137,6 @@ guildList.forEach { guild ->
 - [x] 日程 API (未测试)
 - [ ] 表情表态 API
 - [ ] 音频 API
-- [ ] 帖子 API
+- [x] 帖子 API
 - [x] API接口权限 API
 - [x] WebSocket API

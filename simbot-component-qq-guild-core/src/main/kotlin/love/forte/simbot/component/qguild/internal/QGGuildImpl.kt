@@ -20,21 +20,23 @@ package love.forte.simbot.component.qguild.internal
 import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import love.forte.simbot.ExperimentalSimbotApi
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.component.qguild.QGChannel
+import love.forte.simbot.component.qguild.QGChannelCategory
 import love.forte.simbot.component.qguild.QGChannelCategoryId
 import love.forte.simbot.component.qguild.QGGuild
+import love.forte.simbot.component.qguild.forum.QGForums
+import love.forte.simbot.component.qguild.internal.forum.QGForumChannelImpl
+import love.forte.simbot.component.qguild.internal.forum.QGForumsImpl
 import love.forte.simbot.component.qguild.internal.role.QGGuildRoleImpl
 import love.forte.simbot.component.qguild.internal.role.QGRoleCreatorImpl
 import love.forte.simbot.component.qguild.role.QGRoleCreator
 import love.forte.simbot.component.qguild.util.requestBy
 import love.forte.simbot.literal
+import love.forte.simbot.qguild.InternalApi
 import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.api.apipermission.ApiPermissions
 import love.forte.simbot.qguild.api.apipermission.GetApiPermissionListApi
@@ -47,11 +49,9 @@ import love.forte.simbot.qguild.api.role.GetGuildRoleListApi
 import love.forte.simbot.qguild.ifNotFoundThenNull
 import love.forte.simbot.qguild.model.ChannelType
 import love.forte.simbot.qguild.model.Guild
+import love.forte.simbot.qguild.model.SimpleChannel
 import love.forte.simbot.qguild.model.isCategory
-import love.forte.simbot.utils.item.Items
-import love.forte.simbot.utils.item.effectOn
-import love.forte.simbot.utils.item.effectedFlowItems
-import love.forte.simbot.utils.item.flowItems
+import love.forte.simbot.utils.item.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.CoroutineContext
 
@@ -69,8 +69,6 @@ internal class QGGuildImpl private constructor(
     override val id: ID = source.id.ID
     override val ownerId: ID = source.ownerId.ID
 
-    override val maximumChannel: Int get() = -1
-
     @OptIn(ExperimentalSimbotApi::class)
     override val joinTime: Timestamp get() = source.joinedAt.toTimestamp()
     override val currentMember: Int get() = source.memberCount
@@ -80,7 +78,7 @@ internal class QGGuildImpl private constructor(
     override val name: String get() = source.name
 
     override fun toString(): String {
-        return "QGGuildImpl(id=$id, name=$name, bot=$baseBot, guild=$source)"
+        return "QGGuildImpl(id=$id, name=$name)"
     }
 
     override suspend fun permissions(): ApiPermissions = GetApiPermissionListApi.create(source.id).requestBy(baseBot)
@@ -155,80 +153,129 @@ internal class QGGuildImpl private constructor(
     @ExperimentalSimbotApi
     override fun roleCreator(): QGRoleCreator = QGRoleCreatorImpl(this)
 
-    override val currentChannel: Int get() = -1
-
-    override val channels: Items<QGChannelImpl>
+    override val channels: Items<QGChannel>
         get() = queryChannels()
 
-    /**
-     * 通过API实时查询channels列表
-     */
-    private fun queryChannels(): Items<QGChannelImpl> = effectedFlowItems {
-        val categoryMap = ConcurrentHashMap<String, QGChannelCategoryId>()
-        val flow = GetGuildChannelListApi
-            .create(source.id)
-            .requestBy(baseBot)
-            .asFlow()
-            .filter { info ->
-                if (info.type.isCategory) {
-                    categoryMap.computeIfAbsent(info.parentId) {
-                        QGChannelCategoryImpl(
-                            bot = bot,
-                            source = info,
-                            sourceGuild = baseBot.checkIfTransmitCacheable(this@QGGuildImpl)
-                        )
-                    }
-
-                    false
-                } else {
-                    true
+    private fun channelFlow(): Flow<SimpleChannel> {
+        return flow {
+            GetGuildChannelListApi.create(source.id)
+                .requestBy(baseBot)
+                .forEach {
+                    emit(it)
                 }
-            }
-            .map { info ->
-                val category = categoryMap.computeIfAbsent(info.parentId) { cid ->
-                    QGChannelCategoryIdImpl(
+        }
+    }
+
+    internal data class ChannelInfoWithCategory(val info: SimpleChannel, val categoryId: QGChannelCategoryId)
+
+    internal fun channelFlowWithCategoryId(): Flow<ChannelInfoWithCategory> {
+        val categoryMap = ConcurrentHashMap<String, QGChannelCategoryId>()
+        return channelFlow().filter { info ->
+            if (info.type.isCategory) {
+                categoryMap.computeIfAbsent(info.parentId) {
+                    QGChannelCategoryImpl(
                         bot = bot,
-                        guildId = info.guildId.ID,
-                        id = cid.ID,
+                        source = info,
                         sourceGuild = baseBot.checkIfTransmitCacheable(this@QGGuildImpl)
                     )
                 }
 
-                QGChannelImpl(
+                false
+            } else {
+                true
+            }
+        }.map { info ->
+            val category = categoryMap.computeIfAbsent(info.parentId) { cid ->
+                QGChannelCategoryIdImpl(
+                    bot = bot,
+                    guildId = info.guildId.ID,
+                    id = cid.ID,
+                    sourceGuild = baseBot.checkIfTransmitCacheable(this@QGGuildImpl)
+                )
+            }
+
+            ChannelInfoWithCategory(info, category)
+        }
+    }
+
+    /**
+     * 通过API实时查询channels列表
+     */
+    @OptIn(InternalApi::class)
+    private fun queryChannels(): Items<QGChannel> = effectedItemsByFlow {
+        channelFlowWithCategoryId().map { (info, category) ->
+            when (info.type) {
+                ChannelType.TEXT -> QGTextChannelImpl(
                     bot = bot,
                     source = info,
                     sourceGuild = baseBot.checkIfTransmitCacheable(this@QGGuildImpl),
                     category = category,
                 )
+
+                ChannelType.FORUM -> QGForumChannelImpl(
+                    bot = bot,
+                    source = info,
+                    sourceGuild = baseBot.checkIfTransmitCacheable(this@QGGuildImpl),
+                    category = category,
+                )
+
+                else -> QGNonTextChannelImpl(
+                    bot = bot,
+                    source = info,
+                    sourceGuild = baseBot.checkIfTransmitCacheable(this@QGGuildImpl),
+                    category = category
+                )
             }
 
-
-        emitAll(flow)
+        }
     }
 
-    override suspend fun channel(id: ID): QGChannel? {
-        // by api
-        val channelInfo = try {
+    /**
+     * @throws QQGuildApiException
+     */
+    private suspend fun queryChannel(id: ID): SimpleChannel? {
+        return try {
             GetChannelApi.create(id.literal).requestBy(baseBot)
         } catch (apiEx: QQGuildApiException) {
             apiEx.ifNotFoundThenNull()
-        } ?: return null
+        }
+    }
 
-        return QGChannelImpl(
-            bot = bot,
-            source = channelInfo,
-            sourceGuild = baseBot.checkIfTransmitCacheable(this)
-        )
+    @OptIn(InternalApi::class)
+    override suspend fun channel(id: ID): QGChannel? {
+        val channelInfo = queryChannel(id) ?: return null
+
+        return when (channelInfo.type) {
+            ChannelType.CATEGORY -> QGChannelCategoryImpl(
+                bot = bot,
+                source = channelInfo,
+                sourceGuild = baseBot.checkIfTransmitCacheable(this@QGGuildImpl),
+            ) // throw IllegalStateException("The type of channel(id=${channelInfo.id}, name=${channelInfo.name}) is CATEGORY. Maybe you should use [guild.category(id)]?")
+            ChannelType.TEXT -> QGTextChannelImpl(
+                bot = bot,
+                source = channelInfo,
+                sourceGuild = baseBot.checkIfTransmitCacheable(this@QGGuildImpl),
+            )
+
+            ChannelType.FORUM -> QGForumChannelImpl(
+                bot = bot,
+                source = channelInfo,
+                sourceGuild = baseBot.checkIfTransmitCacheable(this@QGGuildImpl),
+            )
+
+            else -> QGNonTextChannelImpl(
+                bot = bot,
+                source = channelInfo,
+                sourceGuild = baseBot.checkIfTransmitCacheable(this@QGGuildImpl),
+            )
+        }
     }
 
     override val categories: Items<QGChannelCategoryImpl>
         get() = queryCategories()
 
-    private fun queryCategories(): Items<QGChannelCategoryImpl> = effectedFlowItems {
-        val flow = GetGuildChannelListApi
-            .create(source.id)
-            .requestBy(baseBot)
-            .asFlow()
+    private fun queryCategories(): Items<QGChannelCategoryImpl> = effectedItemsByFlow {
+        channelFlow()
             .filter { it.type.isCategory }
             .map { info ->
                 QGChannelCategoryImpl(
@@ -237,30 +284,37 @@ internal class QGGuildImpl private constructor(
                     sourceGuild = baseBot.checkIfTransmitCacheable(this@QGGuildImpl)
                 )
             }
-
-        emitAll(flow)
     }
 
-    override suspend fun category(id: ID): QGChannelCategoryImpl? {
-        val info = try {
-            GetChannelApi.create(id.literal).requestBy(baseBot)
-        } catch (apiEx: QQGuildApiException) {
-            apiEx.ifNotFoundThenNull()
-        }
+    override suspend fun category(id: ID): QGChannelCategory? {
+        val channel = channel(id) ?: return null
 
-        if (info != null && info.type != ChannelType.CATEGORY) {
-            throw IllegalStateException("The type of channel(id=${info.id}, name=${info.name}) in guild(id=${info.guildId}, name=$name) is not category, but ${info.type}(${info.type.value})")
-        }
-
-        return info?.let {
-            QGChannelCategoryImpl(
-                bot = bot,
-                source = it,
-                sourceGuild = baseBot.checkIfTransmitCacheable(this@QGGuildImpl)
-            )
-        }
+        return channel as? QGChannelCategory
+            ?: throw IllegalStateException("The type of channel(id=${channel.source.id}, name=${channel.source.name}) in guild(id=${source.id}, name=$name) is not category (${ChannelType.CATEGORY}), but ${channel.source.type}")
     }
 
+    @Volatile
+    private lateinit var _forums: QGForums
+
+    override val forums: QGForums
+        get() {
+            if (::_forums.isInitialized) {
+                return _forums
+            }
+
+            synchronized(this) {
+                if (::_forums.isInitialized) {
+                    return _forums
+                }
+
+                return initForums().also {
+                    _forums = it
+                }
+            }
+
+        }
+
+    private fun initForums(): QGForums = QGForumsImpl(this)
 
     companion object {
         internal fun qgGuild(bot: QGBotImpl, guild: Guild): QGGuildImpl {
@@ -271,4 +325,3 @@ internal class QGGuildImpl private constructor(
         }
     }
 }
-

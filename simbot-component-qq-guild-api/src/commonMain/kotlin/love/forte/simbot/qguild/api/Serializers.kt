@@ -28,7 +28,7 @@ import kotlinx.serialization.encoding.Encoder
  * - `0` -> false
  * - other -> true, decode true to `1`
  */
-public object BooleanToNumberSerializer : KSerializer<Boolean> {
+public object NumberAsBooleanSerializer : KSerializer<Boolean> {
     override fun deserialize(decoder: Decoder): Boolean {
         return decoder.decodeInt() != 0
     }
@@ -42,5 +42,5 @@ public object BooleanToNumberSerializer : KSerializer<Boolean> {
     /**
      * 将 [Boolean] 转为 [Int]。
      */
-    public fun Boolean.toNumber(): Int = if (this) 1 else 0
+    private fun Boolean.toNumber(): Int = if (this) 1 else 0
 }

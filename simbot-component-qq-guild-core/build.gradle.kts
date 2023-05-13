@@ -40,6 +40,7 @@ dependencies {
 
     testImplementation(simbotCore)
     testImplementation(libs.charleskorn.kaml)
+    testImplementation(simbotLoggerSlf4jImpl)
     testImplementation("love.forte.simbot:simbot-logger-slf4j-impl:3.0.0-RC.3")
 
 }

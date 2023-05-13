@@ -19,8 +19,8 @@ package love.forte.simbot.component.qguild.event
 
 import love.forte.simbot.Timestamp
 import love.forte.simbot.component.qguild.JSTP
-import love.forte.simbot.component.qguild.QGChannel
 import love.forte.simbot.component.qguild.QGMember
+import love.forte.simbot.component.qguild.QGTextChannel
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
 import love.forte.simbot.component.qguild.message.QGReceiveMessageContent
 import love.forte.simbot.definition.Objective
@@ -117,7 +117,7 @@ public abstract class QGAtMessageCreateEvent : QGMessageEvent(), ChannelMessageE
      * @throws QQGuildApiException 请求失败，例如无权限
      * @throws NoSuchElementException 没有找到结果
      */
-    abstract override suspend fun channel(): QGChannel
+    abstract override suspend fun channel(): QGTextChannel
 
     /**
      * 接收到消息的子频道。同 [channel]
@@ -125,7 +125,7 @@ public abstract class QGAtMessageCreateEvent : QGMessageEvent(), ChannelMessageE
      * @throws QQGuildApiException 请求失败，例如无权限
      * @throws NoSuchElementException 没有找到结果
      */
-    override suspend fun source(): QGChannel = channel()
+    override suspend fun source(): QGTextChannel = channel()
 
     /**
      * 接收到消息的子频道。同 [channel]
@@ -133,7 +133,7 @@ public abstract class QGAtMessageCreateEvent : QGMessageEvent(), ChannelMessageE
      * @throws QQGuildApiException 请求失败，例如无权限
      * @throws NoSuchElementException 没有找到结果
      */
-    override suspend fun organization(): QGChannel = channel()
+    override suspend fun organization(): QGTextChannel = channel()
 
     override val key: Event.Key<out QGAtMessageCreateEvent> get() = Key
 
