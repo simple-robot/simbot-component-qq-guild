@@ -23,6 +23,7 @@ import love.forte.simbot.ID
 import love.forte.simbot.component.qguild.QGChannelCategory
 import love.forte.simbot.component.qguild.QGChannelCategoryId
 import love.forte.simbot.component.qguild.QGGuild
+import love.forte.simbot.component.qguild.QGMember
 import kotlin.coroutines.CoroutineContext
 import love.forte.simbot.qguild.model.Channel as QGuildChannel
 
@@ -68,16 +69,19 @@ internal class QGChannelCategoryImpl(
 
     override val category: QGChannelCategory get() = this
 
+    override suspend fun resolve(): QGChannelCategory = this
+
+    override val id: ID = source.id.ID
+
+    override val ownerId: ID = source.ownerId.ID
+    override val guildId: ID = source.guildId.ID
+
     override suspend fun guild(): QGGuild =
         sourceGuild
             ?: bot.guild(guildId)
             ?: throw NoSuchElementException("guild(id=$guildId)")
 
-    override suspend fun resolve(): QGChannelCategory = this
-
-    override val id: ID = source.id.ID
-    override val ownerId: ID = source.ownerId.ID
-    override val guildId: ID = source.guildId.ID
+    override suspend fun owner(): QGMember = guild().member(ownerId) ?: throw NoSuchElementException("owner(id=$ownerId)")
 
 
     override fun toString(): String {

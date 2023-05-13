@@ -18,31 +18,34 @@
 package love.forte.simbot.component.qguild
 
 import kotlinx.coroutines.CoroutineScope
+import love.forte.simbot.ExperimentalSimbotApi
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
+import love.forte.simbot.component.qguild.message.QGMessageReceipt
 import love.forte.simbot.definition.*
 import love.forte.simbot.message.Message
-import love.forte.simbot.message.MessageReceipt
-import love.forte.simbot.qguild.model.Channel
+import love.forte.simbot.message.MessageContent
+import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.utils.item.Items
-import kotlin.coroutines.CoroutineContext
+import love.forte.simbot.utils.item.flowItems
 import kotlin.time.Duration
+import love.forte.simbot.qguild.model.Channel as QGSourceChannel
 
 
 /**
  * 一个QQ频道中的子频道 `Channel` 类型。
  *
- * [QGChannel] 提供部分来自 [source channel][Channel] 的属性获取。
+ * [QGChannel] 提供部分来自 [source channel][QGSourceChannel] 的属性获取。
 
  *
  * @author ForteScarlet
  */
 @Suppress("DeprecatedCallableAddReplaceWith")
-public interface QGChannel : BotContainer, CoroutineScope, QGObjectiveContainer<Channel>, love.forte.simbot.definition.Channel {
+public interface QGChannel : BotContainer, CoroutineScope, QGObjectiveContainer<QGSourceChannel>, Channel {
     /**
      * 原始的子频道信息
      */
-    override val source: Channel
+    override val source: QGSourceChannel
 
     /**
      * 所属bot
@@ -69,8 +72,28 @@ public interface QGChannel : BotContainer, CoroutineScope, QGObjectiveContainer<
      */
     override val ownerId: ID
 
+
     /**
-     * 无效的属性，始终得到 [Timestamp.notSupport()]。
+     * 得到当前子频道所属频道服务器
+     */
+    @JSTP
+    override suspend fun guild(): QGGuild
+
+    /**
+     * 得到当前子频道所属用户
+     */
+    @JSTP
+    override suspend fun owner(): QGMember
+
+    /**
+     * 同 [guild]
+     */
+    @JSTP
+    override suspend fun previous(): QGGuild = guild()
+
+
+    /**
+     * 无效的属性，始终得到 [Timestamp.notSupport]。
      */
     @Deprecated("Invalid property")
     override val createTime: Timestamp get() = Timestamp.notSupport()
@@ -113,42 +136,80 @@ public interface QGChannel : BotContainer, CoroutineScope, QGObjectiveContainer<
      */
     override val category: QGChannelCategoryId
 
-    // TODO?
 
-    override suspend fun send(message: Message): MessageReceipt {
-        TODO("Not yet implemented")
-    }
+    /**
+     * 向子频道发送消息。此频道需要为文字子频道，否则会产生异常。
+     *
+     * @throws QQGuildApiException 请求异常，例如无权限
+     * @throws UnsupportedOperationException 如果当前子频道类型不是文字子频道
+     */
+    @JST
+    override suspend fun send(message: Message): QGMessageReceipt
 
+    /**
+     * 向子频道发送消息。此频道需要为文字子频道，否则会产生异常。
+     *
+     * @throws QQGuildApiException 请求异常，例如无权限
+     * @throws UnsupportedOperationException 如果当前子频道类型不是文字子频道
+     */
+    @JST
+    override suspend fun send(text: String): QGMessageReceipt
+
+    /**
+     * 向子频道发送消息。此频道需要为文字子频道，否则会产生异常。
+     *
+     * @throws QQGuildApiException 请求异常，例如无权限
+     * @throws UnsupportedOperationException 如果当前子频道类型不是文字子频道
+     *
+     */
+    @JST
+    override suspend fun send(message: MessageContent):QGMessageReceipt
+
+    /**
+     * 子频道不能获取成员列表，考虑使用 [guild] 获取。
+     */
+    @Deprecated(
+        "Channels cannot get a list of members, use `guild` to get it.",
+        ReplaceWith("guild().members")
+    )
     override val members: Items<GuildMember>
-        get() = TODO("Not yet implemented")
+        get() = flowItems { prop ->
+            guild().members.batch(prop.batch).offset(prop.offset).limit(prop.limit).collect { emit(it) }
+        }
 
-    override suspend fun guild(): Guild {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun member(id: ID): GuildMember? {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun owner(): GuildMember {
-        TODO("Not yet implemented")
-    }
-
+    /**
+     * 尚不支持子频道角色（权限）获取。
+     *
+     * 如果希望获取频道角色，使用 [guild] 后获取。
+     */
+    @OptIn(ExperimentalSimbotApi::class)
+    @Deprecated("NotSupported yet")
     override val roles: Items<Role>
-        get() = TODO("Not yet implemented")
+        get() = flowItems { prop ->
+            guild().roles.batch(prop.batch).offset(prop.offset).limit(prop.limit).collect { emit(it) }
+        }
 
-    override suspend fun mute(duration: Duration): Boolean {
-        TODO("Not yet implemented")
-    }
+    /**
+     * 子频道不能获取成员，考虑使用 [guild] 获取。
+     */
+    @Deprecated(
+        "Channels cannot get a member, use `guild` to get it.",
+        ReplaceWith("guild().member(id)")
+    )
+    @JST(blockingBaseName = "getMember", blockingSuffix = "", asyncBaseName = "getMember")
+    override suspend fun member(id: ID): QGMember? = guild().member(id)
 
-    override suspend fun previous(): Organization? {
-        TODO("Not yet implemented")
-    }
+    /**
+     * Note: 尚不支持对子频道的禁言相关操作
+     */
+    @Deprecated("Mute channel is not supported", ReplaceWith("false"))
+    @JvmSynthetic
+    override suspend fun mute(duration: Duration): Boolean = false
 
-    override suspend fun unmute(): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override val coroutineContext: CoroutineContext
-        get() = TODO("Not yet implemented")
+    /**
+     * Note: 尚不支持对子频道的禁言相关操作
+     */
+    @Deprecated("Mute channel is not supported", ReplaceWith("false"))
+    @JST
+    override suspend fun unmute(): Boolean = false
 }

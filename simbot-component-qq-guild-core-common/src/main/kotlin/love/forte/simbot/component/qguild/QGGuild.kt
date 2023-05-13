@@ -21,6 +21,7 @@ import kotlinx.coroutines.CoroutineScope
 import love.forte.simbot.ExperimentalSimbotApi
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
+import love.forte.simbot.component.qguild.forum.QGForums
 import love.forte.simbot.component.qguild.role.QGGuildRole
 import love.forte.simbot.component.qguild.role.QGRoleCreator
 import love.forte.simbot.definition.Guild
@@ -116,35 +117,10 @@ public interface QGGuild : Guild, CoroutineScope, QGObjectiveContainer<QGSourceG
     public suspend fun permissions(): ApiPermissions
 
     /**
-     * 得到此频道中的所有子频道。
+     * 得到此频道服务器下的所有子频道。
      *
      * _可以通过 [permissions] 手动检查是否存在 [GetGuildChannelListApi] 的权限。_
      *
-     * 如果希望获取用于发送消息的文字子频道可参考 [channels]。[QGChannel] 可能的类型参考其文档说明。
-     *
-     * @see QGChannel
-     * @see channels
-     *
-     */
-    public val sourceChannels: Items<QGChannel>
-
-    /**
-     * 根据ID获取指定的子频道。
-     *
-     * @see QGChannel
-     */
-    @JST(blockingBaseName = "getSourceChannel", blockingSuffix = "", asyncBaseName = "getSourceChannel")
-    public suspend fun sourceChannel(id: ID): QGChannel?
-
-    // TODO QGChanel 是否实现 Channel ，然后不支持的调用send的时候报错？
-
-    /**
-     * 得到此频道服务器下的所有**文字子频道**。
-     *
-     * _可以通过 [permissions] 手动检查是否存在 [GetGuildChannelListApi] 的权限。_
-     *
-     * [channels] 的结果仅代表**文字子频道**类型。如果希望获取全部的子频道信息，请使用 [sourceChannels];
-     * 如果希望获取 _子频道分类_ ，参考 [categories]。
      *
      * @see QGTextChannel
      * @see channel
@@ -153,30 +129,30 @@ public interface QGGuild : Guild, CoroutineScope, QGObjectiveContainer<QGSourceG
      *
      * @throws QQGuildApiException 请求失败，例如没有权限
      */
-    override val channels: Items<QGTextChannel>
+    override val channels: Items<QGChannel>
 
     /**
-     * 获取指定ID的**文字子频道**。
+     * 获取指定ID的子频道。
      *
      * @throws QQGuildApiException 请求失败，例如没有权限
      */
     @JST(blockingBaseName = "getChannel", blockingSuffix = "", asyncBaseName = "getChannel")
-    override suspend fun channel(id: ID): QGTextChannel?
+    override suspend fun channel(id: ID): QGChannel?
 
     /**
-     * 得到此频道服务器下的所有**文字子频道**。同 [channels]。
+     * 得到此频道服务器下的所有子频道。同 [channels]。
      *
      * @see channels
      */
-    override val children: Items<QGTextChannel> get() = channels
+    override val children: Items<QGChannel> get() = channels
 
     /**
-     * 获取指定ID的**文字子频道**，同 [channel]
+     * 获取指定ID的子频道，同 [channel]
      *
      * @see channel
      */
     @JST(blockingBaseName = "getChild", blockingSuffix = "", asyncBaseName = "getChild")
-    override suspend fun child(id: ID): QGTextChannel? = channel(id)
+    override suspend fun child(id: ID): QGChannel? = channel(id)
 
     /**
      * 得到当前频道服务器下的所有频道分类。
@@ -239,6 +215,13 @@ public interface QGGuild : Guild, CoroutineScope, QGObjectiveContainer<QGSourceG
      */
     @ExperimentalSimbotApi
     public fun roleCreator(): QGRoleCreator
+
+    /**
+     * 得到针对 **帖子子频道** 的操作器。
+     *
+     * @see QGForums
+     */
+    public val forums: QGForums
 
     //// Impls
 

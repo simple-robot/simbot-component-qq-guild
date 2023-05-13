@@ -17,10 +17,16 @@
 
 package love.forte.simbot.component.qguild.forum
 
+import love.forte.simbot.Api4J
+import love.forte.simbot.InternalSimbotApi
 import love.forte.simbot.component.qguild.QGChannel
+import love.forte.simbot.component.qguild.QGGuild
 import love.forte.simbot.definition.BotContainer
 import love.forte.simbot.definition.GuildInfoContainer
 import love.forte.simbot.qguild.model.ChannelType
+import love.forte.simbot.utils.runInAsync
+import love.forte.simbot.utils.runInNoScopeBlocking
+import java.util.concurrent.CompletableFuture
 import love.forte.simbot.qguild.model.Channel as QGSourceChannel
 
 /**
@@ -43,6 +49,24 @@ public interface QGForumChannel : BotContainer, GuildInfoContainer, QGChannel {
      * 表示此帖子频道的源频道。
      */
     override val source: QGSourceChannel
+
+    @JvmSynthetic
+    override suspend fun guild(): QGGuild
+
+    /**
+     * @suppress for hidden warning
+     */
+    @Api4J
+    override val guild: QGGuild
+        get() = runInNoScopeBlocking { guild() }
+
+    /**
+     * @suppress for hidden warning
+     */
+    @OptIn(InternalSimbotApi::class)
+    @Api4J
+    override val guildAsync: CompletableFuture<out QGGuild>
+        get() = runInAsync(this) { guild() }
 
     // TODO 查、发、删
 

@@ -55,7 +55,7 @@ internal class QGTextChannelImpl internal constructor(
 
     override suspend fun guild(): QGGuild =
         sourceGuild
-            ?: bot.guild(guildId, currentMsgId)
+            ?: bot.guild(guildId)
             ?: throw NoSuchElementException("guild(id=$guildId)")
 
     override suspend fun owner(): QGMember = guild().member(ownerId) ?: throw NoSuchElementException("owner(id=$ownerId)")

@@ -18,13 +18,18 @@
 package love.forte.simbot.component.qguild
 
 import kotlinx.coroutines.sync.Mutex
+import love.forte.simbot.Api4J
 import love.forte.simbot.ID
+import love.forte.simbot.InternalSimbotApi
 import love.forte.simbot.definition.BotContainer
 import love.forte.simbot.definition.Category
 import love.forte.simbot.definition.GuildInfoContainer
 import love.forte.simbot.literal
 import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.model.ChannelType
+import love.forte.simbot.utils.runInAsync
+import love.forte.simbot.utils.runInNoScopeBlocking
+import java.util.concurrent.CompletableFuture
 import love.forte.simbot.qguild.model.Channel as QGSourceChannel
 
 
@@ -105,7 +110,7 @@ public interface QGChannelCategoryId : Category, BotContainer, GuildInfoContaine
  *
  * @author ForteScarlet
  */
-public interface QGChannelCategory : Category, QGChannel, BotContainer, GuildInfoContainer, QGChannelCategoryId, QGObjectiveContainer<QGSourceChannel> {
+public interface QGChannelCategory : Category, QGNonTextChannel, QGChannelCategoryId {
     /**
      * 所属BOT
      */
@@ -115,6 +120,26 @@ public interface QGChannelCategory : Category, QGChannel, BotContainer, GuildInf
      * 当前子频道分组ID
      */
     override val id: ID
+
+    /**
+     * 获取此分类所属的频道服务器。
+     */
+    @JvmSynthetic
+    override suspend fun guild(): QGGuild
+
+    /**
+     * @suppress for hidden warning
+     */
+    @Api4J
+    override val guild: QGGuild get() = runInNoScopeBlocking { guild() }
+
+    /**
+     * @suppress for hidden warning
+     */
+    @OptIn(InternalSimbotApi::class)
+    @Api4J
+    override val guildAsync: CompletableFuture<out QGGuild>
+        get() = runInAsync(this) { guild() }
 
     /**
      * 分组名称
@@ -131,12 +156,6 @@ public interface QGChannelCategory : Category, QGChannel, BotContainer, GuildInf
      */
     public val position: Int get() = source.position
 
-
-    /**
-     * 获取此分类所属的频道服务器。
-     */
-    @JSTP
-    override suspend fun guild(): QGGuild
 
     /**
      * 直接得到自身 ( `this` )。

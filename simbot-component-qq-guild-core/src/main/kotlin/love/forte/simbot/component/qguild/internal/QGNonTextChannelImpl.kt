@@ -18,23 +18,24 @@
 package love.forte.simbot.component.qguild.internal
 
 import love.forte.simbot.ID
-import love.forte.simbot.component.qguild.QGChannel
 import love.forte.simbot.component.qguild.QGChannelCategoryId
 import love.forte.simbot.component.qguild.QGGuild
+import love.forte.simbot.component.qguild.QGMember
+import love.forte.simbot.component.qguild.QGNonTextChannel
 import love.forte.simbot.qguild.InternalApi
 import love.forte.simbot.qguild.model.Channel
 import kotlin.coroutines.CoroutineContext
 
 
 /**
- * [QGChannel] 基本实现，用于包装那些非特殊实现的子频道类型。
+ * [QGNonTextChannel] 基本实现，用于包装那些非特殊实现的非文字子频道类型。
  *
- * [QGChannelImpl] 类型作为 [QGChannel] 实现的默认替补，且不对外公开。
+ * [QGNonTextChannelImpl] 类型作为 [QGNonTextChannel] 实现的默认替补，且不对外公开。
  *
  * @author ForteScarlet
  */
 @InternalApi
-internal class QGChannelImpl(
+internal class QGNonTextChannelImpl(
     override val bot: QGGuildBotImpl,
     override val source: Channel,
     private val sourceGuild: QGGuild? = null,
@@ -44,13 +45,20 @@ internal class QGChannelImpl(
         id = source.parentId.ID,
         sourceGuild = sourceGuild,
     ),
-) : QGChannel {
+) : QGNonTextChannel {
     override val coroutineContext: CoroutineContext = bot.newSupervisorCoroutineContext()
     override val id: ID = source.id.ID
     override val guildId: ID = source.guildId.ID
     override val ownerId: ID = source.ownerId.ID
 
+    override suspend fun owner(): QGMember = guild().member(ownerId) ?: throw NoSuchElementException("owner(id=$ownerId)")
+
+    override suspend fun guild(): QGGuild =
+        sourceGuild
+            ?: bot.guild(guildId)
+            ?: throw NoSuchElementException("guild(id=$guildId)")
+
     override fun toString(): String {
-        return "QGChannelImpl(id=$id, name=$name, category=$category)"
+        return "QGNonTextChannelImpl(id=$id, name=$name, category=$category)"
     }
 }

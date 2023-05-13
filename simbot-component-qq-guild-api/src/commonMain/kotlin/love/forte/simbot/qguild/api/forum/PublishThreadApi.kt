@@ -56,14 +56,14 @@ public class PublishThreadApi private constructor(
          * @param channelId 频道ID
          * @param title 帖子标题
          * @param content 帖子内容
-         * @param format 帖子文本格式。see [Format]
+         * @param format 帖子文本格式。see [ThreadPublishFormat]
          */
         @JvmStatic
-        public fun create(channelId: String, title: String, content: String, format: Format): PublishThreadApi =
+        public fun create(channelId: String, title: String, content: String, format: ThreadPublishFormat): PublishThreadApi =
             create(channelId, title, content, format.value)
 
         /**
-         * 构造 [PublishThreadApi]，并使用 [Format.TEXT] 文本格式。
+         * 构造 [PublishThreadApi]，并使用 [ThreadPublishFormat.TEXT] 文本格式。
          *
          * @param channelId 频道ID
          * @param title 帖子标题
@@ -73,10 +73,10 @@ public class PublishThreadApi private constructor(
          */
         @JvmStatic
         public fun createText(channelId: String, title: String, content: String): PublishThreadApi =
-            create(channelId, title, content, Format.TEXT)
+            create(channelId, title, content, ThreadPublishFormat.TEXT)
 
         /**
-         * 构造 [PublishThreadApi]，并使用 [Format.HTML] 文本格式。
+         * 构造 [PublishThreadApi]，并使用 [ThreadPublishFormat.HTML] 文本格式。
          *
          * @param channelId 频道ID
          * @param title 帖子标题
@@ -86,10 +86,10 @@ public class PublishThreadApi private constructor(
          */
         @JvmStatic
         public fun createHtml(channelId: String, title: String, content: String): PublishThreadApi =
-            create(channelId, title, content, Format.HTML)
+            create(channelId, title, content, ThreadPublishFormat.HTML)
 
         /**
-         * 构造 [PublishThreadApi]，并使用 [Format.MARKDOWN] 文本格式。
+         * 构造 [PublishThreadApi]，并使用 [ThreadPublishFormat.MARKDOWN] 文本格式。
          *
          * @param channelId 频道ID
          * @param title 帖子标题
@@ -99,10 +99,10 @@ public class PublishThreadApi private constructor(
          */
         @JvmStatic
         public fun createMarkdown(channelId: String, title: String, content: String): PublishThreadApi =
-            create(channelId, title, content, Format.MARKDOWN)
+            create(channelId, title, content, ThreadPublishFormat.MARKDOWN)
 
         /**
-         * 构造 [PublishThreadApi]，并使用 [Format.JSON] 文本格式。
+         * 构造 [PublishThreadApi]，并使用 [ThreadPublishFormat.JSON] 文本格式。
          *
          * @param channelId 频道ID
          * @param title 帖子标题
@@ -112,7 +112,7 @@ public class PublishThreadApi private constructor(
          */
         @JvmStatic
         public fun createJSON(channelId: String, title: String, content: String): PublishThreadApi =
-            create(channelId, title, content, Format.JSON)
+            create(channelId, title, content, ThreadPublishFormat.JSON)
 
     }
 
@@ -134,34 +134,35 @@ public class PublishThreadApi private constructor(
     private data class Body(val title: String, val content: String, val format: Int)
 
 
+}
+
+
+/**
+ * 帖子文本格式
+ *
+ * 参考 [文档](https://bot.q.qq.com/wiki/develop/api/openapi/forum/put_thread.html)
+ *
+ */
+public enum class ThreadPublishFormat(public val value: Int) {
     /**
-     * 帖子文本格式
-     *
-     * 参考 [文档](https://bot.q.qq.com/wiki/develop/api/openapi/forum/put_thread.html)
-     *
+     * 普通文本
      */
-    public enum class Format(public val value: Int) {
-        /**
-         * 普通文本
-         */
-        TEXT(1),
+    TEXT(1),
 
-        /**
-         * HTML
-         */
-        HTML(2),
+    /**
+     * HTML
+     */
+    HTML(2),
 
-        /**
-         * Markdown
-         */
-        MARKDOWN(3),
+    /**
+     * Markdown
+     */
+    MARKDOWN(3),
 
-        /**
-         * JSON（content参数可参照RichText结构）
-         */
-        JSON(4),
-    }
-
+    /**
+     * JSON（content参数可参照RichText结构）
+     */
+    JSON(4),
 }
 
 

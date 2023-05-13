@@ -182,10 +182,12 @@ internal class QGBotImpl(
         }
     }
 
-    internal fun inGuild(guildId: String, currentMsgId: String? = null): QGGuildBotImpl =
-        QGGuildBotImpl(bot = this, guildId = guildId, currentMsgId = currentMsgId)
+    internal fun inGuild(guildId: String): QGGuildBotImpl =
+        QGGuildBotImpl(bot = this, guildId = guildId)
 
-    internal fun <T> checkIfTransmitCacheable(target: T): T? = target.takeIf { cacheable && cacheConfig?.transmitCacheConfig?.enable == true }
+    private val isTransmitCacheable = cacheable && cacheConfig?.transmitCacheConfig?.enable == true
+
+    internal fun <T> checkIfTransmitCacheable(target: T): T? = target.takeIf { isTransmitCacheable }
 
     override fun toString(): String {
         // 还未初始化
