@@ -132,7 +132,7 @@ internal class BotImpl(
 
     private fun HttpClientConfig<*>.configApiHttpClient() {
         install(ContentNegotiation) {
-            json()
+            json(configuration.apiDecoder)
         }
 
         val apiHttpRequestTimeoutMillis = configuration.apiHttpRequestTimeoutMillis

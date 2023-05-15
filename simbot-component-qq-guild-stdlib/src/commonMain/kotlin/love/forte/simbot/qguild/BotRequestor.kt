@@ -19,6 +19,7 @@ package love.forte.simbot.qguild
 
 import love.forte.simbot.qguild.api.QQGuildApi
 import love.forte.simbot.qguild.api.request
+import love.forte.simbot.qguild.api.requestRaw
 import love.forte.simbot.qguild.internal.BotImpl
 import kotlin.jvm.JvmSynthetic
 
@@ -39,6 +40,22 @@ public suspend fun <R> QQGuildApi<R>.requestBy(bot: Bot): R {
     )
 }
 
+
+/**
+ * 直接通过bot进行请求。
+ *
+ * @throws love.forte.simbot.qguild.QQGuildApiException 如果返回状态码不在 200..300之间。
+ */
+@JvmSynthetic
+public suspend fun <R> QQGuildApi<R>.requestRawBy(bot: Bot): String {
+    val botToken = if (bot is BotImpl) bot.botToken else "Bot ${bot.ticket.appId}.${bot.ticket.token}"
+    return requestRaw(
+        client = bot.apiClient,
+        server = bot.apiServer,
+        token = botToken,
+    )
+}
+
 /**
  * 直接通过bot进行请求。
  *
@@ -46,6 +63,15 @@ public suspend fun <R> QQGuildApi<R>.requestBy(bot: Bot): R {
  */
 @JvmSynthetic
 public suspend fun <R> Bot.request(api: QQGuildApi<R>): R = api.requestBy(this)
+
+
+/**
+ * 直接通过bot进行请求。
+ *
+ * @throws love.forte.simbot.qguild.QQGuildApiException 如果返回状态码不在 200..300之间。
+ */
+@JvmSynthetic
+public suspend fun <R> Bot.requestRaw(api: QQGuildApi<R>): String = api.requestRawBy(this)
 
 
 

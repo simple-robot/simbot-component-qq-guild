@@ -18,16 +18,19 @@
 package love.forte.simbot.qguild.api
 
 import io.ktor.client.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.client.utils.*
 import io.ktor.http.*
-import kotlinx.serialization.DeserializationStrategy
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.StringFormat
-import kotlinx.serialization.builtins.serializer
+import io.ktor.http.content.*
+import io.ktor.serialization.kotlinx.json.*
+import kotlinx.serialization.*
+import kotlinx.serialization.builtins.*
 import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
 import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.logger.isDebugEnabled
 import love.forte.simbot.qguild.ErrInfo
@@ -165,6 +168,11 @@ public abstract class QQGuildApi<out R> : PlatformQQGuildApi<R>() {
     /**
      * 使用此api发起一次请求，并得到预期中的结果。
      *
+     * ## Body序列化
+     *
+     * 参数 [client] 不强制要求必须安装 [ContentNegotiation] 插件，
+     * 如果未安装此插件且 API 的请求过程中存在 body，则内部会使用一个默认的序列化器 (不是 [decoder])
+     * 进行一个与此插件 _类似的_ 逻辑去寻找 body 的序列化信息。此时要求 API 的 body 必须支持 Kotlinx 的序列化。
      *
      * @param client 用于本次http请求的client。默认使用 [QQGuildApi.DefaultHttpClient]。
      * @param server 请求目标服务器。See also: [QQGuild.URL]、[QQGuild.SANDBOX_URL]。
@@ -191,6 +199,12 @@ public abstract class QQGuildApi<out R> : PlatformQQGuildApi<R>() {
 
     /**
      * 使用此api发起一次请求，并得到响应结果的字符串。
+     *
+     * ## Body序列化
+     *
+     * 参数 [client] 不强制要求必须安装 [ContentNegotiation] 插件，
+     * 如果未安装此插件且 API 的请求过程中存在 body，则内部会使用一个默认的序列化器进行一个与此插件
+     * _类似的_ 逻辑去寻找 body 的序列化信息。此时要求 API 的 body 必须支持 Kotlinx 的序列化。
      *
      * @see ErrInfo
      *
@@ -239,7 +253,11 @@ public abstract class QQGuildApi<out R> : PlatformQQGuildApi<R>() {
          *
          */
         public val DefaultHttpClient: HttpClient by lazy {
-            HttpClient()
+            HttpClient {
+                install(ContentNegotiation) {
+                    json(DefaultJsonDecoder)
+                }
+            }
         }
 
         private val DefaultErrInfoDecoder = Json {
@@ -272,7 +290,7 @@ public abstract class QQGuildApi<out R> : PlatformQQGuildApi<R>() {
 }
 
 
-private suspend fun QQGuildApi<*>.request0(client: HttpClient, server: Url, token: String): HttpResponse {
+private suspend fun QQGuildApi<*>.request0(client: HttpClient, server: Url, token: String, json: Json = QQGuildApi.DefaultJsonDecoder): HttpResponse {
     val api = this
 
     return client.request {
@@ -292,7 +310,37 @@ private suspend fun QQGuildApi<*>.request0(client: HttpClient, server: Url, toke
             }
 
             api.route(routeBuilder)
-            setBody(api.body ?: EmptyContent)
+
+            when (val body = api.body) {
+                null -> {
+                    setBody(EmptyContent)
+                }
+                is OutgoingContent -> {
+                    setBody(body)
+                }
+
+                else -> {
+                    if (client.pluginOrNull(ContentNegotiation) != null) {
+                        setBody(body)
+                    } else {
+                        try {
+                            val ser = guessSerializer(body, json.serializersModule)
+                            val bodyJson = json.encodeToString(ser, body)
+                            setBody(bodyJson)
+                        } catch (e: Throwable) {
+                            try {
+                                setBody(body)
+                            } catch (e0: Throwable) {
+                                e0.addSuppressed(e)
+                                throw e0
+                            }
+                        }
+
+                    }
+                }
+            }
+
+
 
             routeBuilder.apiPath?.let { apiPath -> appendPathSegments(components = apiPath) }
             routeBuilder.contentType?.let {
@@ -306,6 +354,58 @@ private suspend fun QQGuildApi<*>.request0(client: HttpClient, server: Url, toke
     }
 }
 
+
+//region Ktor ContentNegotiation guessSerializer
+// see KotlinxSerializationJsonExtensions.kt
+// see SerializerLookup.kt
+
+@Suppress("UNCHECKED_CAST")
+private fun guessSerializer(value: Any?, module: SerializersModule): KSerializer<Any> = when (value) {
+    null -> String.serializer().nullable
+    is List<*> -> ListSerializer(value.elementSerializer(module))
+    is Array<*> -> value.firstOrNull()?.let { guessSerializer(it, module) } ?: ListSerializer(String.serializer())
+    is Set<*> -> SetSerializer(value.elementSerializer(module))
+    is Map<*, *> -> {
+        val keySerializer = value.keys.elementSerializer(module)
+        val valueSerializer = value.values.elementSerializer(module)
+        MapSerializer(keySerializer, valueSerializer)
+    }
+
+    else -> {
+        @OptIn(InternalSerializationApi::class, ExperimentalSerializationApi::class)
+        module.getContextual(value::class) ?: value::class.serializer()
+    }
+} as KSerializer<Any>
+
+
+@OptIn(ExperimentalSerializationApi::class)
+private fun Collection<*>.elementSerializer(module: SerializersModule): KSerializer<*> {
+    val serializers: List<KSerializer<*>> =
+        filterNotNull().map { guessSerializer(it, module) }.distinctBy { it.descriptor.serialName }
+
+    if (serializers.size > 1) {
+        error(
+            "Serializing collections of different element types is not yet supported. " +
+                    "Selected serializers: ${serializers.map { it.descriptor.serialName }}",
+        )
+    }
+
+    val selected = serializers.singleOrNull() ?: String.serializer()
+
+    if (selected.descriptor.isNullable) {
+        return selected
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    selected as KSerializer<Any>
+
+    if (any { it == null }) {
+        return selected.nullable
+    }
+
+    return selected
+}
+//endregion
 
 @Suppress("UNCHECKED_CAST")
 @OptIn(ExperimentalSerializationApi::class)
