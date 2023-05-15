@@ -23,6 +23,8 @@ import love.forte.simbot.component.qguild.QGBot
 import love.forte.simbot.qguild.api.QQGuildApi
 import love.forte.simbot.qguild.request
 import love.forte.simbot.qguild.requestBy
+import love.forte.simbot.qguild.requestRaw
+import love.forte.simbot.qguild.requestRawBy
 
 /**
  * 直接通过bot进行请求。
@@ -42,4 +44,24 @@ public suspend inline fun <R> QQGuildApi<R>.requestBy(bot: QGBot): R {
 @JvmSynthetic
 public suspend inline fun <R> QGBot.request(api: QQGuildApi<R>): R {
     return source.request(api)
+}
+
+/**
+ * 直接通过bot进行请求。
+ *
+ * @throws love.forte.simbot.qguild.QQGuildApiException 如果返回状态码不在 200..300之间。
+ */
+@JvmSynthetic
+public suspend inline fun QQGuildApi<*>.requestRawBy(bot: QGBot): String {
+    return requestRawBy(bot.source)
+}
+
+/**
+ * 直接通过bot进行请求。
+ *
+ * @throws love.forte.simbot.qguild.QQGuildApiException 如果返回状态码不在 200..300之间。
+ */
+@JvmSynthetic
+public suspend inline fun QGBot.requestRaw(api: QQGuildApi<*>): String {
+    return source.requestRaw(api)
 }

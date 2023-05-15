@@ -26,7 +26,7 @@ import java.util.concurrent.CompletableFuture
 
 /**
  * @see requestBlocking
- * @suppress use [requestBlocking]
+ * @suppress use [requestBlocking] or [requestAsync]
  * @throws love.forte.simbot.qguild.QQGuildApiException 如果返回状态码不在 200..300之间。
  */
 @Api4J
@@ -51,4 +51,24 @@ public fun <R> requestBlocking(bot: Bot, api: QQGuildApi<R>): R = runInNoScopeBl
 @Api4J
 public fun <R> requestAsync(bot: Bot, api: QQGuildApi<R>): CompletableFuture<out R> = bot.future {
     api.requestBy(bot)
+}
+
+/**
+ * 直接通过bot进行阻塞地请求。
+ *
+ * @throws love.forte.simbot.qguild.QQGuildApiException 如果返回状态码不在 200..300之间。
+ */
+@Api4J
+public fun requestRawBlocking(bot: Bot, api: QQGuildApi<*>): String = runInNoScopeBlocking {
+    api.requestRawBy(bot)
+}
+
+/**
+ * 直接通过bot进行异步地请求。
+ *
+ * @throws love.forte.simbot.qguild.QQGuildApiException 如果返回状态码不在 200..300之间。
+ */
+@Api4J
+public fun requestRawAsync(bot: Bot, api: QQGuildApi<*>): CompletableFuture<out String> = bot.future {
+    api.requestRawBy(bot)
 }
