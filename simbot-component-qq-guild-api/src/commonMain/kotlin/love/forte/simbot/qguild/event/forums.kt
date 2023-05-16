@@ -17,6 +17,8 @@
 
 package love.forte.simbot.qguild.event
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.PrivateDomainOnly
 import love.forte.simbot.qguild.model.forum.AuditResult
 import love.forte.simbot.qguild.model.forum.Post
@@ -56,6 +58,11 @@ import love.forte.simbot.qguild.model.forum.Thread
  *
  * @see EventIntents.ForumsEvent
  *
+ * @see ForumThreadDispatch
+ * @see ForumPostDispatch
+ * @see ForumReplyDispatch
+ * @see ForumPublishAuditResult
+ *
  */
 @PrivateDomainOnly
 public sealed class ForumDispatch : Signal.Dispatch() {
@@ -68,4 +75,119 @@ public sealed class ForumDispatch : Signal.Dispatch() {
     public abstract override val data: Any
 }
 
-// TODO
+/**
+ * 论坛事件：主题事件
+ *
+ * @see ForumDispatch
+ */
+public sealed class ForumThreadDispatch : ForumDispatch() {
+    /**
+     * 事件内容。
+     */
+    abstract override val data: Thread
+}
+
+/**
+ * 主题创建事件。
+ *
+ * @see ForumDispatch
+ * @see ForumThreadDispatch
+ */
+@Serializable
+@SerialName(EventIntents.ForumsEvent.FORUM_THREAD_CREATE_TYPE)
+public data class ForumThreadCreate(override val s: Long, @SerialName("d") override val data: Thread) : ForumThreadDispatch()
+
+/**
+ * 主题更新事件。
+ *
+ * @see ForumDispatch
+ * @see ForumThreadDispatch
+ */
+@Serializable
+@SerialName(EventIntents.ForumsEvent.FORUM_THREAD_UPDATE_TYPE)
+public data class ForumThreadUpdate(override val s: Long, @SerialName("d") override val data: Thread) : ForumThreadDispatch()
+
+/**
+ * 主题删除事件。
+ *
+ * @see ForumDispatch
+ * @see ForumThreadDispatch
+ */
+@Serializable
+@SerialName(EventIntents.ForumsEvent.FORUM_THREAD_DELETE_TYPE)
+public data class ForumThreadDelete(override val s: Long, @SerialName("d") override val data: Thread) : ForumThreadDispatch()
+
+
+/**
+ * 论坛事件：帖子事件
+ *
+ * @see ForumDispatch
+ */
+public sealed class ForumPostDispatch : ForumDispatch() {
+    /**
+     * 事件内容。
+     */
+    abstract override val data: Post
+}
+
+/**
+ * 帖子创建事件
+ *
+ * @see ForumDispatch
+ * @see ForumPostDispatch
+ */
+@Serializable
+@SerialName(EventIntents.ForumsEvent.FORUM_POST_CREATE_TYPE)
+public data class ForumPostCreate(override val s: Long, @SerialName("d") override val data: Post) : ForumPostDispatch()
+
+/**
+ * 帖子删除事件
+ *
+ * @see ForumDispatch
+ * @see ForumPostDispatch
+ */
+@Serializable
+@SerialName(EventIntents.ForumsEvent.FORUM_POST_DELETE_TYPE)
+public data class ForumPostDelete(override val s: Long, @SerialName("d") override val data: Post) : ForumPostDispatch()
+
+
+/**
+ * 论坛事件：回复事件
+ *
+ * @see ForumDispatch
+ */
+public sealed class ForumReplyDispatch : ForumDispatch() {
+    /**
+     * 事件内容。
+     */
+    abstract override val data: Reply
+}
+
+/**
+ * 回复创建事件
+ *
+ * @see ForumDispatch
+ * @see ForumPostDispatch
+ */
+@Serializable
+@SerialName(EventIntents.ForumsEvent.FORUM_REPLY_CREATE_TYPE)
+public data class ForumReplyCreate(override val s: Long, @SerialName("d") override val data: Reply) : ForumReplyDispatch()
+
+/**
+ * 回复删除事件
+ *
+ * @see ForumDispatch
+ * @see ForumPostDispatch
+ */
+@Serializable
+@SerialName(EventIntents.ForumsEvent.FORUM_REPLY_DELETE_TYPE)
+public data class ForumReplyDelete(override val s: Long, @SerialName("d") override val data: Reply) : ForumReplyDispatch()
+
+/**
+ * 帖子审核事件
+ *
+ * @see ForumDispatch
+ */
+@Serializable
+@SerialName(EventIntents.ForumsEvent.FORUM_PUBLISH_AUDIT_RESULT_TYPE)
+public data class ForumPublishAuditResult(override val s: Long, @SerialName("d") override val data: AuditResult) : ForumDispatch()
