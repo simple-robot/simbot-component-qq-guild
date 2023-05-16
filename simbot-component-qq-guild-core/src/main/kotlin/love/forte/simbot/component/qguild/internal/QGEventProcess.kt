@@ -143,6 +143,19 @@ internal fun QGBotImpl.registerEventProcessor(): DisposableHandle {
                 pushEvent(QGAtMessageCreateEvent) { QGAtMessageCreateEventImpl(bot, raw, event.data) }
             }
 
+            // OpenForum
+            is OpenForumDispatch -> when (event) {
+                is OpenForumThreadCreate -> pushEvent(QGOpenForumThreadCreateEvent) { QGOpenForumThreadCreateEventImpl(bot, raw, event.data) }
+                is OpenForumThreadDelete -> pushEvent(QGOpenForumThreadDeleteEvent) { QGOpenForumThreadDeleteEventImpl(bot, raw, event.data) }
+                is OpenForumThreadUpdate -> pushEvent(QGOpenForumThreadUpdateEvent) { QGOpenForumThreadUpdateEventImpl(bot, raw, event.data) }
+                is OpenForumPostCreate -> pushEvent(QGOpenForumPostCreateEvent) { QGOpenForumPostCreateEventImpl(bot, raw, event.data) }
+                is OpenForumPostDelete -> pushEvent(QGOpenForumPostDeleteEvent) { QGOpenForumPostDeleteEventImpl(bot, raw, event.data) }
+                is OpenForumReplyCreate -> pushEvent(QGOpenForumReplyCreateEvent) { QGOpenForumReplyCreateEventImpl(bot, raw, event.data) }
+                is OpenForumReplyDelete -> pushEvent(QGOpenForumReplyDeleteEvent) { QGOpenForumReplyDeleteEventImpl(bot, raw, event.data) }
+            }
+
+            // TODO Forum
+
 
             // unsupported
             else -> {

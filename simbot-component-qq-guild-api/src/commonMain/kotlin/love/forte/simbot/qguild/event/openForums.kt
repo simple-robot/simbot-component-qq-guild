@@ -20,6 +20,7 @@ package love.forte.simbot.qguild.event
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.ApiModel
+import love.forte.simbot.qguild.model.forum.ForumSourceInfo
 
 /**
  * [开放论坛事件(OpenForumEvent)](https://bot.q.qq.com/wiki/develop/api/gateway/open_forum.html) 相关的事件父类。
@@ -36,7 +37,7 @@ import love.forte.simbot.qguild.ApiModel
  *
  * 参考 [OpenForumThreadDispatch]
  *
- * ## 帖子事件
+ * ## 帖子（评论）事件
  * - OPEN_FORUM_POST_CREATE
  * - OPEN_FORUM_POST_DELETE
  *
@@ -83,21 +84,21 @@ public sealed class OpenForumDispatch : Signal.Dispatch() {
  * @see OpenForumReplyData
  *
  */
-public sealed class OpenForumEventData {
+public sealed class OpenForumEventData : ForumSourceInfo {
     /**
      * 频道ID
      */
-    public abstract val guildId: String
+    public abstract override val guildId: String
 
     /**
      * 子频道ID
      */
-    public abstract val channelId: String
+    public abstract override val channelId: String
 
     /**
      * 发布人ID
      */
-    public abstract val authorId: String
+    public abstract override val authorId: String
 }
 
 /**
@@ -157,7 +158,7 @@ public data class OpenForumThreadData(
 
 
 /**
- * 开放论坛事件的 **_帖子事件_**。
+ * 开放论坛事件的 **_帖子（评论）事件_**。
  */
 public sealed class OpenForumPostDispatch : OpenForumDispatch() {
     /**
@@ -167,7 +168,7 @@ public sealed class OpenForumPostDispatch : OpenForumDispatch() {
 }
 
 /**
- * 帖子事件：创建帖子
+ * 帖子事件：创建帖子（评论）
  *
  * @see OpenForumDispatch
  */
@@ -177,7 +178,7 @@ public data class OpenForumPostCreate(override val s: Long, @SerialName("d") ove
 
 
 /**
- * 帖子事件：删除帖子
+ * 帖子事件：删除帖子（评论）
  *
  * @see OpenForumDispatch
  */
@@ -188,7 +189,7 @@ public data class OpenForumPostDelete(override val s: Long, @SerialName("d") ove
 
 /**
  *
- * 开放论坛事件中 **_帖子事件_** 的内容。
+ * 开放论坛事件中 **_帖子（评论）事件_** 的内容。
  *
  * @see OpenForumEventData
  *

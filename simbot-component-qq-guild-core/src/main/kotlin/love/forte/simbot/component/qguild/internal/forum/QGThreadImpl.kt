@@ -19,11 +19,12 @@ package love.forte.simbot.component.qguild.internal.forum
 
 import love.forte.simbot.ExperimentalSimbotApi
 import love.forte.simbot.Timestamp
-import love.forte.simbot.component.qguild.QGBot
 import love.forte.simbot.component.qguild.QGGuild
 import love.forte.simbot.component.qguild.QGMember
 import love.forte.simbot.component.qguild.forum.QGForumChannel
 import love.forte.simbot.component.qguild.forum.QGThread
+import love.forte.simbot.component.qguild.internal.QGBotImpl
+import love.forte.simbot.component.qguild.internal.QGGuildImpl
 import love.forte.simbot.component.qguild.internal.newSupervisorCoroutineContext
 import love.forte.simbot.component.qguild.internal.toTimestamp
 import love.forte.simbot.component.qguild.util.requestBy
@@ -39,22 +40,35 @@ import kotlin.coroutines.CoroutineContext
  * @author ForteScarlet
  */
 internal class QGThreadImpl(
-    override val bot: QGBot,
-    private val sourceChannel: QGForumChannel,
-    override val source: Thread
+    override val bot: QGBotImpl,
+    override val source: Thread,
+    private val sourceChannel: QGForumChannelImpl?,
 ) : QGThread {
-    override val coroutineContext: CoroutineContext = sourceChannel.newSupervisorCoroutineContext()
 
-    override suspend fun guild(): QGGuild = sourceChannel.guild()
+    override val coroutineContext: CoroutineContext = bot.newSupervisorCoroutineContext()
+
+    override suspend fun guild(): QGGuild =
+        sourceChannel?.guild()
+            ?: bot.queryGuild(source.guildId)
+            ?: throw NoSuchElementException("guild(id=${source.guildId})")
 
     override suspend fun author(): QGMember =
-        guild().member(authorId) ?: throw NoSuchElementException("author(id=$authorId)")
+        bot.member(source.guildId, source.authorId, sourceChannel?.sourceGuild as? QGGuildImpl) ?: throw NoSuchElementException("author(id=$authorId)")
 
     @OptIn(ExperimentalSimbotApi::class)
     override val dateTime: Timestamp
         get() = source.threadInfo.dateTime.toTimestamp()
 
-    override suspend fun channel(): QGForumChannel = sourceChannel
+    override suspend fun channel(): QGForumChannel {
+        if (sourceChannel != null) {
+            return sourceChannel;
+        }
+
+        val channel = bot.channel(source.channelId, null)
+            ?: throw NoSuchElementException("channel(id=${source.channelId})")
+
+        return channel.asForumChannel()
+    }
 
     override suspend fun delete(): Boolean {
         return try {

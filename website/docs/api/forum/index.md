@@ -5,7 +5,7 @@ title: 帖子API
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-QQ频道中有一些针对 `帖子子频道` 的API。( [参考文档](https://bot.q.qq.com/wiki/develop/api/openapi/forum/model.html#thread) )
+QQ频道中有一些针对 `论坛子频道` 的API。( [参考文档](https://bot.q.qq.com/wiki/develop/api/openapi/forum/model.html#thread) )
 
 
 ## API
@@ -98,10 +98,10 @@ result.thenApply(ThreadListResult::getThreads)
 
 ## 组件应用
 
-在组件模块 `core` 中，也同样针对帖子子频道的相关内容提供了API。
+在组件模块 `core` 中，也同样针对论坛子频道的相关内容提供了API。
 在组件模块中提供了一些新的类型：
 
-- `QGForumChannel` : 表示帖子子频道的 `Channel` 实现
+- `QGForumChannel` : 表示论坛子频道的 `Channel` 实现
 - `QGForums` : 表示一个 `QGGuild` 针对帖子的相关操作 
 - `QGThread` : 表示一个主题帖
 - `QGThreadCreator` : 一个用于构造并发布帖子的构造器
@@ -120,7 +120,7 @@ result.thenApply(ThreadListResult::getThreads)
 ```kotlin
 val guild: QGGuild = ....
         
-// 在所有的子频道中筛选出 帖子子频道
+// 在所有的子频道中筛选出 论坛子频道
 guild.channels.asFlow()
     // highlight-next-line
     .filterIsInstance<QGForumChannel>()
@@ -149,7 +149,7 @@ guild.channels.asFlow()
 ```kotlin
 val guild: QGGuild = ....
         
-// 在所有的子频道中筛选出 帖子子频道
+// 在所有的子频道中筛选出 论坛子频道
 // highlight-next-line
 guild.forums.forumChannels
     .collect { channel: QGForumChannel ->
@@ -168,7 +168,7 @@ guild.forums.forumChannels
     // 删除某个主题帖
     thread!!.delete()
 }
-// 根据ID获取指定的 帖子子频道 实例
+// 根据ID获取指定的 论坛子频道 实例
 val forumChannel: QGForumChannel? = guild.forums.forumChannel("666".ID)
 
 ```
@@ -182,7 +182,7 @@ QGGuild guild = ...;
 // 直接遍历
 // 你也可以选择转为列表后再操作
 guild.getChannels().collect(channel -> {
-    // 遍历所有的帖子子频道
+    // 遍历所有的论坛子频道
     // highlight-next-line
     if (channel instanceof QGForumChannel forumChannel) {
         // 获取所有的主题帖并遍历
@@ -216,7 +216,7 @@ guild.getForums()
         // highlight-next-line
         .getForumChannels()
         .collect(forumChannel -> {
-            // 遍历所有的帖子子频道
+            // 遍历所有的论坛子频道
             // 获取所有的主题帖并遍历
             forumChannel.getThreads().collect(thread -> {
                 // ...
@@ -245,7 +245,7 @@ QGGuild guild = ...;
 // 直接遍历
 // 你也可以选择转为列表后再操作
 guild.getChannels().collectAsync(channel -> {
-    // 遍历所有的帖子子频道
+    // 遍历所有的论坛子频道
     // highlight-next-line
     if (channel instanceof QGForumChannel forumChannel) {
         // 获取所有的主题帖并遍历

@@ -20,10 +20,7 @@ package love.forte.simbot.qguild.event
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.PrivateDomainOnly
-import love.forte.simbot.qguild.model.forum.AuditResult
-import love.forte.simbot.qguild.model.forum.Post
-import love.forte.simbot.qguild.model.forum.Reply
-import love.forte.simbot.qguild.model.forum.Thread
+import love.forte.simbot.qguild.model.forum.*
 
 
 /**
@@ -72,7 +69,7 @@ public sealed class ForumDispatch : Signal.Dispatch() {
      * 具体的事件内容类型由 [ForumDispatch] 的实现类型决定。
      *
      */
-    public abstract override val data: Any
+    public abstract override val data: ForumSourceInfo
 }
 
 /**
