@@ -61,7 +61,7 @@ internal class QGThreadImpl(
 
     override suspend fun channel(): QGForumChannel {
         if (sourceChannel != null) {
-            return sourceChannel;
+            return sourceChannel
         }
 
         val channel = bot.channel(source.channelId, null)

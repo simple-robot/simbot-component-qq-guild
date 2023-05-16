@@ -36,20 +36,16 @@ import love.forte.simbot.qguild.model.forum.Thread
  *
  * @author ForteScarlet
  */
-public interface QGThread : CoroutineScope, IDContainer, BotContainer, ChannelInfoContainer, QGObjectiveContainer<Thread>, DeleteSupport, GuildInfoContainer {
+public interface QGThread : CoroutineScope, IDContainer, BotContainer, GuildInfoContainer, ChannelInfoContainer, QGObjectiveContainer<Thread>, DeleteSupport {
     /**
      * 主题帖信息的源类型。
      */
     override val source: Thread
 
-
     /**
      * 所属BOT
      */
     override val bot: QGBot
-
-
-    // TODO info
 
     /**
      * 帖子ID
