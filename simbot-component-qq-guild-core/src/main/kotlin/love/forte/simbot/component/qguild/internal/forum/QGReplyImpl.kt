@@ -17,6 +17,7 @@
 
 package love.forte.simbot.component.qguild.internal.forum
 
+import love.forte.simbot.ExperimentalSimbotApi
 import love.forte.simbot.Timestamp
 import love.forte.simbot.component.qguild.QGGuild
 import love.forte.simbot.component.qguild.QGMember
@@ -41,6 +42,7 @@ internal class QGReplyImpl(
     override val source: Reply,
     private val sourceChannel: QGForumChannelImpl?
 ) : QGReply {
+    @OptIn(ExperimentalSimbotApi::class)
     override val datetime: Timestamp = source.replyInfo.dateTime.toTimestamp()
 
     override suspend fun guild(): QGGuild =
