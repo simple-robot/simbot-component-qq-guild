@@ -23,6 +23,7 @@ import love.forte.simbot.component.qguild.QGGuild
 import love.forte.simbot.component.qguild.QGMember
 import love.forte.simbot.component.qguild.forum.QGForumChannel
 import love.forte.simbot.component.qguild.forum.QGPost
+import love.forte.simbot.component.qguild.forum.QGReply
 import love.forte.simbot.component.qguild.forum.QGThread
 import love.forte.simbot.definition.ChannelInfoContainer
 import love.forte.simbot.definition.GuildInfoContainer
@@ -35,11 +36,12 @@ import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.event.*
 import love.forte.simbot.qguild.model.forum.ForumSourceInfo
 import love.forte.simbot.qguild.model.forum.Post
+import love.forte.simbot.qguild.model.forum.Reply
 import love.forte.simbot.qguild.model.forum.Thread
 
 
 /**
- * QQ频道的 [Forums][EventIntents.ForumsEvent] 事件。
+ * QQ频道的 [EventIntents.ForumsEvent][EventIntents.ForumsEvent] 事件。
  *
  * Forums 相关的事件面向 **私域BOT**，请注意确认bot类型。
  *
@@ -56,21 +58,21 @@ public abstract class QGForumEvent : QGEvent<ForumSourceInfo>(), GuildInfoContai
      *
      * @see OpenForumEventData.guildId
      */
-    public abstract val guildId: ID
+    public open val guildId: ID get() = sourceEventEntity.guildId.ID
 
     /**
      * 子频道ID
      *
      * @see OpenForumEventData.channelId
      */
-    public abstract val channelId: ID
+    public open val channelId: ID get() = sourceEventEntity.channelId.ID
 
     /**
      * 发布人ID
      *
      * @see OpenForumEventData.authorId
      */
-    public abstract val authorId: ID
+    public open val authorId: ID get() = sourceEventEntity.authorId.ID
 
 
     /**
@@ -107,7 +109,7 @@ public abstract class QGForumEvent : QGEvent<ForumSourceInfo>(), GuildInfoContai
 }
 
 /**
- * QQ频道的 [Forums][EventIntents.ForumsEvent] 中的主题事件。
+ * QQ频道的 [EventIntents.ForumsEvent][EventIntents.ForumsEvent] 中的主题事件。
  *
  * 基于 API 模块中的 [ForumThreadDispatch]。
  *
@@ -130,12 +132,13 @@ public abstract class QGForumThreadEvent : QGForumEvent() {
 }
 
 /**
- * QQ频道的 [Forums][EventIntents.ForumsEvent] 中的创建主题事件。
+ * QQ频道的 [EventIntents.ForumsEvent][EventIntents.ForumsEvent] 中的创建主题事件。
  *
  * 基于 API 模块中的 [ForumThreadCreate]。
  *
  * @see ForumThreadCreate
  */
+@PrivateDomainOnly
 public abstract class QGForumThreadCreateEvent : QGForumThreadEvent() {
     override val key: Event.Key<out QGForumThreadCreateEvent> get() = Key
 
@@ -145,12 +148,13 @@ public abstract class QGForumThreadCreateEvent : QGForumThreadEvent() {
 }
 
 /**
- * QQ频道的 [Forums][EventIntents.ForumsEvent] 中的更新主题事件。
+ * QQ频道的 [EventIntents.ForumsEvent][EventIntents.ForumsEvent] 中的更新主题事件。
  *
  * 基于 API 模块中的 [ForumThreadUpdate]。
  *
  * @see ForumThreadUpdate
  */
+@PrivateDomainOnly
 public abstract class QGForumThreadUpdateEvent : QGForumThreadEvent() {
     override val key: Event.Key<out QGForumThreadUpdateEvent> get() = Key
 
@@ -160,12 +164,13 @@ public abstract class QGForumThreadUpdateEvent : QGForumThreadEvent() {
 }
 
 /**
- * QQ频道的 [Forums][EventIntents.ForumsEvent] 中的删除主题事件。
+ * QQ频道的 [EventIntents.ForumsEvent][EventIntents.ForumsEvent] 中的删除主题事件。
  *
  * 基于 API 模块中的 [ForumThreadDelete]。
  *
  * @see ForumThreadDelete
  */
+@PrivateDomainOnly
 public abstract class QGForumThreadDeleteEvent : QGForumThreadEvent() {
     override val key: Event.Key<out QGForumThreadDeleteEvent> get() = Key
 
@@ -175,12 +180,13 @@ public abstract class QGForumThreadDeleteEvent : QGForumThreadEvent() {
 }
 
 /**
- * QQ频道的 [Forums][EventIntents.ForumsEvent] 中的帖子（评论）事件。
+ * QQ频道的 [EventIntents.ForumsEvent][EventIntents.ForumsEvent] 中的帖子（评论）事件。
  *
  * 基于 API 模块中的 [ForumPostDispatch]。
  *
  * @see ForumPostDispatch
  */
+@PrivateDomainOnly
 public abstract class QGForumPostEvent : QGForumEvent() {
     abstract override val sourceEventEntity: Post
 
@@ -196,4 +202,90 @@ public abstract class QGForumPostEvent : QGForumEvent() {
     }
 }
 
-// TODO
+/**
+ * QQ频道的 [EventIntents.ForumsEvent][EventIntents.ForumsEvent] 中的评论创建事件。
+ *
+ * 基于 API 模块中的 [ForumPostCreate]。
+ *
+ * @see ForumPostCreate
+ */
+@PrivateDomainOnly
+public abstract class QGForumPostCreateEvent : QGForumPostEvent() {
+    override val key: Event.Key<out QGForumPostCreateEvent> get() = Key
+
+    public companion object Key : BaseEventKey<QGForumPostCreateEvent>("qg.forum_post_create", QGForumPostEvent) {
+        override fun safeCast(value: Any): QGForumPostCreateEvent? = doSafeCast(value)
+    }
+}
+
+/**
+ * QQ频道的 [EventIntents.ForumsEvent][EventIntents.ForumsEvent] 中的评论删除事件。
+ *
+ * 基于 API 模块中的 [ForumPostDelete]。
+ *
+ * @see ForumPostDelete
+ */
+@PrivateDomainOnly
+public abstract class QGForumPostDeleteEvent : QGForumPostEvent() {
+    override val key: Event.Key<out QGForumPostDeleteEvent> get() = Key
+
+    public companion object Key : BaseEventKey<QGForumPostDeleteEvent>("qg.forum_post_delete", QGForumPostEvent) {
+        override fun safeCast(value: Any): QGForumPostDeleteEvent? = doSafeCast(value)
+    }
+}
+
+
+/**
+ * QQ频道的 [EventIntents.ForumsEvent][EventIntents.ForumsEvent] 中的评论回复事件。
+ *
+ * 基于 API 模块中的 [ForumReplyDispatch]。
+ *
+ * @see ForumReplyDispatch
+ */
+@PrivateDomainOnly
+public abstract class QGForumReplyEvent : QGForumEvent() {
+    abstract override val sourceEventEntity: Reply
+
+    /**
+     * 得到此事件中基于 [sourceEventEntity] 的 [QGReply]。
+     */
+    public abstract val post: QGReply
+
+    abstract override val key: Event.Key<out QGForumReplyEvent>
+
+    public companion object Key : BaseEventKey<QGForumReplyEvent>("qg.forum_reply", QGForumEvent) {
+        override fun safeCast(value: Any): QGForumReplyEvent? = doSafeCast(value)
+    }
+}
+
+/**
+ * QQ频道的 [EventIntents.ForumsEvent][EventIntents.ForumsEvent] 中的回复创建事件。
+ *
+ * 基于 API 模块中的 [ForumReplyCreate]。
+ *
+ * @see ForumReplyCreate
+ */
+@PrivateDomainOnly
+public abstract class QGForumReplyCreateEvent : QGForumReplyEvent() {
+    override val key: Event.Key<out QGForumReplyCreateEvent> get() = Key
+
+    public companion object Key : BaseEventKey<QGForumReplyCreateEvent>("qg.forum_reply_create", QGForumReplyEvent) {
+        override fun safeCast(value: Any): QGForumReplyCreateEvent? = doSafeCast(value)
+    }
+}
+
+/**
+ * QQ频道的 [EventIntents.ForumsEvent][EventIntents.ForumsEvent] 中的回复删除事件。
+ *
+ * 基于 API 模块中的 [ForumReplyDelete]。
+ *
+ * @see ForumReplyDelete
+ */
+@PrivateDomainOnly
+public abstract class QGForumReplyDeleteEvent : QGForumReplyEvent() {
+    override val key: Event.Key<out QGForumReplyDeleteEvent> get() = Key
+
+    public companion object Key : BaseEventKey<QGForumReplyDeleteEvent>("qg.forum_reply_delete", QGForumReplyEvent) {
+        override fun safeCast(value: Any): QGForumReplyDeleteEvent? = doSafeCast(value)
+    }
+}

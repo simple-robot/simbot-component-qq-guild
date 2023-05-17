@@ -37,8 +37,8 @@ internal class QGChannelCreateEventImpl(
     override val bot: QGBotImpl,
     private val _channel: QGTextChannelImpl,
 ) : QGChannelCreateEvent() {
-    override val id: ID = tcgChannelModifyId(0, bot.id, sourceEventEntity.id, changedTime)
-    override val operatorId: ID = sourceEventEntity.opUserId.ID
+    override val id: ID get() = tcgChannelModifyId(0, bot.id, sourceEventEntity.id, changedTime)
+    override val operatorId: ID get() = sourceEventEntity.opUserId.ID
     override suspend fun channel(): QGTextChannel = _channel
     override suspend fun source(): QGGuild = _channel.guild()
 }
@@ -50,8 +50,8 @@ internal class QGChannelUpdateEventImpl(
     override val bot: QGBotImpl,
     private val _channel: QGTextChannelImpl,
 ) : QGChannelUpdateEvent() {
-    override val id: ID = tcgChannelModifyId(1, bot.id, sourceEventEntity.id, changedTime)
-    override val operatorId: ID = sourceEventEntity.opUserId.ID
+    override val id: ID get() = tcgChannelModifyId(1, bot.id, sourceEventEntity.id, changedTime)
+    override val operatorId: ID get() = sourceEventEntity.opUserId.ID
     override suspend fun channel(): QGTextChannel = _channel
     override suspend fun source(): QGGuild = _channel.guild()
 }
@@ -63,8 +63,8 @@ internal class QGChannelDeleteEventImpl(
     override val bot: QGBotImpl,
     private val _channel: QGTextChannelImpl
 ) : QGChannelDeleteEvent() {
-    override val id: ID = tcgChannelModifyId(2, bot.id, sourceEventEntity.id, changedTime)
-    override val operatorId: ID = sourceEventEntity.opUserId.ID
+    override val id: ID get() = tcgChannelModifyId(2, bot.id, sourceEventEntity.id, changedTime)
+    override val operatorId: ID get() = sourceEventEntity.opUserId.ID
     override suspend fun channel(): QGTextChannel = _channel
     override suspend fun source(): QGGuild = _channel.guild()
 }
