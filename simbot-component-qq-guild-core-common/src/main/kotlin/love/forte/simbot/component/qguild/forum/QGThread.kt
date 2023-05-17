@@ -36,7 +36,9 @@ import love.forte.simbot.qguild.model.forum.Thread
  *
  * @author ForteScarlet
  */
-public interface QGThread : CoroutineScope, IDContainer, BotContainer, GuildInfoContainer, ChannelInfoContainer, QGObjectiveContainer<Thread>, DeleteSupport {
+public interface QGThread : CoroutineScope, IDContainer, BotContainer, GuildInfoContainer, ChannelInfoContainer,
+    QGForumInfoContainer,
+    QGObjectiveContainer<Thread>, DeleteSupport {
     /**
      * 主题帖信息的源类型。
      */
@@ -55,17 +57,33 @@ public interface QGThread : CoroutineScope, IDContainer, BotContainer, GuildInfo
     /**
      * 频道ID
      */
-    public val guildId: ID get() = source.guildId.ID
+    override val guildId: ID get() = source.guildId.ID
 
     /**
      * 子频道ID
      */
-    public val channelId: ID get() = source.channelId.ID
+    override val channelId: ID get() = source.channelId.ID
 
     /**
      * 作者ID
      */
-    public val authorId: ID get() = source.authorId.ID
+    override val authorId: ID get() = source.authorId.ID
+
+
+    /**
+     * 帖子标题
+     */
+    public val title: String get() = source.threadInfo.title
+
+    /**
+     * 帖子内容
+     */
+    public val content: String get() = source.threadInfo.content
+
+    /**
+     * 帖子发表时间
+     */
+    public val dateTime: Timestamp
 
     /**
      * 依据 [guildId] 寻找所属频道
@@ -90,21 +108,6 @@ public interface QGThread : CoroutineScope, IDContainer, BotContainer, GuildInfo
      */
     @JSTP
     public suspend fun author(): QGMember
-
-    /**
-     * 帖子标题
-     */
-    public val title: String get() = source.threadInfo.title
-
-    /**
-     * 帖子内容
-     */
-    public val content: String get() = source.threadInfo.content
-
-    /**
-     * 帖子发表时间
-     */
-    public val dateTime: Timestamp
 
     /**
      * 删除此帖。

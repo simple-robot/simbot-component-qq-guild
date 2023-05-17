@@ -22,6 +22,7 @@ import love.forte.simbot.JSTP
 import love.forte.simbot.component.qguild.QGGuild
 import love.forte.simbot.component.qguild.QGMember
 import love.forte.simbot.component.qguild.forum.QGForumChannel
+import love.forte.simbot.component.qguild.forum.QGPost
 import love.forte.simbot.component.qguild.forum.QGThread
 import love.forte.simbot.definition.ChannelInfoContainer
 import love.forte.simbot.definition.GuildInfoContainer
@@ -33,6 +34,7 @@ import love.forte.simbot.qguild.PrivateDomainOnly
 import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.event.*
 import love.forte.simbot.qguild.model.forum.ForumSourceInfo
+import love.forte.simbot.qguild.model.forum.Post
 import love.forte.simbot.qguild.model.forum.Thread
 
 
@@ -172,6 +174,26 @@ public abstract class QGForumThreadDeleteEvent : QGForumThreadEvent() {
     }
 }
 
+/**
+ * QQ频道的 [Forums][EventIntents.ForumsEvent] 中的帖子（评论）事件。
+ *
+ * 基于 API 模块中的 [ForumPostDispatch]。
+ *
+ * @see ForumPostDispatch
+ */
+public abstract class QGForumPostEvent : QGForumEvent() {
+    abstract override val sourceEventEntity: Post
 
+    /**
+     * 得到此事件中基于 [sourceEventEntity] 的 [QGPost]。
+     */
+    public abstract val post: QGPost
+
+    abstract override val key: Event.Key<out QGForumPostEvent>
+
+    public companion object Key : BaseEventKey<QGForumPostEvent>("qg.forum_post", QGForumEvent) {
+        override fun safeCast(value: Any): QGForumPostEvent? = doSafeCast(value)
+    }
+}
 
 // TODO
