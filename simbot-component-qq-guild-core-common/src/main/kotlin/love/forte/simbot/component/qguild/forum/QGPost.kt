@@ -22,6 +22,7 @@ import love.forte.simbot.JSTP
 import love.forte.simbot.Timestamp
 import love.forte.simbot.component.qguild.QGBot
 import love.forte.simbot.component.qguild.QGGuild
+import love.forte.simbot.component.qguild.QGMember
 import love.forte.simbot.component.qguild.QGObjectiveContainer
 import love.forte.simbot.component.qguild.event.QGForumPostEvent
 import love.forte.simbot.definition.BotContainer
@@ -88,6 +89,14 @@ public interface QGPost : QGObjectiveContainer<Post>,
     public val datetime: Timestamp
 
     /**
+     * 此评论所属的频道服务器
+     *
+     * @throws QQGuildApiException API请求产生异常
+     * @throws NoSuchElementException 此频道已不存在
+     */
+    override suspend fun guild(): QGGuild
+
+    /**
      * 此评论所属的论坛子频道
      *
      * @throws QQGuildApiException API请求产生异常
@@ -97,12 +106,12 @@ public interface QGPost : QGObjectiveContainer<Post>,
     override suspend fun channel(): QGForumChannel
 
     /**
-     * 此评论所属的频道服务器
+     * 在频道中的评论者
      *
      * @throws QQGuildApiException API请求产生异常
-     * @throws NoSuchElementException 此频道已不存在
+     * @throws NoSuchElementException 如果此成员已不存在
      */
-    override suspend fun guild(): QGGuild
+    public suspend fun author(): QGMember
 
     /**
      * 此评论所属的主题
