@@ -64,7 +64,7 @@ internal class QGReplyImpl(
         val (thread) = try {
             GetThreadApi.create(source.channelId, source.replyInfo.threadId).requestBy(bot)
         } catch (apiEx: QQGuildApiException) {
-            apiEx.ifNotFoundThenNoSuch { "thread(id=${source.replyInfo.threadId}) by reply(id=${source.replyInfo.postId})" }
+            apiEx.ifNotFoundThenNoSuch { "thread(id=${source.replyInfo.threadId}) by reply(id=${source.replyInfo.replyId})" }
         }
 
         return QGThreadImpl(bot, thread, sourceChannel)
