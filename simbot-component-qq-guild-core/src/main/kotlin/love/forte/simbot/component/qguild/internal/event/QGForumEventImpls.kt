@@ -31,6 +31,7 @@ import love.forte.simbot.component.qguild.internal.forum.QGReplyImpl
 import love.forte.simbot.component.qguild.internal.forum.QGThreadImpl
 import love.forte.simbot.component.qguild.internal.utils.getValue
 import love.forte.simbot.component.qguild.internal.utils.nowTimeMillis
+import love.forte.simbot.qguild.model.forum.AuditResult
 import love.forte.simbot.qguild.model.forum.Post
 import love.forte.simbot.qguild.model.forum.Reply
 import love.forte.simbot.qguild.model.forum.Thread
@@ -156,4 +157,19 @@ internal class QGForumReplyDeleteEventImpl(
         bot.author(sourceEventEntity)
 
     override val post: QGReply = QGReplyImpl(bot, sourceEventEntity, null)
+}
+
+internal class QGForumPublishAuditResultEventImpl(
+    override val bot: QGBotImpl,
+    override val eventRaw: String,
+    override val sourceEventEntity: AuditResult,
+) : QGForumPublishAuditResultEvent() {
+    override val id: ID = randomID()
+    override val timestamp: Timestamp by nowTimeMillis
+
+    override suspend fun channel(): QGForumChannel =
+        bot.forumChannel(sourceEventEntity)
+
+    override suspend fun author(): QGMember =
+        bot.author(sourceEventEntity)
 }

@@ -154,7 +154,17 @@ internal fun QGBotImpl.registerEventProcessor(): DisposableHandle {
                 is OpenForumReplyDelete -> pushEvent(QGOpenForumReplyDeleteEvent) { QGOpenForumReplyDeleteEventImpl(bot, raw, event.data) }
             }
 
-            // TODO Forum
+            // Forum
+            is ForumDispatch -> when (event) {
+                is ForumPostCreate -> pushEvent(QGForumPostCreateEvent) { QGForumPostCreateEventImpl(bot, raw, event.data) }
+                is ForumPostDelete -> pushEvent(QGForumPostDeleteEvent) { QGForumPostDeleteEventImpl(bot, raw, event.data) }
+                is ForumReplyCreate -> pushEvent(QGForumReplyCreateEvent) { QGForumReplyCreateEventImpl(bot, raw, event.data) }
+                is ForumReplyDelete -> pushEvent(QGForumReplyDeleteEvent) { QGForumReplyDeleteEventImpl(bot, raw, event.data) }
+                is ForumThreadCreate -> pushEvent(QGForumThreadCreateEvent) { QGForumThreadCreateEventImpl(bot, raw, event.data) }
+                is ForumThreadDelete -> pushEvent(QGForumThreadDeleteEvent) { QGForumThreadDeleteEventImpl(bot, raw, event.data) }
+                is ForumThreadUpdate -> pushEvent(QGForumThreadUpdateEvent) { QGForumThreadUpdateEventImpl(bot, raw, event.data) }
+                is ForumPublishAuditResult -> pushEvent(QGForumPublishAuditResultEvent) { QGForumPublishAuditResultEventImpl(bot, raw, event.data) }
+            }
 
 
             // unsupported

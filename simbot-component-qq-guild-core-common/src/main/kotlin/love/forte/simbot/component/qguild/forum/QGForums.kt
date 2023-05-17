@@ -19,6 +19,7 @@ package love.forte.simbot.component.qguild.forum
 
 import kotlinx.coroutines.CoroutineScope
 import love.forte.simbot.ID
+import love.forte.simbot.JST
 import love.forte.simbot.component.qguild.JSTP
 import love.forte.simbot.component.qguild.QGBot
 import love.forte.simbot.component.qguild.QGGuild
@@ -64,6 +65,7 @@ public interface QGForums : CoroutineScope, BotContainer, GuildInfoContainer {
      * @throws QQGuildApiException API请求过程中出现的异常
      * @throws IllegalStateException 当目标子频道类型不是 [ChannelType.FORUM] 时
      */
+    @JST(blockingBaseName = "getForumChannel", blockingSuffix = "", asyncBaseName = "getForumChannel")
     public suspend fun forumChannel(id: ID): QGForumChannel?
 
 }

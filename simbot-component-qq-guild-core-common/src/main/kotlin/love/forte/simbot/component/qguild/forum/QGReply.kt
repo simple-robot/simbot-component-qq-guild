@@ -18,11 +18,13 @@
 package love.forte.simbot.component.qguild.forum
 
 import love.forte.simbot.ID
+import love.forte.simbot.JSTP
 import love.forte.simbot.Timestamp
 import love.forte.simbot.component.qguild.QGBot
 import love.forte.simbot.component.qguild.QGGuild
 import love.forte.simbot.component.qguild.QGMember
 import love.forte.simbot.component.qguild.QGObjectiveContainer
+import love.forte.simbot.component.qguild.event.QGForumReplyEvent
 import love.forte.simbot.definition.BotContainer
 import love.forte.simbot.definition.ChannelInfoContainer
 import love.forte.simbot.definition.GuildInfoContainer
@@ -36,6 +38,7 @@ import love.forte.simbot.qguild.model.forum.Reply
  *
  * @author ForteScarlet
  */
+@JSTP
 public interface QGReply : QGObjectiveContainer<Reply>,
     QGForumInfoContainer,
     IDContainer, BotContainer, GuildInfoContainer,

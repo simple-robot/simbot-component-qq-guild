@@ -34,10 +34,7 @@ import love.forte.simbot.message.doSafeCast
 import love.forte.simbot.qguild.PrivateDomainOnly
 import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.event.*
-import love.forte.simbot.qguild.model.forum.ForumSourceInfo
-import love.forte.simbot.qguild.model.forum.Post
-import love.forte.simbot.qguild.model.forum.Reply
-import love.forte.simbot.qguild.model.forum.Thread
+import love.forte.simbot.qguild.model.forum.*
 
 
 /**
@@ -73,7 +70,6 @@ public abstract class QGForumEvent : QGEvent<ForumSourceInfo>(), GuildInfoContai
      * @see OpenForumEventData.authorId
      */
     public open val authorId: ID get() = sourceEventEntity.authorId.ID
-
 
     /**
      * 得到本次事件 [guildId] 对应的频道。
@@ -140,6 +136,9 @@ public abstract class QGForumThreadEvent : QGForumEvent() {
  */
 @PrivateDomainOnly
 public abstract class QGForumThreadCreateEvent : QGForumThreadEvent() {
+    override fun toString(): String =
+        "QGForumThreadCreateEvent(sourceEventEntity=$sourceEventEntity)"
+
     override val key: Event.Key<out QGForumThreadCreateEvent> get() = Key
 
     public companion object Key : BaseEventKey<QGForumThreadCreateEvent>("qg.forum_thread_create", QGForumThreadEvent) {
@@ -156,6 +155,9 @@ public abstract class QGForumThreadCreateEvent : QGForumThreadEvent() {
  */
 @PrivateDomainOnly
 public abstract class QGForumThreadUpdateEvent : QGForumThreadEvent() {
+    override fun toString(): String =
+        "QGForumThreadUpdateEvent(sourceEventEntity=$sourceEventEntity)"
+
     override val key: Event.Key<out QGForumThreadUpdateEvent> get() = Key
 
     public companion object Key : BaseEventKey<QGForumThreadUpdateEvent>("qg.forum_thread_update", QGForumThreadEvent) {
@@ -172,6 +174,9 @@ public abstract class QGForumThreadUpdateEvent : QGForumThreadEvent() {
  */
 @PrivateDomainOnly
 public abstract class QGForumThreadDeleteEvent : QGForumThreadEvent() {
+    override fun toString(): String =
+        "QGForumThreadDeleteEvent(sourceEventEntity=$sourceEventEntity)"
+
     override val key: Event.Key<out QGForumThreadDeleteEvent> get() = Key
 
     public companion object Key : BaseEventKey<QGForumThreadDeleteEvent>("qg.forum_thread_delete", QGForumThreadEvent) {
@@ -211,6 +216,9 @@ public abstract class QGForumPostEvent : QGForumEvent() {
  */
 @PrivateDomainOnly
 public abstract class QGForumPostCreateEvent : QGForumPostEvent() {
+    override fun toString(): String =
+        "QGForumPostCreateEvent(sourceEventEntity=$sourceEventEntity)"
+
     override val key: Event.Key<out QGForumPostCreateEvent> get() = Key
 
     public companion object Key : BaseEventKey<QGForumPostCreateEvent>("qg.forum_post_create", QGForumPostEvent) {
@@ -227,6 +235,9 @@ public abstract class QGForumPostCreateEvent : QGForumPostEvent() {
  */
 @PrivateDomainOnly
 public abstract class QGForumPostDeleteEvent : QGForumPostEvent() {
+    override fun toString(): String =
+        "QGForumPostDeleteEvent(sourceEventEntity=$sourceEventEntity)"
+
     override val key: Event.Key<out QGForumPostDeleteEvent> get() = Key
 
     public companion object Key : BaseEventKey<QGForumPostDeleteEvent>("qg.forum_post_delete", QGForumPostEvent) {
@@ -267,6 +278,9 @@ public abstract class QGForumReplyEvent : QGForumEvent() {
  */
 @PrivateDomainOnly
 public abstract class QGForumReplyCreateEvent : QGForumReplyEvent() {
+    override fun toString(): String =
+        "QGForumReplyCreateEvent(sourceEventEntity=$sourceEventEntity)"
+
     override val key: Event.Key<out QGForumReplyCreateEvent> get() = Key
 
     public companion object Key : BaseEventKey<QGForumReplyCreateEvent>("qg.forum_reply_create", QGForumReplyEvent) {
@@ -283,9 +297,39 @@ public abstract class QGForumReplyCreateEvent : QGForumReplyEvent() {
  */
 @PrivateDomainOnly
 public abstract class QGForumReplyDeleteEvent : QGForumReplyEvent() {
+    override fun toString(): String =
+        "QGForumReplyDeleteEvent(sourceEventEntity=$sourceEventEntity)"
+
     override val key: Event.Key<out QGForumReplyDeleteEvent> get() = Key
 
     public companion object Key : BaseEventKey<QGForumReplyDeleteEvent>("qg.forum_reply_delete", QGForumReplyEvent) {
         override fun safeCast(value: Any): QGForumReplyDeleteEvent? = doSafeCast(value)
     }
+}
+
+/**
+ * QQ频道的 [EventIntents.ForumsEvent][EventIntents.ForumsEvent] 中的帖子审核通过事件。
+ *
+ * 基于 API 模块中的 [ForumPublishAuditResult]。
+ *
+ * @see ForumPublishAuditResult
+ *
+ */
+@PrivateDomainOnly
+public abstract class QGForumPublishAuditResultEvent : QGForumEvent() {
+    /**
+     * 得到此事件中的源数据 [AuditResult]。
+     */
+    abstract override val sourceEventEntity: AuditResult
+
+    override fun toString(): String =
+        "QGForumPublishAuditResultEvent(sourceEventEntity=$sourceEventEntity)"
+
+    override val key: Event.Key<out QGForumPublishAuditResultEvent> get() = Key
+
+    public companion object Key :
+        BaseEventKey<QGForumPublishAuditResultEvent>("qg.forum_publish_audit_result", QGForumEvent) {
+        override fun safeCast(value: Any): QGForumPublishAuditResultEvent? = doSafeCast(value)
+    }
+
 }
