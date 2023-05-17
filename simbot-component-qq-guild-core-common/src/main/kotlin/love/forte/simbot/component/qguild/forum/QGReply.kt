@@ -21,6 +21,7 @@ import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
 import love.forte.simbot.component.qguild.QGBot
 import love.forte.simbot.component.qguild.QGGuild
+import love.forte.simbot.component.qguild.QGMember
 import love.forte.simbot.component.qguild.QGObjectiveContainer
 import love.forte.simbot.definition.BotContainer
 import love.forte.simbot.definition.ChannelInfoContainer
@@ -91,6 +92,14 @@ public interface QGReply : QGObjectiveContainer<Reply>,
     public val datetime: Timestamp
 
     /**
+     * 此评论所属的频道服务器
+     *
+     * @throws QQGuildApiException API请求产生异常
+     * @throws NoSuchElementException 此频道已不存在
+     */
+    override suspend fun guild(): QGGuild
+
+    /**
      * 此评论所属的论坛子频道
      *
      * @throws QQGuildApiException API请求产生异常
@@ -100,12 +109,12 @@ public interface QGReply : QGObjectiveContainer<Reply>,
     override suspend fun channel(): QGForumChannel
 
     /**
-     * 此评论所属的频道服务器
+     * 频道中的回复者。
      *
      * @throws QQGuildApiException API请求产生异常
-     * @throws NoSuchElementException 此频道已不存在
+     * @throws NoSuchElementException 此成员已不存在
      */
-    override suspend fun guild(): QGGuild
+    public suspend fun author(): QGMember
 
     /**
      * 此回复所属的主题
@@ -115,11 +124,12 @@ public interface QGReply : QGObjectiveContainer<Reply>,
      */
     public suspend fun thread(): QGThread
 
-    /**
-     * 此回复所属的评论
-     *
-     * @throws QQGuildApiException API请求产生异常
-     * @throws NoSuchElementException 所属评论已不存在
-     */
-    public suspend fun post(): QGPost
+    // No API supported
+//    /**
+//     * 此回复所属的评论
+//     *
+//     * @throws QQGuildApiException API请求产生异常
+//     * @throws NoSuchElementException 所属评论已不存在
+//     */
+//    public suspend fun post(): QGPost
 }
