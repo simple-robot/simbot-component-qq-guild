@@ -143,6 +143,29 @@ internal fun QGBotImpl.registerEventProcessor(): DisposableHandle {
                 pushEvent(QGAtMessageCreateEvent) { QGAtMessageCreateEventImpl(bot, raw, event.data) }
             }
 
+            // OpenForum
+            is OpenForumDispatch -> when (event) {
+                is OpenForumThreadCreate -> pushEvent(QGOpenForumThreadCreateEvent) { QGOpenForumThreadCreateEventImpl(bot, raw, event.data) }
+                is OpenForumThreadDelete -> pushEvent(QGOpenForumThreadDeleteEvent) { QGOpenForumThreadDeleteEventImpl(bot, raw, event.data) }
+                is OpenForumThreadUpdate -> pushEvent(QGOpenForumThreadUpdateEvent) { QGOpenForumThreadUpdateEventImpl(bot, raw, event.data) }
+                is OpenForumPostCreate -> pushEvent(QGOpenForumPostCreateEvent) { QGOpenForumPostCreateEventImpl(bot, raw, event.data) }
+                is OpenForumPostDelete -> pushEvent(QGOpenForumPostDeleteEvent) { QGOpenForumPostDeleteEventImpl(bot, raw, event.data) }
+                is OpenForumReplyCreate -> pushEvent(QGOpenForumReplyCreateEvent) { QGOpenForumReplyCreateEventImpl(bot, raw, event.data) }
+                is OpenForumReplyDelete -> pushEvent(QGOpenForumReplyDeleteEvent) { QGOpenForumReplyDeleteEventImpl(bot, raw, event.data) }
+            }
+
+            // Forum
+            is ForumDispatch -> when (event) {
+                is ForumPostCreate -> pushEvent(QGForumPostCreateEvent) { QGForumPostCreateEventImpl(bot, raw, event.data) }
+                is ForumPostDelete -> pushEvent(QGForumPostDeleteEvent) { QGForumPostDeleteEventImpl(bot, raw, event.data) }
+                is ForumReplyCreate -> pushEvent(QGForumReplyCreateEvent) { QGForumReplyCreateEventImpl(bot, raw, event.data) }
+                is ForumReplyDelete -> pushEvent(QGForumReplyDeleteEvent) { QGForumReplyDeleteEventImpl(bot, raw, event.data) }
+                is ForumThreadCreate -> pushEvent(QGForumThreadCreateEvent) { QGForumThreadCreateEventImpl(bot, raw, event.data) }
+                is ForumThreadDelete -> pushEvent(QGForumThreadDeleteEvent) { QGForumThreadDeleteEventImpl(bot, raw, event.data) }
+                is ForumThreadUpdate -> pushEvent(QGForumThreadUpdateEvent) { QGForumThreadUpdateEventImpl(bot, raw, event.data) }
+                is ForumPublishAuditResult -> pushEvent(QGForumPublishAuditResultEvent) { QGForumPublishAuditResultEventImpl(bot, raw, event.data) }
+            }
+
 
             // unsupported
             else -> {

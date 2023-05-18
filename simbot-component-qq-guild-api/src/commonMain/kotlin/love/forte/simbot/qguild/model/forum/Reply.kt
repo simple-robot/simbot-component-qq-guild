@@ -37,17 +37,17 @@ public data class Reply(
      * 频道ID
      */
     @SerialName("guild_id")
-    val guildId: String,
+    override val guildId: String,
     /**
      * 子频道ID
      */
     @SerialName("channel_id")
-    val channelId: String,
+    override val channelId: String,
     /**
      * 作者ID
      */
     @SerialName("author_id")
-    val authorId: String,
+    override val authorId: String,
     /**
      * 回复内容
      *
@@ -55,7 +55,7 @@ public data class Reply(
      */
     @SerialName("reply_info")
     val replyInfo: ReplyInfo,
-)
+) : ForumSourceInfo
 
 /**
  * 回复事件包含的回复内容信息

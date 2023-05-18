@@ -36,17 +36,17 @@ public data class Post(
      * 频道ID
      */
     @SerialName("guild_id")
-    val guildId: String,
+    override val guildId: String,
     /**
      * 子频道ID
      */
     @SerialName("channel_id")
-    val channelId: String,
+    override val channelId: String,
     /**
      * 作者ID
      */
     @SerialName("author_id")
-    val authorId: String,
+    override val authorId: String,
     /**
      * 帖子内容
      *
@@ -54,8 +54,7 @@ public data class Post(
      */
     @SerialName("post_info")
     val postInfo: PostInfo
-
-)
+) : ForumSourceInfo
 
 /**
  * 帖子事件包含的帖子内容信息

@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import love.forte.simbot.ID
+import love.forte.simbot.component.qguild.QGChannel
 import love.forte.simbot.component.qguild.QGChannelCategoryId
 import love.forte.simbot.component.qguild.QGGuild
 import love.forte.simbot.component.qguild.QGMember
@@ -37,6 +38,7 @@ import love.forte.simbot.qguild.api.forum.GetThreadApi
 import love.forte.simbot.qguild.api.forum.GetThreadListApi
 import love.forte.simbot.qguild.ifNotFoundThenNull
 import love.forte.simbot.qguild.model.Channel
+import love.forte.simbot.qguild.model.ChannelType
 import love.forte.simbot.qguild.model.forum.Thread
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.effectedItemsByFlow
@@ -50,7 +52,7 @@ import kotlin.coroutines.CoroutineContext
 internal class QGForumChannelImpl(
     override val bot: QGGuildBotImpl,
     override val source: Channel,
-    private val sourceGuild: QGGuild?,
+    internal val sourceGuild: QGGuild?,
     override val category: QGChannelCategoryId = QGChannelCategoryIdImpl(
         bot = bot,
         guildId = source.guildId.ID,
@@ -88,7 +90,7 @@ internal class QGForumChannelImpl(
         }
     }
 
-    private fun Thread.toQGThread(): QGThread = QGThreadImpl(bot, this@QGForumChannelImpl, this)
+    private fun Thread.toQGThread(): QGThread = QGThreadImpl(bot.bot, this, this@QGForumChannelImpl)
 
     override fun threadCreator(): QGThreadCreator = QGThreadCreatorImpl(this)
 
@@ -96,3 +98,11 @@ internal class QGForumChannelImpl(
         return "QGForumChannelImpl(id=$id, name=$name, category=$category)"
     }
 }
+
+/**
+ * @throws IllegalStateException Can't as [QGForumChannel]
+ */
+internal fun QGChannel.asForumChannel(source: Channel = this.source): QGForumChannel =
+    this as? QGForumChannel
+        ?: throw IllegalStateException("The type of channel(id=${source.id}, name=${source.name}) in guild(id=${source.guildId}) is not category (${ChannelType.CATEGORY}), but ${source.type}")
+

@@ -22,64 +22,51 @@ import love.forte.simbot.Timestamp
 import love.forte.simbot.component.qguild.QGGuild
 import love.forte.simbot.component.qguild.QGMember
 import love.forte.simbot.component.qguild.forum.QGForumChannel
+import love.forte.simbot.component.qguild.forum.QGPost
 import love.forte.simbot.component.qguild.forum.QGThread
 import love.forte.simbot.component.qguild.internal.QGBotImpl
 import love.forte.simbot.component.qguild.internal.QGGuildImpl
-import love.forte.simbot.component.qguild.internal.newSupervisorCoroutineContext
 import love.forte.simbot.component.qguild.internal.toTimestamp
 import love.forte.simbot.component.qguild.util.requestBy
 import love.forte.simbot.qguild.QQGuildApiException
-import love.forte.simbot.qguild.api.forum.DeleteThreadApi
-import love.forte.simbot.qguild.ifNotFoundThen
-import love.forte.simbot.qguild.model.forum.Thread
-import kotlin.coroutines.CoroutineContext
-
+import love.forte.simbot.qguild.api.forum.GetThreadApi
+import love.forte.simbot.qguild.ifNotFoundThenNoSuch
+import love.forte.simbot.qguild.model.forum.Post
 
 /**
  *
  * @author ForteScarlet
  */
-internal class QGThreadImpl(
+internal class QGPostImpl(
     override val bot: QGBotImpl,
-    override val source: Thread,
-    private val sourceChannel: QGForumChannelImpl?,
-) : QGThread {
+    override val source: Post,
+    private val sourceChannel: QGForumChannelImpl?
+) : QGPost {
 
-    override val coroutineContext: CoroutineContext = bot.newSupervisorCoroutineContext()
+    @OptIn(ExperimentalSimbotApi::class)
+    override val datetime: Timestamp = source.postInfo.dateTime.toTimestamp()
 
     override suspend fun guild(): QGGuild =
         sourceChannel?.guild()
             ?: bot.queryGuild(source.guildId)
             ?: throw NoSuchElementException("guild(id=${source.guildId})")
 
+
+    override suspend fun channel(): QGForumChannel =
+        sourceChannel
+            ?: (bot.channel(source.channelId, null)
+                ?: throw NoSuchElementException("channel(id=${source.channelId})")).asForumChannel()
+
     override suspend fun author(): QGMember =
         bot.member(source.guildId, source.authorId, sourceChannel?.sourceGuild as? QGGuildImpl) ?: throw NoSuchElementException("author(id=$authorId)")
 
-    @OptIn(ExperimentalSimbotApi::class)
-    override val dateTime: Timestamp
-        get() = source.threadInfo.dateTime.toTimestamp()
-
-    override suspend fun channel(): QGForumChannel {
-        if (sourceChannel != null) {
-            return sourceChannel
-        }
-
-        val channel = bot.channel(source.channelId, null)
-            ?: throw NoSuchElementException("channel(id=${source.channelId})")
-
-        return channel.asForumChannel()
-    }
-
-    override suspend fun delete(): Boolean {
-        return try {
-            DeleteThreadApi.create(source.channelId, source.threadInfo.threadId).requestBy(bot)
-            true
+    override suspend fun thread(): QGThread {
+        val (thread) = try {
+            GetThreadApi.create(source.channelId, source.postInfo.threadId).requestBy(bot)
         } catch (apiEx: QQGuildApiException) {
-            apiEx.ifNotFoundThen { false }
+            apiEx.ifNotFoundThenNoSuch { "thread(id=${source.postInfo.threadId}) by post(id=${source.postInfo.postId})" }
         }
-    }
 
-    override fun toString(): String {
-        return "QGThreadImpl(id=${source.threadInfo.threadId}, title=$title, channelId=${source.channelId})"
+        return QGThreadImpl(bot, thread, sourceChannel)
     }
 }
