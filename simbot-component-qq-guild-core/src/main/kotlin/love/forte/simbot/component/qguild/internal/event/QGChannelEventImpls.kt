@@ -26,9 +26,9 @@ import love.forte.simbot.component.qguild.event.QGChannelDeleteEvent
 import love.forte.simbot.component.qguild.event.QGChannelUpdateEvent
 import love.forte.simbot.component.qguild.internal.QGBotImpl
 import love.forte.simbot.component.qguild.internal.QGTextChannelImpl
+import love.forte.simbot.component.qguild.internal.utils.getValue
+import love.forte.simbot.component.qguild.internal.utils.nowTimeMillis
 import love.forte.simbot.qguild.event.EventChannel
-import kotlin.random.Random
-import kotlin.random.nextUInt
 
 
 internal class QGChannelCreateEventImpl(
@@ -37,8 +37,8 @@ internal class QGChannelCreateEventImpl(
     override val bot: QGBotImpl,
     private val _channel: QGTextChannelImpl,
 ) : QGChannelCreateEvent() {
-    override val id: ID get() = tcgChannelModifyId(0, bot.id, sourceEventEntity.id, changedTime)
-    override val operatorId: ID get() = sourceEventEntity.opUserId.ID
+    override val changedTime: Timestamp by nowTimeMillis
+    override val id: ID get() = tcgChannelModifyId(0, bot.id, sourceEventEntity.id, changedTime, this.hashCode())
     override suspend fun channel(): QGTextChannel = _channel
     override suspend fun source(): QGGuild = _channel.guild()
 }
@@ -50,8 +50,8 @@ internal class QGChannelUpdateEventImpl(
     override val bot: QGBotImpl,
     private val _channel: QGTextChannelImpl,
 ) : QGChannelUpdateEvent() {
-    override val id: ID get() = tcgChannelModifyId(1, bot.id, sourceEventEntity.id, changedTime)
-    override val operatorId: ID get() = sourceEventEntity.opUserId.ID
+    override val changedTime: Timestamp by nowTimeMillis
+    override val id: ID get() = tcgChannelModifyId(1, bot.id, sourceEventEntity.id, changedTime, this.hashCode())
     override suspend fun channel(): QGTextChannel = _channel
     override suspend fun source(): QGGuild = _channel.guild()
 }
@@ -63,13 +63,11 @@ internal class QGChannelDeleteEventImpl(
     override val bot: QGBotImpl,
     private val _channel: QGTextChannelImpl
 ) : QGChannelDeleteEvent() {
-    override val id: ID get() = tcgChannelModifyId(2, bot.id, sourceEventEntity.id, changedTime)
-    override val operatorId: ID get() = sourceEventEntity.opUserId.ID
+    override val changedTime: Timestamp by nowTimeMillis
+    override val id: ID get() = tcgChannelModifyId(2, bot.id, sourceEventEntity.id, changedTime, this.hashCode())
     override suspend fun channel(): QGTextChannel = _channel
     override suspend fun source(): QGGuild = _channel.guild()
 }
-
-
 
 //internal class QGChannelCategoryCreateEventImpl(
 //    override val eventRaw: String,
@@ -112,6 +110,5 @@ internal class QGChannelDeleteEventImpl(
 //}
 
 
-
-private fun tcgChannelModifyId(t: Int, sourceBot: ID, sourceChannel: String, timestamp: Timestamp): ID =
-    "$t$sourceBot.${timestamp.second}.$sourceChannel.${Random.nextUInt()}".ID
+private fun tcgChannelModifyId(t: Int, sourceBot: ID, sourceChannel: String, timestamp: Timestamp, hash: Int): ID =
+    "$t$sourceBot.${timestamp.second}.$sourceChannel.$hash".ID

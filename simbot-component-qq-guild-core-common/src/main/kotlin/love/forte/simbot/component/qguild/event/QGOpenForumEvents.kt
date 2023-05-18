@@ -49,21 +49,21 @@ public abstract class QGOpenForumEvent : QGEvent<OpenForumEventData>(), GuildInf
      *
      * @see OpenForumEventData.guildId
      */
-    public abstract val guildId: ID
+    public val guildId: ID get() = sourceEventEntity.guildId.ID
 
     /**
      * 子频道ID
      *
      * @see OpenForumEventData.channelId
      */
-    public abstract val channelId: ID
+    public val channelId: ID get() = sourceEventEntity.channelId.ID
 
     /**
      * 发布人ID
      *
      * @see OpenForumEventData.authorId
      */
-    public abstract val authorId: ID
+    public val authorId: ID get() = sourceEventEntity.authorId.ID
 
     /**
      * 得到本次事件 [guildId] 对应的频道。
