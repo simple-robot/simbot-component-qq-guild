@@ -237,7 +237,7 @@ public interface QGBot : Bot {
      *
      * @return API得到的用户信息结果
      */
-    @JSTP
+    @JST(blockingBaseName = "getMe", blockingSuffix = "", asyncBaseName = "getMe")
     public suspend fun me(withCache: Boolean): QGSourceUser
 
     /**
