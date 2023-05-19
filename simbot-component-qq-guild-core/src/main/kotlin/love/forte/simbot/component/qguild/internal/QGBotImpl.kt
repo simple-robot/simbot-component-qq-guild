@@ -260,7 +260,14 @@ internal class QGBotImpl(
 
     private val startLock = Mutex()
 
-    override suspend fun me(): QGUser = source.me().also { botSelf = it }
+    override suspend fun me(withCache: Boolean): QGUser {
+        if (withCache && ::botSelf.isInitialized) {
+            return botSelf
+        }
+
+        return source.me().also { botSelf = it }
+    }
+
 
     @Volatile
     private var sourceListenerDisposableHandle: DisposableHandle? = null
