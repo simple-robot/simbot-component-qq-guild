@@ -65,7 +65,7 @@ public abstract class QGMemberAddEvent : QGMemberEvent(), GuildMemberIncreaseEve
     /**
      * 事件对象构建时间。
      */
-    override val changedTime: Timestamp = Timestamp.now()
+    abstract override val changedTime: Timestamp
 
     /**
      * 同 [changedTime]
@@ -130,7 +130,7 @@ public abstract class QGMemberUpdateEvent : QGMemberEvent(), MemberChangedEvent,
     /**
      * 事件对象构建时间。
      */
-    override val changedTime: Timestamp = Timestamp.now()
+    abstract override val changedTime: Timestamp
 
     /**
      * 同 [changedTime]
@@ -194,7 +194,7 @@ public abstract class QGMemberRemoveEvent : QGMemberEvent(), GuildMemberDecrease
     /**
      * 事件对象构建时间。
      */
-    override val changedTime: Timestamp = Timestamp.now()
+    abstract override val changedTime: Timestamp
 
     /**
      * 同 [changedTime]
