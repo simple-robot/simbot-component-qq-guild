@@ -87,6 +87,7 @@ internal class QGGuildBotImpl(
     override val guilds: Items<QGGuildImpl>
         get() = bot.guilds
 
+    override suspend fun me(withCache: Boolean): User = bot.me(withCache)
     override suspend fun me(): User = bot.me()
 
     override fun toString(): String {

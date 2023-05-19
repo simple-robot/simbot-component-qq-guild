@@ -53,7 +53,7 @@ public sealed class QGChannelEvent : QGEvent<QGSourceEventChannel>() {
     /**
      * 操作者ID
      */
-    public abstract val operatorId: ID
+    public val operatorId: ID get() = sourceEventEntity.opUserId.ID
 
     abstract override val key: Event.Key<out QGChannelEvent>
 
@@ -70,8 +70,7 @@ public sealed class QGChannelEvent : QGEvent<QGSourceEventChannel>() {
  */
 @JSTP
 public abstract class QGChannelCreateEvent : QGChannelEvent(), StartPointEvent, ChangedEvent, ChannelEvent {
-
-    override val changedTime: Timestamp = Timestamp.now()
+    abstract override val changedTime: Timestamp
     override val timestamp: Timestamp get() = changedTime
 
     /**
@@ -116,7 +115,7 @@ public abstract class QGChannelCreateEvent : QGChannelEvent(), StartPointEvent, 
  */
 @JSTP
 public abstract class QGChannelUpdateEvent : QGChannelEvent(), ChangedEvent, ChannelEvent {
-    override val changedTime: Timestamp = Timestamp.now()
+    abstract override val changedTime: Timestamp
     override val timestamp: Timestamp get() = changedTime
 
     /**
@@ -162,7 +161,7 @@ public abstract class QGChannelUpdateEvent : QGChannelEvent(), ChangedEvent, Cha
  */
 @JSTP
 public abstract class QGChannelDeleteEvent : QGChannelEvent(), EndPointEvent, ChannelEvent {
-    override val changedTime: Timestamp = Timestamp.now()
+    abstract override val changedTime: Timestamp
     override val timestamp: Timestamp get() = changedTime
 
 

@@ -51,8 +51,8 @@ internal class QGAtMessageCreateEventImpl(
     @OptIn(ExperimentalSimbotApi::class)
     override val timestamp: Timestamp get() = sourceEventEntity.timestamp.toTimestamp()
 
-    override val id: ID =
-        "${sourceEventEntity.guildId}.${sourceEventEntity.channelId}.${sourceEventEntity.id}.${timestamp.second}".ID
+    override val id: ID
+        get() = "${sourceEventEntity.guildId}.${sourceEventEntity.channelId}.${sourceEventEntity.id}.${timestamp.second}".ID
 
 
     override val messageContent: QGReceiveMessageContentImpl = QGReceiveMessageContentImpl(sourceEventEntity)

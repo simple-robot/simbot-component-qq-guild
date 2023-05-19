@@ -55,7 +55,7 @@ public abstract class QGUnsupportedEvent : QGEvent<Signal.Dispatch>() {
     /**
      * 事件构建时间。
      */
-    override val timestamp: Timestamp = Timestamp.now()
+    abstract override val timestamp: Timestamp
 
     /**
      * 原始的标准库事件对象。

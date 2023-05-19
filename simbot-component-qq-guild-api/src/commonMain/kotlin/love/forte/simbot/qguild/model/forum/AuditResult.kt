@@ -36,17 +36,17 @@ public data class AuditResult(
      * 频道ID
      */
     @SerialName("guild_id")
-    val guildId: String,
+    override val guildId: String,
     /**
      * 子频道ID
      */
     @SerialName("channel_id")
-    val channelId: String,
+    override val channelId: String,
     /**
      * 作者ID
      */
     @SerialName("author_id")
-    val authorId: String,
+    override val authorId: String,
     /**
      * 主题ID
      */
@@ -80,7 +80,7 @@ public data class AuditResult(
      */
     @SerialName("err_msg")
     val errMsg: String,
-)
+) : ForumSourceInfo
 
 /**
  * 部分审核类型的常量。

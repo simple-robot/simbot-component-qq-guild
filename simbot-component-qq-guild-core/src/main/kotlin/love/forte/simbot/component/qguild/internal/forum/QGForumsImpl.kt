@@ -46,7 +46,7 @@ internal class QGForumsImpl(
 
     override val forumChannels: Items<QGForumChannel>
         get() = effectedItemsByFlow {
-            sourceGuild.channelFlowWithCategoryId()
+            sourceGuild.baseBot.channelFlowWithCategoryId(sourceGuild.source.id, sourceGuild)
                 .filter { (info, _) ->
                     info.type == ChannelType.FORUM
                 }.map { (info, category) ->
@@ -62,7 +62,6 @@ internal class QGForumsImpl(
     override suspend fun forumChannel(id: ID): QGForumChannel? {
         val channel = sourceGuild.channel(id) ?: return null
 
-        return channel as? QGForumChannel
-            ?: throw IllegalStateException("The type of channel(id=${channel.source.id}, name=${channel.name}) is not FORUM (${ChannelType.FORUM}), but ${channel.source.type}")
+        return channel.asForumChannel(channel.source)
     }
 }

@@ -17,42 +17,46 @@
 
 package love.forte.simbot.component.qguild.forum
 
-import kotlinx.coroutines.CoroutineScope
 import love.forte.simbot.ID
+import love.forte.simbot.JSTP
 import love.forte.simbot.Timestamp
-import love.forte.simbot.action.DeleteSupport
-import love.forte.simbot.component.qguild.*
+import love.forte.simbot.component.qguild.QGBot
+import love.forte.simbot.component.qguild.QGGuild
+import love.forte.simbot.component.qguild.QGMember
+import love.forte.simbot.component.qguild.QGObjectiveContainer
+import love.forte.simbot.component.qguild.event.QGForumPostEvent
 import love.forte.simbot.definition.BotContainer
 import love.forte.simbot.definition.ChannelInfoContainer
 import love.forte.simbot.definition.GuildInfoContainer
 import love.forte.simbot.definition.IDContainer
 import love.forte.simbot.qguild.QQGuildApiException
-import love.forte.simbot.qguild.model.forum.Thread
+import love.forte.simbot.qguild.model.forum.Post
 
 
 /**
- *
- * 一个在 [QGForumChannel] 中的主题帖。
+ * 在 [QGForumPostEvent] 获取到的帖子评论信息。
  *
  * @author ForteScarlet
  */
-public interface QGThread : CoroutineScope, IDContainer, BotContainer, GuildInfoContainer, ChannelInfoContainer,
+@JSTP
+public interface QGPost : QGObjectiveContainer<Post>,
     QGForumInfoContainer,
-    QGObjectiveContainer<Thread>, DeleteSupport {
+    IDContainer, BotContainer, GuildInfoContainer,
+    ChannelInfoContainer {
     /**
-     * 主题帖信息的源类型。
-     */
-    override val source: Thread
-
-    /**
-     * 所属BOT
+     * 当前bot
      */
     override val bot: QGBot
 
     /**
-     * 帖子ID
+     * 评论信息的源信息
      */
-    override val id: ID get() = source.threadInfo.threadId.ID
+    override val source: Post
+
+    /**
+     * 此回复的ID
+     */
+    override val id: ID get() = source.postInfo.postId.ID
 
     /**
      * 频道ID
@@ -69,52 +73,51 @@ public interface QGThread : CoroutineScope, IDContainer, BotContainer, GuildInfo
      */
     override val authorId: ID get() = source.authorId.ID
 
-
     /**
-     * 帖子标题
+     * 此评论对应的主题帖ID
      */
-    public val title: String get() = source.threadInfo.title
+    public val threadId: ID get() = source.postInfo.threadId.ID
 
     /**
-     * 帖子内容
+     * 内容
      */
-    public val content: String get() = source.threadInfo.content
+    public val content: String get() = source.postInfo.content
 
     /**
-     * 帖子发表时间
+     * 评论时间
      */
-    public val dateTime: Timestamp
+    public val datetime: Timestamp
 
     /**
-     * 依据 [guildId] 寻找所属频道
+     * 此评论所属的频道服务器
      *
-     * @throws QQGuildApiException api请求异常
-     * @throws NoSuchElementException 获取时目标已不存在
+     * @throws QQGuildApiException API请求产生异常
+     * @throws NoSuchElementException 此频道已不存在
      */
-    @JSTP
     override suspend fun guild(): QGGuild
 
     /**
-     * 这个帖子所属的子频道。
+     * 此评论所属的论坛子频道
+     *
+     * @throws QQGuildApiException API请求产生异常
+     * @throws IllegalStateException 此子频道已不再是论坛类型
+     * @throws NoSuchElementException 此子频道已不存在
      */
-    @JSTP
     override suspend fun channel(): QGForumChannel
 
     /**
-     * 依据 [authorId] 寻找作者信息
+     * 在频道中的评论者
      *
-     * @throws QQGuildApiException api请求异常
-     * @throws NoSuchElementException 获取时目标已不存在
+     * @throws QQGuildApiException API请求产生异常
+     * @throws NoSuchElementException 如果此成员已不存在
      */
-    @JSTP
     public suspend fun author(): QGMember
 
     /**
-     * 删除此帖。
+     * 此评论所属的主题
      *
-     * @return 当API请求成功得到 `true`，当API请求响应 404 得到 `false`，其他情况抛出原异常。
-     * @throws QQGuildApiException API请求产生的异常
+     * @throws QQGuildApiException API请求产生异常
+     * @throws NoSuchElementException 所属主题已不存在
      */
-    @JST
-    override suspend fun delete(): Boolean
+    public suspend fun thread(): QGThread
 }

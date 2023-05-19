@@ -15,26 +15,21 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package love.forte.simbot.component.qguild.internal.event
+package love.forte.simbot.component.qguild.internal.utils
 
-import love.forte.simbot.FragileSimbotApi
 import love.forte.simbot.Timestamp
-import love.forte.simbot.component.qguild.QGBot
-import love.forte.simbot.component.qguild.event.QGUnsupportedEvent
-import love.forte.simbot.component.qguild.internal.utils.getValue
-import love.forte.simbot.component.qguild.internal.utils.nowTimeMillis
-import love.forte.simbot.qguild.event.Signal
-
+import kotlin.reflect.KProperty
 
 /**
+ * 使用一个毫秒时间戳代理为 [Timestamp]. 可用于减少 [Timestamp] 对象的快速急迫产生，
+ * 但是会使其每次获取都得到新的实例。
  *
- * @author ForteScarlet
  */
-@OptIn(FragileSimbotApi::class)
-internal data class QGUnsupportedEventImpl(
-    override val bot: QGBot,
-    override val sourceEventEntity: Signal.Dispatch,
-    override val eventRaw: String
-) : QGUnsupportedEvent() {
-    override val timestamp: Timestamp by nowTimeMillis
-}
+@Suppress("NOTHING_TO_INLINE")
+internal inline operator fun Long.getValue(thisRef: Any?, property: KProperty<*>): Timestamp =
+    Timestamp.byMillisecond(this)
+
+/**
+ * 当前系统毫秒时间戳
+ */
+internal inline val nowTimeMillis: Long get() = System.currentTimeMillis()

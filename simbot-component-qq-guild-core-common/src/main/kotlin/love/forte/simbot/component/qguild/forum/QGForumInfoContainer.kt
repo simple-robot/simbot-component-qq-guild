@@ -15,26 +15,32 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package love.forte.simbot.component.qguild.internal.event
+package love.forte.simbot.component.qguild.forum
 
-import love.forte.simbot.FragileSimbotApi
-import love.forte.simbot.Timestamp
-import love.forte.simbot.component.qguild.QGBot
-import love.forte.simbot.component.qguild.event.QGUnsupportedEvent
-import love.forte.simbot.component.qguild.internal.utils.getValue
-import love.forte.simbot.component.qguild.internal.utils.nowTimeMillis
-import love.forte.simbot.qguild.event.Signal
-
+import love.forte.simbot.ID
+import love.forte.simbot.definition.Container
 
 /**
  *
+ * QQ频道中与论坛对象相关的基础信息。
+ *
  * @author ForteScarlet
  */
-@OptIn(FragileSimbotApi::class)
-internal data class QGUnsupportedEventImpl(
-    override val bot: QGBot,
-    override val sourceEventEntity: Signal.Dispatch,
-    override val eventRaw: String
-) : QGUnsupportedEvent() {
-    override val timestamp: Timestamp by nowTimeMillis
+public interface QGForumInfoContainer : Container {
+
+    /**
+     * 频道ID
+     */
+    public val guildId: ID
+
+    /**
+     * 子频道ID
+     */
+    public val channelId: ID
+
+    /**
+     * 作者ID
+     */
+    public val authorId: ID
+
 }

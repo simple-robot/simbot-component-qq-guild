@@ -38,17 +38,17 @@ public data class Thread(
      * 频道ID
      */
     @SerialName("guild_id")
-    val guildId: String,
+    override val guildId: String,
     /**
      * 子频道ID
      */
     @SerialName("channel_id")
-    val channelId: String,
+    override val channelId: String,
     /**
      * 作者ID
      */
     @SerialName("author_id")
-    val authorId: String,
+    override val authorId: String,
     /**
      * 主帖内容
      *
@@ -56,7 +56,7 @@ public data class Thread(
      */
     @SerialName("thread_info")
     val threadInfo: ThreadInfo
-)
+) : ForumSourceInfo
 
 /**
  * 帖子事件包含的主帖内容相关信息

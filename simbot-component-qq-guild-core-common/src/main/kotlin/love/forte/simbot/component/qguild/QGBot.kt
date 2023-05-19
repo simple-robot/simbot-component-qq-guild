@@ -112,7 +112,7 @@ public interface QGBot : Bot {
      * bot的头像
      */
     override val avatar: String
-    
+
     /**
      * bot所属的bot管理器
      */
@@ -228,12 +228,27 @@ public interface QGBot : Bot {
     override suspend fun group(id: ID): Group? = null
 
     /**
+     * 获取当前bot对应的用户信息。
+     *
+     * 如果 [withCache] 为 `true` 且当前bot内存在上一次查询的结果缓存，
+     * 则直接得到缓存，否则通过API查询。
+     *
+     * 通过API查询的结果会刷新至当前的内部缓存。
+     *
+     * @return API得到的用户信息结果
+     */
+    @JST(blockingBaseName = "getMe", blockingSuffix = "", asyncBaseName = "getMe")
+    public suspend fun me(withCache: Boolean): QGSourceUser
+
+    /**
      * 通过API实时查询当前bot对应的用户信息。
+     *
+     * 通过API查询的结果会刷新至当前的内部缓存。
      *
      * @return API得到的用户信息结果
      */
     @JSTP
-    public suspend fun me(): QGSourceUser
+    public suspend fun me(): QGSourceUser = me(false)
 }
 
 

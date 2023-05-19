@@ -58,7 +58,7 @@ public sealed class QGGuildEvent : QGEvent<EventGuild>() {
     /**
      * 事件操作者的ID
      */
-    public abstract val operatorId: ID
+    public val operatorId: ID get() = sourceEventEntity.opUserId.ID
 
     abstract override val key: Event.Key<out QGGuildEvent>
     
@@ -80,7 +80,7 @@ public sealed class QGGuildEvent : QGEvent<EventGuild>() {
  */
 @JSTP
 public abstract class QGGuildCreateEvent : QGGuildEvent(), StartPointEvent, GuildEvent, ChangedEvent {
-    override val changedTime: Timestamp = Timestamp.now()
+    abstract override val changedTime: Timestamp
     override val timestamp: Timestamp get() = changedTime
 
     /**
@@ -129,7 +129,7 @@ public abstract class QGGuildCreateEvent : QGGuildEvent(), StartPointEvent, Guil
  */
 @JSTP
 public abstract class QGGuildUpdateEvent : QGGuildEvent(), GuildEvent, ChangedEvent {
-    override val changedTime: Timestamp = Timestamp.now()
+    abstract override val changedTime: Timestamp
     override val timestamp: Timestamp get() = changedTime
 
     /**
@@ -180,7 +180,7 @@ public abstract class QGGuildUpdateEvent : QGGuildEvent(), GuildEvent, ChangedEv
  */
 @JSTP
 public abstract class QGGuildDeleteEvent : QGGuildEvent(), ChangedEvent {
-    override val changedTime: Timestamp = Timestamp.now()
+    abstract override val changedTime: Timestamp
     override val timestamp: Timestamp get() = changedTime
 
     /**

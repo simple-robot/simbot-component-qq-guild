@@ -34,7 +34,7 @@ import java.util.concurrent.CompletableFuture
 import love.forte.simbot.qguild.model.Channel as QGSourceChannel
 
 /**
- * 一个帖子类型的频道。
+ * 一个论坛类型的频道。
  * 是 [QGChannel] 的子类型之一。
  *
  * [QGForumChannel] 内包含一个类型为 [ChannelType.FORUM] 的频道信息。
