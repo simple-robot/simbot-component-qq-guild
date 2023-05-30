@@ -24,13 +24,13 @@ import love.forte.simbot.component.qguild.event.*
 import love.forte.simbot.component.qguild.forum.QGForumChannel
 import love.forte.simbot.component.qguild.internal.QGBotImpl
 import love.forte.simbot.component.qguild.internal.forum.asForumChannel
-import love.forte.simbot.component.qguild.internal.utils.getValue
-import love.forte.simbot.component.qguild.internal.utils.nowTimeMillis
+import love.forte.simbot.delegate.getValue
+import love.forte.simbot.delegate.stringID
+import love.forte.simbot.delegate.timestamp
 import love.forte.simbot.qguild.event.OpenForumPostData
 import love.forte.simbot.qguild.event.OpenForumReplyData
 import love.forte.simbot.qguild.event.OpenForumThreadData
 import love.forte.simbot.qguild.model.forum.ForumSourceInfo
-import love.forte.simbot.randomID
 
 
 internal suspend fun QGBotImpl.forumChannel(data: ForumSourceInfo): QGForumChannel {
@@ -49,8 +49,8 @@ internal class QGOpenForumThreadCreateEventImpl(
     override val eventRaw: String,
     override val sourceEventEntity: OpenForumThreadData,
 ) : QGOpenForumThreadCreateEvent() {
-    override val id: ID = randomID()
-    override val timestamp: Timestamp by nowTimeMillis
+    override val id: ID by stringID { random }
+    override val timestamp: Timestamp by timestamp { now }
 
     override suspend fun channel(): QGForumChannel = bot.forumChannel(sourceEventEntity)
     override suspend fun author(): QGMember = bot.author(sourceEventEntity)
@@ -61,8 +61,8 @@ internal class QGOpenForumThreadUpdateEventImpl(
     override val eventRaw: String,
     override val sourceEventEntity: OpenForumThreadData,
 ) : QGOpenForumThreadUpdateEvent() {
-    override val id: ID = randomID()
-    override val timestamp: Timestamp by nowTimeMillis
+    override val id: ID by stringID { random }
+    override val timestamp: Timestamp by timestamp { now }
 
     override suspend fun channel(): QGForumChannel = bot.forumChannel(sourceEventEntity)
     override suspend fun author(): QGMember = bot.author(sourceEventEntity)
@@ -73,8 +73,8 @@ internal class QGOpenForumThreadDeleteEventImpl(
     override val eventRaw: String,
     override val sourceEventEntity: OpenForumThreadData,
 ) : QGOpenForumThreadDeleteEvent() {
-    override val id: ID = randomID()
-    override val timestamp: Timestamp by nowTimeMillis
+    override val id: ID by stringID { random }
+    override val timestamp: Timestamp by timestamp { now }
 
     override suspend fun channel(): QGForumChannel = bot.forumChannel(sourceEventEntity)
     override suspend fun author(): QGMember = bot.author(sourceEventEntity)
@@ -86,8 +86,8 @@ internal class QGOpenForumPostCreateEventImpl(
     override val eventRaw: String,
     override val sourceEventEntity: OpenForumPostData,
 ) : QGOpenForumPostCreateEvent() {
-    override val id: ID = randomID()
-    override val timestamp: Timestamp by nowTimeMillis
+    override val id: ID by stringID { random }
+    override val timestamp: Timestamp by timestamp { now }
 
     override suspend fun channel(): QGForumChannel = bot.forumChannel(sourceEventEntity)
     override suspend fun author(): QGMember = bot.author(sourceEventEntity)
@@ -98,8 +98,8 @@ internal class QGOpenForumPostDeleteEventImpl(
     override val eventRaw: String,
     override val sourceEventEntity: OpenForumPostData,
 ) : QGOpenForumPostDeleteEvent() {
-    override val id: ID = randomID()
-    override val timestamp: Timestamp by nowTimeMillis
+    override val id: ID by stringID { random }
+    override val timestamp: Timestamp by timestamp { now }
 
     override suspend fun channel(): QGForumChannel = bot.forumChannel(sourceEventEntity)
     override suspend fun author(): QGMember = bot.author(sourceEventEntity)
@@ -110,8 +110,8 @@ internal class QGOpenForumReplyCreateEventImpl(
     override val eventRaw: String,
     override val sourceEventEntity: OpenForumReplyData,
 ) : QGOpenForumReplyCreateEvent() {
-    override val id: ID = randomID()
-    override val timestamp: Timestamp by nowTimeMillis
+    override val id: ID by stringID { random }
+    override val timestamp: Timestamp by timestamp { now }
 
     override suspend fun channel(): QGForumChannel = bot.forumChannel(sourceEventEntity)
     override suspend fun author(): QGMember = bot.author(sourceEventEntity)
@@ -122,8 +122,8 @@ internal class QGOpenForumReplyDeleteEventImpl(
     override val eventRaw: String,
     override val sourceEventEntity: OpenForumReplyData,
 ) : QGOpenForumReplyDeleteEvent() {
-    override val id: ID = randomID()
-    override val timestamp: Timestamp by nowTimeMillis
+    override val id: ID by stringID { random }
+    override val timestamp: Timestamp by timestamp { now }
 
     override suspend fun channel(): QGForumChannel = bot.forumChannel(sourceEventEntity)
     override suspend fun author(): QGMember = bot.author(sourceEventEntity)
