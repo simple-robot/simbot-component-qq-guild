@@ -116,7 +116,7 @@ kotlin {
 ////        "watchosDeviceArm64",
 //    )
 
-    val targets = NativeTargets.Official.all.intersect(NativeTargets.Ktor.all) + setOf("mingwX64")
+    val targets = NativeTargets.Official.all.intersect(NativeTargets.KtorClient.all)
 
 
     targets {
@@ -160,6 +160,8 @@ kotlin {
                 api(project(":simbot-component-qq-guild-api"))
                 api(simbotLogger)
                 api(simbotUtilLoop)
+                api(simbotUtilSuspendTransformer)
+                compileOnly(simbotUtilAnnotations)
                 api(libs.ktor.client.ws)
                 api("org.jetbrains.kotlinx:atomicfu:${libs.versions.atomicfu.get()}")
             }
@@ -174,7 +176,7 @@ kotlin {
 
         getByName("jvmMain") {
             dependencies {
-                compileOnly(simbotApi) // use @Api4J annotation
+                compileOnly(simbotUtilAnnotations) // use @Api4J annotation
             }
         }
 

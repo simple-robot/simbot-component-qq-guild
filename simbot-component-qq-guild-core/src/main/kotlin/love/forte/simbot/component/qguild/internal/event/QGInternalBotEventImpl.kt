@@ -22,17 +22,17 @@ import love.forte.simbot.Timestamp
 import love.forte.simbot.component.qguild.event.QGBotRegisteredEvent
 import love.forte.simbot.component.qguild.event.QGBotStartedEvent
 import love.forte.simbot.component.qguild.internal.QGBotImpl
-import love.forte.simbot.component.qguild.internal.utils.getValue
-import love.forte.simbot.component.qguild.internal.utils.nowTimeMillis
-import love.forte.simbot.randomID
+import love.forte.simbot.delegate.getValue
+import love.forte.simbot.delegate.stringID
+import love.forte.simbot.delegate.timestamp
 
 
 internal class QGBotRegisteredEventImpl(override val bot: QGBotImpl) : QGBotRegisteredEvent() {
-    override val timestamp: Timestamp by nowTimeMillis
-    override val id: ID = randomID()
+    override val timestamp: Timestamp by timestamp { now }
+    override val id: ID by stringID { random }
 }
 
 internal class QGBotStartedEventImpl(override val bot: QGBotImpl) : QGBotStartedEvent() {
-    override val timestamp: Timestamp by nowTimeMillis
-    override val id: ID = randomID()
+    override val timestamp: Timestamp by timestamp { now }
+    override val id: ID by stringID { random }
 }

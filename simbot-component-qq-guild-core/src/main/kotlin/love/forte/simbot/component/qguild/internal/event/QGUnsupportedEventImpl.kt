@@ -18,11 +18,8 @@
 package love.forte.simbot.component.qguild.internal.event
 
 import love.forte.simbot.FragileSimbotApi
-import love.forte.simbot.Timestamp
 import love.forte.simbot.component.qguild.QGBot
 import love.forte.simbot.component.qguild.event.QGUnsupportedEvent
-import love.forte.simbot.component.qguild.internal.utils.getValue
-import love.forte.simbot.component.qguild.internal.utils.nowTimeMillis
 import love.forte.simbot.qguild.event.Signal
 
 
@@ -35,6 +32,4 @@ internal data class QGUnsupportedEventImpl(
     override val bot: QGBot,
     override val sourceEventEntity: Signal.Dispatch,
     override val eventRaw: String
-) : QGUnsupportedEvent() {
-    override val timestamp: Timestamp by nowTimeMillis
-}
+) : QGUnsupportedEvent()

@@ -26,8 +26,6 @@ import love.forte.simbot.component.qguild.event.QGGuildDeleteEvent
 import love.forte.simbot.component.qguild.event.QGGuildUpdateEvent
 import love.forte.simbot.component.qguild.internal.QGBotImpl
 import love.forte.simbot.component.qguild.internal.QGGuildImpl
-import love.forte.simbot.component.qguild.internal.utils.getValue
-import love.forte.simbot.component.qguild.internal.utils.nowTimeMillis
 import love.forte.simbot.qguild.event.EventGuild
 
 internal class QGGuildCreateEventImpl(
@@ -36,8 +34,9 @@ internal class QGGuildCreateEventImpl(
     override val bot: QGBotImpl,
     private val _guild: QGGuildImpl,
 ) : QGGuildCreateEvent() {
-    override val changedTime: Timestamp by nowTimeMillis
-    override val id: ID get() = tcgGuildModifyId(0, bot.id, sourceEventEntity.id, changedTime, hashCode())
+    private val currentTimeMillis = System.currentTimeMillis()
+    override val changedTime: Timestamp get() = Timestamp.byMillisecond(currentTimeMillis)
+    override val id: ID get() = tcgGuildModifyId(0, bot.id, sourceEventEntity.id, currentTimeMillis, hashCode())
     override suspend fun guild(): QGGuild = _guild
 }
 
@@ -48,8 +47,9 @@ internal class QGGuildUpdateEventImpl(
     override val bot: QGBotImpl,
     private val _guild: QGGuildImpl,
 ) : QGGuildUpdateEvent() {
-    override val changedTime: Timestamp by nowTimeMillis
-    override val id: ID get() = tcgGuildModifyId(1, bot.id, sourceEventEntity.id, changedTime, hashCode())
+    private val currentTimeMillis = System.currentTimeMillis()
+    override val changedTime: Timestamp get() = Timestamp.byMillisecond(currentTimeMillis)
+    override val id: ID get() = tcgGuildModifyId(1, bot.id, sourceEventEntity.id, currentTimeMillis, hashCode())
     override suspend fun guild(): QGGuild = _guild
 }
 
@@ -60,12 +60,13 @@ internal class QGGuildDeleteEventImpl(
     override val bot: QGBotImpl,
     private val _guild: QGGuildImpl?,
 ) : QGGuildDeleteEvent() {
-    override val changedTime: Timestamp by nowTimeMillis
-    override val id: ID get() = tcgGuildModifyId(2, bot.id, sourceEventEntity.id, changedTime, hashCode())
+    private val currentTimeMillis = System.currentTimeMillis()
+    override val changedTime: Timestamp get() = Timestamp.byMillisecond(currentTimeMillis)
+    override val id: ID get() = tcgGuildModifyId(2, bot.id, sourceEventEntity.id, currentTimeMillis, hashCode())
     @FragileSimbotApi
     override val guild: QGGuild? get() = _guild
 }
 
 
-private fun tcgGuildModifyId(t: Int, sourceBot: ID, sourceGuild: String, timestamp: Timestamp, hash: Int): ID =
-    "$t$sourceBot.${timestamp.second}.$sourceGuild.$hash".ID
+private fun tcgGuildModifyId(t: Int, sourceBot: ID, sourceGuild: String, timestamp: Long, hash: Int): ID =
+    "$t$sourceBot.$timestamp.$sourceGuild.$hash".ID

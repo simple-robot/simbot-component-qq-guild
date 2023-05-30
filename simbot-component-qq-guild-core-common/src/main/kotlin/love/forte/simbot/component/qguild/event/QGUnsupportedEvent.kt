@@ -20,11 +20,13 @@ package love.forte.simbot.component.qguild.event
 import love.forte.simbot.FragileSimbotApi
 import love.forte.simbot.ID
 import love.forte.simbot.Timestamp
+import love.forte.simbot.delegate.getValue
+import love.forte.simbot.delegate.stringID
+import love.forte.simbot.delegate.timestamp
 import love.forte.simbot.event.BaseEventKey
 import love.forte.simbot.event.Event
 import love.forte.simbot.message.doSafeCast
 import love.forte.simbot.qguild.event.Signal
-import love.forte.simbot.randomID
 
 
 /**
@@ -50,12 +52,12 @@ public abstract class QGUnsupportedEvent : QGEvent<Signal.Dispatch>() {
     /**
      * 事件ID。一个随机字符串。
      */
-    override val id: ID = randomID()
+    override val id: ID by stringID { random }
 
     /**
-     * 事件构建时间。
+     * 事件构建时间，即此对象被构建的时间
      */
-    abstract override val timestamp: Timestamp
+    override val timestamp: Timestamp by timestamp { now }
 
     /**
      * 原始的标准库事件对象。

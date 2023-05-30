@@ -20,7 +20,7 @@ import love.forte.gradle.common.core.project.Version
 import love.forte.gradle.common.core.project.minus
 import love.forte.gradle.common.core.project.version as v
 
-val simbotVersion = v(3, 0, 0)
+val simbotVersion = v(3, 1, 0)
 //- v("RC", 3)
 
 fun simbot(name: String, version: String = simbotVersion.toString()): String = "love.forte.simbot:simbot-$name:$version"
@@ -33,6 +33,8 @@ val simbotLoggerJvm = simbot("logger-jvm")
 val simbotLoggerSlf4jImpl = simbot("logger-slf4j-impl")
 
 val simbotUtilLoop = "love.forte.simbot.util:simbot-util-stage-loop:$simbotVersion"
+val simbotUtilSuspendTransformer = "love.forte.simbot.util:simbot-util-suspend-transformer:$simbotVersion"
+val simbotUtilAnnotations = "love.forte.simbot.util:simbot-annotations:$simbotVersion"
 
 const val SIMBOT_GROUP = "love.forte.simbot"
 
@@ -60,7 +62,7 @@ object P {
             0, 0
         )
 
-        private val alphaSuffix = v("alpha", 8)
+        private val alphaSuffix = v("alpha", 9)
 
         override val version = baseVersion - alphaSuffix
         val snapshotVersion = baseVersion - (alphaSuffix - Version.SNAPSHOT)

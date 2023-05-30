@@ -20,9 +20,10 @@
 package love.forte.simbot.qguild
 
 import kotlinx.coroutines.future.future
+import love.forte.simbot.Api4J
 import love.forte.simbot.qguild.api.QQGuildApi
+import love.forte.simbot.utils.runInNoScopeBlocking
 import java.util.concurrent.CompletableFuture
-
 
 /**
  * @see requestBlocking

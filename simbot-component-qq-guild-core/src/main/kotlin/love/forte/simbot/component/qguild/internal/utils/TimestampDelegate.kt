@@ -17,19 +17,16 @@
 
 package love.forte.simbot.component.qguild.internal.utils
 
-import love.forte.simbot.Timestamp
-import kotlin.reflect.KProperty
+///**
+// * 使用一个毫秒时间戳代理为 [Timestamp]. 可用于减少 [Timestamp] 对象的快速急迫产生，
+// * 但是会使其每次获取都得到新的实例。
+// *
+// */
+//@Suppress("NOTHING_TO_INLINE")
+//internal inline operator fun Long.getValue(thisRef: Any?, property: KProperty<*>): Timestamp =
+//    Timestamp.byMillisecond(this)
 
-/**
- * 使用一个毫秒时间戳代理为 [Timestamp]. 可用于减少 [Timestamp] 对象的快速急迫产生，
- * 但是会使其每次获取都得到新的实例。
- *
- */
-@Suppress("NOTHING_TO_INLINE")
-internal inline operator fun Long.getValue(thisRef: Any?, property: KProperty<*>): Timestamp =
-    Timestamp.byMillisecond(this)
-
-/**
- * 当前系统毫秒时间戳
- */
-internal inline val nowTimeMillis: Long get() = System.currentTimeMillis()
+///**
+// * 当前系统毫秒时间戳
+// */
+//internal inline val nowTimeMillis: Long get() = System.currentTimeMillis()

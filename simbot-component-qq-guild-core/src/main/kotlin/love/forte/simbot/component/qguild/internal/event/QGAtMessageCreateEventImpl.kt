@@ -36,6 +36,7 @@ import love.forte.simbot.qguild.api.channel.GetChannelApi
 import love.forte.simbot.qguild.api.member.GetMemberApi
 import love.forte.simbot.qguild.ifNotFoundThenNoSuch
 import love.forte.simbot.qguild.model.Message
+import java.util.*
 
 
 /**
@@ -51,9 +52,7 @@ internal class QGAtMessageCreateEventImpl(
     @OptIn(ExperimentalSimbotApi::class)
     override val timestamp: Timestamp get() = sourceEventEntity.timestamp.toTimestamp()
 
-    override val id: ID
-        get() = "${sourceEventEntity.guildId}.${sourceEventEntity.channelId}.${sourceEventEntity.id}.${timestamp.second}".ID
-
+    override val id: ID get() = "${sourceEventEntity.guildId}.${sourceEventEntity.channelId}.${sourceEventEntity.id}.${Base64.getEncoder().encodeToString(sourceEventEntity.timestamp.toByteArray())}".ID
 
     override val messageContent: QGReceiveMessageContentImpl = QGReceiveMessageContentImpl(sourceEventEntity)
 
