@@ -84,6 +84,20 @@ public class DmsSendApi private constructor(
             builder.contentType = ContentType.MultiPart.FormData
         }
     }
+
+    /*
+        TODO: Send DMS MissingField
+        {
+            "code": 304023,
+            "message": "push message is waiting for audit now",
+            "data": {
+                "message_audit": {
+                    "audit_id": "50db3d4b-9589-4497-9a1e-75e5532262ba"
+                }
+            }
+        }
+     */
+
 }
 
 /**

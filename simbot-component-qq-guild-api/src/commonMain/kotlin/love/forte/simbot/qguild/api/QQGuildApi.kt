@@ -409,7 +409,7 @@ private fun Collection<*>.elementSerializer(module: SerializersModule): KSeriali
 
 @Suppress("UNCHECKED_CAST")
 @OptIn(ExperimentalSerializationApi::class)
-private fun <R> QQGuildApi<R>.decodeResponse(
+internal fun <R> QQGuildApi<R>.decodeResponse(
     decoder: StringFormat, remainingText: String
 ): R {
     if (resultDeserializer === Unit.serializer()) {
