@@ -22,6 +22,7 @@ import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import io.ktor.utils.io.core.*
 import kotlinx.serialization.*
+import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.encoding.Encoder
@@ -184,6 +185,8 @@ public class MessageSendApi private constructor(
         /**
          * 选填，引用消息
          */
+        @SerialName("message_reference")
+        @IgnoreWhenUseImageFormData
         public val messageReference: Message.Reference?,
         /**
          * 选填，图片url地址，平台会转存该图片，用于下发图片消息
@@ -192,10 +195,12 @@ public class MessageSendApi private constructor(
         /**
          * 选填，要回复的消息id, 在 `AT_CREATE_MESSAGE` 事件中获取。
          */
+        @SerialName("msg_id")
         public val msgId: String?,
         /**
          * 选填，要回复的事件id, 在各事件对象中获取。
          */
+        @SerialName("eventId")
         public val eventId: String?,
         /**
          * 选填，markdown 消息
@@ -334,7 +339,7 @@ public inline fun MessageSendApi.Factory.create(channelId: String, builder: Buil
 @InternalApi
 public expect abstract class BaseMessageSendBodyBuilder() {
     public open var fileImage: Any?
-    protected set
+        protected set
     /*
      * 追加额外的平台功能，但是不能有抽象方法
      */
@@ -359,10 +364,10 @@ internal fun MessageSendApi.Body.toRealBody(json: Json): Any {
         appendFileImage(fileImage)
     }
 
-
     return MultiPartFormDataContent(formParts)
 }
 
+private const val FILE_IMAGE_PROPERTY_NAME = "file_image"
 
 /**
  * support:
@@ -435,29 +440,48 @@ private class FormDataDecoder(
     private val json: Json,
     private val formBuilder: FormBuilder,
 ) : Encoder, CompositeEncoder {
+
+    private inline fun check(descriptor: SerialDescriptor, index: Int, block: () -> Unit) {
+        if (descriptor.getElementAnnotations(index).any { it is IgnoreWhenUseImageFormData }) {
+            return
+        }
+
+        block()
+    }
+
     override fun encodeBooleanElement(descriptor: SerialDescriptor, index: Int, value: Boolean) {
-        val name = descriptor.getElementName(index)
-        formBuilder.append(name, value.toString())
+        check(descriptor, index) {
+            val name = descriptor.getElementName(index)
+            formBuilder.append(name, value.toString())
+        }
     }
 
     override fun encodeByteElement(descriptor: SerialDescriptor, index: Int, value: Byte) {
-        val name = descriptor.getElementName(index)
-        formBuilder.append(name, value)
+        check(descriptor, index) {
+            val name = descriptor.getElementName(index)
+            formBuilder.append(name, value)
+        }
     }
 
     override fun encodeCharElement(descriptor: SerialDescriptor, index: Int, value: Char) {
-        val name = descriptor.getElementName(index)
-        formBuilder.append(name, value.toString())
+        check(descriptor, index) {
+            val name = descriptor.getElementName(index)
+            formBuilder.append(name, value.toString())
+        }
     }
 
     override fun encodeDoubleElement(descriptor: SerialDescriptor, index: Int, value: Double) {
-        val name = descriptor.getElementName(index)
-        formBuilder.append(name, value)
+        check(descriptor, index) {
+            val name = descriptor.getElementName(index)
+            formBuilder.append(name, value)
+        }
     }
 
     override fun encodeFloatElement(descriptor: SerialDescriptor, index: Int, value: Float) {
-        val name = descriptor.getElementName(index)
-        formBuilder.append(name, value)
+        check(descriptor, index) {
+            val name = descriptor.getElementName(index)
+            formBuilder.append(name, value)
+        }
     }
 
     override fun encodeInlineElement(descriptor: SerialDescriptor, index: Int): Encoder {
@@ -465,13 +489,17 @@ private class FormDataDecoder(
     }
 
     override fun encodeIntElement(descriptor: SerialDescriptor, index: Int, value: Int) {
-        val name = descriptor.getElementName(index)
-        formBuilder.append(name, value)
+        check(descriptor, index) {
+            val name = descriptor.getElementName(index)
+            formBuilder.append(name, value)
+        }
     }
 
     override fun encodeLongElement(descriptor: SerialDescriptor, index: Int, value: Long) {
-        val name = descriptor.getElementName(index)
-        formBuilder.append(name, value)
+        check(descriptor, index) {
+            val name = descriptor.getElementName(index)
+            formBuilder.append(name, value)
+        }
     }
 
     @ExperimentalSerializationApi
@@ -482,8 +510,14 @@ private class FormDataDecoder(
         value: T?,
     ) {
         if (value != null) {
-            val name = descriptor.getElementName(index)
-            formBuilder.append(name, json.encodeToString(serializer, value))
+            check(descriptor, index) {
+                val name = descriptor.getElementName(index)
+                if (serializer.descriptor.kind !is PrimitiveKind) {
+                    return
+                }
+
+                formBuilder.append(name, json.encodeToString(serializer, value))
+            }
         }
     }
 
@@ -553,3 +587,10 @@ private class FormDataDecoder(
     }
 }
 
+/**
+ * 标记一个属性在使用 `form-data` 发送消息的时候进行忽略
+ */
+@OptIn(ExperimentalSerializationApi::class)
+@MetaSerializable
+@Target(AnnotationTarget.PROPERTY)
+private annotation class IgnoreWhenUseImageFormData

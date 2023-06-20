@@ -21,11 +21,11 @@ package love.forte.simbot.component.qguild.message
 /**
  * 用于发送的图片类型
  */
-public class QGOfflineImage
+public class QGOfflineImage // TODO
 
 
 /**
  * 图片类型
  *
  */
-public class QGImage
+public class QGImage // TODO
