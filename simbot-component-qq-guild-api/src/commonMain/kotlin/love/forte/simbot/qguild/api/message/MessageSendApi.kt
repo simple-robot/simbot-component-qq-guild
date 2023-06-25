@@ -22,7 +22,6 @@ import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import io.ktor.utils.io.core.*
 import kotlinx.serialization.*
-import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.encoding.Encoder
@@ -186,7 +185,7 @@ public class MessageSendApi private constructor(
          * 选填，引用消息
          */
         @SerialName("message_reference")
-        @IgnoreWhenUseImageFormData
+        @IgnoreWhenUseImageFormData // TODO 疑似不支持使用form转json发送，暂时忽略
         public val messageReference: Message.Reference?,
         /**
          * 选填，图片url地址，平台会转存该图片，用于下发图片消息
@@ -385,28 +384,28 @@ private fun FormBuilder.appendFileImage(fileImage: Any?) {
             val imgHeaders = Headers.build {
                 append(HttpHeaders.ContentDisposition, "filename=\"image\"")
             }
-            append(key = "file_image", fileImage, imgHeaders)
+            append(key = FILE_IMAGE_PROPERTY_NAME, fileImage, imgHeaders)
         }
 
         is InputProvider -> {
             val imgHeaders = Headers.build {
                 append(HttpHeaders.ContentDisposition, "filename=\"image\"")
             }
-            append(key = "file_image", fileImage, imgHeaders)
+            append(key = FILE_IMAGE_PROPERTY_NAME, fileImage, imgHeaders)
         }
 
         is ByteReadPacket -> {
             val imgHeaders = Headers.build {
                 append(HttpHeaders.ContentDisposition, "filename=\"image\"")
             }
-            append(key = "file_image", fileImage, imgHeaders)
+            append(key = FILE_IMAGE_PROPERTY_NAME, fileImage, imgHeaders)
         }
 
         is ChannelProvider -> {
             val imgHeaders = Headers.build {
                 append(HttpHeaders.ContentDisposition, "filename=\"image\"")
             }
-            append(key = "file_image", fileImage, imgHeaders)
+            append(key = FILE_IMAGE_PROPERTY_NAME, fileImage, imgHeaders)
         }
 
         else -> {
@@ -512,11 +511,15 @@ private class FormDataDecoder(
         if (value != null) {
             check(descriptor, index) {
                 val name = descriptor.getElementName(index)
-                if (serializer.descriptor.kind !is PrimitiveKind) {
-                    return
+//                val kind = serializer.descriptor.kind
+                when (value) {
+                    is CharSequence -> formBuilder.append(name, value.toString())
+                    is Char -> formBuilder.append(name, value.toString())
+                    else -> {
+                        val jsonValue = json.encodeToString(serializer, value)
+                        formBuilder.append(name, jsonValue)
+                    }
                 }
-
-                formBuilder.append(name, json.encodeToString(serializer, value))
             }
         }
     }
