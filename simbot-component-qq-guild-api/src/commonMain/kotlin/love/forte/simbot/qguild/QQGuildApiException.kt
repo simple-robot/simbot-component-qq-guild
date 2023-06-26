@@ -37,13 +37,13 @@ public open class QQGuildApiException : RuntimeException {
     public val info: ErrInfo?
     public val value: Int
     public val description: String
-    
+
     public constructor(value: Int, description: String) : super("$value: $description") {
         this.info = null
         this.value = value
         this.description = description
     }
-    
+
     public constructor(
         info: ErrInfo?,
         value: Int,
@@ -53,28 +53,32 @@ public open class QQGuildApiException : RuntimeException {
         this.value = value
         this.description = description
     }
-    
-}
 
-@Suppress("ConvertSecondaryConstructorToPrimary")
-private class QQGuildApiExceptionCopied : QQGuildApiException {
-    constructor(info: ErrInfo?, value: Int, description: String) : super(info, value, description)
 }
 
 /**
  * @suppress
  */
-public fun QQGuildApiException.copyCurrent(): QQGuildApiException {
-    return if (this is QQGuildApiExceptionCopied) {
-        this
-    } else {
-        QQGuildApiExceptionCopied(
-            info, value, description
-        ).apply {
-            initCause0(this@copyCurrent)
-        }
-    }
+@Deprecated("use 'addStackTrace'", ReplaceWith("addStackTrace()"))
+public fun QQGuildApiException.copyCurrent(): QQGuildApiException = addStackTrace()
+
+/**
+ *
+ * @suppress internal API to add suppressed for api exception
+ */
+@InternalApi
+public inline fun <E : QQGuildApiException> E.addStackTrace(name: String? = null): E {
+    addSuppressed(APIStackException(name))
+    return this
 }
+
+/**
+ *
+ * @see addStackTrace
+ */
+@InternalApi
+@PublishedApi
+internal class APIStackException @PublishedApi internal constructor(message: String? = null) : Exception(message)
 
 /**
  * 判断 [QQGuildApiException.value] 的值是否为 `404`
@@ -89,21 +93,25 @@ public inline val QQGuildApiException.isUnauthorized: Boolean get() = value == 4
 /**
  * 如果 [QQGuildApiException.isNotFound] 为 `true`, 得到null，否则抛出此异常
  */
-public inline fun <reified T> QQGuildApiException.ifNotFoundThenNull(throwCopy: Boolean = true): T? = if (isNotFound) null else if (throwCopy) throw this.copyCurrent() else throw this
+public inline fun <reified T> QQGuildApiException.ifNotFoundThenNull(throwCopy: Boolean = true): T? =
+    if (isNotFound) null else if (throwCopy) throw this.addStackTrace() else throw this
 
 /**
  * 如果 [QQGuildApiException.isNotFound] 为 `true`, 得到null，否则抛出此异常
  */
-public inline fun <reified T> QQGuildApiException.ifNotFoundThen(throwCopy: Boolean = true, value: () -> T): T = if (isNotFound) value() else if (throwCopy) throw this.copyCurrent() else throw this
+public inline fun <reified T> QQGuildApiException.ifNotFoundThen(throwCopy: Boolean = true, value: () -> T): T =
+    if (isNotFound) value() else if (throwCopy) throw this.addStackTrace() else throw this
+
 
 /**
  * 如果 [QQGuildApiException.isNotFound] 为 `true`, 得到null，否则抛出此异常
  */
-public inline fun QQGuildApiException.ifNotFoundThenNoSuch(throwCopy: Boolean = true, value: () -> String): Nothing = if (isNotFound) {
-    throw NoSuchElementException(value()).apply { initCause0(this) }
-} else {
-    if (throwCopy) throw this.copyCurrent() else throw this
-}
+public inline fun QQGuildApiException.ifNotFoundThenNoSuch(throwCopy: Boolean = true, value: () -> String): Nothing =
+    if (isNotFound) {
+        throw NoSuchElementException(value()).apply { initCause0(this) }
+    } else {
+        if (throwCopy) throw this.addStackTrace() else throw this
+    }
 
 /**
  * 提供 [ErrInfo] 和 [HttpStatusCode] ，构建一个 [QQGuildApiException] 并抛出。

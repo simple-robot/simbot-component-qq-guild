@@ -28,6 +28,7 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import love.forte.simbot.qguild.InternalApi
+import love.forte.simbot.qguild.api.MessageAuditedException
 import love.forte.simbot.qguild.api.QQGuildApi
 import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimplePostApiDescription
@@ -112,7 +113,19 @@ import kotlin.jvm.JvmSynthetic
  *
  * 可参考使用 [ContentTextDecoder] 和 [ContentTextEncoder]
  *
+ * ## 消息审核
+ *
+ * > 其中推送、回复消息的 code 错误码 `304023`、`304024` 会在 响应数据包 `data` 中返回 `MessageAudit` 审核消息的信息
+ *
+ * 当响应结果为上述错误码时，请求实体对象结果的API时会抛出 [MessageAuditedException] 异常并携带相关的对象信息。
+ *
+ * 审核相关更多参考异常类型 [MessageAuditedException] 的文档描述。
+ *
+ * <hr />
+ *
  * 更多参考 [文档](https://bot.q.qq.com/wiki/develop/api/openapi/message/message_format.html)
+ *
+ * @throws MessageAuditedException
  *
  * @author ForteScarlet
  */

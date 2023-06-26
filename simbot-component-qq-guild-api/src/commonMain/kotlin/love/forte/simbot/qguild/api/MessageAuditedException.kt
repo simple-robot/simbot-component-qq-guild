@@ -17,9 +17,12 @@
 
 package love.forte.simbot.qguild.api
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import love.forte.simbot.qguild.ApiModel
 import love.forte.simbot.qguild.ErrInfo
+import love.forte.simbot.qguild.InternalApi
 import love.forte.simbot.qguild.QQGuildApiException
-import love.forte.simbot.qguild.model.MessageAuditedId
 
 
 /**
@@ -46,4 +49,53 @@ public class MessageAuditedException : QQGuildApiException {
     ) : super(info, value, description) {
         this.messageAuditedId = messageAuditedId
     }
+
+
+    public companion object {
+        private val AUDIT_ERROR_CODES = setOf(304023, 304024)
+
+        /**
+         * TODO
+         */
+        @InternalApi
+        internal fun isAuditResultCode(code: Int): Boolean = code in AUDIT_ERROR_CODES
+    }
 }
+
+
+// TODO
+// see https://bot.q.qq.com/wiki/develop/api/openapi/message/post_messages.html
+// 详见错误码。
+//
+//其中推送、回复消息的 code 错误码 304023、304024 会在 响应数据包 data 中返回 MessageAudit 审核消息的信息
+
+/**
+ *
+ *
+ * @see MessageAuditedException
+ */
+@Serializable
+public data class MessageAudit(@SerialName("message_audit") val messageAudit: MessageAuditedId)
+
+
+/*
+{
+	"code": 304023,
+	"message": "push message is waiting for audit now",
+	"data": {
+		"message_audit": {
+			"audit_id": "50db3d4b-9589-4497-9a1e-75e5532262ba"
+		}
+	}
+}
+ */
+
+// Only id?
+
+/**
+ *
+ *
+ */
+@ApiModel
+@Serializable
+public data class MessageAuditedId(@SerialName("audit_id") val auditId: String)
