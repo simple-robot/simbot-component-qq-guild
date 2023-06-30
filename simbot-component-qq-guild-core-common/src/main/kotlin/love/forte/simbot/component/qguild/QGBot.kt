@@ -26,6 +26,8 @@ import love.forte.simbot.definition.Group
 import love.forte.simbot.definition.GuildBot
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.message.Image
+import love.forte.simbot.qguild.QQGuildApiException
+import love.forte.simbot.qguild.model.ChannelType
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.Items.Companion.emptyItems
 import love.forte.simbot.qguild.Bot as QGSourceBot
@@ -188,6 +190,27 @@ public interface QGBot : Bot {
      */
     @JST(blockingBaseName = "getGuild", blockingSuffix = "", asyncBaseName = "getGuild")
     override suspend fun guild(id: ID): QGGuild?
+
+    /**
+     * 直接获取指定ID的子频道。
+     *
+     * @see category
+     *
+     * @throws QQGuildApiException 请求失败，例如没有权限
+     */
+    @JST(blockingBaseName = "getChannel", blockingSuffix = "", asyncBaseName = "getChannel")
+    public suspend fun channel(channelId: ID): QGChannel?
+
+
+    /**
+     * 直接获取指定ID的子频道分类。
+     *
+     * @throws QQGuildApiException 请求失败，例如没有权限
+     * @throws IllegalStateException 当目标子频道的类型不属于 [分组类型][ChannelType.CATEGORY] 时
+     *
+     */
+    @JST(blockingBaseName = "getCategory", blockingSuffix = "", asyncBaseName = "getCategory")
+    public suspend fun category(channelId: ID): QGChannelCategory?
 
     /**
      * Deprecated: QQ频道BOT不存在'联系人'列表，始终得到 [emptyItems]。

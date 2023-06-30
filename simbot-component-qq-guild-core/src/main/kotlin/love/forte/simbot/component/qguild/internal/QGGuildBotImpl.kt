@@ -18,10 +18,7 @@
 package love.forte.simbot.component.qguild.internal
 
 import love.forte.simbot.ID
-import love.forte.simbot.component.qguild.QGBot
-import love.forte.simbot.component.qguild.QGGuildBot
-import love.forte.simbot.component.qguild.QQGuildBotManager
-import love.forte.simbot.component.qguild.QQGuildComponent
+import love.forte.simbot.component.qguild.*
 import love.forte.simbot.component.qguild.util.requestBy
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.literal
@@ -89,6 +86,10 @@ internal class QGGuildBotImpl(
 
     override suspend fun me(withCache: Boolean): User = bot.me(withCache)
     override suspend fun me(): User = bot.me()
+
+    override suspend fun channel(channelId: ID): QGChannel? = bot.channel(channelId)
+
+    override suspend fun category(channelId: ID): QGChannelCategory? = bot.category(channelId)
 
     override fun toString(): String {
         return "QGGuildBotImpl(bot=$bot, guildId=$guildId)"

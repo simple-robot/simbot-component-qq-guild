@@ -132,6 +132,15 @@ internal class QGBotImpl(
         }
     }
 
+    override suspend fun channel(channelId: ID): QGChannel? = channel(channelId.literal, null)
+
+    override suspend fun category(channelId: ID): QGChannelCategory? {
+        val channel = channel(id) ?: return null
+
+        return channel as? QGChannelCategory
+            ?: throw IllegalStateException("The type of channel(id=${channel.source.id}, name=${channel.source.name}) is not category (${ChannelType.CATEGORY}), but ${channel.source.type}")
+    }
+
     /**
      * @throws QQGuildApiException
      */
