@@ -17,6 +17,8 @@
 
 package love.forte.simbot.component.qguild
 
+import io.ktor.client.*
+import io.ktor.client.request.*
 import kotlinx.coroutines.CoroutineScope
 import love.forte.simbot.ExperimentalSimbotApi
 import love.forte.simbot.ID
@@ -27,6 +29,8 @@ import love.forte.simbot.definition.GuildMember
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.message.Text
+import love.forte.simbot.qguild.QQGuildApiException
+import love.forte.simbot.qguild.api.MessageAuditedException
 import love.forte.simbot.utils.item.Items
 import kotlin.time.Duration
 import love.forte.simbot.qguild.model.Member as QGSourceMember
@@ -66,6 +70,11 @@ public interface QGMember : GuildMember, CoroutineScope, QGObjectiveContainer<QG
 
     /**
      * 向目标成员发送私聊消息。
+     *
+     * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
+     * @throws QQGuildApiException 请求异常，例如无权限
+     * @throws UnsupportedOperationException 如果当前子频道类型不是文字子频道
+     * @throws MessageAuditedException 当响应状态为表示消息审核的 `304023`、`304024` 时
      */
     @JST
     override suspend fun send(message: Message): QGMessageReceipt
@@ -78,6 +87,11 @@ public interface QGMember : GuildMember, CoroutineScope, QGObjectiveContainer<QG
      *
      * 如果希望允许内嵌格式，请使用 [QGContentText] 消息类型而不是纯文本或 [Text] 。
      *
+     * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
+     * @throws QQGuildApiException 请求异常，例如无权限
+     * @throws UnsupportedOperationException 如果当前子频道类型不是文字子频道
+     * @throws MessageAuditedException 当响应状态为表示消息审核的 `304023`、`304024` 时
+     *
      * @see QGContentText
      */
     @JST
@@ -85,6 +99,11 @@ public interface QGMember : GuildMember, CoroutineScope, QGObjectiveContainer<QG
 
     /**
      * 向目标成员发送私聊消息。
+     *
+     * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
+     * @throws QQGuildApiException 请求异常，例如无权限
+     * @throws UnsupportedOperationException 如果当前子频道类型不是文字子频道
+     * @throws MessageAuditedException 当响应状态为表示消息审核的 `304023`、`304024` 时
      */
     @JST
     override suspend fun send(message: MessageContent): QGMessageReceipt

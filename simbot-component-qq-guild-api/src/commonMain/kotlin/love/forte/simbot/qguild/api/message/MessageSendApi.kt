@@ -177,7 +177,7 @@ public class MessageSendApi private constructor(
     /**
      * 使用当前API发送消息
      *
-     * @throws MessageAuditedException 当响应状态为 `304023`、`304024` 时
+     * @throws MessageAuditedException 当响应状态为表示消息审核的 `304023`、`304024` 时
      * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
      * @throws love.forte.simbot.qguild.QQGuildApiException 请求过程中出现了错误（http状态码 !in 200 .. 300）
      */
@@ -189,7 +189,7 @@ public class MessageSendApi private constructor(
      * 使用当前API发送消息
      *
      *
-     *  @throws MessageAuditedException 当响应状态为 `304023`、`304024` 时
+     *  @throws MessageAuditedException 当响应状态为表示消息审核的 `304023`、`304024` 时
      *  @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
      *  @throws love.forte.simbot.qguild.QQGuildApiException 请求过程中出现了错误（http状态码 !in 200 .. 300）
      */
