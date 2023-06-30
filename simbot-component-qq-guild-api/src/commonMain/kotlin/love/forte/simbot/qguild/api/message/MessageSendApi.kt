@@ -18,7 +18,10 @@
 
 package love.forte.simbot.qguild.api.message
 
+import io.ktor.client.*
+import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.utils.io.core.*
 import kotlinx.serialization.*
@@ -27,11 +30,10 @@ import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
+import love.forte.simbot.qguild.ErrInfo
 import love.forte.simbot.qguild.InternalApi
-import love.forte.simbot.qguild.api.MessageAuditedException
-import love.forte.simbot.qguild.api.QQGuildApi
-import love.forte.simbot.qguild.api.RouteInfoBuilder
-import love.forte.simbot.qguild.api.SimplePostApiDescription
+import love.forte.simbot.qguild.QQGuildApiException
+import love.forte.simbot.qguild.api.*
 import love.forte.simbot.qguild.api.message.MessageSendApi.Body.Builder
 import love.forte.simbot.qguild.message.ContentTextDecoder
 import love.forte.simbot.qguild.message.ContentTextEncoder
@@ -119,7 +121,8 @@ import kotlin.jvm.JvmSynthetic
  *
  * 当响应结果为上述错误码时，请求实体对象结果的API时会抛出 [MessageAuditedException] 异常并携带相关的对象信息。
  *
- * 审核相关更多参考异常类型 [MessageAuditedException] 的文档描述。
+ * 详见文档 [发送消息](https://bot.q.qq.com/wiki/develop/api/openapi/message/post_messages.html) 中的相关描述以及
+ * [MessageAuditedException] 的文档描述。
  *
  * <hr />
  *
@@ -169,6 +172,54 @@ public class MessageSendApi private constructor(
         if (body is MultiPartFormDataContent) {
             builder.contentType = ContentType.MultiPart.FormData
         }
+    }
+
+    /**
+     * 使用当前API发送消息
+     *
+     * @throws MessageAuditedException 当响应状态为 `304023`、`304024` 时
+     * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
+     * @throws love.forte.simbot.qguild.QQGuildApiException 请求过程中出现了错误（http状态码 !in 200 .. 300）
+     */
+    override suspend fun doRequest(client: HttpClient, server: Url, token: String, decoder: StringFormat): Message {
+        return super.doRequest(client, server, token, decoder)
+    }
+
+    /**
+     * 使用当前API发送消息
+     *
+     *
+     *  @throws MessageAuditedException 当响应状态为 `304023`、`304024` 时
+     *  @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
+     *  @throws love.forte.simbot.qguild.QQGuildApiException 请求过程中出现了错误（http状态码 !in 200 .. 300）
+     */
+    override suspend fun doRequestRaw(client: HttpClient, server: Url, token: String): String {
+        val resp: HttpResponse
+        val text = requestForText(client, server, token) { resp = it }
+
+        checkStatus(text, DefaultErrInfoDecoder, resp.status)
+
+        if (text.isEmpty() && resp.status.isSuccess()) {
+            return "{}"
+        }
+
+        if (resp.status == HttpStatusCode.Accepted) {
+            // decode as error data
+            val errorInfo = DefaultErrInfoDecoder.decodeFromString(ErrInfo.serializer(), text)
+            // maybe audited
+            if (MessageAuditedException.isAuditResultCode(errorInfo.code)) {
+                throw MessageAuditedException(
+                    DefaultErrInfoDecoder.decodeFromJsonElement(MessageAudit.serializer(), errorInfo.data).messageAudit,
+                    errorInfo,
+                    resp.status.value,
+                    resp.status.description
+                )
+            }
+
+            throw QQGuildApiException(errorInfo, resp.status.value, resp.status.description)
+        }
+
+        return text
     }
 
     /**

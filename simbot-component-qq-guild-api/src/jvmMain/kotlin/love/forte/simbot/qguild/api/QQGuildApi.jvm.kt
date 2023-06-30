@@ -198,5 +198,6 @@ private val logNameProcessor: HttpMethod.() -> String = run {
 /**
  * 日志对齐
  */
+@PublishedApi
 internal actual val HttpMethod.logName: String
     get() = logNameProcessor()

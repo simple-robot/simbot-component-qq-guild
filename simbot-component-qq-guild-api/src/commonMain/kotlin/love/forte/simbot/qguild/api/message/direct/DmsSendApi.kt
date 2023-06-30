@@ -17,12 +17,16 @@
 
 package love.forte.simbot.qguild.api.message.direct
 
+import io.ktor.client.*
+import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
-import love.forte.simbot.qguild.api.PostQQGuildApi
-import love.forte.simbot.qguild.api.RouteInfoBuilder
-import love.forte.simbot.qguild.api.SimplePostApiDescription
+import kotlinx.serialization.StringFormat
+import love.forte.simbot.qguild.ErrInfo
+import love.forte.simbot.qguild.QQGuildApiException
+import love.forte.simbot.qguild.api.*
 import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.qguild.api.message.toRealBody
 import love.forte.simbot.qguild.model.Message
@@ -85,18 +89,53 @@ public class DmsSendApi private constructor(
         }
     }
 
-    /*
-        TODO: Send DMS MissingField
-        {
-            "code": 304023,
-            "message": "push message is waiting for audit now",
-            "data": {
-                "message_audit": {
-                    "audit_id": "50db3d4b-9589-4497-9a1e-75e5532262ba"
-                }
-            }
-        }
+    /**
+     * 使用当前API发送消息
+     *
+     * @throws MessageAuditedException 当响应状态为 `304023`、`304024` 时
+     * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
+     * @throws love.forte.simbot.qguild.QQGuildApiException 请求过程中出现了错误（http状态码 !in 200 .. 300）
      */
+    override suspend fun doRequest(client: HttpClient, server: Url, token: String, decoder: StringFormat): Message {
+        return super.doRequest(client, server, token, decoder)
+    }
+
+    /**
+     * 使用当前API发送消息
+     *
+     *
+     * @throws MessageAuditedException 当响应状态为 `304023`、`304024` 时
+     * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
+     * @throws love.forte.simbot.qguild.QQGuildApiException 请求过程中出现了错误（http状态码 !in 200 .. 300）
+     */
+    override suspend fun doRequestRaw(client: HttpClient, server: Url, token: String): String {
+        val resp: HttpResponse
+        val text = requestForText(client, server, token) { resp = it }
+
+        checkStatus(text, DefaultErrInfoDecoder, resp.status)
+
+        if (text.isEmpty() && resp.status.isSuccess()) {
+            return "{}"
+        }
+
+        if (resp.status == HttpStatusCode.Accepted) {
+            // decode as error data
+            val errorInfo = DefaultErrInfoDecoder.decodeFromString(ErrInfo.serializer(), text)
+            // maybe audited
+            if (MessageAuditedException.isAuditResultCode(errorInfo.code)) {
+                throw MessageAuditedException(
+                    DefaultErrInfoDecoder.decodeFromJsonElement(MessageAudit.serializer(), errorInfo.data).messageAudit,
+                    errorInfo,
+                    resp.status.value,
+                    resp.status.description
+                )
+            }
+
+            throw QQGuildApiException(errorInfo, resp.status.value, resp.status.description)
+        }
+
+        return text
+    }
 
 }
 

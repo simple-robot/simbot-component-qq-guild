@@ -20,6 +20,8 @@ package love.forte.simbot.qguild
 import io.ktor.http.*
 import io.ktor.websocket.*
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
 
 /**
  * 初始化 cause, 并得到自身（或结果）
@@ -128,7 +130,7 @@ public fun ErrInfo.err(code: HttpStatusCode): Nothing {
  */
 @Suppress("MemberVisibilityCanBePrivate")
 @Serializable
-public data class ErrInfo(val code: Int, val message: String)
+public data class ErrInfo(val code: Int, val message: String, val data: JsonElement = JsonNull)
 
 /**
  * 提供一个 [CloseReason]，构建为一个 [QQGuildApiException] 并抛出。

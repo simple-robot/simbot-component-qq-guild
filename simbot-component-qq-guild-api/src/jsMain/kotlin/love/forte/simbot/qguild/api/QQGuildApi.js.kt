@@ -102,5 +102,6 @@ public actual abstract class PlatformQQGuildApi<out R> actual constructor() {
 /**
  * 日志对齐
  */
+@PublishedApi
 internal actual val HttpMethod.logName: String
     get() = defaultForLogName()

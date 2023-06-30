@@ -33,6 +33,9 @@ import love.forte.simbot.component.qguild.util.requestBy
 import love.forte.simbot.literal
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
+import love.forte.simbot.qguild.InternalApi
+import love.forte.simbot.qguild.QQGuildApiException
+import love.forte.simbot.qguild.addStackTrace
 import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.qguild.api.message.direct.CreateDmsApi
 import love.forte.simbot.qguild.api.message.direct.DmsSendApi
@@ -134,6 +137,7 @@ internal class QGMemberImpl(
         return DmsSendApi.create(dms.guildId, body).requestBy(bot).asReceipt()
     }
 
+    @OptIn(InternalApi::class)
     private suspend fun send0(bodyList: List<MessageSendApi.Body.Builder>): QGMessageReceipt {
         val dms = getDms()
 
@@ -142,9 +146,13 @@ internal class QGMemberImpl(
             return DmsSendApi.create(dms.guildId, body).requestBy(bot).asReceipt()
         }
 
-        return bodyList.map {
-            DmsSendApi.create(dms.guildId, it.build()).requestBy(bot)
-        }.asReceipt()
+        return try {
+            bodyList.map {
+                DmsSendApi.create(dms.guildId, it.build()).requestBy(bot)
+            }.asReceipt()
+        } catch (e: QQGuildApiException) {
+            throw e.addStackTrace("member.send")
+        }
     }
 
     override fun toString(): String {
