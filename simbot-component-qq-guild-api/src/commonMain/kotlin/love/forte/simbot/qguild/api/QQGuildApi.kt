@@ -31,15 +31,20 @@ import kotlinx.serialization.builtins.*
 import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
+import love.forte.simbot.logger.Logger
 import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.logger.isDebugEnabled
 import love.forte.simbot.qguild.ErrInfo
 import love.forte.simbot.qguild.InternalApi
 import love.forte.simbot.qguild.QQGuild
 import love.forte.simbot.qguild.QQGuildApiException
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.jvm.JvmSynthetic
 
-private val apiLogger = LoggerFactory.getLogger("love.forte.simbot.qguild.api")
+@PublishedApi
+internal val apiLogger: Logger = LoggerFactory.getLogger("love.forte.simbot.qguild.api")
 
 /**
  * [有关 traceID](https://bot.q.qq.com/wiki/develop/api/openapi/error/error.html#%E6%9C%89%E5%85%B3-traceid)
@@ -50,7 +55,8 @@ private val apiLogger = LoggerFactory.getLogger("love.forte.simbot.qguild.api")
  * 方便查询相关日志。
  *
  */
-private const val TRACE_ID_HEAD = "X-Tps-trace-ID"
+@PublishedApi
+internal const val TRACE_ID_HEAD: String = "X-Tps-trace-ID"
 
 
 /**
@@ -217,21 +223,8 @@ public abstract class QQGuildApi<out R> : PlatformQQGuildApi<R>() {
      */
     @JvmSynthetic
     override suspend fun doRequestRaw(client: HttpClient, server: Url, token: String): String {
-        val resp = request0(client, server, token)
-
-        val text = resp.bodyAsText()
-
-        if (apiLogger.isDebugEnabled) {
-            val traceId = resp.headers[TRACE_ID_HEAD]
-            apiLogger.debug(
-                "[{} {}] <===== status: {}, body: {}, traceID: {}",
-                method.logName,
-                resp.request.url.encodedPath,
-                resp.status,
-                text,
-                traceId
-            )
-        }
+        val resp: HttpResponse
+        val text = requestForText(client, server, token) { resp = it }
 
         checkStatus(text, DefaultErrInfoDecoder, resp.status)
 
@@ -260,7 +253,7 @@ public abstract class QQGuildApi<out R> : PlatformQQGuildApi<R>() {
             }
         }
 
-        private val DefaultErrInfoDecoder = Json {
+        internal val DefaultErrInfoDecoder = Json {
             isLenient = true
             ignoreUnknownKeys = true
             allowSpecialFloatingPointValues = true
@@ -287,72 +280,105 @@ public abstract class QQGuildApi<out R> : PlatformQQGuildApi<R>() {
         @InternalApi
         public val DefaultJsonDecoder: Json = Json(DefaultErrInfoDecoder) {}
     }
-}
 
 
-private suspend fun QQGuildApi<*>.request0(client: HttpClient, server: Url, token: String, json: Json = QQGuildApi.DefaultJsonDecoder): HttpResponse {
-    val api = this
+    protected suspend fun requestForResponse(client: HttpClient, server: Url, token: String, json: Json = DefaultJsonDecoder): HttpResponse {
+        val api = this
 
-    return client.request {
-        method = api.method
+        return client.request {
+            method = api.method
 
-        headers {
-            this[HttpHeaders.Authorization] = token
-        }
-
-
-        url {
-            takeFrom(server)
-
-            // route builder
-            val routeBuilder = RouteInfoBuilder { name, value ->
-                parameters.append(name, value.toString())
+            headers {
+                this[HttpHeaders.Authorization] = token
             }
 
-            api.route(routeBuilder)
 
-            when (val body = api.body) {
-                null -> {
-                    setBody(EmptyContent)
-                }
-                is OutgoingContent -> {
-                    setBody(body)
+            url {
+                takeFrom(server)
+
+                // route builder
+                val routeBuilder = RouteInfoBuilder { name, value ->
+                    parameters.append(name, value.toString())
                 }
 
-                else -> {
-                    if (client.pluginOrNull(ContentNegotiation) != null) {
+                api.route(routeBuilder)
+
+                when (val body = api.body) {
+                    null -> {
+                        setBody(EmptyContent)
+                    }
+                    is OutgoingContent -> {
                         setBody(body)
-                    } else {
-                        try {
-                            val ser = guessSerializer(body, json.serializersModule)
-                            val bodyJson = json.encodeToString(ser, body)
-                            setBody(bodyJson)
-                        } catch (e: Throwable) {
-                            try {
-                                setBody(body)
-                            } catch (e0: Throwable) {
-                                e0.addSuppressed(e)
-                                throw e0
-                            }
-                        }
+                    }
 
+                    else -> {
+                        if (client.pluginOrNull(ContentNegotiation) != null) {
+                            setBody(body)
+                        } else {
+                            try {
+                                val ser = guessSerializer(body, json.serializersModule)
+                                val bodyJson = json.encodeToString(ser, body)
+                                setBody(bodyJson)
+                            } catch (e: Throwable) {
+                                try {
+                                    setBody(body)
+                                } catch (e0: Throwable) {
+                                    e0.addSuppressed(e)
+                                    throw e0
+                                }
+                            }
+
+                        }
+                    }
+                }
+
+
+
+                routeBuilder.apiPath?.let { apiPath -> appendPathSegments(components = apiPath) }
+                routeBuilder.contentType?.let {
+                    headers {
+                        this[HttpHeaders.ContentType] = it.toString()
                     }
                 }
             }
 
+            apiLogger.debug("[{} /{}] =====> {}, body: {}", method.logName, url.encodedPath, url.host, api.body)
+        }
+    }
 
 
-            routeBuilder.apiPath?.let { apiPath -> appendPathSegments(components = apiPath) }
-            routeBuilder.contentType?.let {
-                headers {
-                    this[HttpHeaders.ContentType] = it.toString()
-                }
-            }
+    /**
+     * 通过 [requestForResponse] 得到响应，读取为文本并输出debug日志后返回。
+     * 不会进行校验。
+     */
+    @OptIn(ExperimentalContracts::class)
+    protected suspend inline fun requestForText(client: HttpClient, server: Url, token: String, useResp: (HttpResponse) -> Unit = {}): String {
+        contract {
+            callsInPlace(useResp, InvocationKind.EXACTLY_ONCE)
         }
 
-        apiLogger.debug("[{} /{}] =====> {}, body: {}", method.logName, url.encodedPath, url.host, api.body)
+        val resp = requestForResponse(client, server, token)
+        useResp(resp)
+
+        val text = resp.bodyAsText()
+
+        if (apiLogger.isDebugEnabled) {
+            val traceId = resp.headers[TRACE_ID_HEAD]
+            apiLogger.debug(
+                "[{} {}] <===== status: {}, body: {}, traceID: {}",
+                method.logName,
+                resp.request.url.encodedPath,
+                resp.status,
+                text,
+                traceId
+            )
+        }
+
+        return text
     }
 }
+
+
 
 
 //region Ktor ContentNegotiation guessSerializer
@@ -423,11 +449,12 @@ internal fun <R> QQGuildApi<R>.decodeResponse(
     return decoder.decodeFromString(resultDeserializer, remainingText)
 }
 
-private fun checkStatus(
+internal fun checkStatus(
     remainingText: String,
     decoder: StringFormat,
     status: HttpStatusCode
 ) {
+    // TODO 201,202 异步操作成功，虽然说成功，但是会返回一个 error body，需要特殊处理
     if (!status.isSuccess()) {
         val info = decoder.decodeFromString(ErrInfo.serializer(), remainingText)
         // throw err
@@ -466,4 +493,5 @@ internal fun HttpMethod.defaultForLogName(): String = when (this) {
 /**
  * 日志对齐
  */
+@PublishedApi
 internal expect val HttpMethod.logName: String

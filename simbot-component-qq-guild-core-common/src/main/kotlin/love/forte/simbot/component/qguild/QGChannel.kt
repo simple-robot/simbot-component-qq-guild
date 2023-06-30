@@ -17,6 +17,8 @@
 
 package love.forte.simbot.component.qguild
 
+import io.ktor.client.*
+import io.ktor.client.request.*
 import kotlinx.coroutines.CoroutineScope
 import love.forte.simbot.ExperimentalSimbotApi
 import love.forte.simbot.ID
@@ -26,6 +28,7 @@ import love.forte.simbot.definition.*
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.qguild.QQGuildApiException
+import love.forte.simbot.qguild.api.MessageAuditedException
 import love.forte.simbot.qguild.model.ChannelType
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.flowItems
@@ -149,8 +152,10 @@ public interface QGChannel : BotContainer, CoroutineScope, QGObjectiveContainer<
     /**
      * 向子频道发送消息。此频道需要为文字子频道，否则会产生异常。
      *
+     * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
      * @throws QQGuildApiException 请求异常，例如无权限
      * @throws UnsupportedOperationException 如果当前子频道类型不是文字子频道
+     * @throws MessageAuditedException 当响应状态为表示消息审核的 `304023`、`304024` 时
      */
     @JST
     override suspend fun send(message: Message): QGMessageReceipt
@@ -158,8 +163,10 @@ public interface QGChannel : BotContainer, CoroutineScope, QGObjectiveContainer<
     /**
      * 向子频道发送消息。此频道需要为文字子频道，否则会产生异常。
      *
+     * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
      * @throws QQGuildApiException 请求异常，例如无权限
      * @throws UnsupportedOperationException 如果当前子频道类型不是文字子频道
+     * @throws MessageAuditedException 当响应状态为表示消息审核的 `304023`、`304024` 时
      */
     @JST
     override suspend fun send(text: String): QGMessageReceipt
@@ -167,8 +174,10 @@ public interface QGChannel : BotContainer, CoroutineScope, QGObjectiveContainer<
     /**
      * 向子频道发送消息。此频道需要为文字子频道，否则会产生异常。
      *
+     * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
      * @throws QQGuildApiException 请求异常，例如无权限
      * @throws UnsupportedOperationException 如果当前子频道类型不是文字子频道
+     * @throws MessageAuditedException 当响应状态为表示消息审核的 `304023`、`304024` 时
      *
      */
     @JST
