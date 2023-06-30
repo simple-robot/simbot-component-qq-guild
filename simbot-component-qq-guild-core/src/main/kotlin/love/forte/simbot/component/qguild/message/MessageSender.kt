@@ -24,6 +24,7 @@ import love.forte.simbot.component.qguild.util.requestBy
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.qguild.QQGuildApiException
+import love.forte.simbot.qguild.api.MessageAuditedException
 import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.qguild.api.message.direct.DmsSendApi
 import love.forte.simbot.qguild.message.ContentTextEncoder
@@ -46,6 +47,7 @@ import love.forte.simbot.qguild.message.ContentTextEncoder
  * @see MessageParsers.parse
  *
  * @throws QQGuildApiException 请求得到了异常的结果
+ * @throws MessageAuditedException 当响应状态为表示消息审核的 `304023`、`304024` 时
  *
  * @return 发送后的回执
  */
@@ -85,6 +87,7 @@ public suspend inline fun QGBot.sendMessage(
  * @see MessageParsers.parse
  *
  * @throws QQGuildApiException 请求得到了异常的结果
+ * @throws MessageAuditedException 当响应状态为表示消息审核的 `304023`、`304024` 时
  *
  * @return 发送后的回执
  */
@@ -125,6 +128,7 @@ public suspend inline fun QGBot.sendMessage(
  * @see QGContentText
  *
  * @throws QQGuildApiException 请求得到了异常的结果
+ * @throws MessageAuditedException 当响应状态为表示消息审核的 `304023`、`304024` 时
  *
  * @return 发送后的回执
  */

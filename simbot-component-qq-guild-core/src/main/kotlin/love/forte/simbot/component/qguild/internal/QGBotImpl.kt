@@ -28,10 +28,14 @@ import love.forte.simbot.component.qguild.event.QGBotStartedEvent
 import love.forte.simbot.component.qguild.internal.QGGuildImpl.Companion.qgGuild
 import love.forte.simbot.component.qguild.internal.event.QGBotStartedEventImpl
 import love.forte.simbot.component.qguild.internal.forum.QGForumChannelImpl
+import love.forte.simbot.component.qguild.message.QGMessageReceipt
+import love.forte.simbot.component.qguild.message.sendMessage
 import love.forte.simbot.component.qguild.util.requestBy
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.literal
 import love.forte.simbot.logger.LoggerFactory
+import love.forte.simbot.message.Message
+import love.forte.simbot.message.MessageContent
 import love.forte.simbot.qguild.*
 import love.forte.simbot.qguild.DisposableHandle
 import love.forte.simbot.qguild.api.channel.GetChannelApi
@@ -247,6 +251,30 @@ internal class QGBotImpl(
                 )
             }
 
+        }
+    }
+
+    override suspend fun sendTo(channelId: ID, text: String): QGMessageReceipt {
+        return try {
+            bot.sendMessage(channelId.literal, text)
+        } catch (e: QQGuildApiException) {
+            throw e.addStackTrace { "Bot.sendTo" }
+        }
+    }
+
+    override suspend fun sendTo(channelId: ID, message: Message): QGMessageReceipt {
+        return try {
+            bot.sendMessage(channelId.literal, message)
+        } catch (e: QQGuildApiException) {
+            throw e.addStackTrace { "Bot.sendTo" }
+        }
+    }
+
+    override suspend fun sendTo(channelId: ID, message: MessageContent): QGMessageReceipt {
+        return try {
+            bot.sendMessage(channelId.literal, message)
+        } catch (e: QQGuildApiException) {
+            throw e.addStackTrace { "Bot.sendTo" }
         }
     }
 

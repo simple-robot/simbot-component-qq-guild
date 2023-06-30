@@ -151,7 +151,7 @@ internal class QGMemberImpl(
                 DmsSendApi.create(dms.guildId, it.build()).requestBy(bot)
             }.asReceipt()
         } catch (e: QQGuildApiException) {
-            throw e.addStackTrace("member.send")
+            throw e.addStackTrace { "member.send" }
         }
     }
 

@@ -73,7 +73,7 @@ internal class QGTextChannelImpl internal constructor(
                 }
             }
         } catch (e: QQGuildApiException) {
-            throw e.addStackTrace("channel.send")
+            throw e.addStackTrace { "channel.send" }
         }
     }
 
@@ -86,7 +86,7 @@ internal class QGTextChannelImpl internal constructor(
                 }
             }
         } catch (e: QQGuildApiException) {
-            throw e.addStackTrace("channel.send")
+            throw e.addStackTrace { "channel.send" }
         }
     }
 
@@ -99,7 +99,7 @@ internal class QGTextChannelImpl internal constructor(
                 }
             }
         } catch (e: QQGuildApiException) {
-            throw e.addStackTrace("channel.send")
+            throw e.addStackTrace { "channel.send" }
         }
     }
 
