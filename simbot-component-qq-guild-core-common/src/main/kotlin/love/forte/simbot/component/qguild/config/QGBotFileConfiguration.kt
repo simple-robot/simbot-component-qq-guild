@@ -20,6 +20,7 @@ package love.forte.simbot.component.qguild.config
 import io.ktor.http.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.modules.SerializersModule
 import love.forte.simbot.qguild.Bot
 import love.forte.simbot.qguild.BotConfiguration
 import love.forte.simbot.qguild.QQGuild
@@ -62,7 +63,7 @@ public data class QGBotFileConfiguration(
     /**
      * bot相关的票据信息，必填。
      */
-    val ticket: Ticket,
+    val ticket: TicketConfiguration,
 
     /**
      * 其他配置信息。
@@ -75,6 +76,7 @@ public data class QGBotFileConfiguration(
      * @see Bot.Ticket
      */
     @Serializable
+    @UsedOnlyForConfigSerialization
     public data class Ticket(
         /**
          * 用于识别一个机器人的 id
@@ -307,5 +309,12 @@ public data class QGBotFileConfiguration(
 
             }
         }
+    }
+
+    public companion object {
+        internal val serializersModule = SerializersModule {
+            include(TicketConfiguration.serializersModule)
+        }
+
     }
 }
