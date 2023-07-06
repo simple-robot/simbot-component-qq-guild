@@ -69,8 +69,8 @@ public fun QQGuildApiException.copyCurrent(): QQGuildApiException = addStackTrac
  * @suppress internal API to add suppressed for api exception
  */
 @InternalApi
-public inline fun <E : QQGuildApiException> E.addStackTrace(name: String? = null): E {
-    addSuppressed(APIStackException(name))
+public inline fun <E : QQGuildApiException> E.addStackTrace(block: () -> String? = { null }): E {
+    addSuppressed(APIStackException(block()))
     return this
 }
 

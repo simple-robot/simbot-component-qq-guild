@@ -18,14 +18,14 @@
 package love.forte.simbot.component.qguild.internal
 
 import love.forte.simbot.ID
-import love.forte.simbot.component.qguild.QGBot
-import love.forte.simbot.component.qguild.QGGuildBot
-import love.forte.simbot.component.qguild.QQGuildBotManager
-import love.forte.simbot.component.qguild.QQGuildComponent
+import love.forte.simbot.component.qguild.*
+import love.forte.simbot.component.qguild.message.QGMessageReceipt
 import love.forte.simbot.component.qguild.util.requestBy
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.literal
 import love.forte.simbot.message.Image
+import love.forte.simbot.message.Message
+import love.forte.simbot.message.MessageContent
 import love.forte.simbot.qguild.Bot
 import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.api.member.GetMemberApi
@@ -89,6 +89,16 @@ internal class QGGuildBotImpl(
 
     override suspend fun me(withCache: Boolean): User = bot.me(withCache)
     override suspend fun me(): User = bot.me()
+
+    override suspend fun channel(channelId: ID): QGChannel? = bot.channel(channelId)
+
+    override suspend fun category(channelId: ID): QGChannelCategory? = bot.category(channelId)
+
+    override suspend fun sendTo(channelId: ID, text: String): QGMessageReceipt = bot.sendTo(channelId, text)
+
+    override suspend fun sendTo(channelId: ID, message: Message): QGMessageReceipt = bot.sendTo(channelId, message)
+
+    override suspend fun sendTo(channelId: ID, message: MessageContent): QGMessageReceipt = bot.sendTo(channelId, message)
 
     override fun toString(): String {
         return "QGGuildBotImpl(bot=$bot, guildId=$guildId)"
