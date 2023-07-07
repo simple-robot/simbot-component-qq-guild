@@ -29,7 +29,7 @@ import love.forte.simbot.qguild.model.Message
  */
 internal class QGReceiveMessageContentImpl(override val sourceMessage: Message) : QGReceiveMessageContent() {
 
-    override val messageId: ID = sourceMessage.id.ID
+    override val messageId: ID get() = sourceMessage.id.ID
 
     private val parseContext by lazy(LazyThreadSafetyMode.PUBLICATION) { MessageParsers.parse(sourceMessage) }
 

@@ -26,6 +26,9 @@ import love.forte.simbot.component.qguild.message.QGMessageReceipt
 import love.forte.simbot.component.qguild.message.sendMessage
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
+import love.forte.simbot.qguild.InternalApi
+import love.forte.simbot.qguild.QQGuildApiException
+import love.forte.simbot.qguild.addStackTrace
 import kotlin.coroutines.CoroutineContext
 import love.forte.simbot.qguild.model.Channel as QGSourceChannel
 
@@ -58,29 +61,45 @@ internal class QGTextChannelImpl internal constructor(
             ?: bot.guild(guildId)
             ?: throw NoSuchElementException("guild(id=$guildId)")
 
-    override suspend fun owner(): QGMember = guild().member(ownerId) ?: throw NoSuchElementException("owner(id=$ownerId)")
+    override suspend fun owner(): QGMember =
+        guild().member(ownerId) ?: throw NoSuchElementException("owner(id=$ownerId)")
 
+    @OptIn(InternalApi::class)
     override suspend fun send(message: Message): QGMessageReceipt {
-        return bot.sendMessage(source.id, message) {
-            if (msgId == null) {
-                msgId = currentMsgId
+        return try {
+            bot.sendMessage(source.id, message) {
+                if (msgId == null) {
+                    msgId = currentMsgId
+                }
             }
+        } catch (e: QQGuildApiException) {
+            throw e.addStackTrace { "channel.send" }
         }
     }
 
+    @OptIn(InternalApi::class)
     override suspend fun send(message: MessageContent): QGMessageReceipt {
-        return bot.sendMessage(source.id, message) {
-            if (msgId == null) {
-                msgId = currentMsgId
+        return try {
+            bot.sendMessage(source.id, message) {
+                if (msgId == null) {
+                    msgId = currentMsgId
+                }
             }
+        } catch (e: QQGuildApiException) {
+            throw e.addStackTrace { "channel.send" }
         }
     }
 
+    @OptIn(InternalApi::class)
     override suspend fun send(text: String): QGMessageReceipt {
-        return bot.sendMessage(source.id, text) {
-            if (msgId == null) {
-                msgId = currentMsgId
+        return try {
+            bot.sendMessage(source.id, text) {
+                if (msgId == null) {
+                    msgId = currentMsgId
+                }
             }
+        } catch (e: QQGuildApiException) {
+            throw e.addStackTrace { "channel.send" }
         }
     }
 

@@ -18,7 +18,10 @@
 
 package love.forte.simbot.qguild.api.message
 
+import io.ktor.client.*
+import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.utils.io.core.*
 import kotlinx.serialization.*
@@ -27,10 +30,10 @@ import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
+import love.forte.simbot.qguild.ErrInfo
 import love.forte.simbot.qguild.InternalApi
-import love.forte.simbot.qguild.api.QQGuildApi
-import love.forte.simbot.qguild.api.RouteInfoBuilder
-import love.forte.simbot.qguild.api.SimplePostApiDescription
+import love.forte.simbot.qguild.QQGuildApiException
+import love.forte.simbot.qguild.api.*
 import love.forte.simbot.qguild.api.message.MessageSendApi.Body.Builder
 import love.forte.simbot.qguild.message.ContentTextDecoder
 import love.forte.simbot.qguild.message.ContentTextEncoder
@@ -112,7 +115,20 @@ import kotlin.jvm.JvmSynthetic
  *
  * 可参考使用 [ContentTextDecoder] 和 [ContentTextEncoder]
  *
+ * ## 消息审核
+ *
+ * > 其中推送、回复消息的 code 错误码 `304023`、`304024` 会在 响应数据包 `data` 中返回 `MessageAudit` 审核消息的信息
+ *
+ * 当响应结果为上述错误码时，请求实体对象结果的API时会抛出 [MessageAuditedException] 异常并携带相关的对象信息。
+ *
+ * 详见文档 [发送消息](https://bot.q.qq.com/wiki/develop/api/openapi/message/post_messages.html) 中的相关描述以及
+ * [MessageAuditedException] 的文档描述。
+ *
+ * <hr />
+ *
  * 更多参考 [文档](https://bot.q.qq.com/wiki/develop/api/openapi/message/message_format.html)
+ *
+ * @throws MessageAuditedException
  *
  * @author ForteScarlet
  */
@@ -159,6 +175,54 @@ public class MessageSendApi private constructor(
     }
 
     /**
+     * 使用当前API发送消息
+     *
+     * @throws MessageAuditedException 当响应状态为表示消息审核的 `304023`、`304024` 时
+     * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
+     * @throws love.forte.simbot.qguild.QQGuildApiException 请求过程中出现了错误（http状态码 !in 200 .. 300）
+     */
+    override suspend fun doRequest(client: HttpClient, server: Url, token: String, decoder: StringFormat): Message {
+        return super.doRequest(client, server, token, decoder)
+    }
+
+    /**
+     * 使用当前API发送消息
+     *
+     *
+     *  @throws MessageAuditedException 当响应状态为表示消息审核的 `304023`、`304024` 时
+     *  @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
+     *  @throws love.forte.simbot.qguild.QQGuildApiException 请求过程中出现了错误（http状态码 !in 200 .. 300）
+     */
+    override suspend fun doRequestRaw(client: HttpClient, server: Url, token: String): String {
+        val resp: HttpResponse
+        val text = requestForText(client, server, token) { resp = it }
+
+        checkStatus(text, DefaultErrInfoDecoder, resp.status)
+
+        if (text.isEmpty() && resp.status.isSuccess()) {
+            return "{}"
+        }
+
+        if (resp.status == HttpStatusCode.Accepted) {
+            // decode as error data
+            val errorInfo = DefaultErrInfoDecoder.decodeFromString(ErrInfo.serializer(), text)
+            // maybe audited
+            if (MessageAuditedException.isAuditResultCode(errorInfo.code)) {
+                throw MessageAuditedException(
+                    DefaultErrInfoDecoder.decodeFromJsonElement(MessageAudit.serializer(), errorInfo.data).messageAudit,
+                    errorInfo,
+                    resp.status.value,
+                    resp.status.description
+                )
+            }
+
+            throw QQGuildApiException(errorInfo, resp.status.value, resp.status.description)
+        }
+
+        return text
+    }
+
+    /**
      * [MessageSendApi] 所需参数。详情参考 [文档](https://bot.q.qq.com/wiki/develop/api/openapi/message/post_messages.html#%E9%80%9A%E7%94%A8%E5%8F%82%E6%95%B0)
      *
      * [fileImage] 存在时将会使用 `multipart/form-data` 的形式发送，否则使用 `application/json`。
@@ -184,6 +248,8 @@ public class MessageSendApi private constructor(
         /**
          * 选填，引用消息
          */
+        @SerialName("message_reference")
+        @IgnoreWhenUseImageFormData // TODO 疑似不支持使用form转json发送，暂时忽略
         public val messageReference: Message.Reference?,
         /**
          * 选填，图片url地址，平台会转存该图片，用于下发图片消息
@@ -192,10 +258,12 @@ public class MessageSendApi private constructor(
         /**
          * 选填，要回复的消息id, 在 `AT_CREATE_MESSAGE` 事件中获取。
          */
+        @SerialName("msg_id")
         public val msgId: String?,
         /**
          * 选填，要回复的事件id, 在各事件对象中获取。
          */
+        @SerialName("eventId")
         public val eventId: String?,
         /**
          * 选填，markdown 消息
@@ -334,7 +402,7 @@ public inline fun MessageSendApi.Factory.create(channelId: String, builder: Buil
 @InternalApi
 public expect abstract class BaseMessageSendBodyBuilder() {
     public open var fileImage: Any?
-    protected set
+        protected set
     /*
      * 追加额外的平台功能，但是不能有抽象方法
      */
@@ -359,10 +427,10 @@ internal fun MessageSendApi.Body.toRealBody(json: Json): Any {
         appendFileImage(fileImage)
     }
 
-
     return MultiPartFormDataContent(formParts)
 }
 
+private const val FILE_IMAGE_PROPERTY_NAME = "file_image"
 
 /**
  * support:
@@ -380,28 +448,28 @@ private fun FormBuilder.appendFileImage(fileImage: Any?) {
             val imgHeaders = Headers.build {
                 append(HttpHeaders.ContentDisposition, "filename=\"image\"")
             }
-            append(key = "file_image", fileImage, imgHeaders)
+            append(key = FILE_IMAGE_PROPERTY_NAME, fileImage, imgHeaders)
         }
 
         is InputProvider -> {
             val imgHeaders = Headers.build {
                 append(HttpHeaders.ContentDisposition, "filename=\"image\"")
             }
-            append(key = "file_image", fileImage, imgHeaders)
+            append(key = FILE_IMAGE_PROPERTY_NAME, fileImage, imgHeaders)
         }
 
         is ByteReadPacket -> {
             val imgHeaders = Headers.build {
                 append(HttpHeaders.ContentDisposition, "filename=\"image\"")
             }
-            append(key = "file_image", fileImage, imgHeaders)
+            append(key = FILE_IMAGE_PROPERTY_NAME, fileImage, imgHeaders)
         }
 
         is ChannelProvider -> {
             val imgHeaders = Headers.build {
                 append(HttpHeaders.ContentDisposition, "filename=\"image\"")
             }
-            append(key = "file_image", fileImage, imgHeaders)
+            append(key = FILE_IMAGE_PROPERTY_NAME, fileImage, imgHeaders)
         }
 
         else -> {
@@ -435,29 +503,48 @@ private class FormDataDecoder(
     private val json: Json,
     private val formBuilder: FormBuilder,
 ) : Encoder, CompositeEncoder {
+
+    private inline fun check(descriptor: SerialDescriptor, index: Int, block: () -> Unit) {
+        if (descriptor.getElementAnnotations(index).any { it is IgnoreWhenUseImageFormData }) {
+            return
+        }
+
+        block()
+    }
+
     override fun encodeBooleanElement(descriptor: SerialDescriptor, index: Int, value: Boolean) {
-        val name = descriptor.getElementName(index)
-        formBuilder.append(name, value.toString())
+        check(descriptor, index) {
+            val name = descriptor.getElementName(index)
+            formBuilder.append(name, value.toString())
+        }
     }
 
     override fun encodeByteElement(descriptor: SerialDescriptor, index: Int, value: Byte) {
-        val name = descriptor.getElementName(index)
-        formBuilder.append(name, value)
+        check(descriptor, index) {
+            val name = descriptor.getElementName(index)
+            formBuilder.append(name, value)
+        }
     }
 
     override fun encodeCharElement(descriptor: SerialDescriptor, index: Int, value: Char) {
-        val name = descriptor.getElementName(index)
-        formBuilder.append(name, value.toString())
+        check(descriptor, index) {
+            val name = descriptor.getElementName(index)
+            formBuilder.append(name, value.toString())
+        }
     }
 
     override fun encodeDoubleElement(descriptor: SerialDescriptor, index: Int, value: Double) {
-        val name = descriptor.getElementName(index)
-        formBuilder.append(name, value)
+        check(descriptor, index) {
+            val name = descriptor.getElementName(index)
+            formBuilder.append(name, value)
+        }
     }
 
     override fun encodeFloatElement(descriptor: SerialDescriptor, index: Int, value: Float) {
-        val name = descriptor.getElementName(index)
-        formBuilder.append(name, value)
+        check(descriptor, index) {
+            val name = descriptor.getElementName(index)
+            formBuilder.append(name, value)
+        }
     }
 
     override fun encodeInlineElement(descriptor: SerialDescriptor, index: Int): Encoder {
@@ -465,13 +552,17 @@ private class FormDataDecoder(
     }
 
     override fun encodeIntElement(descriptor: SerialDescriptor, index: Int, value: Int) {
-        val name = descriptor.getElementName(index)
-        formBuilder.append(name, value)
+        check(descriptor, index) {
+            val name = descriptor.getElementName(index)
+            formBuilder.append(name, value)
+        }
     }
 
     override fun encodeLongElement(descriptor: SerialDescriptor, index: Int, value: Long) {
-        val name = descriptor.getElementName(index)
-        formBuilder.append(name, value)
+        check(descriptor, index) {
+            val name = descriptor.getElementName(index)
+            formBuilder.append(name, value)
+        }
     }
 
     @ExperimentalSerializationApi
@@ -482,8 +573,18 @@ private class FormDataDecoder(
         value: T?,
     ) {
         if (value != null) {
-            val name = descriptor.getElementName(index)
-            formBuilder.append(name, json.encodeToString(serializer, value))
+            check(descriptor, index) {
+                val name = descriptor.getElementName(index)
+//                val kind = serializer.descriptor.kind
+                when (value) {
+                    is CharSequence -> formBuilder.append(name, value.toString())
+                    is Char -> formBuilder.append(name, value.toString())
+                    else -> {
+                        val jsonValue = json.encodeToString(serializer, value)
+                        formBuilder.append(name, jsonValue)
+                    }
+                }
+            }
         }
     }
 
@@ -553,3 +654,10 @@ private class FormDataDecoder(
     }
 }
 
+/**
+ * 标记一个属性在使用 `form-data` 发送消息的时候进行忽略
+ */
+@OptIn(ExperimentalSerializationApi::class)
+@MetaSerializable
+@Target(AnnotationTarget.PROPERTY)
+private annotation class IgnoreWhenUseImageFormData

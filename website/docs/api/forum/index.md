@@ -28,7 +28,7 @@ QQ频道中有一些针对 `论坛子频道` 的API。( [参考文档](https://b
 val token = "Bot xxx"
 
 // Ktor 的 HttpClient
-// 在不同平台下请注意选择可用的引擎，比如在JS平台下使用 `JS` 引擎，windows系统平天下使用 `WinHttp` 等。
+// 在不同平台下请注意选择可用的引擎，比如在JS平台下使用 `JS` 引擎，windows系统平台下使用 `WinHttp` 等。
 val client = HttpClient()
 
 // 请求的服务器地址

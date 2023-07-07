@@ -18,6 +18,7 @@
 package love.forte.simbot.qguild
 
 import kotlinx.coroutines.future.await
+import love.forte.simbot.Api4J
 import love.forte.simbot.qguild.event.Signal
 import java.util.concurrent.CompletionStage
 import java.util.function.BiConsumer

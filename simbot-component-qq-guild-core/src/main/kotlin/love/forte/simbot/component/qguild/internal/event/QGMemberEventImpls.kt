@@ -26,10 +26,9 @@ import love.forte.simbot.component.qguild.event.QGMemberRemoveEvent
 import love.forte.simbot.component.qguild.event.QGMemberUpdateEvent
 import love.forte.simbot.component.qguild.internal.QGGuildImpl
 import love.forte.simbot.component.qguild.internal.QGMemberImpl
-import love.forte.simbot.component.qguild.internal.utils.getValue
-import love.forte.simbot.component.qguild.internal.utils.nowTimeMillis
+import love.forte.simbot.qguild.InternalApi
 import love.forte.simbot.qguild.QQGuildApiException
-import love.forte.simbot.qguild.copyCurrent
+import love.forte.simbot.qguild.addStackTrace
 import love.forte.simbot.qguild.event.EventMember
 import love.forte.simbot.qguild.isUnauthorized
 
@@ -40,18 +39,20 @@ internal class QGMemberAddEventImpl(
     override val sourceEventEntity: EventMember,
     private val _member: QGMemberImpl,
 ) : QGMemberAddEvent() {
-    override val changedTime: Timestamp by nowTimeMillis
+    private val currentTimeMillis = System.currentTimeMillis()
+    override val changedTime: Timestamp get() = Timestamp.byMillisecond(currentTimeMillis)
     override val actionType: ActionType
         get() = if (sourceEventEntity.opUserId == sourceEventEntity.user.id) ActionType.PROACTIVE else ActionType.PASSIVE
 
-    override val id: ID get() = memberEventId(0, bot.id, sourceEventEntity.user.id, changedTime, hashCode())
+    override val id: ID get() = memberEventId(0, bot.id, sourceEventEntity.user.id, currentTimeMillis, hashCode())
     override suspend fun member(): QGMemberImpl = _member
+    @OptIn(InternalApi::class)
     override suspend fun operator(): QGMemberImpl? {
         return try {
             guild().member(sourceEventEntity.opUserId)
         } catch (apiEx: QQGuildApiException) {
             // process no auth
-            if (apiEx.isUnauthorized) null else throw apiEx.copyCurrent()
+            if (apiEx.isUnauthorized) null else throw apiEx.addStackTrace()
         }
     }
 
@@ -64,15 +65,17 @@ internal class QGMemberUpdateEventImpl(
     override val sourceEventEntity: EventMember,
     private val _member: QGMemberImpl,
 ) : QGMemberUpdateEvent() {
-    override val changedTime: Timestamp by nowTimeMillis
-    override val id: ID get() = memberEventId(1, bot.id, sourceEventEntity.user.id, changedTime, hashCode())
+    private val currentTimeMillis = System.currentTimeMillis()
+    override val changedTime: Timestamp get() = Timestamp.byMillisecond(currentTimeMillis)
+    override val id: ID get() = memberEventId(1, bot.id, sourceEventEntity.user.id, currentTimeMillis, hashCode())
     override suspend fun member(): QGMemberImpl = _member
+    @OptIn(InternalApi::class)
     override suspend fun operator(): QGMemberImpl? {
         return try {
             guild().member(sourceEventEntity.opUserId)
         } catch (apiEx: QQGuildApiException) {
             // process no auth
-            if (apiEx.isUnauthorized) null else throw apiEx.copyCurrent()
+            if (apiEx.isUnauthorized) null else throw apiEx.addStackTrace()
         }
     }
 
@@ -85,23 +88,25 @@ internal class QGMemberRemoveEventImpl(
     override val sourceEventEntity: EventMember,
     private val _member: QGMemberImpl,
 ) : QGMemberRemoveEvent() {
-    override val changedTime: Timestamp by nowTimeMillis
+    private val currentTimeMillis = System.currentTimeMillis()
+    override val changedTime: Timestamp get() = Timestamp.byMillisecond(currentTimeMillis)
     override val actionType: ActionType
         get() = if (sourceEventEntity.opUserId == sourceEventEntity.user.id) ActionType.PROACTIVE else ActionType.PASSIVE
 
-    override val id: ID get() = memberEventId(2, bot.id, sourceEventEntity.user.id, changedTime, hashCode())
+    override val id: ID get() = memberEventId(2, bot.id, sourceEventEntity.user.id, currentTimeMillis, hashCode())
     override suspend fun member(): QGMemberImpl = _member
+    @OptIn(InternalApi::class)
     override suspend fun operator(): QGMemberImpl? {
         return try {
             guild().member(sourceEventEntity.opUserId)
         } catch (apiEx: QQGuildApiException) {
             // process no auth
-            if (apiEx.isUnauthorized) null else throw apiEx.copyCurrent()
+            if (apiEx.isUnauthorized) null else throw apiEx.addStackTrace()
         }
     }
 
     override suspend fun guild(): QGGuildImpl = _member.guild()
 }
 
-private fun memberEventId(t: Int, sourceBot: ID, sourceUserId: String, timestamp: Timestamp, hash: Int): ID =
-    "$t$sourceBot.${timestamp.second}.$sourceUserId.$hash".ID
+private fun memberEventId(t: Int, sourceBot: ID, sourceUserId: String, timestamp: Long, hash: Int): ID =
+    "$t$sourceBot.$timestamp.$sourceUserId.$hash".ID

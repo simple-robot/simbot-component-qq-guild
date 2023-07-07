@@ -17,15 +17,23 @@
 
 package love.forte.simbot.component.qguild
 
+import io.ktor.client.*
+import io.ktor.client.request.*
 import kotlinx.coroutines.isActive
 import love.forte.simbot.ID
 import love.forte.simbot.action.UnsupportedActionException
 import love.forte.simbot.bot.Bot
+import love.forte.simbot.component.qguild.message.QGMessageReceipt
 import love.forte.simbot.definition.Contact
 import love.forte.simbot.definition.Group
 import love.forte.simbot.definition.GuildBot
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.message.Image
+import love.forte.simbot.message.Message
+import love.forte.simbot.message.MessageContent
+import love.forte.simbot.qguild.QQGuildApiException
+import love.forte.simbot.qguild.api.MessageAuditedException
+import love.forte.simbot.qguild.model.ChannelType
 import love.forte.simbot.utils.item.Items
 import love.forte.simbot.utils.item.Items.Companion.emptyItems
 import love.forte.simbot.qguild.Bot as QGSourceBot
@@ -188,6 +196,86 @@ public interface QGBot : Bot {
      */
     @JST(blockingBaseName = "getGuild", blockingSuffix = "", asyncBaseName = "getGuild")
     override suspend fun guild(id: ID): QGGuild?
+
+    /**
+     * 直接获取指定ID的子频道。
+     *
+     * @see category
+     *
+     * @throws QQGuildApiException 请求失败，例如没有权限
+     */
+    @JST(blockingBaseName = "getChannel", blockingSuffix = "", asyncBaseName = "getChannel")
+    public suspend fun channel(channelId: ID): QGChannel?
+
+
+    /**
+     * 直接获取指定ID的子频道分类。
+     *
+     * @throws QQGuildApiException 请求失败，例如没有权限
+     * @throws IllegalStateException 当目标子频道的类型不属于 [分组类型][ChannelType.CATEGORY] 时
+     *
+     */
+    @JST(blockingBaseName = "getCategory", blockingSuffix = "", asyncBaseName = "getCategory")
+    public suspend fun category(channelId: ID): QGChannelCategory?
+
+
+    /**
+     * 直接向目标子频道发送消息。
+     *
+     * 此频道需要为文字子频道，否则会产生异常，但是此异常不会由程序检测，
+     * 而是通过API的错误响应 [QQGuildApiException] 体现。
+     *
+     * [sendTo] 相对于 [QGChannel.send] 而言更加“不可靠”
+     * —— 因为它跳过了对频道服务器和对子频道类型的校验，失去了在消息中自动填充 `msgId` 等透明行为，并且直接使用ID也会存在一些细微的隐患。
+     * 但是这可以有效规避当没有获取频道服务器或子频道信息权限时候可能导致的问题。
+     *
+     * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
+     * @throws QQGuildApiException 请求异常，例如无权限
+     * @throws MessageAuditedException 当响应状态为表示消息审核的 `304023`、`304024` 时
+     *
+     * @return 消息发送回执
+     */
+    @JST
+    public suspend fun sendTo(channelId: ID, text: String): QGMessageReceipt
+
+    /**
+     * 直接向目标子频道发送消息。
+     *
+     * 此频道需要为文字子频道，否则会产生异常，但是此异常不会由程序检测，
+     * 而是通过API的错误响应 [QQGuildApiException] 体现。
+     *
+     * [sendTo] 相对于 [QGChannel.send] 而言更加“不可靠”
+     * —— 因为它跳过了对频道服务器和对子频道类型的校验，失去了在消息中自动填充 `msgId` 等透明行为，并且直接使用ID也会存在一些细微的隐患。
+     * 但是这可以有效规避当没有获取频道服务器或子频道信息权限时候可能导致的问题。
+     *
+     * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
+     * @throws QQGuildApiException 请求异常，例如无权限
+     * @throws MessageAuditedException 当响应状态为表示消息审核的 `304023`、`304024` 时
+     *
+     * @return 消息发送回执
+     */
+    @JST
+    public suspend fun sendTo(channelId: ID, message: Message): QGMessageReceipt
+
+    /**
+     * 直接向目标子频道发送消息。
+     *
+     * 此频道需要为文字子频道，否则会产生异常，但是此异常不会由程序检测，
+     * 而是通过API的错误响应 [QQGuildApiException] 体现。
+     *
+     * [sendTo] 相对于 [QGChannel.send] 而言更加“不可靠”
+     * —— 因为它跳过了对频道服务器和对子频道类型的校验，失去了在消息中自动填充 `msgId` 等透明行为，并且直接使用ID也会存在一些细微的隐患。
+     * 但是这可以有效规避当没有获取频道服务器或子频道信息权限时候可能导致的问题。
+     *
+     * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
+     * @throws QQGuildApiException 请求异常，例如无权限
+     * @throws MessageAuditedException 当响应状态为表示消息审核的 `304023`、`304024` 时
+     *
+     * @return 消息发送回执
+     */
+    @JST
+    public suspend fun sendTo(channelId: ID, message: MessageContent): QGMessageReceipt
+
 
     /**
      * Deprecated: QQ频道BOT不存在'联系人'列表，始终得到 [emptyItems]。
