@@ -55,7 +55,7 @@ public sealed class TicketConfiguration {
      * ```json
      * {
      *   "ticket": {
-     *     "type": "simple",
+     *     "type": "plain",
      *     "appId": "appId-value",
      *     "secret": "secret-value",
      *     "token": "token-value"
@@ -79,8 +79,8 @@ public sealed class TicketConfiguration {
      *
      */
     @Serializable
-    @SerialName(Simple.TYPE)
-    public data class Simple(
+    @SerialName(Plain.TYPE)
+    public data class Plain(
         /**
          * @see QGBotFileConfiguration.Ticket
          */
@@ -101,7 +101,7 @@ public sealed class TicketConfiguration {
             QGBotFileConfiguration.Ticket(appId, secret, token)
 
         public companion object {
-            public const val TYPE: String = "simple"
+            public const val TYPE: String = "plain"
         }
     }
 
@@ -164,7 +164,7 @@ public sealed class TicketConfiguration {
      *
      */
     @Serializable
-    @SerialName(Simple.TYPE)
+    @SerialName(Env.TYPE)
     public data class Env(
         /**
          * @see QGBotFileConfiguration.Ticket
@@ -218,7 +218,7 @@ public sealed class TicketConfiguration {
 
     public companion object {
         internal val serializersModule = SerializersModule {
-            polymorphicDefaultDeserializer(TicketConfiguration::class) { Simple.serializer() }
+            polymorphicDefaultDeserializer(TicketConfiguration::class) { Plain.serializer() }
         }
     }
 }

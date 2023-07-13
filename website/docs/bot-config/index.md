@@ -13,7 +13,7 @@ toc_max_heading_level: 4
 {
     "component": "simbot.qqguild",
     "ticket": {
-        "type": "simple",
+        "type": "plain",
         "appId": "APPID",
         "token": "TOKEN",
         "secret": "SECRET"
@@ -64,14 +64,14 @@ bot的票据信息，**必填**。
 - `token`: 机器人令牌
 - `secret`: 机器人密钥 (目前可能不会用到，可以用 `""` 代替)
 - 
-### simple
+### plain
 
-当 `type=simple` 时，与 `Ticket` 属性基本一致的配置类型， 也是默认的方案。
+当 `type=plain` 时，与 `Ticket` 属性基本一致的配置类型， 也是默认的方案。
 
 ```json
 {
   "ticket": {
-    "type": "simple",
+    "type": "plain",
     "appId": "appId-value",
     "secret": "secret-value",
     "token": "token-value"
@@ -81,7 +81,7 @@ bot的票据信息，**必填**。
 
 :::note 省略type
 
-当 simbot-core 版本为 `3.2.0+` 时，`type` 作为默认值 `simple` 时可以省略：
+当 simbot-core 版本为 `3.2.0+` 时，`type` 作为默认值 `plain` 时可以省略：
 
 ```json
 {
