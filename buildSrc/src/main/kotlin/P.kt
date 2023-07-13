@@ -20,7 +20,7 @@ import love.forte.gradle.common.core.project.Version
 import love.forte.gradle.common.core.project.minus
 import love.forte.gradle.common.core.project.version as v
 
-val simbotVersion = v(3, 1, 0)
+val simbotVersion = v(3, 2, 0)
 //- v("RC", 3)
 
 fun simbot(name: String, version: String = simbotVersion.toString()): String = "love.forte.simbot:simbot-$name:$version"
@@ -62,7 +62,7 @@ object P {
             0, 0
         )
 
-        private val alphaSuffix = v("alpha", 9)
+        private val alphaSuffix = v("alpha", 10)
 
         override val version = baseVersion - alphaSuffix
         val snapshotVersion = baseVersion - (alphaSuffix - Version.SNAPSHOT)

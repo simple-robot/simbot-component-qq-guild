@@ -68,10 +68,11 @@ public abstract class BaseQQGuildBotManager : BotManager<QGBot>() {
             )
             throw ComponentMismatchException("[$component] != [$currentComponent]")
         }
+
         val configuration = verifyInfo.decode(serializer)
 
         // no config
-        val (appId, secret, token) = configuration.ticket
+        val (appId, secret, token) = configuration.ticket.toTicket()
         return register(appId, secret, token, configuration::includeConfig)
     }
 

@@ -22,6 +22,7 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
 import love.forte.simbot.*
+import love.forte.simbot.component.qguild.config.QGBotFileConfiguration
 import love.forte.simbot.component.qguild.message.*
 import love.forte.simbot.message.At
 import love.forte.simbot.message.Message
@@ -126,6 +127,8 @@ public class QQGuildComponent : Component {
             polymorphic(Message.Element::class) {
                 subclass0()
             }
+
+            include(QGBotFileConfiguration.serializersModule)
         }
         
         
