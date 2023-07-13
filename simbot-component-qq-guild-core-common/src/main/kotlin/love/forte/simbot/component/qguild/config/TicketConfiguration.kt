@@ -182,7 +182,7 @@ public sealed class TicketConfiguration {
         val token: String,
 
         /**
-         * 直接使用
+         * 是否允许在无法获取到对应的 JVM 参数或环境变量时，直接使用原始输入值。
          */
         val plain: Boolean = false,
     ) : TicketConfiguration() {
@@ -203,12 +203,10 @@ public sealed class TicketConfiguration {
                 return prop.substringAfter(PLAIN_PREFIX, missingDelimiterValue = "")
             }
 
-            val value = System.getProperty(prop) ?: System.getenv(prop)
-            if (value != null) return value
-
-            if (plain) return prop
-
-            throw IllegalStateException("Cannot find property '$prop' for ticket '$key' in JVM or environment variables.")
+            return System.getProperty(prop)
+                ?: System.getenv(prop)
+                ?: if (plain) return prop
+                else throw IllegalStateException("Cannot find property '$prop' for ticket '$key' in JVM or environment variables.")
         }
 
         public companion object {
