@@ -195,6 +195,9 @@ internal object QGMessageParser : ReceivingMessageParser {
             appendText(contentText, lastStart, contentText.length)
         }
 
+        // end flush
+        flushText()
+
         // ark
         qgMessage.ark?.toMessage()?.also { messageList.add(it) }
 

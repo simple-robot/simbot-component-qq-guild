@@ -23,6 +23,14 @@ plugins {
     `qq-guild-dokka-partial-configure`
 }
 
+kotlin {
+    sourceSets.configureEach {
+        languageSettings {
+            optIn("love.forte.simbot.InternalSimbotApi")
+            optIn("love.forte.simbot.qguild.InternalApi")
+        }
+    }
+}
 
 dependencies {
     api(project(":simbot-component-qq-guild-stdlib")) {
