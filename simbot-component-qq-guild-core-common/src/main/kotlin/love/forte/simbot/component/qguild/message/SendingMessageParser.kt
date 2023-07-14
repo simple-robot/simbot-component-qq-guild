@@ -17,15 +17,15 @@
 
 package love.forte.simbot.component.qguild.message
 
-import love.forte.simbot.*
-import love.forte.simbot.component.qguild.message.*
-import love.forte.simbot.message.*
-import love.forte.simbot.qguild.*
-import love.forte.simbot.qguild.api.message.*
+import love.forte.simbot.ExperimentalSimbotApi
+import love.forte.simbot.message.Messages
+import love.forte.simbot.message.emptyMessages
+import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.qguild.model.Message
 import love.forte.simbot.resources.Resource
 import java.util.*
-import java.util.concurrent.*
+import java.util.concurrent.ConcurrentLinkedDeque
+import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -98,6 +98,7 @@ public object MessageParsers {
     @ExperimentalSimbotApi
     public val sendingParsers: Queue<SendingMessageParser> = ConcurrentLinkedQueue<SendingMessageParser>().apply {
         add(ContentParser)
+        add(FaceParser)
         add(MentionParser)
         add(ArkParser)
         add(AttachmentParser)

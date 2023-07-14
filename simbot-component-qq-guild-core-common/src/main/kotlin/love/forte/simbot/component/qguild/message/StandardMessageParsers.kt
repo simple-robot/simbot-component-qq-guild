@@ -21,6 +21,7 @@ import love.forte.simbot.ID
 import love.forte.simbot.component.qguild.QQGuildComponent
 import love.forte.simbot.component.qguild.message.QGAttachmentMessage.Key.toMessage
 import love.forte.simbot.component.qguild.message.QGReference.Key.toMessage
+import love.forte.simbot.literal
 import love.forte.simbot.message.*
 import love.forte.simbot.qguild.message.ContentTextDecoder
 import love.forte.simbot.qguild.message.ContentTextEncoder
@@ -44,6 +45,32 @@ internal object ContentParser : SendingMessageParser {
             is QGContentText -> {
                 builderContext.builder.appendContent(element.content)
             }
+        }
+    }
+}
+
+/**
+ * 解析 [Face] 为 [内嵌格式](https://bot.q.qq.com/wiki/develop/api/openapi/message/message_format.html) 中的 `表情` 使用。
+ *
+ * 解析为系统表情，具体表情id参考 [Emoji 列表](https://bot.q.qq.com/wiki/develop/api/openapi/emoji/model.html#emoji-%E5%88%97%E8%A1%A8)，
+ * 仅支持type=1的系统表情，type=2的emoji表情直接按字符串填写即可
+ *
+ * @see love.forte.simbot.message.Face
+ */
+internal object FaceParser : SendingMessageParser {
+    // <emoji:id>
+    private const val EMOJI_PREFIX = "<emoji:"
+    private const val EMOJI_SUFFIX = ">"
+
+    override suspend fun invoke(
+        index: Int,
+        element: love.forte.simbot.message.Message.Element<*>,
+        messages: Messages?,
+        builderContext: SendingMessageParser.BuilderContext
+    ) {
+        if (element is Face) {
+            val id = element.id.literal
+            builderContext.builder.appendContent("$EMOJI_PREFIX$id$EMOJI_SUFFIX")
         }
     }
 }
@@ -167,6 +194,9 @@ internal object QGMessageParser : ReceivingMessageParser {
         if (lastStart < length) {
             appendText(contentText, lastStart, contentText.length)
         }
+
+        // end flush
+        flushText()
 
         // ark
         qgMessage.ark?.toMessage()?.also { messageList.add(it) }
