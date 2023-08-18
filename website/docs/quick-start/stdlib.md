@@ -22,7 +22,7 @@ import {version} from '@site/static/version.json';
 
 <CodeBlock language='kotlin'>{`
 // 不要忘记使用 Gradle 的 kotlin 插件来允许自动选择对应平台，比如JVM或JS等。
-implementation("love.forte.simbot.component:simbot-component-qq-gulid-stdlib:${version}") // 或参考下文所述的 Releases
+implementation("love.forte.simbot.component:simbot-component-qq-guild-stdlib:${version}") // 或参考下文所述的 Releases
 `.trim()}</CodeBlock>
 
 
@@ -31,7 +31,7 @@ implementation("love.forte.simbot.component:simbot-component-qq-gulid-stdlib:${v
 
 <CodeBlock language='gradle'>{`
 // 不要忘记使用 Gradle 的 kotlin 插件来允许自动选择对应平台，比如JVM或JS等。
-implementation 'love.forte.simbot.component:simbot-component-qq-gulid-stdlib:${version}' // 版本参考下文所述的 Releases
+implementation 'love.forte.simbot.component:simbot-component-qq-guild-stdlib:${version}' // 版本参考下文所述的 Releases
 `.trim()}</CodeBlock>
 
 </TabItem>
