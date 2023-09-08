@@ -62,7 +62,7 @@ object P {
             0, 0
         )
 
-        private val alphaSuffix = v("alpha", 10)
+        private val alphaSuffix = v("beta", 1)
 
         override val version = baseVersion - alphaSuffix
         val snapshotVersion = baseVersion - (alphaSuffix - Version.SNAPSHOT)
