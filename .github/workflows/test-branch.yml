@@ -2,7 +2,14 @@ name: Test Branch
 on:
   pull_request:
     branches:
-      - dev/**
+      - 'dev/**'
+    paths:
+      - '**.java'
+      - '**.kt'
+      - '**.kts'
+      - '*/src/*/kotlin/**'
+      - '*/src/*/java/**'
+      - '*/src/*/resource/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

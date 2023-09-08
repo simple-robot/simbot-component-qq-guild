@@ -21,7 +21,7 @@
 
 </div>
 
-这是 [**Simple Robot v3.x**](https://github.com/simple-robot/simpler-robot)
+这是 [**Simple Robot v3**](https://github.com/simple-robot/simpler-robot)
 下的子项目，是针对 [**QQ频道机器人**](https://bot.q.qq.com/wiki/develop/api/) 各方面的实现，
 包括对 `API` 内容的实现、事件相关的实现以及BOT对于事件的监听与交互等。
 
@@ -31,29 +31,31 @@
 
 > **Note**
 >
-> _下文 `simple-robot v3.x` 简称为 `simbot3`_
+> _下文 `Simple Robot v3` 简称为 `simbot3`_
 
 ## 文档
 
 - 了解simbot3: [**simbot3官网**](https://simbot.forte.love)
-- **QQ频道组件**文档网站：https://simple-robot.github.io/simbot-component-qq-guild/ （尚在 _🔧建设中_，暂未配置域名，未来可能会变化）
+- **QQ频道组件**手册：https://simple-robot.github.io/simbot-component-qq-guild/ （尚在 _🔧建设中_，暂未配置域名，未来可能会变化）
 - **API文档**: [**文档引导站点**](https://docs.simbot.forte.love) 中QQ频道的 [**KDoc站点**](https://docs.simbot.forte.love/components/qq-guild)
 
 ---
 
 > **Warning**
->
-> 目前无论是当前仓库还是 `simbot3` 都处于紧张的早中期建设阶段，在正式版发布之前必然存在很多不可预知的问题，并且开发进度无法清晰预估，毕竟一天一共就24个小时，而我们团队的精力并非无限。
-> 
-> 如果你想要协助我们对当前仓库或者 [simbot3](https://github.com/ForteScarlet/simpler-robot/tree/v3-dev) 的建设，欢迎通过Issues提出宝贵意见或者通过PR参与到建设当中，十分感谢。
+> **目前版本处于 `BETA` 阶段，代表我们会尽量保证不再大面积变更API，且仍然可能存在一些未知问题、未完善的内容和落后于官方更新的内容。**
+
+我们欢迎并期望着您的的[反馈](https://github.com/simple-robot/simbot-component-qq-guild/issues)或[协助](https://github.com/simple-robot/simbot-component-qq-guild/pulls)，
+感谢您的贡献与支持！
 
 ## 模块引导
 
 ### API模块
 
-> JVM/JS/Native
+> JVM | JS | native
 
-基于 `Ktor` 针对 [QQ频道API](https://bot.q.qq.com/wiki/develop/api/) 的基本完整的封装实现，
+基于 `Ktor` 针对 [QQ频道API](https://bot.q.qq.com/wiki/develop/api/) 
+的基本完整的[KMP](https://kotlinlang.org/docs/multiplatform.html)多平台封装实现，
+支持 JVM、JS 和 native 平台，
 是一个简单高效轻量级的API实现模块。
 
 此模块基本不会提供什么多余的实现，其目标为在提供封装的情况下尽可能地保留原始API的使用手感，不做过多的封装。
@@ -62,9 +64,11 @@
 
 ### 标准库模块
 
-> JVM/JS/Native
+> JVM | JS | native
 
 基于 [API模块](simbot-component-qq-guild-api) 针对bot的"登录"鉴权实现简单高效轻量级的事件订阅功能。
+
+通过[KMP](https://kotlinlang.org/docs/multiplatform.html)多平台支持 JVM、JS 和 native 平台，
 
 此模块在API模块的基础上提供了针对事件相关的功能实现，包括事件订阅的能力。
 同样的，其目标为在提供封装的情况下尽可能地保留原始API的使用手感，不做过多的封装。

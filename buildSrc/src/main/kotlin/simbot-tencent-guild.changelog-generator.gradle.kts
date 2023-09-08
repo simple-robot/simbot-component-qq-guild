@@ -34,11 +34,12 @@ tasks.create("createChangelog") {
                 > 对应核心版本: [**v$coreVersion**](https://github.com/simple-robot/simpler-robot/releases/tag/v$coreVersion)
                 
                 > **Warning**
-                > **目前版本仍处于 `ALPHA` 阶段，代表仍然可能存在大量[已知问题](https://github.com/simple-robot/simbot-component-qq-guild/issues)或未知问题，
-                以及未完善的内容和落后于官方更新的内容。**
+                > **目前版本处于 `BETA` 阶段，代表我们会尽量保证不再大面积变更API，且仍然可能存在一些未知问题、未完善的内容和落后于官方更新的内容。**
                 
                 我们欢迎并期望着您的的[反馈](https://github.com/simple-robot/simbot-component-qq-guild/issues)或[协助](https://github.com/simple-robot/simbot-component-qq-guild/pulls)，
                 感谢您的贡献与支持！
+
+                也欢迎您为我们献上一颗 `star`，这是对我们最大的鼓励与认可！
                 
             """.trimIndent()
 

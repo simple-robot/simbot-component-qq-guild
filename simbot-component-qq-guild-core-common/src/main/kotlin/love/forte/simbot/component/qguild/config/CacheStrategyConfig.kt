@@ -81,9 +81,7 @@ public data class CacheConfig(
      */
     @SerialName("dynamic")
     val dynamicCacheConfig: DynamicCacheConfig? = null,
-) {
-
-}
+)
 
 
 /**
@@ -125,7 +123,7 @@ public data class TransmitCacheConfig(val enable: Boolean = true)
  * 那么他就可以针对某个 `guild` 下的 `member` 和 `channel` 进行实时的内部缓存来避免频繁的API调用，
  * 提高整体程序的响应速度和网络（请求）压力。
  *
- * TODO
+ * @suppress TODO Not supported yet.
  */
 @Serializable
-public data class DynamicCacheConfig(val enable: Boolean = true)
+public data class DynamicCacheConfig(val enable: Boolean = false)

@@ -70,7 +70,9 @@ internal class QGBotImpl(
         LoggerFactory.getLogger("love.forte.simbot.component.qguild.bot.${source.ticket.secret}")
 
     internal val job: CompletableJob
-    override val coroutineContext: CoroutineContext
+
+    @Suppress("RedundantModalityModifier") // warn
+    final override val coroutineContext: CoroutineContext
 
     private val cacheConfig = configuration.cacheConfig
     private val cacheable = cacheConfig?.enable == true
@@ -80,6 +82,12 @@ internal class QGBotImpl(
         val job = SupervisorJob(context[Job])
         this.job = job
         this.coroutineContext = context + job
+
+        // check config for warn log
+        if (configuration.cacheConfig?.dynamicCacheConfig?.enable == true) {
+            logger.warn("DynamicCacheConfig is not supported yet, but dynamicCacheConfig.enable == `true`. This will have no real effect.")
+        }
+
     }
 
     @Volatile
@@ -88,7 +96,7 @@ internal class QGBotImpl(
     override val userId: ID
         get() {
             if (!::botSelf.isInitialized) {
-                throw UninitializedPropertyAccessException("information of bot has not been initialized. Please execute the `start()` method at least once first")
+                throw UninitializedPropertyAccessException("Information of bot has not been initialized. Please execute the `start()` method at least once first")
             }
 
             return botSelf.id.ID
@@ -102,7 +110,7 @@ internal class QGBotImpl(
 
     override val username: String
         get() = if (!::botSelf.isInitialized) {
-            throw UninitializedPropertyAccessException("information of bot has not been initialized. Please execute the `start()` method at least once first")
+            throw UninitializedPropertyAccessException("Information of bot has not been initialized. Please execute the `start()` method at least once first")
         } else botSelf.username
 
     override val avatar: String
