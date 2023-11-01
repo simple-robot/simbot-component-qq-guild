@@ -53,11 +53,32 @@ public fun interface SendingMessageParser :
         val builderFactory: () -> MessageSendApi.Body.Builder
     ) {
         public val builders: Deque<MessageSendApi.Body.Builder>
+
+        /**
+         * 标记下一次再获取 builder 时必须新建。
+         */
+        public var nextIsNew: Boolean = false
+        private set
+
+        @PublishedApi
+        internal fun nextMustBeNew(value: Boolean = true) {
+            nextIsNew = value
+        }
+
         init {
             builders = ConcurrentLinkedDeque()
             builders.add(builderFactory())
         }
-        val builder: MessageSendApi.Body.Builder get() = builders.peekLast()
+
+        val builder: MessageSendApi.Body.Builder get() {
+            if (nextIsNew) {
+                return newBuilder().also {
+                    nextMustBeNew(false)
+                }
+            }
+
+            return builders.peekLast()
+        }
         public fun newBuilder(): MessageSendApi.Body.Builder {
             return builderFactory().also { builders.addLast(it) }
         }
@@ -65,8 +86,15 @@ public fun interface SendingMessageParser :
         /**
          * 如果符合 [check] 的条件，得到 [builder], 否则使用 [newBuilder] 构建一个新的builder。
          *
+         * 如果 [nextIsNew] 被标记为 `true`, 则本次不会调用 [check] 且必然得到新的 builder.
+         *
          */
         public inline fun builderOrNew(check: (MessageSendApi.Body.Builder) -> Boolean): MessageSendApi.Body.Builder {
+            if (nextIsNew) {
+                return newBuilder().also {
+                    nextMustBeNew(false)
+                }
+            }
             return builder.takeIf(check) ?: newBuilder()
         }
 
@@ -101,6 +129,7 @@ public object MessageParsers {
         add(FaceParser)
         add(MentionParser)
         add(ArkParser)
+        add(EmbedParser)
         add(AttachmentParser)
         add(ReplyToParser)
         add(ImageParser)
