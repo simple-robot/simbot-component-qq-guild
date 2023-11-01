@@ -238,7 +238,7 @@ public class MessageSendApi private constructor(
         public val content: String?,
 
         /**
-         * 选填，embed 消息，一种特殊的 ark，详情参考[Embed消息](https://bot.q.qq.com/wiki/develop/api/openapi/message/embed_message.html)
+         * 选填，embed 消息，一种特殊的 ark，详情参考 [Embed消息](https://bot.q.qq.com/wiki/develop/api/openapi/message/template/embed_message.html)
          */
         public val embed: Message.Embed?,
         /**
@@ -311,6 +311,12 @@ public class MessageSendApi private constructor(
             public var msgId: String? = null
             public var eventId: String? = null
             public var markdown: Message.Markdown? = null
+
+            /**
+             * 判断 [Builder] 中的各属性是否都为空
+             */
+            public val isEmpty: Boolean
+                get() = content == null && embed == null && ark == null && messageReference == null && image == null && msgId == null && eventId == null && markdown == null
 
             public fun appendContent(append: String) {
                 if (content == null) {
@@ -399,6 +405,7 @@ public inline fun MessageSendApi.Factory.create(channelId: String, builder: Buil
  * 提供一些需要由不同平台额外实现的基类。
  * 主要针对 `fileImage`。
  */
+@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 @InternalApi
 public expect abstract class BaseMessageSendBodyBuilder() {
     public open var fileImage: Any?

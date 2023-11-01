@@ -24,6 +24,7 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import love.forte.simbot.qguild.ApiModel
+import love.forte.simbot.qguild.message.EmbedBuilder
 import kotlin.jvm.JvmStatic
 import kotlin.jvm.JvmSynthetic
 
@@ -149,7 +150,9 @@ public data class Message(
     }
 
     /**
-     * [MessageEmbed](https://bot.q.qq.com/wiki/develop/api/openapi/message/model.html#messageembed)
+     * [embed 消息](https://bot.q.qq.com/wiki/develop/api/openapi/message/template/embed_message.html)
+     *
+     * @see EmbedBuilder
      */
     @Serializable
     public data class Embed(
@@ -164,9 +167,9 @@ public data class Message(
         val prompt: String,
 
         /**
-         * 缩略图
+         * 缩略图，选填
          */
-        val thumbnail: Thumbnail,
+        val thumbnail: Thumbnail? = null,
 
         /**
          * 字段信息
@@ -202,7 +205,8 @@ public data class Message(
              * _Note: 似乎已经不存在了_
              */
             @Deprecated("not exists", level = DeprecationLevel.HIDDEN)
-            public val value: String = "",
+            @Transient
+            public val value: String? = null,
         )
     }
 
