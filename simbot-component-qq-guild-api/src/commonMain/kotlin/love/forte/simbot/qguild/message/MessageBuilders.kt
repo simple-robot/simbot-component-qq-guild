@@ -16,6 +16,7 @@
  */
 
 @file:Suppress("MemberVisibilityCanBePrivate")
+
 package love.forte.simbot.qguild.message
 
 import love.forte.simbot.qguild.model.Message
@@ -174,24 +175,53 @@ public class EmbedBuilder {
      */
     public lateinit var prompt: String
 
-
     /**
      * 缩略图
+     *
+     * 选填，没有缩略图的可以不填
      */
-    public lateinit var thumbnail: Message.Embed.Thumbnail
+    public var thumbnail: Message.Embed.Thumbnail? = null
 
+    /**
+     * 设置缩略图。
+     *
+     * @see thumbnail
+     */
+    public var thumbnailUrl: String?
+        get() = thumbnail?.url
+        set(value) {
+            thumbnail = if (value == null) {
+                null
+            } else {
+                Message.Embed.Thumbnail(value)
+            }
+        }
 
     /**
      * MessageEmbedField 对象数组	字段信息
      */
     public var fields: MutableList<Message.Embed.Field> = mutableListOf()
 
-
+    /**
+     * 向 [fields] 中添加一个元素。
+     *
+     */
+    @Deprecated("'value' is deprecated.", ReplaceWith("addField(name)"))
     public fun addField(name: String, value: String) {
-        fields.add(Message.Embed.Field(name, value))
+        addField(name)
     }
 
+    /**
+     * 向 [fields] 中添加一个元素。
+     *
+     */
+    public fun addField(name: String) {
+        fields.add(Message.Embed.Field(name))
+    }
 
+    /**
+     * 构建得到 [Message.Embed]
+     */
     public fun build(): Message.Embed {
         return Message.Embed(title, prompt, thumbnail, fields.toList())
     }
