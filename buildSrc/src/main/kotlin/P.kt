@@ -24,7 +24,8 @@ val simbotVersion = v(3, 2, 0)
 //- v("RC", 3)
 
 fun simbot(name: String, version: String = simbotVersion.toString()): String = "love.forte.simbot:simbot-$name:$version"
-fun simboot(name: String, version: String = simbotVersion.toString()): String = "love.forte.simbot.boot:simboot-$name:$version"
+fun simboot(name: String, version: String = simbotVersion.toString()): String =
+    "love.forte.simbot.boot:simboot-$name:$version"
 
 val simbotApi = simbot("api")
 val simbotCore = simbot("core")
@@ -62,10 +63,10 @@ object P {
             0, 0
         )
 
-        private val alphaSuffix = v("beta", 2)
+        //private val alphaSuffix = v("beta", 2)
 
-        override val version = baseVersion - alphaSuffix
-        val snapshotVersion = baseVersion - (alphaSuffix - Version.SNAPSHOT)
+        override val version = baseVersion // - alphaSuffix
+        val snapshotVersion = baseVersion - Version.SNAPSHOT
 
         val versionIfSnap get() = (if (isSnapshot()) snapshotVersion else version).toString()
 
@@ -106,6 +107,7 @@ object P {
 
 
 }
+
 private val _isSnapshot by lazy { initIsSnapshot() }
 
 private fun initIsSnapshot(): Boolean {
