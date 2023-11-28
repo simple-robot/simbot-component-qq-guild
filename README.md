@@ -36,13 +36,10 @@
 ## 文档
 
 - 了解simbot3: [**simbot3官网**](https://simbot.forte.love)
-- **QQ频道组件**手册：https://simple-robot.github.io/simbot-component-qq-guild/ （尚在 _🔧建设中_，暂未配置域名，未来可能会变化）
+- **QQ频道组件**手册：https://simple-robot.github.io/simbot-component-qq-guild/ （尚在 _🔧建设中_，暂未配置域名）
 - **API文档**: [**文档引导站点**](https://docs.simbot.forte.love) 中QQ频道的 [**KDoc站点**](https://docs.simbot.forte.love/components/qq-guild)
 
 ---
-
-> **Warning**
-> **目前版本处于 `BETA` 阶段，代表我们会尽量保证不再大面积变更API，且仍然可能存在一些未知问题、未完善的内容和落后于官方更新的内容。**
 
 我们欢迎并期望着您的的[反馈](https://github.com/simple-robot/simbot-component-qq-guild/issues)或[协助](https://github.com/simple-robot/simbot-component-qq-guild/pulls)，
 感谢您的贡献与支持！
