@@ -29,9 +29,8 @@
 - 基于 [`Kotlin coroutines`](https://github.com/Kotlin/kotlinx.coroutines) 与 [`Ktor`](https://ktor.io/) 提供高效易用的API；
 - 基于 [`Kotlin serialization`](https://github.com/Kotlin/kotlinx.serialization) 进行数据序列化/反序列化操作。
 
-> **Note**
->
-> _下文 `Simple Robot v3` 简称为 `simbot3`_
+> [!Note]
+> 下文中 `Simple Robot v3` 简称为 `simbot3`
 
 ## 文档
 
