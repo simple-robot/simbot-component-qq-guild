@@ -21,16 +21,16 @@ async function config() {
 
         // Set the production url of your site here
         // url: 'https://component-qqguild.simbot.forte.love',
-        url: 'https://simple-robot.github.io',
+        url: 'http://component-qqguild.simbot.forte.love/',
 
         // Set the /<baseUrl>/ pathname under which your site is served
         // For GitHub pages deployment, it is often '/<projectName>/'
-        baseUrl: '/simbot-component-qq-guild/',
+        baseUrl: '/',
 
         // GitHub pages deployment config.
         // If you aren't using GitHub pages, you don't need these.
         organizationName: 'Simple Robot', // Usually your GitHub org/username.
-        projectName: 'simbot component tencent guild website', // Usually your repo name.
+        projectName: 'simbot component qq guild website', // Usually your repo name.
 
         onBrokenLinks: 'warn',
         onBrokenMarkdownLinks: 'warn',
