@@ -2,7 +2,7 @@ name: Publish V4 Snapshot
 on:
   push:
     branches:
-      - v4-dev/ver/**
+      - v4-dev/*
       - v4-dev/main
 
     paths:
