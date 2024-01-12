@@ -29,13 +29,15 @@ plugins {
 configJavaCompileWithModule("simbot.component.qqguild.stdlib")
 apply(plugin = "qq-guild-multiplatform-maven-publish")
 
+configJsTestTasks()
+
 kotlin {
     explicitApi()
     applyDefaultHierarchyTemplate()
 
     sourceSets.configureEach {
         languageSettings {
-            optIn("love.forte.simbot.qguild.InternalApi")
+            optIn("love.forte.simbot.qguild.QGInternalApi")
         }
     }
 
@@ -87,4 +89,3 @@ kotlin {
         }
     }
 }
-

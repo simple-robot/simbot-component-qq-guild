@@ -17,10 +17,10 @@
 
 package love.forte.simbot.qguild
 
+//import kotlin.js.ExperimentalJsExport
+//import kotlin.js.JsExport
 import io.ktor.http.*
 import kotlinx.serialization.json.Json
-import kotlin.js.ExperimentalJsExport
-import kotlin.js.JsExport
 import kotlin.jvm.JvmField
 
 /**
@@ -30,9 +30,8 @@ import kotlin.jvm.JvmField
  *
  *
  */
-@OptIn(ExperimentalJsExport::class)
-@JsExport
-@Suppress("NON_EXPORTABLE_TYPE")
+//@OptIn(ExperimentalJsExport::class)
+//@JsExport
 public object QQGuild {
     /**
      * 正式环境接口域名 `https://api.sgroup.qq.com`

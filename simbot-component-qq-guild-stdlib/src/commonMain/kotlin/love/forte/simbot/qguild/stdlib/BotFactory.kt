@@ -15,11 +15,11 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package love.forte.simbot.qguild
+package love.forte.simbot.qguild.stdlib
 
 import love.forte.simbot.common.function.ConfigurerFunction
 import love.forte.simbot.common.function.invokeBy
-import love.forte.simbot.qguild.internal.BotImpl
+import love.forte.simbot.qguild.stdlib.internal.BotImpl
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 

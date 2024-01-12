@@ -18,14 +18,14 @@
 @file:JvmName("BotRequests")
 @file:JvmMultifileClass
 
-package love.forte.simbot.qguild
+package love.forte.simbot.qguild.stdlib
 
 import io.ktor.client.statement.*
 import love.forte.simbot.qguild.api.QQGuildApi
 import love.forte.simbot.qguild.api.request
 import love.forte.simbot.qguild.api.requestData
 import love.forte.simbot.qguild.api.requestText
-import love.forte.simbot.qguild.internal.BotImpl
+import love.forte.simbot.qguild.stdlib.internal.BotImpl
 import kotlin.jvm.JvmMultifileClass
 import kotlin.jvm.JvmName
 import kotlin.jvm.JvmSynthetic

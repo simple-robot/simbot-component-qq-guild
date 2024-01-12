@@ -15,13 +15,14 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package love.forte.simbot.qguild
+package love.forte.simbot.qguild.stdlib
 
 import io.ktor.client.*
 import io.ktor.client.engine.*
 import io.ktor.client.plugins.*
 import io.ktor.http.*
 import kotlinx.serialization.json.Json
+import love.forte.simbot.qguild.QQGuild
 import love.forte.simbot.qguild.event.EventIntents
 import love.forte.simbot.qguild.event.Intents
 import love.forte.simbot.qguild.event.Shard
@@ -169,26 +170,6 @@ public class ConfigurableBotConfiguration : BotConfiguration {
      */
     override var apiDecoder: Json = QQGuild.DefaultJson
 
-//    /**
-//     * BOT内接收到事件后推送到的缓冲区的容量。
-//     *
-//     * 缓冲区中堆积的事件如果已满则后续推送的事件会挂起等待缓冲区内元素的消费。
-//     *
-//     * 默认为 [`64`][DEFAULT_EVENT_BUFFER_CAPACITY]。
-//     *
-//     * @see DEFAULT_EVENT_BUFFER_CAPACITY
-//     *
-//     */
-//    override var eventBufferCapacity: Int = DEFAULT_EVENT_BUFFER_CAPACITY
-
-    public companion object {
-        private val defaultJson = Json {
-            isLenient = true
-            ignoreUnknownKeys = true
-        }
-    }
-
-
     internal fun release(): BotConfiguration = BotConfigurationImpl(
         coroutineContext = coroutineContext,
         shard = shard,
@@ -205,6 +186,8 @@ public class ConfigurableBotConfiguration : BotConfiguration {
         wsClientEngineFactory = wsClientEngineFactory,
         apiDecoder = apiDecoder,
     )
+
+    public companion object
 }
 
 private class BotConfigurationImpl(

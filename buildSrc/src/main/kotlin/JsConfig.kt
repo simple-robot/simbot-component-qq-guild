@@ -25,24 +25,26 @@ inline fun KotlinJsTargetDsl.configJs(
     block: () -> Unit = {}
 ) {
     if (nodeJs) {
-        nodejs {
-            testTask {
-                useMocha {
-                    timeout = "10000"
-                }
-            }
-        }
+        nodejs()
+//        {
+////            testTask {
+////                useMocha {
+////                    timeout = "10000"
+////                }
+////            }
+//        }
     }
 
     if (browser) {
-        browser {
-            testTask{
-                useKarma {
-                    useChromeHeadless()
-                    // useConfigDirectory(File(project.rootProject.projectDir, "karma"))
-                }
-            }
-        }
+        browser()
+//        {
+//            testTask{
+//                useKarma {
+//                    useChromeHeadless()
+//                    // useConfigDirectory(File(project.rootProject.projectDir, "karma"))
+//                }
+//            }
+//        }
     }
 
     binaries.library()

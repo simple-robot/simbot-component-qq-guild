@@ -18,6 +18,7 @@
 import love.forte.gradle.common.kotlin.multiplatform.applyTier1
 import love.forte.gradle.common.kotlin.multiplatform.applyTier2
 import love.forte.gradle.common.kotlin.multiplatform.applyTier3
+import love.forte.plugin.suspendtrans.gradle.withKotlinTargets
 
 plugins {
     kotlin("multiplatform")
@@ -29,13 +30,15 @@ configJavaCompileWithModule("simbot.component.qqguild.api")
 //apply(plugin = "qq-guild-dokka-partial-configure")
 apply(plugin = "qq-guild-multiplatform-maven-publish")
 
+//configJsTestTasks()
+
 kotlin {
     explicitApi()
     applyDefaultHierarchyTemplate()
 
     sourceSets.configureEach {
         languageSettings {
-            optIn("love.forte.simbot.qguild.InternalApi")
+            optIn("love.forte.simbot.qguild.QGInternalApi")
         }
     }
 
@@ -48,6 +51,13 @@ kotlin {
     applyTier1()
     applyTier2()
     applyTier3(supportKtorClient = true)
+
+    withKotlinTargets { target ->
+        targets.findByName(target.name)?.compilations?.all {
+            // 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+            kotlinOptions.freeCompilerArgs += "-Xexpect-actual-classes"
+        }
+    }
 
     sourceSets {
         commonMain.dependencies {
@@ -82,6 +92,10 @@ kotlin {
         }
 
         jsMain.dependencies {
+            api(libs.ktor.client.js)
+        }
+
+        jsTest.dependencies {
             api(libs.ktor.client.js)
         }
 

@@ -15,7 +15,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package love.forte.simbot.qguild.internal
+package love.forte.simbot.qguild.stdlib.internal
 
 import io.ktor.client.*
 import io.ktor.client.plugins.*
@@ -37,16 +37,15 @@ import love.forte.simbot.common.weak.WeakRef
 import love.forte.simbot.common.weak.weakRef
 import love.forte.simbot.logger.Logger
 import love.forte.simbot.logger.LoggerFactory
-import love.forte.simbot.qguild.*
-import love.forte.simbot.qguild.DisposableHandle
 import love.forte.simbot.qguild.api.GatewayApis
 import love.forte.simbot.qguild.api.GatewayInfo
 import love.forte.simbot.qguild.api.user.GetBotInfoApi
-import love.forte.simbot.qguild.event.Intents
 import love.forte.simbot.qguild.event.Ready
 import love.forte.simbot.qguild.event.Shard
 import love.forte.simbot.qguild.event.Signal
 import love.forte.simbot.qguild.model.User
+import love.forte.simbot.qguild.stdlib.*
+import love.forte.simbot.qguild.stdlib.DisposableHandle
 import kotlin.concurrent.Volatile
 import kotlin.coroutines.CoroutineContext
 
@@ -156,7 +155,6 @@ internal class BotImpl(
     internal val botToken = "Bot ${ticket.appId}.${ticket.token}"
     override val shard: Shard = configuration.shard
     override val apiDecoder: Json = configuration.apiDecoder
-    internal val intents: Intents = configuration.intents
 
 
     internal val processorQueue: ConcurrentQueue<EventProcessor> = createConcurrentQueue()
@@ -345,6 +343,4 @@ internal data class SessionInfo(
     val logger: Logger,
     val readyData: Ready.Data,
 )
-
-internal data class EventData(val raw: String, val event: Signal.Dispatch)
 

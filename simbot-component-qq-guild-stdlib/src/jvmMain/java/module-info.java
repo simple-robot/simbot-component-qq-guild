@@ -9,6 +9,9 @@ module simbot.component.qqguild.stdlib {
     requires io.ktor.client.content.negotiation;
     requires io.ktor.serialization.kotlinx.json;
     requires io.ktor.client.websockets;
+    requires io.ktor.client.core;
 
-    exports love.forte.simbot.qguild;
+    requires static org.jetbrains.annotations;
+
+    exports love.forte.simbot.qguild.stdlib;
 }

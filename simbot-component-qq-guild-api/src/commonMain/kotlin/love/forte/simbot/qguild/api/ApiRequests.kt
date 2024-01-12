@@ -36,7 +36,6 @@ import kotlinx.serialization.json.Json
 import love.forte.simbot.common.serialization.guessSerializer
 import love.forte.simbot.logger.isDebugEnabled
 import love.forte.simbot.qguild.ErrInfo
-import love.forte.simbot.qguild.QGInternalApi
 import love.forte.simbot.qguild.QQGuild
 import love.forte.simbot.qguild.QQGuildApiException
 import kotlin.contracts.ExperimentalContracts
@@ -204,7 +203,6 @@ internal fun <R : Any> QQGuildApi<R>.decodeResponse(
     return decoder.decodeFromString(resultDeserializationStrategy, remainingText)
 }
 
-@OptIn(QGInternalApi::class)
 internal fun checkStatus(
     remainingText: String,
     decoder: StringFormat,

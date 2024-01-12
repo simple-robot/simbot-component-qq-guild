@@ -15,7 +15,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package love.forte.simbot.qguild.internal
+package love.forte.simbot.qguild.stdlib.internal
 
 import io.ktor.client.*
 import io.ktor.client.plugins.websocket.*
@@ -33,14 +33,13 @@ import love.forte.simbot.common.collection.ExperimentalSimbotCollectionApi
 import love.forte.simbot.logger.Logger
 import love.forte.simbot.logger.isDebugEnabled
 import love.forte.simbot.logger.isTraceEnabled
-import love.forte.simbot.qguild.QGInternalApi
 import love.forte.simbot.qguild.api.GatewayApis
 import love.forte.simbot.qguild.api.GatewayInfo
-import love.forte.simbot.qguild.doInvoke
 import love.forte.simbot.qguild.err
 import love.forte.simbot.qguild.event.*
-import love.forte.simbot.qguild.internal.BotImpl.ClientImpl
-import love.forte.simbot.qguild.requestDataBy
+import love.forte.simbot.qguild.stdlib.doInvoke
+import love.forte.simbot.qguild.stdlib.internal.BotImpl.ClientImpl
+import love.forte.simbot.qguild.stdlib.requestDataBy
 import kotlin.math.max
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
@@ -268,7 +267,6 @@ internal class ReceiveEvent(
     override val bot: BotImpl,
     private val client: ClientImpl,
 ) : State() {
-    @OptIn(QGInternalApi::class)
     override suspend fun invoke(): State? {
         val session = client.wsSession
         val seq = client.sessionInfo.seq

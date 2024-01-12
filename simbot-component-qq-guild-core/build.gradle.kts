@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -27,7 +27,7 @@ kotlin {
     sourceSets.configureEach {
         languageSettings {
             optIn("love.forte.simbot.InternalSimbotApi")
-            optIn("love.forte.simbot.qguild.InternalApi")
+            optIn("love.forte.simbot.qguild.QGInternalApi")
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -15,13 +15,10 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-@file:OptIn(ExperimentalJsExport::class)
-@file:JsExport
+//@file:OptIn(ExperimentalJsExport::class)
+//@file:JsExport
 
 package love.forte.simbot.qguild.model
-
-import kotlin.js.ExperimentalJsExport
-import kotlin.js.JsExport
 
 
 /**

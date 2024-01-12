@@ -15,7 +15,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package love.forte.simbot.qguild
+package love.forte.simbot.qguild.stdlib
 
 import io.ktor.client.*
 import io.ktor.client.engine.*
@@ -76,7 +76,7 @@ public interface BotConfiguration {
     public val clientProperties: Map<String, String>
 
     /**
-     * 请求的服务器地址。默认为 [QQGuild.URL]. 即正式地址。
+     * 请求的服务器地址。默认为 [love.forte.simbot.qguild.QQGuild.URL]. 即正式地址。
      */
     public val serverUrl: Url
 

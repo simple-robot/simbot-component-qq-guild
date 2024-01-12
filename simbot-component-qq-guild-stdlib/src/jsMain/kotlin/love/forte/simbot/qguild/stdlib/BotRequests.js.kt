@@ -15,7 +15,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package love.forte.simbot.qguild
+package love.forte.simbot.qguild.stdlib
 
 import io.ktor.client.statement.*
 import kotlinx.coroutines.promise

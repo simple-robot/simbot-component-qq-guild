@@ -1,5 +1,6 @@
 module simbot.component.qqguild.api {
     requires kotlin.stdlib;
+
     requires transitive kotlinx.coroutines.core;
     requires transitive kotlinx.serialization.core;
     requires transitive kotlinx.serialization.json;
@@ -9,6 +10,7 @@ module simbot.component.qqguild.api {
     requires transitive simbot.common.suspendrunner;
     requires transitive simbot.common.core;
     // ktor
+    requires io.ktor.http;
     requires io.ktor.client.core;
     requires io.ktor.client.content.negotiation;
 

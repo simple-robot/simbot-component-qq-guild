@@ -241,7 +241,6 @@ public class MessageSendApi private constructor(
          * 各属性参考 [Body] 内同名属性。
          *
          */
-        @OptIn(QGInternalApi::class)
         @Suppress("MemberVisibilityCanBePrivate")
         public class Builder : BaseMessageSendBodyBuilder() {
             public var content: String? = null
@@ -352,7 +351,6 @@ public inline fun MessageSendApi.Factory.create(channelId: String, builder: Buil
  * 提供一些需要由不同平台额外实现的基类。
  * 主要针对 `fileImage`。
  */
-@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 @QGInternalApi
 public expect abstract class BaseMessageSendBodyBuilder() {
     public open var fileImage: Any?
@@ -395,7 +393,6 @@ private const val FILE_IMAGE_PROPERTY_NAME = "file_image"
  * - [resolveOther] support other platform type.
  */
 
-@OptIn(QGInternalApi::class)
 private fun FormBuilder.appendFileImage(fileImage: Any?) {
     when (fileImage) {
         is ByteArray -> {

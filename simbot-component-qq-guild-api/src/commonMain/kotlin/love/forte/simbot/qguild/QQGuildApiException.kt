@@ -62,7 +62,6 @@ public open class QQGuildApiException : RuntimeException {
 /**
  * @suppress
  */
-@OptIn(QGInternalApi::class)
 @Deprecated("use 'addStackTrace'", ReplaceWith("addStackTrace()"))
 public fun QQGuildApiException.copyCurrent(): QQGuildApiException = addStackTrace()
 
@@ -97,14 +96,12 @@ public inline val QQGuildApiException.isUnauthorized: Boolean get() = value == 4
 /**
  * 如果 [QQGuildApiException.isNotFound] 为 `true`, 得到null，否则抛出此异常
  */
-@OptIn(QGInternalApi::class)
 public inline fun <reified T> QQGuildApiException.ifNotFoundThenNull(throwCopy: Boolean = true): T? =
     if (isNotFound) null else if (throwCopy) throw this.addStackTrace() else throw this
 
 /**
  * 如果 [QQGuildApiException.isNotFound] 为 `true`, 得到null，否则抛出此异常
  */
-@OptIn(QGInternalApi::class)
 public inline fun <reified T> QQGuildApiException.ifNotFoundThen(throwCopy: Boolean = true, value: () -> T): T =
     if (isNotFound) value() else if (throwCopy) throw this.addStackTrace() else throw this
 
@@ -112,7 +109,6 @@ public inline fun <reified T> QQGuildApiException.ifNotFoundThen(throwCopy: Bool
 /**
  * 如果 [QQGuildApiException.isNotFound] 为 `true`, 得到null，否则抛出此异常
  */
-@OptIn(QGInternalApi::class)
 public inline fun QQGuildApiException.ifNotFoundThenNoSuch(throwCopy: Boolean = true, value: () -> String): Nothing =
     if (isNotFound) {
         throw NoSuchElementException(value()).apply { initCause0(this) }
