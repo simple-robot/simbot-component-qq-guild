@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -15,7 +15,36 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+@file:JvmName("EventProcessors")
+@file:JvmMultifileClass
+
 package love.forte.simbot.qguild
 
+import love.forte.simbot.qguild.event.Signal
+import kotlin.jvm.JvmMultifileClass
+import kotlin.jvm.JvmName
+import kotlin.jvm.JvmSynthetic
+
+/**
+ * 用于处理事件的函数接口。
+ *
+ * 在Java中可以使用 `JBlockEventProcessor`、`JAsyncEventProcessor`
+ * 或者 `EventProcessors` 中提供的静态工厂函数，
+ * 例如
+ * ```java
+ * bot.registerProcessor(EventProcessors.block((event, raw) -> { ... }))
+ * ```
+ *
+ */
+public fun interface EventProcessor {
+    /**
+     * 事件处理函数
+     */
+    @JvmSynthetic
+    public suspend operator fun Signal.Dispatch.invoke(raw: String)
+}
 
 
+internal suspend fun EventProcessor.doInvoke(d: Signal.Dispatch, r: String) {
+    d.apply { invoke(r) }
+}

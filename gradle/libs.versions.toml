@@ -19,6 +19,7 @@ simbot-common-atomic = { group = "love.forte.simbot.common", name = "simbot-comm
 simbot-common-core = { group = "love.forte.simbot.common", name = "simbot-common-core", version.ref = "simbot" }
 simbot-common-suspend = { group = "love.forte.simbot.common", name = "simbot-common-suspend-runner", version.ref = "simbot" }
 simbot-common-annotations = { group = "love.forte.simbot.common", name = "simbot-common-annotations", version.ref = "simbot" }
+simbot-common-loop = { group = "love.forte.simbot.common", name = "simbot-common-stage-loop", version.ref = "simbot" }
 
 # jetbrains-annotation
 jetbrains-annotations = "org.jetbrains:annotations:24.0.1"

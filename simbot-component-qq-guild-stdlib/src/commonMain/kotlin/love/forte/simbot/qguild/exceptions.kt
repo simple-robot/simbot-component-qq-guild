@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -15,28 +15,14 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package love.forte.simbot.qguild.internal
-
+package love.forte.simbot.qguild
 
 /**
- *
- * @author ForteScarlet
+ * 当尝试使用已经被关闭的 [Bot] 进行某些操作时（例如尝试启动它）
  */
-public expect class SimpleConcurrentQueue<T> {
-
-    /**
-     * 向此队列添加一个元素。
-     */
-    public fun add(element: T): Boolean
-
-    /**
-     * 移除指定目标。
-     */
-    public fun remove(element: T): Boolean
+public open class BotAlreadyCancelledException : IllegalStateException {
+    public constructor() : super()
+    public constructor(message: String?) : super(message)
+    public constructor(message: String?, cause: Throwable?) : super(message, cause)
+    public constructor(cause: Throwable?) : super(cause)
 }
-
-
-public expect fun <T> createSimpleConcurrentQueue(): SimpleConcurrentQueue<T>
-
-
-public expect inline fun <T> SimpleConcurrentQueue<T>.forEach(block: (T) -> Unit)

@@ -61,7 +61,6 @@ kotlin {
 
             api(libs.ktor.client.core)
             api(libs.ktor.client.contentNegotiation)
-            api(libs.ktor.serialization.kotlinxJson)
             api(libs.kotlinx.serialization.json)
         }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -23,22 +23,24 @@ import io.ktor.client.request.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
-import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.longOrNull
+import love.forte.simbot.common.collection.ExperimentalSimbotCollectionApi
 import love.forte.simbot.logger.Logger
 import love.forte.simbot.logger.isDebugEnabled
 import love.forte.simbot.logger.isTraceEnabled
+import love.forte.simbot.qguild.QGInternalApi
 import love.forte.simbot.qguild.api.GatewayApis
 import love.forte.simbot.qguild.api.GatewayInfo
+import love.forte.simbot.qguild.doInvoke
 import love.forte.simbot.qguild.err
 import love.forte.simbot.qguild.event.*
 import love.forte.simbot.qguild.internal.BotImpl.ClientImpl
-import love.forte.simbot.qguild.requestBy
+import love.forte.simbot.qguild.requestDataBy
 import kotlin.math.max
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
@@ -74,7 +76,7 @@ private fun canBeIdentified(code: Short): Boolean {
 /**
  * 流转的状态
  */
-internal abstract class State : love.forte.simbot.util.stageloop.State<State>() {
+internal abstract class State : love.forte.simbot.common.stageloop.State<State>() {
     internal abstract val bot: BotImpl
     internal val logger: Logger get() = bot.logger
 }
@@ -82,7 +84,7 @@ internal abstract class State : love.forte.simbot.util.stageloop.State<State>() 
 internal class Connect(
     override val bot: BotImpl,
     private val shard: Shard,
-    private val gateway: GatewayInfo
+    private val gateway: GatewayInfo,
 ) : State() {
     override suspend fun invoke(): State {
         val intents = bot.configuration.intents
@@ -235,7 +237,7 @@ internal class HeartbeatJob(
 
 
 /**
- * 创建 [ClientImpl], 并在异步中处理事件。
+ * 创建 [ClientImpl]
  */
 internal class CreateClient(
     override val bot: BotImpl,
@@ -243,11 +245,6 @@ internal class CreateClient(
     private val session: DefaultClientWebSocketSession
 ) : State() {
     override suspend fun invoke(): State {
-        val eventBufferCapacity = bot.configuration.eventBufferCapacity
-        logger.debug("Bot event buffer capacity: {}", eventBufferCapacity)
-        val sharedFlow = MutableSharedFlow<EventData>(extraBufferCapacity = eventBufferCapacity)
-        launchEventProcessJob(sharedFlow)
-
         val client = bot.ClientImpl(
             botClientSession.readyData,
             botClientSession,
@@ -256,64 +253,11 @@ internal class CreateClient(
 
         logger.debug("Current client: {}", client)
 
-        // store client
-        bot.getAndUpdateClient { old ->
-            old?.cancel()
-            client
-        }
+        // update client
+        bot.updateClient(client)
 
         // next: receive events
-        return ReceiveEvent(bot, client, sharedFlow)
-    }
-
-    private fun launchEventProcessJob(flow: SharedFlow<EventData>): Job {
-        return flow
-            .onEach { (raw, event) ->
-                // 先顺序地使用 preProcessor 处理
-                bot.preProcessorQueue.forEach { processor ->
-                    runCatching {
-                        processor.invoke(event, raw)
-                    }.onFailure { e ->
-                        if (logger.isDebugEnabled) {
-                            logger.debug(
-                                "Event pre-precess failure. raw: {}, event: {}", raw, event
-                            )
-                        }
-                        logger.error("Event pre-precess failure.", e)
-                    }
-                }
-
-                // 然后异步地正常处理
-                // TODO 同步异步 configurable?
-                // bot launch or session launch?
-                bot.launch {
-                    bot.processorQueue.forEach { processor ->
-                        runCatching {
-                            processor.invoke(event, raw)
-                        }.onFailure { e ->
-                            if (logger.isDebugEnabled) {
-                                logger.debug(
-                                    "Event precess failure. raw: {}, event: {}", raw, event
-                                )
-                            }
-                            logger.error("Event precess failure.", e)
-                        }
-                    }
-                }
-
-            }.onCompletion { cause ->
-                if (cause == null) {
-                    logger.debug("Event process flow is completed. No cause.")
-                } else {
-                    logger.debug(
-                        "Event process flow is completed. Cause: {}", cause.message, cause
-                    )
-                }
-            }.catch { cause ->
-                logger.error(
-                    "Event process flow on error: {}", cause.message, cause
-                )
-            }.launchIn(session)
+        return ReceiveEvent(bot, client)
     }
 }
 
@@ -323,10 +267,8 @@ internal class CreateClient(
 internal class ReceiveEvent(
     override val bot: BotImpl,
     private val client: ClientImpl,
-    private val eventSharedFlow: MutableSharedFlow<EventData>,
 ) : State() {
-    // TODO session.incoming buffer
-
+    @OptIn(QGInternalApi::class)
     override suspend fun invoke(): State? {
         val session = client.wsSession
         val seq = client.sessionInfo.seq
@@ -345,7 +287,7 @@ internal class ReceiveEvent(
             }
 
             suspend fun doIdentify(): State {
-                val gatewayInfo: GatewayInfo = GatewayApis.Normal.requestBy(bot)
+                val gatewayInfo: GatewayInfo = GatewayApis.Normal.requestDataBy(bot)
                 logger.debug("Reconnect gateway {} by shard {}", gatewayInfo, bot.shard)
                 return Connect(bot, bot.shard, gatewayInfo)
             }
@@ -386,6 +328,8 @@ internal class ReceiveEvent(
                     }
 
                     bot.cancel(e)
+                    session.cancel(e.message ?: e.toString(), e)
+                    bot.updateClient(null)
                 }
             }
 
@@ -407,8 +351,6 @@ internal class ReceiveEvent(
             val raw = (frame as? Frame.Text)?.readText() ?: run {
                 logger.debug("Not Text frame {}, skip.", frame)
                 return this
-//                    loop.appendStage(this) // next: this
-//                    return
             }
             logger.debug("Received text frame raw: {}", raw)
             val json = bot.wsDecoder.parseToJsonElement(raw)
@@ -438,7 +380,8 @@ internal class ReceiveEvent(
                     val dispatchSeq = dispatch.seq
 
                     // 推送事件
-                    eventSharedFlow.emit(EventData(raw, dispatch))
+                    emitEvent(bot, dispatch, raw)
+//                    eventSharedFlow.emit(EventData(raw, dispatch))
 
                     // seq留下最大值
                     val currentSeq = seq.updateAndGet { pref -> max(pref, dispatchSeq) }
@@ -463,7 +406,42 @@ internal class ReceiveEvent(
 
         // next: self
         return this
-//            loop.appendStage(this)
+    }
+}
+
+@OptIn(ExperimentalSimbotCollectionApi::class)
+private suspend fun emitEvent(bot: BotImpl, dispatch: Signal.Dispatch, raw: String) {
+    val logger = bot.logger
+    // 先顺序地使用 preProcessor 处理
+    bot.preProcessorQueue.forEach { processor ->
+        runCatching {
+            processor.doInvoke(dispatch, raw)
+        }.onFailure { e ->
+            if (logger.isDebugEnabled) {
+                logger.debug(
+                    "Event pre-precess failure. raw: {}, event: {}", raw, dispatch
+                )
+            }
+            logger.error("Event pre-precess failure.", e)
+        }
+    }
+
+    // 然后异步地正常处理
+    // TODO 同步异步 configurable?
+    // bot launch or session launch?
+    bot.launch {
+        bot.processorQueue.forEach { processor ->
+            runCatching {
+                processor.doInvoke(dispatch, raw)
+            }.onFailure { e ->
+                if (logger.isDebugEnabled) {
+                    logger.debug(
+                        "Event precess failure. raw: {}, event: {}", raw, dispatch
+                    )
+                }
+                logger.error("Event precess failure.", e)
+            }
+        }
     }
 }
 
@@ -480,10 +458,10 @@ internal class Resume(
     private val client: ClientImpl,
 ) : State() {
     override suspend fun invoke(): State {
-        val newSession = bot.connectLock.withLock {
+        val newSession = bot.startLock.withLock {
             // 关闭当前连接
             client.cancelAndJoin()
-            val gateway = GatewayApis.Normal.requestBy(bot)
+            val gateway = GatewayApis.Normal.requestDataBy(bot)
             bot.wsClient.ws { gateway }.apply {
                 // 发送 Opcode6
                 val resumeSignal =
@@ -491,7 +469,6 @@ internal class Resume(
                 send(bot.wsDecoder.encodeToString(Signal.Resume.serializer(), resumeSignal))
             }
         }
-
 
         return WaitingHello(bot, newSession) { hello ->
             // 跳过 wait ready, 直接HeartbeatJob

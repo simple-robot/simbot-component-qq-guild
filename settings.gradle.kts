@@ -20,7 +20,7 @@ rootProject.name = "qq-guild"
 
 //include(":builder-generator")
 include(":simbot-component-qq-guild-api")
-//include(":simbot-component-qq-guild-stdlib")
+include(":simbot-component-qq-guild-stdlib")
 //include(":simbot-component-qq-guild-core-common")
 //include(":simbot-component-qq-guild-core")
 //include(":simbot-component-qq-guild-benchmark")

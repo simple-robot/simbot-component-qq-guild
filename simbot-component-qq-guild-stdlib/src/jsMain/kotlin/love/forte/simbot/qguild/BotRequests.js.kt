@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,11 +17,11 @@
 
 package love.forte.simbot.qguild
 
+import io.ktor.client.statement.*
+import kotlinx.coroutines.promise
+import love.forte.simbot.annotations.Api4Js
 import love.forte.simbot.qguild.api.QQGuildApi
-import love.forte.simbot.qguild.api.request
-import love.forte.simbot.qguild.api.requestRaw
-import love.forte.simbot.qguild.internal.BotImpl
-import kotlin.jvm.JvmSynthetic
+import kotlin.js.Promise
 
 
 /**
@@ -29,31 +29,9 @@ import kotlin.jvm.JvmSynthetic
  *
  * @throws love.forte.simbot.qguild.QQGuildApiException 如果返回状态码不在 200..300之间。
  */
-@JvmSynthetic
-public suspend fun <R> QQGuildApi<R>.requestBy(bot: Bot): R {
-    val botToken = if (bot is BotImpl) bot.botToken else "Bot ${bot.ticket.appId}.${bot.ticket.token}"
-    return request(
-        client = bot.apiClient,
-        server = bot.apiServer,
-        token = botToken,
-        decoder = bot.apiDecoder,
-    )
-}
-
-
-/**
- * 直接通过bot进行请求。
- *
- * @throws love.forte.simbot.qguild.QQGuildApiException 如果返回状态码不在 200..300之间。
- */
-@JvmSynthetic
-public suspend fun <R> QQGuildApi<R>.requestRawBy(bot: Bot): String {
-    val botToken = if (bot is BotImpl) bot.botToken else "Bot ${bot.ticket.appId}.${bot.ticket.token}"
-    return requestRaw(
-        client = bot.apiClient,
-        server = bot.apiServer,
-        token = botToken,
-    )
+@Api4Js
+public fun Bot.requestByAsync(api: QQGuildApi<*>): Promise<HttpResponse> = promise {
+    request(api)
 }
 
 /**
@@ -61,17 +39,17 @@ public suspend fun <R> QQGuildApi<R>.requestRawBy(bot: Bot): String {
  *
  * @throws love.forte.simbot.qguild.QQGuildApiException 如果返回状态码不在 200..300之间。
  */
-@JvmSynthetic
-public suspend fun <R> Bot.request(api: QQGuildApi<R>): R = api.requestBy(this)
-
+@Api4Js
+public fun Bot.requestTextByAsync(api: QQGuildApi<*>): Promise<String> = promise {
+    requestText(api)
+}
 
 /**
  * 直接通过bot进行请求。
  *
  * @throws love.forte.simbot.qguild.QQGuildApiException 如果返回状态码不在 200..300之间。
  */
-@JvmSynthetic
-public suspend fun <R> Bot.requestRaw(api: QQGuildApi<R>): String = api.requestRawBy(this)
-
-
-
+@Api4Js
+public fun <R : Any> Bot.requestDataByAsync(api: QQGuildApi<R>): Promise<R> = promise {
+    requestData(api)
+}

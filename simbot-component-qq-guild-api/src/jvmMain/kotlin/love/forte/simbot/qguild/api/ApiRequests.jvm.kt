@@ -65,5 +65,5 @@ public fun <R : Any> QQGuildApi<R>.requestBlocking(
     server: Url = QQGuild.URL,
     decoder: Json = QQGuild.DefaultJson,
 ): HttpResponse = runInNoScopeBlocking {
-    request(client, token, server, decoder)
+    request(client, token, server)
 }

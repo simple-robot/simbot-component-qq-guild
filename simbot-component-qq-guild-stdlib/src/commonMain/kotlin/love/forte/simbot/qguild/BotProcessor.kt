@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -29,7 +29,7 @@ import love.forte.simbot.qguild.event.Signal
  * ```
  *
  */
-public inline fun <reified E : Signal.Dispatch> Bot.registerProcessor(
+public inline fun <reified E : Signal.Dispatch> Bot.process(
     crossinline block: suspend E.(raw: String) -> Unit
 ): DisposableHandle {
     return registerProcessor { raw ->

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -26,27 +26,8 @@ import love.forte.simbot.qguild.event.EventIntents
 import love.forte.simbot.qguild.event.Intents
 import love.forte.simbot.qguild.event.Shard
 import love.forte.simbot.qguild.event.Signal
-import love.forte.simbot.qguild.internal.BotImpl
 import kotlin.coroutines.CoroutineContext
-import kotlin.jvm.JvmStatic
 import kotlin.jvm.JvmSynthetic
-
-/**
- * 用于构建 [Bot] 的工厂类型，提供一些工厂函数。
- */
-public object BotFactory {
-
-    /**
-     * 构造一个 [Bot].
-     */
-    @JvmStatic
-    public fun create(appId: String, secret: String, token: String, config: ConfigurableBotConfiguration.() -> Unit = {}): Bot {
-        val ticket = Bot.Ticket(appId, secret, token)
-        val configuration = ConfigurableBotConfiguration().also(config)
-        return BotImpl(ticket, configuration.release())
-    }
-
-}
 
 /**
  * [Bot] 所需的配置信息。
@@ -172,28 +153,28 @@ public interface BotConfiguration {
      *
      */
     public val apiDecoder: Json
-
-    /**
-     * BOT内事件冲区的容量。
-     *
-     * 缓冲区中堆积的事件如果已满则后续推送的事件会挂起等待缓冲区内元素的消费。
-     *
-     * @see DEFAULT_EVENT_BUFFER_CAPACITY
-     *
-     */
-    public val eventBufferCapacity: Int
-
-
-    public companion object {
-
-        /**
-         * 事件缓冲区的默认容量: `64`
-         *
-         * _此默认值没什么特殊含义，一拍脑袋想的。_
-         *
-         */
-        public const val DEFAULT_EVENT_BUFFER_CAPACITY: Int = 64
-    }
+//
+//    /**
+//     * BOT内事件冲区的容量。
+//     *
+//     * 缓冲区中堆积的事件如果已满则后续推送的事件会挂起等待缓冲区内元素的消费。
+//     *
+//     * @see DEFAULT_EVENT_BUFFER_CAPACITY
+//     *
+//     */
+//    public val eventBufferCapacity: Int
+//
+//
+//    public companion object {
+//
+//        /**
+//         * 事件缓冲区的默认容量: `64`
+//         *
+//         * _此默认值没什么特殊含义，一拍脑袋想的。_
+//         *
+//         */
+//        public const val DEFAULT_EVENT_BUFFER_CAPACITY: Int = 64
+//    }
 }
 
 

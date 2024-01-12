@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -23,14 +23,18 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
-import kotlinx.atomicfu.AtomicLong
-import kotlinx.atomicfu.atomic
-import kotlinx.atomicfu.getAndUpdate
-import kotlinx.atomicfu.updateAndGet
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.Json
+import love.forte.simbot.common.atomic.AtomicLong
+import love.forte.simbot.common.atomic.atomic
+import love.forte.simbot.common.collection.ConcurrentQueue
+import love.forte.simbot.common.collection.ExperimentalSimbotCollectionApi
+import love.forte.simbot.common.collection.createConcurrentQueue
+import love.forte.simbot.common.stageloop.loop
+import love.forte.simbot.common.weak.WeakRef
+import love.forte.simbot.common.weak.weakRef
 import love.forte.simbot.logger.Logger
 import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.qguild.*
@@ -43,15 +47,15 @@ import love.forte.simbot.qguild.event.Ready
 import love.forte.simbot.qguild.event.Shard
 import love.forte.simbot.qguild.event.Signal
 import love.forte.simbot.qguild.model.User
-import love.forte.simbot.util.stageloop.loop
+import kotlin.concurrent.Volatile
 import kotlin.coroutines.CoroutineContext
-import kotlin.jvm.Volatile
 
 
 /**
  * implementation for [Bot].
  * @author ForteScarlet
  */
+@OptIn(ExperimentalSimbotCollectionApi::class)
 internal class BotImpl(
     override val ticket: Bot.Ticket,
     override val configuration: BotConfiguration,
@@ -60,14 +64,15 @@ internal class BotImpl(
 
     // private val parentJob: Job
     override val coroutineContext: CoroutineContext
-    private val supervisorJob: Job
+    private val job: Job
 
     init {
-        val configContext = configuration.coroutineContext
-        val configJob = configContext[Job]
-        supervisorJob = SupervisorJob(configJob)
-        coroutineContext = configContext + supervisorJob + CoroutineName("QGBot.${ticket.appId}")
         configCheck()
+
+        val configContext = configuration.coroutineContext
+        val parentJob = configContext[Job]
+        job = SupervisorJob(parentJob)
+        coroutineContext = configContext.minusKey(Job) + job + CoroutineName("QGBot.${ticket.appId}")
     }
 
     private fun configCheck() {
@@ -102,12 +107,7 @@ internal class BotImpl(
 
 
     private fun HttpClientConfig<*>.configWsHttpClient() {
-        install(ContentNegotiation) {
-            json(wsDecoder)
-        }
-
-        install(WebSockets) {
-            // ...?
+        WebSockets {
         }
     }
 
@@ -159,8 +159,8 @@ internal class BotImpl(
     internal val intents: Intents = configuration.intents
 
 
-    internal val processorQueue: SimpleConcurrentQueue<EventProcessor> = createSimpleConcurrentQueue()
-    internal val preProcessorQueue: SimpleConcurrentQueue<EventProcessor> = createSimpleConcurrentQueue()
+    internal val processorQueue: ConcurrentQueue<EventProcessor> = createConcurrentQueue()
+    internal val preProcessorQueue: ConcurrentQueue<EventProcessor> = createConcurrentQueue()
 
 
     override fun registerPreProcessor(processor: EventProcessor): DisposableHandle {
@@ -173,31 +173,31 @@ internal class BotImpl(
         return DisposableHandleImpl(processorQueue, processor)
     }
 
-    private class DisposableHandleImpl(queue: SimpleConcurrentQueue<EventProcessor>, subject: EventProcessor) :
+    private class DisposableHandleImpl(queue: ConcurrentQueue<EventProcessor>, subject: EventProcessor) :
         DisposableHandle {
 
         @Suppress("unused")
         private val disposed = atomic(false) // 0
 
         @Volatile
-        private var queueRef: WeakRef<SimpleConcurrentQueue<EventProcessor>>? = WeakRef(queue)
+        private var queueRef: WeakRef<ConcurrentQueue<EventProcessor>>? = weakRef(queue)
 
         @Volatile
-        private var subjectRef: WeakRef<EventProcessor>? = WeakRef(subject)
+        private var subjectRef: WeakRef<EventProcessor>? = weakRef(subject)
 
         override fun dispose() {
-            if (!disposed.compareAndSet(expect = false, update = true)) {
+            if (!disposed.compareAndSet(expect = false, value = true)) {
                 return
             }
 
             val queue = queueRef?.let { ref ->
-                ref.get().also {
+                ref.value.also {
                     ref.clear()
                     queueRef = null
                 }
             }
             val subject = subjectRef?.let { ref ->
-                ref.get().also {
+                ref.value.also {
                     ref.clear()
                     subjectRef = null
                 }
@@ -210,71 +210,77 @@ internal class BotImpl(
             queue.remove(subject)
         }
 
-        private companion object {
-        }
+        private companion object
     }
 
     /**
      * 用于 [start] 或内部重新连接的锁。
      */
-    internal val connectLock = Mutex()
+    internal val startLock = Mutex()
 
-    private val stageLoopJob = atomic<Job?>(null)
-    private val _client = atomic<ClientImpl?>(null)
+    // TODO atomic? lock update?
+//    private val stageLoopJob = atomicRef<Job?>(null)
 
-    override val client: Bot.Client? get() = _client.value
+    @Volatile
+    private var stageLoopJob: Job? = null
 
-    internal fun getAndUpdateClient(function: (ClientImpl?) -> ClientImpl?): ClientImpl? {
-        return _client.getAndUpdate { function(it) }
+    private val clientLock = Mutex()
+
+    // TODO With Lock
+    @Volatile
+    private var _client: ClientImpl? = null
+    override val client: Bot.Client? get() = _client
+
+    internal suspend inline fun updateClient(new: ClientImpl?) {
+        clientLock.withLock {
+            _client?.cancel()
+            _client = new
+        }
     }
 
-    override suspend fun start(): Boolean = start(GatewayApis.Normal.requestBy(this))
-
-    override suspend fun start(gateway: GatewayInfo): Boolean = connectLock.withLock {
-        val gatewayInfo: GatewayInfo = GatewayApis.Normal.requestBy(this)
-
-        logger.debug("Request gateway {} by shard {}", gatewayInfo, shard)
-
-        val state = Connect(this, shard, gatewayInfo)
-
-//        val loop = StageLoop<Stage>()
-
-        logger.debug("Create state loop {}", state)
-
-
-        var st: State? = state
-        do {
-            logger.debug("Current state: {}", st)
-            st = st?.invoke()
-        } while (st != null && st !is ReceiveEvent)
-
-        if (st == null) {
-            // 当前状态为空且尚未进入事件接收状态
-            throw IllegalStateException("The current state is null and not yet in the event receiving state")
-        }
-
-        val stageLoopJob: Job = launch {
-            st.loop()
-        }
-
-        this.stageLoopJob.getAndUpdate { old ->
-            old?.cancel()
-            stageLoopJob
-        }
-
-        return true
+    override suspend fun start() {
+        start(requestData(GatewayApis.Normal))
     }
 
-    override suspend fun cancel(reason: Throwable?): Boolean {
-        if (supervisorJob.isCancelled) return false
+    override suspend fun start(gateway: GatewayInfo) {
+        startLock.withLock {
+            stageLoopJob?.cancel()
+            stageLoopJob = null
 
-        supervisorJob.cancel(reason?.let { CancellationException(it.message, it) })
-        supervisorJob.join()
-        return true
+            logger.debug("Request gateway {} by shard {}", gateway, shard)
+
+            val state = Connect(this, shard, gateway)
+
+            logger.debug("Create state loop {}", state)
+
+
+            var st: State? = state
+            do {
+                logger.debug("Current state: {}", st)
+                st = st?.invoke()
+            } while (st != null && st !is ReceiveEvent)
+
+            if (st == null) {
+                // 当前状态为空且尚未进入事件接收状态
+                throw IllegalStateException("The current state is null and not yet in the event receiving state")
+            }
+
+            val stageLoopJob: Job = launch {
+                st.loop()
+            }
+
+            this.stageLoopJob = stageLoopJob
+        }
+    }
+
+    override fun cancel(reason: Throwable?) {
+        if (!job.isActive) return
+
+        job.cancel(reason?.let { CancellationException(it.message, it) })
     }
 
     override suspend fun join() {
-        supervisorJob.join()
+        job.join()
     }
 
 
@@ -283,7 +289,6 @@ internal class BotImpl(
         val sessionInfo: SessionInfo,
         val wsSession: DefaultClientWebSocketSession,
     ) : Bot.Client {
-        override val bot: Bot get() = this@BotImpl
         override val seq: Long get() = sessionInfo.seq.value
         override val isActive: Boolean get() = wsSession.isActive
 
@@ -305,12 +310,10 @@ internal class BotImpl(
         }
     }
 
-
-
     //// self api
 
     override suspend fun me(): User {
-        return GetBotInfoApi.requestBy(this)
+        return GetBotInfoApi.requestDataBy(this)
     }
 
 }
@@ -324,7 +327,15 @@ internal class AtomicLongRef(initValue: Long = 0) {
             atomicValue.value = value
         }
 
-    fun updateAndGet(function: (Long) -> Long): Long = atomicValue.updateAndGet(function)
+    fun updateAndGet(function: (Long) -> Long): Long {
+        while (true) {
+            val current = value
+            val new = function(current)
+            if (atomicValue.compareAndSet(current, new)) {
+                return new
+            }
+        }
+    }
 }
 
 internal data class SessionInfo(

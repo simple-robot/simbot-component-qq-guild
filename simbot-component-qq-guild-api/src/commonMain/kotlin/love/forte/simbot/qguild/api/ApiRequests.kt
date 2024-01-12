@@ -57,8 +57,7 @@ import kotlin.jvm.JvmSynthetic
 public suspend fun <R : Any> QQGuildApi<R>.request(
     client: HttpClient,
     token: String,
-    server: Url? = null,
-    json: Json = QQGuild.DefaultJson
+    server: Url? = null
 ): HttpResponse {
     val api = this
 
@@ -98,6 +97,7 @@ public suspend fun <R : Any> QQGuildApi<R>.request(
                     setBody(body)
                 } else {
                     try {
+                        val json = QQGuild.DefaultJson
                         val ser = guessSerializer(body, json.serializersModule)
                         val bodyJson = json.encodeToString(ser, body)
                         setBody(bodyJson)
