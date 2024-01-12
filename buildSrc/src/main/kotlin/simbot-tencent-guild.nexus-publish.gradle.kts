@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -18,24 +18,12 @@
 import love.forte.gradle.common.core.project.setup
 import love.forte.gradle.common.core.repository.Repositories
 import love.forte.gradle.common.publication.configure.nexusPublishConfig
-import util.checkPublishConfigurable
-import java.time.Duration
 
 plugins {
     id("io.github.gradle-nexus.publish-plugin")
 }
 
 setup(P.ComponentQQGuild)
-
-if (isSnapshot()) {
-    version = P.ComponentQQGuild.snapshotVersion.toString()
-}
-
-//val (isSnapshotOnly, isReleaseOnly, isPublishConfigurable) = checkPublishConfigurable()
-//
-//logger.info("isSnapshotOnly: {}", isSnapshotOnly)
-//logger.info("isReleaseOnly: {}", isReleaseOnly)
-//logger.info("isPublishConfigurable: {}", isPublishConfigurable)
 
 val userInfo = love.forte.gradle.common.publication.sonatypeUserInfoOrNull
 
@@ -54,43 +42,3 @@ nexusPublishConfig {
         }
     }
 }
-
-//
-//if (isPublishConfigurable) {
-//    val sonatypeUsername: String? = sonatypeUsername
-//    val sonatypePassword: String? = sonatypePassword
-//
-//    if (sonatypeUsername == null || sonatypePassword == null) {
-//        logger.warn("sonatype.username or sonatype.password is null, cannot config nexus publishing.")
-//    }
-//
-//    nexusPublishing {
-//        packageGroup.set(project.group.toString())
-//
-//        useStaging.set(
-//            project.provider { !project.version.toString().endsWith("SNAPSHOT", ignoreCase = true).also {
-//                logger.info("UseStaging: {} (project version: {})", it, project.version.toString())
-//            } }
-//        )
-//
-//        transitionCheckOptions {
-//            maxRetries.set(100)
-//            delayBetween.set(Duration.ofSeconds(30))
-//        }
-//
-//        repositories {
-//            sonatype {
-//                snapshotRepositoryUrl.set(uri(Repositories.Snapshot.URL))
-//                username.set(sonatypeUsername)
-//                password.set(sonatypePassword)
-//            }
-//        }
-//    }
-//
-//
-//    logger.info("[publishing-configure] - [{}] configured.", name)
-//}
-
-
-
-

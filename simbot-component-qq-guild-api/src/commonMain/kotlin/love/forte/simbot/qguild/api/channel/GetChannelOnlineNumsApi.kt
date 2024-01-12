@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -20,12 +20,7 @@ package love.forte.simbot.qguild.api.channel
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
 import love.forte.simbot.qguild.api.GetQQGuildApi
-import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleGetApiDescription
 import kotlin.jvm.JvmStatic
 
@@ -37,11 +32,10 @@ import kotlin.jvm.JvmStatic
  *
  * @author ForteScarlet
  */
-public class GetChannelOnlineNumsApi(channelId: String) : GetQQGuildApi<Int>() {
+public class GetChannelOnlineNumsApi(channelId: String) : GetQQGuildApi<OnlineNumsResult>() {
     public companion object Factory : SimpleGetApiDescription(
         "/channels/{channel_id}/online_nums"
     ) {
-
         /**
          * 构造 [GetChannelOnlineNumsApi]
          */
@@ -49,25 +43,15 @@ public class GetChannelOnlineNumsApi(channelId: String) : GetQQGuildApi<Int>() {
         public fun create(channelId: String): GetChannelOnlineNumsApi = GetChannelOnlineNumsApi(channelId)
     }
 
-    private val path = arrayOf("channels", channelId, "online_nums")
+    override val path: Array<String> = arrayOf("channels", channelId, "online_nums")
 
-    override val resultDeserializer: DeserializationStrategy<Int>
-        get() = OnlineNumsToIntDeserializationStrategy
-
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-    }
+    override val resultDeserializationStrategy: DeserializationStrategy<OnlineNumsResult>
+        get() = OnlineNumsResult.serializer()
 }
 
 
-private object OnlineNumsToIntDeserializationStrategy : DeserializationStrategy<Int> {
-    @Serializable
-    private data class OnlineNumsResult(@SerialName("online_nums") val onlineNums: Int)
-
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("OnlineNums", PrimitiveKind.INT)
-
-    override fun deserialize(decoder: Decoder): Int {
-        val decoded = OnlineNumsResult.serializer().deserialize(decoder)
-        return decoded.onlineNums
-    }
-}
+/**
+ * Result of [GetChannelOnlineNumsApi]
+ */
+@Serializable
+public data class OnlineNumsResult(@SerialName("online_nums") val onlineNums: Int)

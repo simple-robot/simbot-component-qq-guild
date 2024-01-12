@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -26,7 +26,7 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
-import love.forte.simbot.qguild.InternalApi
+import love.forte.simbot.qguild.QGInternalApi
 import love.forte.simbot.qguild.event.Signal.Dispatch.Unknown
 import love.forte.simbot.qguild.event.Signal.Resume.Data
 import kotlin.jvm.JvmField
@@ -212,7 +212,7 @@ public sealed class Signal<D>(@Serializable(Opcode.SerializerByCode::class) publ
          * [Unknown] 的构建仅由内部完成。
          *
          */
-        public data class Unknown @InternalApi constructor(override val s: Long, override val data: JsonElement, val raw: String) : Dispatch()
+        public data class Unknown @QGInternalApi constructor(override val s: Long, override val data: JsonElement, val raw: String) : Dispatch()
 
     }
 }

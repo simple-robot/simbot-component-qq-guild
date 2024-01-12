@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,16 +17,11 @@
 
 package love.forte.simbot.qguild.api.message.direct
 
-import io.ktor.client.*
-import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
-import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
-import kotlinx.serialization.StringFormat
-import love.forte.simbot.qguild.ErrInfo
-import love.forte.simbot.qguild.QQGuildApiException
-import love.forte.simbot.qguild.api.*
+import love.forte.simbot.qguild.api.PostQQGuildApi
+import love.forte.simbot.qguild.api.SimplePostApiDescription
 import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.qguild.api.message.toRealBody
 import love.forte.simbot.qguild.model.Message
@@ -59,7 +54,7 @@ import kotlin.jvm.JvmSynthetic
  */
 public class DmsSendApi private constructor(
     guildId: String,
-    body: MessageSendApi.Body, // TencentMessageForSending || MultiPartFormDataContent
+    private val _body: MessageSendApi.Body, // TencentMessageForSending || MultiPartFormDataContent
 ) : PostQQGuildApi<Message>() {
     public companion object Factory : SimplePostApiDescription(
         "/channels/{channel_id}/messages"
@@ -72,71 +67,15 @@ public class DmsSendApi private constructor(
         public fun create(guildId: String, body: MessageSendApi.Body): DmsSendApi = DmsSendApi(guildId, body)
     }
 
-    override val body: Any = body.toRealBody(MessageSendApi.defaultJson)
+    override fun createBody(): Any = _body.toRealBody(MessageSendApi.defaultJson)
 
-    private val path = arrayOf("dms", guildId, "messages")
+    override val path: Array<String> = arrayOf("dms", guildId, "messages")
 
-    override val resultDeserializer: DeserializationStrategy<Message>
+    override val resultDeserializationStrategy: DeserializationStrategy<Message>
         get() = Message.serializer()
 
-    override val method: HttpMethod
-        get() = HttpMethod.Post
-
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-        if (body is MultiPartFormDataContent) {
-            builder.contentType = ContentType.MultiPart.FormData
-        }
-    }
-
-    /**
-     * 使用当前API发送消息
-     *
-     * @throws MessageAuditedException 当响应状态为表示消息审核的  `304023`、`304024` 时
-     * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
-     * @throws love.forte.simbot.qguild.QQGuildApiException 请求过程中出现了错误（http状态码 !in 200 .. 300）
-     */
-    override suspend fun doRequest(client: HttpClient, server: Url, token: String, decoder: StringFormat): Message {
-        return super.doRequest(client, server, token, decoder)
-    }
-
-    /**
-     * 使用当前API发送消息
-     *
-     *
-     * @throws MessageAuditedException 当响应状态为表示消息审核的 `304023`、`304024` 时
-     * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
-     * @throws love.forte.simbot.qguild.QQGuildApiException 请求过程中出现了错误（http状态码 !in 200 .. 300）
-     */
-    override suspend fun doRequestRaw(client: HttpClient, server: Url, token: String): String {
-        val resp: HttpResponse
-        val text = requestForText(client, server, token) { resp = it }
-
-        checkStatus(text, DefaultErrInfoDecoder, resp.status)
-
-        if (text.isEmpty() && resp.status.isSuccess()) {
-            return "{}"
-        }
-
-        if (resp.status == HttpStatusCode.Accepted) {
-            // decode as error data
-            val errorInfo = DefaultErrInfoDecoder.decodeFromString(ErrInfo.serializer(), text)
-            // maybe audited
-            if (MessageAuditedException.isAuditResultCode(errorInfo.code)) {
-                throw MessageAuditedException(
-                    DefaultErrInfoDecoder.decodeFromJsonElement(MessageAudit.serializer(), errorInfo.data).messageAudit,
-                    errorInfo,
-                    resp.status.value,
-                    resp.status.description
-                )
-            }
-
-            throw QQGuildApiException(errorInfo, resp.status.value, resp.status.description)
-        }
-
-        return text
-    }
-
+    override val headers: Headers
+        get() = if (body is MultiPartFormDataContent) MessageSendApi.FormDataHeader else Headers.Empty
 }
 
 /**

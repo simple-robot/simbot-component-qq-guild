@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,11 +17,10 @@
 
 package love.forte.simbot.qguild.api.role
 
-import io.ktor.http.*
 import kotlinx.serialization.Serializable
+import love.forte.simbot.qguild.api.PutQQGuildApi
 import love.forte.simbot.qguild.api.QQGuildApiWithoutResult
-import love.forte.simbot.qguild.api.RouteInfoBuilder
-import love.forte.simbot.qguild.api.SimpleApiDescription
+import love.forte.simbot.qguild.api.SimplePutApiDescription
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 
@@ -41,10 +40,10 @@ public class AddMemberRoleApi private constructor(
     guildId: String,
     userId: String,
     roleId: String,
-    channelId: String?,
-) : QQGuildApiWithoutResult() {
-    public companion object Factory : SimpleApiDescription(
-        HttpMethod.Put, "/guilds/{guild_id}/members/{user_id}/roles/{role_id}"
+    private val channelId: String?,
+) : QQGuildApiWithoutResult, PutQQGuildApi<Unit>() {
+    public companion object Factory : SimplePutApiDescription(
+        "/guilds/{guild_id}/members/{user_id}/roles/{role_id}"
     ) {
 
         /**
@@ -56,28 +55,20 @@ public class AddMemberRoleApi private constructor(
         @JvmStatic
         @JvmOverloads
         public fun create(
-            guildId: String,
-            userId: String,
-            roleId: String,
+            guildId: String, userId: String, roleId: String,
             channelId: String? = null
         ): AddMemberRoleApi =
             AddMemberRoleApi(guildId, userId, roleId, channelId)
     }
 
-    private val path = arrayOf(
+    override val path: Array<String> = arrayOf(
         "guilds", guildId,
         "members", userId,
         "roles", roleId,
     )
 
-    override val method: HttpMethod
-        get() = HttpMethod.Put
-
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-    }
-
-    override val body: Any? = channelId?.let { cid -> Body(ChannelId(cid)) }
+    override fun createBody(): Any? =
+        channelId?.let { cid -> Body(ChannelId(cid)) }
 
     @Serializable
     private data class Body(val channel: ChannelId)

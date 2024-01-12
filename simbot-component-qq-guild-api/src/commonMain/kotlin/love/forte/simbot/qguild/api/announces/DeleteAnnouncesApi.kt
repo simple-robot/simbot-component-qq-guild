@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,10 +17,9 @@
 
 package love.forte.simbot.qguild.api.announces
 
-import io.ktor.http.*
+import love.forte.simbot.qguild.api.DeleteQQGuildApi
 import love.forte.simbot.qguild.api.QQGuildApiWithoutResult
-import love.forte.simbot.qguild.api.RouteInfoBuilder
-import love.forte.simbot.qguild.api.SimpleApiDescription
+import love.forte.simbot.qguild.api.SimpleDeleteApiDescription
 import kotlin.jvm.JvmStatic
 
 
@@ -35,10 +34,10 @@ import kotlin.jvm.JvmStatic
 public class DeleteAnnouncesApi private constructor(
     channelId: String,
     messageId: String,
-) : QQGuildApiWithoutResult() {
+) : QQGuildApiWithoutResult, DeleteQQGuildApi<Unit>() {
 
-    public companion object Factory : SimpleApiDescription(
-        HttpMethod.Delete, "/channels/{channel_id}/announces/{message_id}"
+    public companion object Factory : SimpleDeleteApiDescription(
+        "/channels/{channel_id}/announces/{message_id}"
     ) {
 
         /**
@@ -49,14 +48,5 @@ public class DeleteAnnouncesApi private constructor(
             DeleteAnnouncesApi(channelId, messageId)
     }
 
-    private val path = arrayOf("channels", channelId, "announces", messageId)
-
-    override val method: HttpMethod
-        get() = HttpMethod.Delete
-
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-    }
-
-    override val body: Any? = null
+    override val path: Array<String> = arrayOf("channels", channelId, "announces", messageId)
 }

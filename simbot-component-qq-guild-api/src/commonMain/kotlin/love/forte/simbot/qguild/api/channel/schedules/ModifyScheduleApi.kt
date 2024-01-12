@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -19,9 +19,8 @@ package love.forte.simbot.qguild.api.channel.schedules
 
 import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
-import love.forte.simbot.qguild.api.QQGuildApi
-import love.forte.simbot.qguild.api.RouteInfoBuilder
-import love.forte.simbot.qguild.api.SimpleApiDescription
+import love.forte.simbot.qguild.api.PatchQQGuildApi
+import love.forte.simbot.qguild.api.SimplePatchApiDescription
 import love.forte.simbot.qguild.api.channel.schedules.ScheduleRequestBody.Companion.toCreateBody
 import love.forte.simbot.qguild.model.Schedule
 import kotlin.jvm.JvmStatic
@@ -37,9 +36,11 @@ import kotlin.jvm.JvmStatic
  * @author ForteScarlet
  */
 public class ModifyScheduleApi private constructor(
-    channelId: String, scheduleId: String, override val body: ScheduleRequestBody
-) : QQGuildApi<Schedule>() {
-    public companion object Factory : SimpleApiDescription(HttpMethod.Patch, "/channels/{channel_id}/schedules/{schedule_id}") {
+    channelId: String, scheduleId: String,
+    override val body: ScheduleRequestBody
+) : PatchQQGuildApi<Schedule>() {
+    public companion object Factory :
+        SimplePatchApiDescription("/channels/{channel_id}/schedules/{schedule_id}") {
 
         /**
          * 构造 [ModifyScheduleApi]
@@ -78,12 +79,10 @@ public class ModifyScheduleApi private constructor(
 
     }
 
-    override val resultDeserializer: DeserializationStrategy<Schedule> get() = Schedule.serializer()
+    override val resultDeserializationStrategy: DeserializationStrategy<Schedule> get() = Schedule.serializer()
     override val method: HttpMethod get() = HttpMethod.Patch
 
-    private val path = arrayOf("channels", channelId, "schedules", scheduleId)
+    override val path: Array<String> = arrayOf("channels", channelId, "schedules", scheduleId)
 
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-    }
+    override fun createBody(): Any? = null
 }

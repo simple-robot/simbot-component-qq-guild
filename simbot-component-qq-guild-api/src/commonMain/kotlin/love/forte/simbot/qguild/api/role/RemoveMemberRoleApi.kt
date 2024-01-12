@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,11 +17,10 @@
 
 package love.forte.simbot.qguild.api.role
 
-import io.ktor.http.*
 import kotlinx.serialization.Serializable
+import love.forte.simbot.qguild.api.DeleteQQGuildApi
 import love.forte.simbot.qguild.api.QQGuildApiWithoutResult
-import love.forte.simbot.qguild.api.RouteInfoBuilder
-import love.forte.simbot.qguild.api.SimpleApiDescription
+import love.forte.simbot.qguild.api.SimpleDeleteApiDescription
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 
@@ -41,11 +40,11 @@ public class RemoveMemberRoleApi private constructor(
     userId: String,
     roleId: String,
     channelId: String?,
-) : QQGuildApiWithoutResult() {
-    public companion object Factory : SimpleApiDescription(
-        HttpMethod.Delete, "/guilds/{guild_id}/members/{user_id}/roles/{role_id}"
+) : QQGuildApiWithoutResult, DeleteQQGuildApi<Unit>() {
+    public companion object Factory : SimpleDeleteApiDescription(
+        "/guilds/{guild_id}/members/{user_id}/roles/{role_id}"
     ) {
-        
+
         /**
          * 构造 [RemoveMemberRoleApi]
          *
@@ -61,29 +60,19 @@ public class RemoveMemberRoleApi private constructor(
             channelId: String? = null,
         ): RemoveMemberRoleApi = RemoveMemberRoleApi(guildId, userId, roleId, channelId)
     }
-    
-    private val path = arrayOf(
-        "guilds",
-        guildId,
-        "members",
-        userId,
-        "roles",
-        roleId,
-    )
-    
-    override val method: HttpMethod
-        get() = HttpMethod.Delete
-    
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-    }
 
-    override val body: Any? = channelId?.let { cid -> Body(ChannelId(cid)) }
+    override val path: Array<String> = arrayOf(
+        "guilds", guildId,
+        "members", userId,
+        "roles", roleId,
+    )
+
+    override val body: Any? =
+        channelId?.let { cid -> Body(ChannelId(cid)) }
 
     @Serializable
     private data class Body(val channel: ChannelId)
 
     @Serializable
     private data class ChannelId(val id: String)
-    
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -19,8 +19,8 @@ package love.forte.simbot.qguild.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import love.forte.simbot.qguild.Api4J
 import love.forte.simbot.qguild.ApiModel
+import love.forte.simbot.qguild.QGApi4J
 import kotlin.jvm.JvmName
 
 
@@ -47,7 +47,7 @@ public data class Announces(
      * 获取 [announcesType] 的结果并从 [Unsigned integer type](https://kotlinlang.org/docs/unsigned-integer-types.html) 转为Java可用的 [Int]
      *
      */
-    @Api4J
+    @QGApi4J
     public val announcesTypeIntValue: Int get() = announcesType.toInt()
 }
 

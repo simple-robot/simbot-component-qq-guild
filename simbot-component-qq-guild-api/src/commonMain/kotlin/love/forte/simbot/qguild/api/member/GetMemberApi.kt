@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -19,7 +19,6 @@ package love.forte.simbot.qguild.api.member
 
 import kotlinx.serialization.DeserializationStrategy
 import love.forte.simbot.qguild.api.GetQQGuildApi
-import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleGetApiDescription
 import love.forte.simbot.qguild.model.SimpleMember
 import kotlin.jvm.JvmStatic
@@ -46,12 +45,8 @@ public class GetMemberApi private constructor(
         public fun create(guildId: String, userId: String): GetMemberApi = GetMemberApi(guildId, userId)
     }
 
-    private val path = arrayOf("guilds", guildId, "members", userId)
+    override val path: Array<String> = arrayOf("guilds", guildId, "members", userId)
 
-    override val resultDeserializer: DeserializationStrategy<SimpleMember>
+    override val resultDeserializationStrategy: DeserializationStrategy<SimpleMember>
         get() = SimpleMember.serializer()
-
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,10 +17,12 @@
 
 package love.forte.simbot.qguild.api.role
 
-import kotlinx.serialization.*
-import love.forte.simbot.*
-import love.forte.simbot.qguild.*
-import love.forte.simbot.qguild.api.*
+import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import love.forte.simbot.qguild.ApiModel
+import love.forte.simbot.qguild.api.GetQQGuildApi
+import love.forte.simbot.qguild.api.SimpleGetApiDescription
 import love.forte.simbot.qguild.model.Role
 import kotlin.jvm.JvmStatic
 
@@ -44,14 +46,9 @@ public class GetGuildRoleListApi private constructor(guildId: String) : GetQQGui
         public fun create(guildId: String): GetGuildRoleListApi = GetGuildRoleListApi(guildId)
     }
 
-    private val path = arrayOf("guilds", guildId, "roles")
-    override val resultDeserializer: DeserializationStrategy<GuildRoleList> get() = GuildRoleList.serializer()
-
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-    }
-
-
+    override val path: Array<String> = arrayOf("guilds", guildId, "roles")
+    override val resultDeserializationStrategy: DeserializationStrategy<GuildRoleList>
+        get() = GuildRoleList.serializer()
 }
 
 /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,12 +17,12 @@
 
 package love.forte.simbot.qguild.api.user
 
+import io.ktor.http.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.builtins.ListSerializer
 import love.forte.simbot.qguild.api.GetQQGuildApi
-import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleGetApiDescription
 import love.forte.simbot.qguild.model.SimpleGuild
 import kotlin.jvm.JvmOverloads
@@ -106,30 +106,28 @@ public class GetBotGuildListApi private constructor(
         public fun createByAfter(after: String, limit: Int = DEFAULT_LIMIT): GetBotGuildListApi =
             create(before = null, after = after, limit)
 
-
     }
 
-
-    override val resultDeserializer: DeserializationStrategy<List<SimpleGuild>>
+    override val resultDeserializationStrategy: DeserializationStrategy<List<SimpleGuild>>
         get() = serializer
 
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = route
-        if (before != null) {
-            builder.parametersAppender.append("before", before.toString())
-        }
-        if (after != null) {
-            builder.parametersAppender.append("after", after.toString())
-        }
-        val limit = limit
-        if (limit > 0) {
-            builder.parametersAppender.append("limit", limit)
+    override val path: Array<String>
+        get() = route
+
+    override fun URLBuilder.buildUrl() {
+        parameters.apply {
+            if (before != null) {
+                append("before", before.toString())
+            }
+            if (after != null) {
+                append("after", after.toString())
+            }
+            val limit = limit
+            if (limit > 0) {
+                append("limit", limit.toString())
+            }
         }
     }
-
-    override val body: Any?
-        get() = null
-
 }
 
 

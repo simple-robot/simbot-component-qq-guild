@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -19,60 +19,116 @@ import love.forte.plugin.suspendtrans.*
 
 
 object SuspendTransforms {
-    private val includeAnnotationApi4JClassInfo = ClassInfo("love.forte.simbot", "Api4J")
-    private val includeAnnotationApi4J = IncludeAnnotation(includeAnnotationApi4JClassInfo)
-    private val includeAnnotations = listOf(includeAnnotationApi4J)
-    
+    private val javaIncludeAnnotationApi4JClassInfo = ClassInfo("love.forte.simbot.annotations", "Api4J")
+    private val javaIncludeAnnotationApi4J = IncludeAnnotation(javaIncludeAnnotationApi4JClassInfo)
+    private val javaIncludeAnnotations = listOf(javaIncludeAnnotationApi4J)
+
+    private val jsIncludeAnnotationApi4JsClassInfo = ClassInfo("love.forte.simbot.annotations", "Api4Js")
+    private val jsIncludeAnnotationApi4Js = IncludeAnnotation(jsIncludeAnnotationApi4JsClassInfo)
+    private val jsIncludeAnnotations = listOf(jsIncludeAnnotationApi4Js)
+
+
+    private val SuspendReserveClassInfo = ClassInfo(
+        packageName = "love.forte.simbot.suspendrunner.reserve",
+        className = "SuspendReserve",
+
+        )
+
     /**
      * JvmBlocking
      */
     val jvmBlockingTransformer = SuspendTransformConfiguration.jvmBlockingTransformer.copy(
-        syntheticFunctionIncludeAnnotations = includeAnnotations,
-        transformFunctionInfo = FunctionInfo("love.forte.simbot.utils", null, "$\$runInBlocking"),
+        syntheticFunctionIncludeAnnotations = javaIncludeAnnotations,
+        transformFunctionInfo = FunctionInfo("love.forte.simbot.suspendrunner", null, "$\$runInBlocking"),
         copyAnnotationExcludes = SuspendTransformConfiguration.jvmBlockingTransformer.copyAnnotationExcludes + SuspendTransformConfiguration.jvmBlockingTransformer.markAnnotation.classInfo
     )
-    
+
     /**
      * JvmAsync
      */
     val jvmAsyncTransformer = SuspendTransformConfiguration.jvmAsyncTransformer.copy(
-        syntheticFunctionIncludeAnnotations = includeAnnotations,
-        transformFunctionInfo = FunctionInfo("love.forte.simbot.utils", null, "$\$runInAsync1"),
+        syntheticFunctionIncludeAnnotations = javaIncludeAnnotations,
+        transformFunctionInfo = FunctionInfo("love.forte.simbot.suspendrunner", null, "$\$runInAsyncNullable"),
         copyAnnotationExcludes = SuspendTransformConfiguration.jvmAsyncTransformer.copyAnnotationExcludes + SuspendTransformConfiguration.jvmAsyncTransformer.markAnnotation.classInfo
     )
-    
+
+    /**
+     * JvmReserve
+     */
+    val jvmReserveTransformer = SuspendTransformConfiguration.jvmAsyncTransformer.copy(
+        syntheticFunctionIncludeAnnotations = javaIncludeAnnotations,
+        transformFunctionInfo = FunctionInfo("love.forte.simbot.suspendrunner", null, "$\$asReserve"),
+        copyAnnotationExcludes = SuspendTransformConfiguration.jvmAsyncTransformer.copyAnnotationExcludes + SuspendTransformConfiguration.jvmAsyncTransformer.markAnnotation.classInfo,
+        transformReturnType = SuspendReserveClassInfo,
+        transformReturnTypeGeneric = true,
+    )
+
+    /**
+     * JsPromise
+     */
+    val jsPromiseTransformer = SuspendTransformConfiguration.jsPromiseTransformer.copy(
+        syntheticFunctionIncludeAnnotations = javaIncludeAnnotations,
+        transformFunctionInfo = FunctionInfo("love.forte.simbot.suspendrunner", null, "$\$runInPromise"),
+        copyAnnotationExcludes = SuspendTransformConfiguration.jsPromiseTransformer.copyAnnotationExcludes + SuspendTransformConfiguration.jsPromiseTransformer.markAnnotation.classInfo,
+    )
+
     //region @JvmSuspendTrans
-    private val jvmSuspendTransMarkAnnotationClassInfo = ClassInfo("love.forte.simbot", "JvmSuspendTrans")
-    
+    private val suspendTransMarkAnnotationClassInfo = ClassInfo("love.forte.simbot.suspendrunner", "SuspendTrans")
+
     private val jvmSuspendTransMarkAnnotationForBlocking = MarkAnnotation(
-        jvmSuspendTransMarkAnnotationClassInfo,
+        suspendTransMarkAnnotationClassInfo,
         baseNameProperty = "blockingBaseName",
         suffixProperty = "blockingSuffix",
         asPropertyProperty = "blockingAsProperty",
         defaultSuffix = SuspendTransformConfiguration.jvmBlockingAnnotationInfo.defaultSuffix,
     )
     private val jvmSuspendTransMarkAnnotationForAsync = MarkAnnotation(
-        jvmSuspendTransMarkAnnotationClassInfo,
+        suspendTransMarkAnnotationClassInfo,
         baseNameProperty = "asyncBaseName",
         suffixProperty = "asyncSuffix",
         asPropertyProperty = "asyncAsProperty",
         defaultSuffix = SuspendTransformConfiguration.jvmAsyncAnnotationInfo.defaultSuffix,
     )
-    
-    val jvmSuspendTransTransformerForBlocking = jvmBlockingTransformer.copy(
+    private val jvmSuspendTransMarkAnnotationForReserve = MarkAnnotation(
+        suspendTransMarkAnnotationClassInfo,
+        baseNameProperty = "reserveBaseName",
+        suffixProperty = "reserveSuffix",
+        asPropertyProperty = "reserveAsProperty",
+        defaultSuffix = "Reserve",
+    )
+    private val jsSuspendTransMarkAnnotationForPromise = MarkAnnotation(
+        suspendTransMarkAnnotationClassInfo,
+        baseNameProperty = "jsPromiseBaseName",
+        suffixProperty = "jsPromiseSuffix",
+        asPropertyProperty = "jsPromiseAsProperty",
+        defaultSuffix = "Async",
+    )
+
+    val suspendTransTransformerForJvmBlocking = jvmBlockingTransformer.copy(
         markAnnotation = jvmSuspendTransMarkAnnotationForBlocking,
         copyAnnotationExcludes = SuspendTransformConfiguration.jvmBlockingTransformer.copyAnnotationExcludes + jvmSuspendTransMarkAnnotationForBlocking.classInfo
     )
-    
-    val jvmSuspendTransTransformerForAsync = jvmAsyncTransformer.copy(
+
+    val suspendTransTransformerForJvmAsync = jvmAsyncTransformer.copy(
         markAnnotation = jvmSuspendTransMarkAnnotationForAsync,
         copyAnnotationExcludes = SuspendTransformConfiguration.jvmAsyncTransformer.copyAnnotationExcludes + jvmSuspendTransMarkAnnotationForAsync.classInfo
     )
+
+    val suspendTransTransformerForJvmReserve = jvmReserveTransformer.copy(
+        markAnnotation = jvmSuspendTransMarkAnnotationForReserve,
+        copyAnnotationExcludes = jvmReserveTransformer.copyAnnotationExcludes + jvmSuspendTransMarkAnnotationForReserve.classInfo,
+    )
+
+    val suspendTransTransformerForJsPromise = jsPromiseTransformer.copy(
+        markAnnotation = jvmSuspendTransMarkAnnotationForReserve,
+        copyAnnotationExcludes = jsPromiseTransformer.copyAnnotationExcludes + jsSuspendTransMarkAnnotationForPromise.classInfo,
+    )
     //endregion
-    
+
     //region @JvmSuspendTransProperty
-    private val jvmSuspendTransPropMarkAnnotationClassInfo = ClassInfo("love.forte.simbot", "JvmSuspendTransProperty")
-    
+    private val jvmSuspendTransPropMarkAnnotationClassInfo =
+        ClassInfo("love.forte.simbot.suspendrunner", "SuspendTransProperty")
+
     private val jvmSuspendTransPropMarkAnnotationForBlocking = MarkAnnotation(
         jvmSuspendTransPropMarkAnnotationClassInfo,
         baseNameProperty = "blockingBaseName",
@@ -89,20 +145,29 @@ object SuspendTransforms {
         defaultSuffix = SuspendTransformConfiguration.jvmAsyncAnnotationInfo.defaultSuffix,
         defaultAsProperty = true
     )
-    
+    private val jvmSuspendTransPropMarkAnnotationForReserve = MarkAnnotation(
+        jvmSuspendTransPropMarkAnnotationClassInfo,
+        baseNameProperty = "reserveBaseName",
+        suffixProperty = "reserveSuffix",
+        asPropertyProperty = "reserveAsProperty",
+        defaultSuffix = "Reserve",
+        defaultAsProperty = true
+    )
+
     val jvmSuspendTransPropTransformerForBlocking = jvmBlockingTransformer.copy(
         markAnnotation = jvmSuspendTransPropMarkAnnotationForBlocking,
         copyAnnotationExcludes = SuspendTransformConfiguration.jvmBlockingTransformer.copyAnnotationExcludes + jvmSuspendTransPropMarkAnnotationForBlocking.classInfo
     )
-    
+
     val jvmSuspendTransPropTransformerForAsync = jvmAsyncTransformer.copy(
         markAnnotation = jvmSuspendTransPropMarkAnnotationForAsync,
         copyAnnotationExcludes = SuspendTransformConfiguration.jvmAsyncTransformer.copyAnnotationExcludes + jvmSuspendTransPropMarkAnnotationForAsync.classInfo
     )
+
+    val jvmSuspendTransPropTransformerForReserve = jvmReserveTransformer.copy(
+        markAnnotation = jvmSuspendTransPropMarkAnnotationForReserve,
+        copyAnnotationExcludes = jvmReserveTransformer.copyAnnotationExcludes + jvmSuspendTransPropMarkAnnotationForReserve.classInfo
+    )
     //endregion
-    
 }
-
-
-
 

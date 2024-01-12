@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,12 +17,10 @@
 
 package love.forte.simbot.qguild.api.announces
 
-import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.api.PostQQGuildApi
-import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimplePostApiDescription
 import love.forte.simbot.qguild.model.Announces
 import kotlin.jvm.JvmStatic
@@ -39,7 +37,7 @@ import kotlin.jvm.JvmStatic
  */
 public class CreateAnnouncesApi private constructor(
     channelId: String,
-    messageId: String,
+    private val messageId: String,
 ) : PostQQGuildApi<Announces>() {
 
     public companion object Factory : SimplePostApiDescription(
@@ -57,19 +55,12 @@ public class CreateAnnouncesApi private constructor(
 
     }
 
+    override val path: Array<String> = arrayOf("channels", channelId, "announces")
 
-    // POST /channels/{channel_id}/announces
-    private val path = arrayOf("channels", channelId, "announces")
-
-    override val resultDeserializer: DeserializationStrategy<Announces>
+    override val resultDeserializationStrategy: DeserializationStrategy<Announces>
         get() = Announces.serializer()
 
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-    }
-
-    override val body: Any = Body(messageId)
-
+    override fun createBody(): Any = Body(messageId)
 
     @Serializable
     private data class Body(

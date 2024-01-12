@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -19,7 +19,6 @@ package love.forte.simbot.qguild.api.message.setting
 
 import kotlinx.serialization.DeserializationStrategy
 import love.forte.simbot.qguild.api.GetQQGuildApi
-import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleGetApiDescription
 import love.forte.simbot.qguild.model.MessageSetting
 import kotlin.jvm.JvmStatic
@@ -43,12 +42,8 @@ public class GetMessageSettingApi private constructor(guildId: String) : GetQQGu
         public fun create(guildId: String): GetMessageSettingApi = GetMessageSettingApi(guildId)
     }
 
-    private val path = arrayOf("guilds", guildId, "message", "setting")
+    override val path: Array<String> = arrayOf("guilds", guildId, "message", "setting")
 
-    override val resultDeserializer: DeserializationStrategy<MessageSetting>
+    override val resultDeserializationStrategy: DeserializationStrategy<MessageSetting>
         get() = MessageSetting.serializer()
-
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-    }
 }

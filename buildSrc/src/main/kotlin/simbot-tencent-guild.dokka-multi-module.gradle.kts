@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,8 +17,6 @@
 
 import org.jetbrains.dokka.base.DokkaBase
 import org.jetbrains.dokka.base.DokkaBaseConfiguration
-import org.gradle.api.plugins.JavaBasePlugin
-import java.io.File
 import java.time.Year
 
 plugins {
@@ -30,7 +28,7 @@ repositories {
 }
 
 fun org.jetbrains.dokka.gradle.AbstractDokkaTask.configOutput(format: String) {
-    moduleName.set("Simple Robot Component Tencent Guild")
+    moduleName.set("Simple Robot Component | QQ Guild")
     outputDirectory.set(rootProject.file("build/dokka/$format"))
 }
 

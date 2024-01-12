@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -15,11 +15,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package love.forte.simbot.qguild.time
-
-/**
- * 时间单位，用于时间转化。
- *
- * @see java.util.concurrent.TimeUnit
- */
-public actual typealias TimeUnit = java.util.concurrent.TimeUnit
+object JVMConstants {
+    const val KT_JVM_TARGET_VALUE = 11
+    const val KT_JVM_TARGET = "11"
+}

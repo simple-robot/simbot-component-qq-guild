@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -22,7 +22,7 @@ import io.ktor.http.*
 import io.ktor.util.cio.*
 import io.ktor.utils.io.nio.*
 import io.ktor.utils.io.streams.*
-import love.forte.simbot.qguild.InternalApi
+import love.forte.simbot.qguild.QGInternalApi
 import java.io.File
 import java.net.URI
 import java.net.URL
@@ -95,7 +95,7 @@ public actual fun FormBuilder.resolveOther(fileImage: Any?) {
  * 与 [resolveOther] 中的支持类型相对应。
  *
  */
-@InternalApi
+@QGInternalApi
 public actual abstract class BaseMessageSendBodyBuilder actual constructor() {
     /*
         追加额外的平台功能，但是不能有抽象方法

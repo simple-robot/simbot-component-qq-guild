@@ -1,14 +1,25 @@
 [versions]
-kotlinx-coroutines = "1.7.0"
-kotlinx-serialization = "1.5.0"
+kotlinx-coroutines = "1.7.3"
+kotlinx-serialization = "1.6.2"
 kotlinx-datetime = "0.4.0"
 okio = "3.3.0"
-ktor = "2.3.0"
+ktor = "2.3.7"
 openjdk-jmh = "1.35"
 log4j = "2.20.0"
 atomicfu = "0.20.1"
+simbot = "4.0.0-dev1-SNAPSHOT"
 
 [libraries]
+# simbot
+simbot-api = { group = "love.forte.simbot", name = "simbot-api", version.ref = "simbot" }
+simbot-core = { group = "love.forte.simbot", name = "simbot-core", version.ref = "simbot" }
+simbot-logger = { group = "love.forte.simbot.logger", name = "simbot-logger", version.ref = "simbot" }
+simbot-common-apidefinition = { group = "love.forte.simbot.common", name = "simbot-common-apidefinition", version.ref = "simbot" }
+simbot-common-atomic = { group = "love.forte.simbot.common", name = "simbot-common-atomic", version.ref = "simbot" }
+simbot-common-core = { group = "love.forte.simbot.common", name = "simbot-common-core", version.ref = "simbot" }
+simbot-common-suspend = { group = "love.forte.simbot.common", name = "simbot-common-suspend-runner", version.ref = "simbot" }
+simbot-common-annotations = { group = "love.forte.simbot.common", name = "simbot-common-annotations", version.ref = "simbot" }
+
 # jetbrains-annotation
 jetbrains-annotations = "org.jetbrains:annotations:24.0.1"
 

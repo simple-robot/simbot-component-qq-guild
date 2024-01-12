@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -18,6 +18,7 @@
 import love.forte.gradle.common.core.project.ProjectDetail
 import love.forte.gradle.common.core.project.Version
 import love.forte.gradle.common.core.project.minus
+import love.forte.gradle.common.core.property.systemProp
 import love.forte.gradle.common.core.project.version as v
 
 val simbotVersion = v(3, 2, 0)
@@ -58,15 +59,12 @@ object P {
         override val homepage: String get() = HOMEPAGE
 
 
-        private val baseVersion = v(
-            "${simbotVersion.major}.${simbotVersion.minor}",
-            0, 0
-        )
+        private val baseVersion = v(4, 0, 0) - v("dev1")
 
         //private val alphaSuffix = v("beta", 2)
 
-        override val version = baseVersion // - alphaSuffix
         val snapshotVersion = baseVersion - Version.SNAPSHOT
+        override val version = if (isSnapshot()) snapshotVersion else baseVersion
 
         val versionIfSnap get() = (if (isSnapshot()) snapshotVersion else version).toString()
 
@@ -118,3 +116,5 @@ private fun initIsSnapshot(): Boolean {
 }
 
 fun isSnapshot(): Boolean = _isSnapshot
+
+fun isSimbotLocal(): Boolean = systemProp("SIMBOT_LOCAL").toBoolean()

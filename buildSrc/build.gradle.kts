@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. ForteScarlet.
+ * Copyright (c) 2021-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -26,8 +26,8 @@ repositories {
 
 val kotlinVersion = "1.9.21"
 val dokkaPluginVersion = "1.9.10"
-val suspendTransformVersion = "0.5.1"
-val gradleCommon = "0.1.1"
+val suspendTransformVersion = "0.6.0-beta3"
+val gradleCommon = "0.2.0"
 //val atomicfuVersion = "0.20.0"
 
 dependencies {
