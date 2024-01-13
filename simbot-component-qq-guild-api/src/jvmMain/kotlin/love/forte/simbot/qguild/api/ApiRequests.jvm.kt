@@ -23,11 +23,14 @@ package love.forte.simbot.qguild.api
 import io.ktor.client.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.future.future
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonBuilder
 import love.forte.simbot.qguild.QGApi4J
 import love.forte.simbot.qguild.QQGuild
 import love.forte.simbot.suspendrunner.runInNoScopeBlocking
+import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
 
@@ -56,13 +59,85 @@ public fun newJson(
 
 /**
  * [QQGuildApi.request] for Java
+ *
  */
 @QGApi4J
 @JvmOverloads
-public fun <R : Any> QQGuildApi<R>.requestBlocking(
+public fun QQGuildApi<*>.requestBlocking(
     client: HttpClient,
     token: String,
     server: Url = QQGuild.URL,
 ): HttpResponse = runInNoScopeBlocking {
     request(client, token, server)
+}
+
+/**
+ * [QQGuildApi.requestText] for Java
+ *
+ */
+@QGApi4J
+@JvmOverloads
+public fun QQGuildApi<*>.requestTextBlocking(
+    client: HttpClient,
+    token: String,
+    server: Url = QQGuild.URL,
+): String = runInNoScopeBlocking {
+    requestText(client, token, server)
+}
+
+/**
+ * [QQGuildApi.requestData] for Java
+ */
+@QGApi4J
+@JvmOverloads
+public fun <R : Any> QQGuildApi<R>.requestDataBlocking(
+    client: HttpClient,
+    token: String,
+    server: Url = QQGuild.URL,
+): R = runInNoScopeBlocking {
+    requestData(client, token, server)
+}
+
+/**
+ * [QQGuildApi.request] for Java
+ *
+ */
+@QGApi4J
+@JvmOverloads
+public fun QQGuildApi<*>.requestAsync(
+    client: HttpClient,
+    token: String,
+    server: Url = QQGuild.URL,
+    scope: CoroutineScope? = null,
+): CompletableFuture<HttpResponse> = (scope ?: client).future {
+    request(client, token, server)
+}
+
+/**
+ * [QQGuildApi.requestText] for Java
+ *
+ */
+@QGApi4J
+@JvmOverloads
+public fun QQGuildApi<*>.requestTextAsync(
+    client: HttpClient,
+    token: String,
+    server: Url = QQGuild.URL,
+    scope: CoroutineScope? = null,
+): CompletableFuture<String> = (scope ?: client).future {
+    requestText(client, token, server)
+}
+
+/**
+ * [QQGuildApi.requestData] for Java
+ */
+@QGApi4J
+@JvmOverloads
+public fun <R : Any> QQGuildApi<R>.requestDataAsync(
+    client: HttpClient,
+    token: String,
+    server: Url = QQGuild.URL,
+    scope: CoroutineScope? = null,
+): CompletableFuture<R> = (scope ?: client).future {
+    requestData(client, token, server)
 }

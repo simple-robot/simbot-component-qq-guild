@@ -73,7 +73,7 @@ public fun <R : Any> Bot.requestDataAsync(
  * 直接通过bot进行请求。
  */
 @Api4J
-public fun Bot.requestByBlocking(api: QQGuildApi<*>): HttpResponse = runInNoScopeBlocking {
+public fun Bot.requestBlocking(api: QQGuildApi<*>): HttpResponse = runInNoScopeBlocking {
     request(api)
 }
 
@@ -81,7 +81,7 @@ public fun Bot.requestByBlocking(api: QQGuildApi<*>): HttpResponse = runInNoScop
  * 直接通过bot进行请求。
  */
 @Api4J
-public fun Bot.requestTextByBlocking(api: QQGuildApi<*>): String = runInNoScopeBlocking {
+public fun Bot.requestTextBlocking(api: QQGuildApi<*>): String = runInNoScopeBlocking {
     requestText(api)
 }
 
@@ -91,6 +91,6 @@ public fun Bot.requestTextByBlocking(api: QQGuildApi<*>): String = runInNoScopeB
  * @throws love.forte.simbot.qguild.QQGuildApiException 如果返回状态码不在 200..300之间。
  */
 @Api4J
-public fun <R : Any> Bot.requestDataByBlocking(api: QQGuildApi<R>): R = runInNoScopeBlocking {
+public fun <R : Any> Bot.requestDataBlocking(api: QQGuildApi<R>): R = runInNoScopeBlocking {
     requestData(api)
 }

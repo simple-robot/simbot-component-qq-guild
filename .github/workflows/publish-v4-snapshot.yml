@@ -3,13 +3,18 @@ on:
   push:
     branches:
       - v4-dev/*
+      - v4-dev/v4-upgrade
       - v4-dev/main
 
     paths:
-      - '**src/main/kotlin/**.kt'
-      - '**src/main/java/**.java'
-      - 'buildSrc/**'
-      - '**gradle.kts'
+      - 'buildSrc'
+      - '**src/**/kotlin/**.kt'
+      - '**src/**/java/**.java'
+      - '**/src/**/kotlin/**.kt'
+      - '**/src/**/java/**.java'
+      - '**/build.gradle.kts'
+      - 'build.gradle.kts'
+      - 'settings.gradle.kts'
       - 'gradle.properties'
 
   # 手动触发工作流

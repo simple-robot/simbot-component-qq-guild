@@ -216,7 +216,7 @@ internal fun checkStatus(
         throw QQGuildApiException(info, status.value, status.description)
     }
 
-    // 202 消息审核异常
+    // 202 消息审核
     if (status == HttpStatusCode.Accepted) {
         val info = decoder.decodeFromString(ErrInfo.serializer(), remainingText)
         // maybe audited
