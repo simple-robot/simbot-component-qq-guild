@@ -22,7 +22,6 @@ import io.ktor.http.*
 import io.ktor.util.cio.*
 import io.ktor.utils.io.nio.*
 import io.ktor.utils.io.streams.*
-import love.forte.simbot.qguild.QGInternalApi
 import java.io.File
 import java.net.URI
 import java.net.URL
@@ -34,11 +33,13 @@ import kotlin.io.path.name
 /**
  * JVM平台下所能支持的针对 [MessageSendApi.Body.fileImage] 的解析。
  *
- * 处理当类型为
+ * 处理当类型为:
+ *
  * - [File]
  * - [Path]
  * - [URL]
  * - [URI]
+ *
  * 时的表单提交方式。
  *
  */
@@ -78,46 +79,14 @@ public actual fun FormBuilder.resolveOther(fileImage: Any?) {
     }
 }
 
-
-/**
- * 提供一些需要由不同平台额外实现的基类。
- * 主要针对 `fileImage`。
- *
- * 提供额外对于
- *
- * - [File]
- * - [Path]
- * - [URL]
- * - [URI]
- *
- * 的类型支持。
- *
- * 与 [resolveOther] 中的支持类型相对应。
- *
- */
-@QGInternalApi
-public actual abstract class BaseMessageSendBodyBuilder actual constructor() {
-    /*
-        追加额外的平台功能，但是不能有抽象方法
-     */
-    public actual open var fileImage: Any? = null
-    protected set
-
-
-    public fun setFileImage(file: File) {
-        fileImage = file
+internal actual fun checkFileImage(fileImage: Any) {
+    when (fileImage) {
+        is File -> {}
+        is Path -> {}
+        is URL -> {}
+        is URI -> {}
+        else -> {
+            throw IllegalArgumentException("Unsupported fileImage type: $fileImage (${fileImage::class.java})")
+        }
     }
-
-    public fun setFileImage(path: Path) {
-        fileImage = path
-    }
-
-    public fun setFileImage(url: URL) {
-        fileImage = url
-    }
-
-    public fun setFileImage(uri: URI) {
-        fileImage = uri
-    }
-
 }

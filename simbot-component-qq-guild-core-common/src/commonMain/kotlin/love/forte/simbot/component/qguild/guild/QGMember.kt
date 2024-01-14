@@ -1,0 +1,121 @@
+/*
+ * Copyright (c) 2022-2024. ForteScarlet.
+ *
+ * This file is part of simbot-component-qq-guild.
+ *
+ * simbot-component-qq-guild is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ *
+ * simbot-component-qq-guild is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with simbot-component-qq-guild.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package love.forte.simbot.component.qguild.guild
+
+import io.ktor.client.*
+import io.ktor.client.request.*
+import kotlinx.coroutines.CoroutineScope
+import love.forte.simbot.common.collectable.Collectable
+import love.forte.simbot.common.id.ID
+import love.forte.simbot.common.time.Timestamp
+import love.forte.simbot.component.qguild.ExperimentalQGApi
+import love.forte.simbot.component.qguild.QGObjectiveContainer
+import love.forte.simbot.component.qguild.message.QGContentText
+import love.forte.simbot.component.qguild.message.QGMessageReceipt
+import love.forte.simbot.component.qguild.role.QGMemberRole
+import love.forte.simbot.component.qguild.utils.toTimestamp
+import love.forte.simbot.definition.Member
+import love.forte.simbot.message.Message
+import love.forte.simbot.message.MessageContent
+import love.forte.simbot.message.Text
+import love.forte.simbot.qguild.QQGuildApiException
+import love.forte.simbot.qguild.api.MessageAuditedException
+import love.forte.simbot.suspendrunner.ST
+import love.forte.simbot.qguild.model.Member as QGSourceMember
+
+/**
+ *
+ * @author ForteScarlet
+ */
+public interface QGMember : Member, CoroutineScope, QGObjectiveContainer<QGSourceMember> {
+    /**
+     * 成员的用户ID
+     */
+    override val id: ID
+
+    /**
+     * 成员的用户头像
+     */
+    override val avatar: String
+        get() = source.user.avatar
+
+    /**
+     * 用户名
+     */
+    override val name: String
+        get() = source.user.username
+
+    /**
+     * 成员在频道中的昵称
+     */
+    override val nick: String
+        get() = source.nick
+
+    /**
+     * 用户加入频道的时间
+     *
+     */
+    @OptIn(ExperimentalQGApi::class)
+    public val joinTime: Timestamp
+        get() = source.joinedAt.toTimestamp()
+    /**
+     * 成员拥有的角色
+     */
+    @ExperimentalQGApi
+    public val roles: Collectable<QGMemberRole>
+
+    /**
+     * 向目标成员发送私聊消息。
+     *
+     * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
+     * @throws QQGuildApiException 请求异常，例如无权限
+     * @throws UnsupportedOperationException 如果当前子频道类型不是文字子频道
+     * @throws MessageAuditedException 当响应状态为表示消息审核的 `304023`、`304024` 时
+     */
+    @ST
+    override suspend fun send(message: Message): QGMessageReceipt
+
+    /**
+     * 向目标成员发送纯文本的私聊消息。
+     *
+     * [text] 的内容会根据 [内嵌格式](https://bot.q.qq.com/wiki/develop/api/openapi/message/message_format.html)
+     * 自动转义，发送出去的内容将会是原本的纯文本字符串，不会触发内嵌格式的特殊格式。
+     *
+     * 如果希望允许内嵌格式，请使用 [QGContentText] 消息类型而不是纯文本或 [Text] 。
+     *
+     * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
+     * @throws QQGuildApiException 请求异常，例如无权限
+     * @throws UnsupportedOperationException 如果当前子频道类型不是文字子频道
+     * @throws MessageAuditedException 当响应状态为表示消息审核的 `304023`、`304024` 时
+     *
+     * @see QGContentText
+     */
+    @ST
+    override suspend fun send(text: String): QGMessageReceipt
+
+    /**
+     * 向目标成员发送私聊消息。
+     *
+     * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
+     * @throws QQGuildApiException 请求异常，例如无权限
+     * @throws UnsupportedOperationException 如果当前子频道类型不是文字子频道
+     * @throws MessageAuditedException 当响应状态为表示消息审核的 `304023`、`304024` 时
+     */
+    @ST
+    override suspend fun send(messageContent: MessageContent): QGMessageReceipt
+}

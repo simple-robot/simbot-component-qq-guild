@@ -24,9 +24,39 @@ import io.ktor.client.statement.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.future.future
 import love.forte.simbot.annotations.Api4J
+import love.forte.simbot.annotations.InternalSimbotAPI
 import love.forte.simbot.qguild.api.QQGuildApi
+import love.forte.simbot.suspendrunner.reserve.SuspendReserve
+import love.forte.simbot.suspendrunner.reserve.suspendReserve
 import love.forte.simbot.suspendrunner.runInNoScopeBlocking
 import java.util.concurrent.CompletableFuture
+import kotlin.coroutines.EmptyCoroutineContext
+
+/**
+ * 直接通过bot进行请求。
+ */
+@Api4J
+public fun Bot.requestBlocking(api: QQGuildApi<*>): HttpResponse = runInNoScopeBlocking {
+    request(api)
+}
+
+/**
+ * 直接通过bot进行请求。
+ */
+@Api4J
+public fun Bot.requestTextBlocking(api: QQGuildApi<*>): String = runInNoScopeBlocking {
+    requestText(api)
+}
+
+/**
+ * 直接通过bot进行请求。
+ *
+ * @throws love.forte.simbot.qguild.QQGuildApiException 如果返回状态码不在 200..300之间。
+ */
+@Api4J
+public fun <R : Any> Bot.requestDataBlocking(api: QQGuildApi<R>): R = runInNoScopeBlocking {
+    requestData(api)
+}
 
 
 /**
@@ -69,28 +99,52 @@ public fun <R : Any> Bot.requestDataAsync(
     requestData(api)
 }
 
-/**
- * 直接通过bot进行请求。
- */
-@Api4J
-public fun Bot.requestBlocking(api: QQGuildApi<*>): HttpResponse = runInNoScopeBlocking {
-    request(api)
-}
-
-/**
- * 直接通过bot进行请求。
- */
-@Api4J
-public fun Bot.requestTextBlocking(api: QQGuildApi<*>): String = runInNoScopeBlocking {
-    requestText(api)
-}
 
 /**
  * 直接通过bot进行请求。
  *
- * @throws love.forte.simbot.qguild.QQGuildApiException 如果返回状态码不在 200..300之间。
+ * [SuspendReserve] 可能使用的作用域 [scope] 默认为 [Bot.apiClient]。
+ *
+ * @see SuspendReserve
  */
 @Api4J
-public fun <R : Any> Bot.requestDataBlocking(api: QQGuildApi<R>): R = runInNoScopeBlocking {
+@JvmOverloads
+@OptIn(InternalSimbotAPI::class)
+public fun Bot.requestReserve(api: QQGuildApi<*>, scope: CoroutineScope? = null): SuspendReserve<HttpResponse> =
+    suspendReserve(scope ?: apiClient, EmptyCoroutineContext) {
+        request(api)
+    }
+
+/**
+ * 直接通过bot进行请求。
+ *
+ * [SuspendReserve] 可能使用的作用域 [scope] 默认为 [Bot.apiClient]。
+ *
+ * @see SuspendReserve
+ */
+@Api4J
+@JvmOverloads
+@OptIn(InternalSimbotAPI::class)
+public fun Bot.requestTextReserve(api: QQGuildApi<*>, scope: CoroutineScope? = null): SuspendReserve<String> =
+    suspendReserve(scope ?: apiClient, EmptyCoroutineContext) {
+        requestText(api)
+    }
+
+/**
+ * 直接通过bot进行请求。
+ *
+ * [SuspendReserve] 可能使用的作用域 [scope] 默认为 [Bot.apiClient]。
+ *
+ * @throws love.forte.simbot.qguild.QQGuildApiException 如果返回状态码不在 200..300之间。
+ *
+ * @see SuspendReserve
+ */
+@Api4J
+@JvmOverloads
+@OptIn(InternalSimbotAPI::class)
+public fun <R : Any> Bot.requestDataReserve(
+    api: QQGuildApi<R>,
+    scope: CoroutineScope? = null
+): SuspendReserve<R> = suspendReserve(scope ?: apiClient, EmptyCoroutineContext) {
     requestData(api)
 }

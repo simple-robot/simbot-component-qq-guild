@@ -162,7 +162,6 @@ public class MessageSendApi private constructor(
         get() = if (body is MultiPartFormDataContent) FormDataHeader else Headers.Empty
 
 
-
     /**
      * [MessageSendApi] 所需参数。详情参考 [文档](https://bot.q.qq.com/wiki/develop/api/openapi/message/post_messages.html#%E9%80%9A%E7%94%A8%E5%8F%82%E6%95%B0)
      *
@@ -242,7 +241,53 @@ public class MessageSendApi private constructor(
          *
          */
         @Suppress("MemberVisibilityCanBePrivate")
-        public class Builder : BaseMessageSendBodyBuilder() {
+        public class Builder {
+            /**
+             * [fileImage] 直接set时支持的类型：
+             *
+             * 所有平台：
+             * - [ByteArray]
+             * - [InputProvider]
+             * - [ByteReadPacket]
+             * - [ChannelProvider]
+             *
+             * JVM 平台：
+             * - `java.nio.Path`
+             * - `java.io.File`
+             * - `java.net.URL`
+             * - `java.net.URI`
+             */
+            public var fileImage: Any? = null
+                set(value) {
+                    when (value) {
+                        null -> {
+                            field = value
+                        }
+
+                        is ByteArray -> {
+                            field = value
+                        }
+
+                        is InputProvider -> {
+                            field = value
+                        }
+
+                        is ByteReadPacket -> {
+                            field = value
+                        }
+
+                        is ChannelProvider -> {
+                            field = value
+                        }
+
+                        else -> {
+                            checkFileImage(value)
+                            field = value
+                        }
+                    }
+
+                }
+
             public var content: String? = null
             public var embed: Message.Embed? = null
             public var ark: Message.Ark? = null
@@ -347,19 +392,7 @@ public inline fun MessageSendApi.Factory.create(channelId: String, builder: Buil
     create(channelId, MessageSendApi.Body.invoke(builder))
 
 
-/**
- * 提供一些需要由不同平台额外实现的基类。
- * 主要针对 `fileImage`。
- */
-@QGInternalApi
-public expect abstract class BaseMessageSendBodyBuilder() {
-    public open var fileImage: Any?
-        protected set
-    /*
-     * 追加额外的平台功能，但是不能有抽象方法
-     */
-}
-
+internal expect fun checkFileImage(fileImage: Any)
 
 // // TencentMessageForSending || MultiPartFormDataContent
 /**

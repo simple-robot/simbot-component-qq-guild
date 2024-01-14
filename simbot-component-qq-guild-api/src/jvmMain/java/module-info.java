@@ -6,6 +6,8 @@ module simbot.component.qqguild.api {
     requires transitive kotlinx.serialization.json;
     // simbot
     requires static simbot.common.annotations;
+    requires transitive simbot.logger;
+    requires transitive org.slf4j;
     requires transitive simbot.common.apidefinition;
     requires transitive simbot.common.suspendrunner;
     requires transitive simbot.common.core;
@@ -13,6 +15,8 @@ module simbot.component.qqguild.api {
     requires io.ktor.http;
     requires io.ktor.client.core;
     requires io.ktor.client.content.negotiation;
+    requires io.ktor.utils;
+    requires io.ktor.io;
 
 
     exports love.forte.simbot.qguild;

@@ -27,11 +27,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.future.future
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonBuilder
+import love.forte.simbot.annotations.InternalSimbotAPI
 import love.forte.simbot.qguild.QGApi4J
 import love.forte.simbot.qguild.QQGuild
+import love.forte.simbot.suspendrunner.reserve.SuspendReserve
+import love.forte.simbot.suspendrunner.reserve.suspendReserve
 import love.forte.simbot.suspendrunner.runInNoScopeBlocking
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
+import kotlin.coroutines.EmptyCoroutineContext
 
 
 /**
@@ -139,5 +143,56 @@ public fun <R : Any> QQGuildApi<R>.requestDataAsync(
     server: Url = QQGuild.URL,
     scope: CoroutineScope? = null,
 ): CompletableFuture<R> = (scope ?: client).future {
+    requestData(client, token, server)
+}
+
+/**
+ * [QQGuildApi.request] for Java
+ *
+ * @see SuspendReserve
+ */
+@QGApi4J
+@JvmOverloads
+@OptIn(InternalSimbotAPI::class)
+public fun QQGuildApi<*>.requestReserve(
+    client: HttpClient,
+    token: String,
+    server: Url = QQGuild.URL,
+    scope: CoroutineScope? = null,
+): SuspendReserve<HttpResponse> = suspendReserve(scope = (scope ?: client), context = EmptyCoroutineContext) {
+    request(client, token, server)
+}
+
+/**
+ * [QQGuildApi.requestText] for Java
+ *
+ * @see SuspendReserve
+ */
+@QGApi4J
+@JvmOverloads
+@OptIn(InternalSimbotAPI::class)
+public fun QQGuildApi<*>.requestTextReserve(
+    client: HttpClient,
+    token: String,
+    server: Url = QQGuild.URL,
+    scope: CoroutineScope? = null,
+): SuspendReserve<String> = suspendReserve(scope = (scope ?: client), context = EmptyCoroutineContext) {
+    requestText(client, token, server)
+}
+
+/**
+ * [QQGuildApi.requestData] for Java
+ *
+ * @see SuspendReserve
+ */
+@QGApi4J
+@JvmOverloads
+@OptIn(InternalSimbotAPI::class)
+public fun <R : Any> QQGuildApi<R>.requestDataReserve(
+    client: HttpClient,
+    token: String,
+    server: Url = QQGuild.URL,
+    scope: CoroutineScope? = null,
+): SuspendReserve<R> = suspendReserve(scope = (scope ?: client), context = EmptyCoroutineContext) {
     requestData(client, token, server)
 }

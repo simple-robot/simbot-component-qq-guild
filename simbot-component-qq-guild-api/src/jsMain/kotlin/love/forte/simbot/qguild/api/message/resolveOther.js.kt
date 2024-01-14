@@ -32,13 +32,3 @@ import love.forte.simbot.qguild.QGInternalApi
 public actual fun FormBuilder.resolveOther(fileImage: Any?) {
 }
 
-
-/**
- * 提供一些需要由不同平台额外实现的基类。
- * 主要针对 `fileImage`。
- */
-@QGInternalApi
-public actual abstract class BaseMessageSendBodyBuilder actual constructor() {
-    public actual open var fileImage: Any? = null
-    protected set
-}
