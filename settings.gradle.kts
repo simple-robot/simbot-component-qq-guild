@@ -28,4 +28,5 @@ include(":simbot-component-qq-guild-core")
 // tests
 include(":tests:application-test")
 include(":tests:spring-boot-test")
+include(":tests:plugin-test")
 

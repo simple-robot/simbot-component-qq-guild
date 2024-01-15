@@ -26,6 +26,7 @@ import love.forte.simbot.common.function.ConfigurerFunction
 import love.forte.simbot.common.function.invokeBy
 import love.forte.simbot.component.*
 import love.forte.simbot.component.qguild.bot.config.QGBotFileConfiguration
+import love.forte.simbot.component.qguild.bot.config.TicketConfiguration
 import love.forte.simbot.component.qguild.message.*
 import love.forte.simbot.message.At
 import love.forte.simbot.message.Message
@@ -130,6 +131,10 @@ public class QQGuildComponent : Component {
 
             serializableBotConfigurationPolymorphic {
                 subclass(QGBotFileConfiguration.serializer())
+            }
+
+            polymorphic(TicketConfiguration::class) {
+                defaultDeserializer { TicketConfiguration.Plain.serializer() }
             }
         }
 

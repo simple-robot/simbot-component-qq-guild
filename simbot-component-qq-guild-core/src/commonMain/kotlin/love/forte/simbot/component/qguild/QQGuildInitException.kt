@@ -17,6 +17,9 @@
 
 package love.forte.simbot.component.qguild
 
+import love.forte.simbot.component.qguild.bot.QGBot
+import love.forte.simbot.component.qguild.guild.QGGuild
+
 /**
  * 用于当 [QGGuild] 或 [QGBot] 等类型实现类内部初始化信息过程中出现的异常。
  * @author ForteScarlet

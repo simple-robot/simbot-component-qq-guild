@@ -1,0 +1,11 @@
+{
+  "component": "simbot.qqguild",
+  "ticket": {
+    "appId": "102051700",
+    "secret": "",
+    "token": "xH2wbDzsrTWqGk8KW81fhOCf98drwsb7"
+  },
+  "config": {
+    "serverUrl": "SANDBOX"
+  }
+}

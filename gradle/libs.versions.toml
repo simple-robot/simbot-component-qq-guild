@@ -7,13 +7,15 @@ ktor = "2.3.7"
 openjdk-jmh = "1.35"
 log4j = "2.20.0"
 atomicfu = "0.20.1"
-simbot = "4.0.0-dev1"
+simbot = "4.0.0-dev2"
 
 [libraries]
 # simbot
 simbot-api = { group = "love.forte.simbot", name = "simbot-api", version.ref = "simbot" }
 simbot-core = { group = "love.forte.simbot", name = "simbot-core", version.ref = "simbot" }
+simbot-spring = { group = "love.forte.simbot", name = "simbot-core-spring-boot-starter", version.ref = "simbot" }
 simbot-logger = { group = "love.forte.simbot.logger", name = "simbot-logger", version.ref = "simbot" }
+simbot-logger-slf4jimpl = { group = "love.forte.simbot.logger", name = "simbot-logger-slf4j2-impl", version.ref = "simbot" }
 simbot-common-apidefinition = { group = "love.forte.simbot.common", name = "simbot-common-apidefinition", version.ref = "simbot" }
 simbot-common-atomic = { group = "love.forte.simbot.common", name = "simbot-common-atomic", version.ref = "simbot" }
 simbot-common-core = { group = "love.forte.simbot.common", name = "simbot-common-core", version.ref = "simbot" }
@@ -60,6 +62,7 @@ ktor-client-ws = { group = "io.ktor", name = "ktor-client-websockets", version.r
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
 ktor-client-cio = { group = "io.ktor", name = "ktor-client-cio", version.ref = "ktor" }
 ktor-client-js = { group = "io.ktor", name = "ktor-client-js", version.ref = "ktor" }
+ktor-client-java = { group = "io.ktor", name = "ktor-client-java", version.ref = "ktor" }
 
 # for linuxX64, macosX64, macosArm64, mingwX64
 # see https://ktor.io/docs/http-client-engines.html#curl

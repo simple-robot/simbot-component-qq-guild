@@ -48,7 +48,7 @@ allprojects {
                 snapshotsOnly()
             }
         }
-        mavenLocal()
+        //mavenLocal()
     }
 //
 //    configurations.all {

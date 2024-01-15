@@ -36,6 +36,7 @@ import love.forte.simbot.component.qguild.channel.*
 import love.forte.simbot.component.qguild.guild.QGGuild
 import love.forte.simbot.component.qguild.guild.QGGuildRelation
 import love.forte.simbot.component.qguild.internal.channel.*
+import love.forte.simbot.component.qguild.internal.event.QGBotStartedEventImpl
 import love.forte.simbot.component.qguild.internal.guild.QGGuildImpl
 import love.forte.simbot.component.qguild.internal.guild.QGGuildImpl.Companion.qgGuild
 import love.forte.simbot.component.qguild.internal.guild.QGMemberImpl
@@ -46,6 +47,7 @@ import love.forte.simbot.component.qguild.internal.role.toMemberRole
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
 import love.forte.simbot.component.qguild.message.sendMessage
 import love.forte.simbot.event.EventDispatcher
+import love.forte.simbot.event.onEachError
 import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
@@ -62,6 +64,7 @@ import love.forte.simbot.qguild.ifNotFoundThenNull
 import love.forte.simbot.qguild.model.ChannelType
 import love.forte.simbot.qguild.model.SimpleChannel
 import love.forte.simbot.qguild.model.SimpleGuild
+import love.forte.simbot.qguild.stdlib.DisposableHandle
 import love.forte.simbot.qguild.stdlib.requestDataBy
 import kotlin.concurrent.Volatile
 import kotlin.coroutines.CoroutineContext
@@ -75,10 +78,10 @@ import love.forte.simbot.qguild.stdlib.Bot as StdlibBot
 internal class QGBotImpl(
     override val source: StdlibBot,
     override val component: QQGuildComponent,
-    private val eventDispatcher: EventDispatcher,
+    internal val eventDispatcher: EventDispatcher,
     configuration: QGBotComponentConfiguration
 ) : QGBot, JobBasedBot() {
-    private val logger =
+    internal val logger =
         LoggerFactory.getLogger("love.forte.simbot.component.qguild.bot.${source.ticket.secret}")
 
     override val job: Job
@@ -358,19 +361,26 @@ internal class QGBotImpl(
      */
     override suspend fun start() {
         startLock.withLock {
+            sourceListenerDisposableHandle?.also { handle ->
+                handle.dispose()
+                sourceListenerDisposableHandle = null
+            }
+
+            sourceListenerDisposableHandle = registerEventProcessor()
+
             source.start().also {
-                // just set everytime.
+                // set everytime.
                 botSelf = me().also { me ->
                     logger.debug("bot own information: {}", me)
                 }
 
-                suspend fun pushStartedEvent() {
-                    // TODO
-//                    if (eventDispatcher.isProcessable(QGBotStartedEvent)) {
-//                        launch {
-//                            eventProcessor.push(QGBotStartedEventImpl(this@QGBotImpl))
-//                        }
-//                    }
+                fun pushStartedEvent() {
+                    launch {
+                        val event = QGBotStartedEventImpl(this@QGBotImpl)
+                        eventDispatcher.push(event)
+                            .onEachError { e -> logger.error("Event {} process failed: {}", event, e, e.content) }
+                            .collect()
+                    }
                 }
 
                 if (!isStarted) {
@@ -378,16 +388,11 @@ internal class QGBotImpl(
                     return@also
                 }
 
-                sourceListenerDisposableHandle?.also { handle ->
-                    handle.dispose()
-                    sourceListenerDisposableHandle = null
-                }
-                // TODO
-//                sourceListenerDisposableHandle = registerEventProcessor()
+
+                isStarted = true
                 pushStartedEvent()
             }
 
-            isStarted = true
         }
     }
 

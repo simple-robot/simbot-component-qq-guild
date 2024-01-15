@@ -61,14 +61,8 @@ object P {
 
         private val baseVersion = v(4, 0, 0) - v("dev1")
 
-        //private val alphaSuffix = v("beta", 2)
-
         val snapshotVersion = baseVersion - Version.SNAPSHOT
         override val version = if (isSnapshot()) snapshotVersion else baseVersion
-
-        val versionIfSnap get() = (if (isSnapshot()) snapshotVersion else version).toString()
-
-        val VERSION: String get() = versionIfSnap.toString()
 
         override val developers: List<Developer> = developers {
             developer {

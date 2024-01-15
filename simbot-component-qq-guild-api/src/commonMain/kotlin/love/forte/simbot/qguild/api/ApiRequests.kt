@@ -70,6 +70,9 @@ public suspend fun <R : Any> QQGuildApi<R>.request(
                     appendAll(api.headers)
                 }
             }
+            if (!contains(HttpHeaders.ContentType)) {
+                contentType(ContentType.Application.Json)
+            }
         }
 
         url {
@@ -112,7 +115,7 @@ public suspend fun <R : Any> QQGuildApi<R>.request(
             }
         }
 
-        apiLogger.debug("[{} /{}] =====> {}, body: {}", method.logName, url.encodedPath, url.host, api.body)
+        apiLogger.debug("[{} {}] =====> {}, body: {}", method.logName, url.encodedPath, url.host, api.body)
     }
 }
 

@@ -52,39 +52,12 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            api(libs.simbot.core)
-            api(project(":simbot-component-qq-guild-core"))
-//            compileOnly(libs.simbot.common.annotations)
+            implementation(libs.simbot.api)
+            implementation(libs.simbot.core)
         }
 
         commonTest.dependencies {
             implementation(kotlin("test"))
-            implementation(libs.kotlinx.coroutines.test)
-        }
-
-        jvmMain.dependencies {
-            implementation(libs.simbot.logger.slf4jimpl)
-//            implementation(libs.ktor.client.cio)
-            implementation(libs.ktor.client.java)
-        }
-
-        jvmTest.dependencies {
-            implementation(libs.log4j.api)
-            implementation(libs.log4j.core)
-            implementation(libs.log4j.slf4j2)
-        }
-
-        jsMain.dependencies {
-            implementation(libs.ktor.client.js)
-            implementation(libs.simbot.common.annotations)
-        }
-
-        nativeMain.dependencies {
-            api(libs.simbot.common.annotations)
-        }
-
-        mingwMain.dependencies {
-            implementation(libs.ktor.client.winhttp)
         }
     }
 }

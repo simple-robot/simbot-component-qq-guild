@@ -44,7 +44,7 @@ import love.forte.simbot.qguild.event.Signal
  * @author ForteScarlet
  */
 @FragileSimbotAPI
-public abstract class QGUnsupportedEvent : QGEvent<Signal.Dispatch>() {
+public abstract class QGUnsupportedEvent : QGBotEvent<Signal.Dispatch>() {
     /**
      * 事件ID。一个随机ID。
      */

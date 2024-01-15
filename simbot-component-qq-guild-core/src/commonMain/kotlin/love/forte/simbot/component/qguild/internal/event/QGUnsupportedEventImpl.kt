@@ -18,6 +18,7 @@
 package love.forte.simbot.component.qguild.internal.event
 
 import love.forte.simbot.annotations.FragileSimbotAPI
+import love.forte.simbot.component.qguild.bot.QGBot
 import love.forte.simbot.component.qguild.event.QGUnsupportedEvent
 import love.forte.simbot.qguild.event.Signal
 
@@ -28,6 +29,7 @@ import love.forte.simbot.qguild.event.Signal
  */
 @OptIn(FragileSimbotAPI::class)
 internal data class QGUnsupportedEventImpl(
+    override val bot: QGBot,
     override val sourceEventEntity: Signal.Dispatch,
     override val sourceEventRaw: String
 ) : QGUnsupportedEvent()
