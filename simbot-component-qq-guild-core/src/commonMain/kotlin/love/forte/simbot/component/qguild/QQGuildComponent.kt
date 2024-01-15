@@ -164,7 +164,6 @@ public class QQGuildComponentFactoryProvider :
     override fun provide(): ComponentFactory<*, QQGuildComponentConfiguration> = QQGuildComponent
 }
 
-// TODO add to package-info
 /**
  * 用于 [QQGuildComponentFactoryProvider.loadConfigurers] 的可加载的额外配置器。
  *

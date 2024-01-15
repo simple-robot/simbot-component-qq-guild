@@ -18,13 +18,13 @@
 import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
 import love.forte.simbot.common.function.ConfigurerFunction
-import love.forte.simbot.component.Component
-import love.forte.simbot.component.ComponentConfigureContext
-import love.forte.simbot.component.ComponentFactory
+import love.forte.simbot.common.function.invokeBy
+import love.forte.simbot.component.*
 import love.forte.simbot.core.application.launchSimpleApplication
 import love.forte.simbot.plugin.Plugin
 import love.forte.simbot.plugin.PluginConfigureContext
 import love.forte.simbot.plugin.PluginFactory
+import kotlin.jvm.JvmField
 
 /*
  * Copyright (c) 2024. ForteScarlet.
@@ -44,16 +44,36 @@ import love.forte.simbot.plugin.PluginFactory
  */
 
 class FooComponent : Component {
-    override val id: String = "example.foo"
-    override val serializersModule: SerializersModule = EmptySerializersModule()
+    override val id: String get() = ID_VALUE
+    override val serializersModule: SerializersModule get() = SerializersModule
 
-    companion object Factory : ComponentFactory<FooComponent, Unit> {
+    /** 伴生对象实现的工厂实现 */
+    companion object Factory : ComponentFactory<FooComponent, FooComponentConfiguration> {
+        /** id 常量化 */
+        const val ID_VALUE: String = "com.example.foo"
+        /** serializersModule "静态化" */
+        @JvmField
+        val SerializersModule: SerializersModule = EmptySerializersModule()
+
         override val key: ComponentFactory.Key = object : ComponentFactory.Key {}
-        override fun create(context: ComponentConfigureContext, configurer: ConfigurerFunction<Unit>): FooComponent {
+        override fun create(context: ComponentConfigureContext, configurer: ConfigurerFunction<FooComponentConfiguration>): FooComponent {
+            FooComponentConfiguration().invokeBy(configurer)
             return FooComponent()
         }
     }
 }
+
+class FooComponentFactoryProvider : ComponentFactoryProvider<FooComponentConfiguration> {
+    override fun loadConfigurers(): Sequence<ComponentFactoryConfigurerProvider<FooComponentConfiguration>>? {
+        return null
+    }
+
+    override fun provide(): ComponentFactory<*, FooComponentConfiguration> {
+        return FooComponent.Factory
+    }
+}
+
+class FooComponentConfiguration
 
 class FooPlugin : Plugin {
     companion object Factory : PluginFactory<FooPlugin, Unit> {
