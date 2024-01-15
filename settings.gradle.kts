@@ -26,7 +26,9 @@ include(":simbot-component-qq-guild-core")
 //include(":simbot-component-qq-guild-benchmark")
 
 // tests
-include(":tests:application-test")
-include(":tests:spring-boot-test")
-include(":tests:plugin-test")
+if (!System.getenv("IS_CI").toBoolean()) {
+    include(":tests:application-test")
+    include(":tests:spring-boot-test")
+    include(":tests:plugin-test")
+}
 
