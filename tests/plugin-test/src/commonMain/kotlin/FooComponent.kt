@@ -88,7 +88,9 @@ class FooPlugin : Plugin {
 suspend fun main() {
     val app = launchSimpleApplication {
         install(FooComponent)
-        install(FooPlugin)
     }
 
+    // Kotlin 可以直接通过扩展函数根据类型寻找目标
+    val fooComponent = app.components.find<FooComponent>()
+    println(fooComponent)
 }
