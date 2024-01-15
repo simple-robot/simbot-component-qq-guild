@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -15,17 +15,19 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = "qq-guild"
+package love.forte.simbot.component.qguild.internal.event
+
+import love.forte.simbot.annotations.FragileSimbotAPI
+import love.forte.simbot.component.qguild.event.QGUnsupportedEvent
+import love.forte.simbot.qguild.event.Signal
 
 
-//include(":builder-generator")
-include(":simbot-component-qq-guild-api")
-include(":simbot-component-qq-guild-stdlib")
-include(":simbot-component-qq-guild-core")
-//include(":simbot-component-qq-guild-core")
-//include(":simbot-component-qq-guild-benchmark")
-
-// tests
-include(":tests:application-test")
-include(":tests:spring-boot-test")
-
+/**
+ *
+ * @author ForteScarlet
+ */
+@OptIn(FragileSimbotAPI::class)
+internal data class QGUnsupportedEventImpl(
+    override val sourceEventEntity: Signal.Dispatch,
+    override val sourceEventRaw: String
+) : QGUnsupportedEvent()

@@ -28,8 +28,8 @@ import kotlinx.serialization.json.JsonNull
  * 在 JVM 平台上生效。
  * 在其他平台会使用 [addSuppressed] 添加 [cause]。
  */
-@PublishedApi
-internal expect inline fun <reified T : Throwable> T.initCause0(cause: Throwable): T
+@QGInternalApi
+public expect inline fun <reified T : Throwable> T.initCause0(cause: Throwable): T
 
 /**
  * QQ频道API请求过程中出现的异常
@@ -71,7 +71,7 @@ public fun QQGuildApiException.copyCurrent(): QQGuildApiException = addStackTrac
  */
 @QGInternalApi
 public inline fun <E : QQGuildApiException> E.addStackTrace(block: () -> String? = { null }): E {
-    addSuppressed(APIStackException(block()))
+    addSuppressed(APIStack(block()))
     return this
 }
 
@@ -81,7 +81,7 @@ public inline fun <E : QQGuildApiException> E.addStackTrace(block: () -> String?
  */
 @QGInternalApi
 @PublishedApi
-internal class APIStackException @PublishedApi internal constructor(message: String? = null) : Exception(message)
+internal class APIStack @PublishedApi internal constructor(message: String? = null) : Exception(message)
 
 /**
  * 判断 [QQGuildApiException.value] 的值是否为 `404`

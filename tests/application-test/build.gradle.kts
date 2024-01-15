@@ -26,14 +26,13 @@ plugins {
     `simbot-tcg-suspend-transform-configure`
 }
 
-configJavaCompileWithModule("simbot.component.qqguild.core")
+configJavaCompileWithModule()
 apply(plugin = "qq-guild-multiplatform-maven-publish")
 
 configJsTestTasks()
 
 kotlin {
     explicitApi()
-    applyDefaultHierarchyTemplate()
 
     sourceSets.configureEach {
         languageSettings {
@@ -45,6 +44,7 @@ kotlin {
 
     js(IR) {
         configJs()
+        binaries.executable()
     }
 
     applyTier1()
@@ -53,15 +53,9 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            api(libs.simbot.api)
-            api(project(":simbot-component-qq-guild-stdlib"))
-            compileOnly(libs.simbot.common.annotations)
-            // ktor
-            api(libs.ktor.client.contentNegotiation)
-            api(libs.ktor.serialization.kotlinxJson)
-            api(libs.ktor.client.ws)
-            // datetime
-            api(libs.kotlinx.datetime)
+            api(libs.simbot.core)
+            api(project(":simbot-component-qq-guild-core"))
+//            compileOnly(libs.simbot.common.annotations)
         }
 
         commonTest.dependencies {

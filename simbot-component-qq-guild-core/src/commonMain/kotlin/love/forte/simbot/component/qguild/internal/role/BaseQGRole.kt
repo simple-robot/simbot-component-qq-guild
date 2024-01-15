@@ -15,9 +15,27 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package love.forte.simbot.qguild
+package love.forte.simbot.component.qguild.internal.role
+
+import love.forte.simbot.common.id.ID
+import love.forte.simbot.common.id.StringID.Companion.ID
+import love.forte.simbot.component.qguild.ExperimentalQGApi
+import love.forte.simbot.component.qguild.internal.bot.QGBotImpl
+import love.forte.simbot.component.qguild.internal.bot.newSupervisorCoroutineContext
+import love.forte.simbot.component.qguild.role.QGRole
+import love.forte.simbot.qguild.model.Role
+import kotlin.coroutines.CoroutineContext
+
 
 /**
- * @suppress
+ *
+ * @author ForteScarlet
  */
-public actual inline fun <reified T : Throwable> T.initCause0(cause: Throwable): T = this.also { addSuppressed(cause) }
+@ExperimentalQGApi
+internal abstract class BaseQGRole(internal val bot: QGBotImpl) : QGRole {
+    override val coroutineContext: CoroutineContext = bot.newSupervisorCoroutineContext()
+    abstract override var source: Role
+
+    override val id: ID
+        get() = source.id.ID
+}

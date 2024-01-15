@@ -78,7 +78,7 @@
 基于 [标准库模块](simbot-component-qq-guild-stdlib) 对 [simbot3核心库](https://github.com/simple-robot/simpler-robot) 的组件实现，
 是一个相对高度封装的模块，并提供simbot3大部分能力，包括事件监听、多组件协同、Spring Boot Starter 等。
 
-👉 [前往模块](simbot-component-qq-guild-core) 了解更多。
+👉 [前往模块](simbot-component-qq-guild-core-1) 了解更多。
 
 ## 法欧莉
 

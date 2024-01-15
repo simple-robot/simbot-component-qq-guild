@@ -7,7 +7,7 @@ ktor = "2.3.7"
 openjdk-jmh = "1.35"
 log4j = "2.20.0"
 atomicfu = "0.20.1"
-simbot = "4.0.0-dev1-SNAPSHOT"
+simbot = "4.0.0-dev1"
 
 [libraries]
 # simbot

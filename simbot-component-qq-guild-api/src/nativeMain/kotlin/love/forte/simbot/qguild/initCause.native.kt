@@ -20,5 +20,4 @@ package love.forte.simbot.qguild
 /**
  * @suppress
  */
-@PublishedApi
-internal actual inline fun <reified T : Throwable> T.initCause0(cause: Throwable): T = this.also { addSuppressed(cause) }
+public actual inline fun <reified T : Throwable> T.initCause0(cause: Throwable): T = this.also { addSuppressed(cause) }

@@ -15,17 +15,13 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = "qq-guild"
+package love.forte.simbot.component.qguild.internal.event
+
+import love.forte.simbot.component.qguild.event.QGBotRegisteredEvent
+import love.forte.simbot.component.qguild.event.QGBotStartedEvent
+import love.forte.simbot.component.qguild.internal.bot.QGBotImpl
 
 
-//include(":builder-generator")
-include(":simbot-component-qq-guild-api")
-include(":simbot-component-qq-guild-stdlib")
-include(":simbot-component-qq-guild-core")
-//include(":simbot-component-qq-guild-core")
-//include(":simbot-component-qq-guild-benchmark")
+internal class QGBotRegisteredEventImpl(override val bot: QGBotImpl) : QGBotRegisteredEvent()
 
-// tests
-include(":tests:application-test")
-include(":tests:spring-boot-test")
-
+internal class QGBotStartedEventImpl(override val bot: QGBotImpl) : QGBotStartedEvent()
