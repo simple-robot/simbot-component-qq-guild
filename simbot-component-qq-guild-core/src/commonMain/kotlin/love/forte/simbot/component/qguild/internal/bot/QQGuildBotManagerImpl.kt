@@ -26,6 +26,9 @@ import love.forte.simbot.common.atomic.atomic
 import love.forte.simbot.common.collection.ExperimentalSimbotCollectionApi
 import love.forte.simbot.common.collection.createConcurrentQueue
 import love.forte.simbot.common.coroutines.linkTo
+import love.forte.simbot.common.function.ConfigurerFunction
+import love.forte.simbot.common.function.invokeBy
+import love.forte.simbot.common.function.invokeWith
 import love.forte.simbot.common.id.ID
 import love.forte.simbot.component.qguild.QQGuildComponent
 import love.forte.simbot.component.qguild.bot.QGBot
@@ -97,7 +100,7 @@ internal class QQGuildBotManagerImpl(
 
     private val onRegister = atomic(false)
 
-    override fun register(ticket: Bot.Ticket, block: QGBotComponentConfiguration.() -> Unit): QGBot {
+    override fun register(ticket: Bot.Ticket, block: ConfigurerFunction<QGBotComponentConfiguration>?): QGBot {
         while (true) {
             if (!isActive) throw IllegalStateException("This manager has been completed")
             if (onRegister.compareAndSet(expect = false, value = true)) {
@@ -116,15 +119,15 @@ internal class QQGuildBotManagerImpl(
         appId: String,
         secret: String,
         token: String,
-        block: QGBotComponentConfiguration.() -> Unit,
+        block: ConfigurerFunction<QGBotComponentConfiguration>?,
     ): QGBot = register(Bot.Ticket(appId, secret, token), block)
 
     private fun doRegister(
         ticket: Bot.Ticket,
-        block: QGBotComponentConfiguration.() -> Unit,
+        block: ConfigurerFunction<QGBotComponentConfiguration>?,
     ): QGBot {
         val configure = configuration.botConfigure
-        val config = QGBotComponentConfiguration().also(block)
+        val config = QGBotComponentConfiguration().invokeBy(block)
         val sourceBot = BotFactory.create(ticket) {
             // init context
             coroutineContext = if (coroutineContext == EmptyCoroutineContext) {
@@ -134,7 +137,7 @@ internal class QQGuildBotManagerImpl(
             }
 
             configure(ticket.appId, ticket.secret, ticket.token)
-            config.botConfigure(this)
+            config.botConfigure?.invokeWith(this)
 
             val customJob = coroutineContext[Job]
             if (customJob == null) {

@@ -67,6 +67,8 @@ kotlin {
         commonTest.dependencies {
             implementation(kotlin("test"))
             implementation(libs.kotlinx.coroutines.test)
+            api(libs.simbot.core)
+            api(libs.simbot.common.core)
         }
 
         jvmTest.dependencies {

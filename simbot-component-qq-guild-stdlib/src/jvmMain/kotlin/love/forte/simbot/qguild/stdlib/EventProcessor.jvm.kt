@@ -29,6 +29,7 @@ import love.forte.simbot.suspendrunner.runInBlocking
 import org.jetbrains.annotations.Blocking
 import org.jetbrains.annotations.NonBlocking
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CompletionStage
 
 /**
  * 以阻塞的形式实现 [EventProcessor]，是提供给 Java 的友好类型。
@@ -53,6 +54,21 @@ public fun interface JBlockEventProcessor : EventProcessor {
 }
 
 /**
+ * 以阻塞的形式实现 [EventProcessor]，是提供给 Java 的友好类型。
+ * 可直接使用 `EventProcessors.block((event, raw) -> { ... })` 构建。
+ *
+ *  [block] 最终会在 [Dispatchers.IO] 的调度器下使用 [runInterruptible] 执行。
+ */
+public fun interface TypedJBlockEventProcessor<T : Signal.Dispatch> {
+    /**
+     * 处理事件。
+     */
+    @Blocking
+    @Throws(Exception::class)
+    public fun block(event: T, raw: String)
+}
+
+/**
  * 以异步的形式实现 [EventProcessor]，是提供给 Java 的友好类型。
  * 可直接使用 `EventProcessors.async((event, raw) -> { ... })` 构建。
  */
@@ -62,12 +78,25 @@ public fun interface JAsyncEventProcessor : EventProcessor {
      */
     @Throws(Exception::class)
     @NonBlocking
-    public fun async(event: Signal.Dispatch, raw: String): CompletableFuture<Void?>
+    public fun async(event: Signal.Dispatch, raw: String): CompletionStage<Void?>
 
     @JvmSynthetic
     override suspend fun Signal.Dispatch.invoke(raw: String) {
         async(this, raw).await()
     }
+}
+
+/**
+ * 以异步的形式实现 [EventProcessor]，是提供给 Java 的友好类型。
+ * 可直接使用 `EventProcessors.async((event, raw) -> { ... })` 构建。
+ */
+public fun interface TypedJAsyncEventProcessor {
+    /**
+     * 处理事件。
+     */
+    @Throws(Exception::class)
+    @NonBlocking
+    public fun async(event: Signal.Dispatch, raw: String): CompletionStage<Void?>
 }
 
 /**
@@ -79,3 +108,25 @@ public fun block(function: JBlockEventProcessor): JBlockEventProcessor = functio
  * 构建一个 [JAsyncEventProcessor].
  */
 public fun async(function: JAsyncEventProcessor): JAsyncEventProcessor = function
+
+/**
+ * 构建一个 [JBlockEventProcessor].
+ */
+public fun <T : Signal.Dispatch> block(type: Class<T>, function: TypedJBlockEventProcessor<T>): JBlockEventProcessor =
+    JBlockEventProcessor { event, raw ->
+        if (type.isInstance(event)) {
+            function.block(type.cast(event), raw)
+        }
+    }
+
+/**
+ * 构建一个 [JAsyncEventProcessor].
+ */
+public fun <T : Signal.Dispatch> async(type: Class<T>, function: TypedJAsyncEventProcessor): JAsyncEventProcessor =
+    JAsyncEventProcessor { event, raw ->
+        if (type.isInstance(event)) {
+            function.async(type.cast(event), raw)
+        } else {
+            CompletableFuture.completedFuture(null)
+        }
+    }

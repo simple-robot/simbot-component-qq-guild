@@ -17,6 +17,8 @@
 
 package love.forte.simbot.component.qguild.bot.config
 
+import love.forte.simbot.common.function.ConfigurerFunction
+import love.forte.simbot.common.function.invokeWith
 import love.forte.simbot.qguild.stdlib.Bot
 import love.forte.simbot.qguild.stdlib.BotConfiguration
 import love.forte.simbot.qguild.stdlib.ConfigurableBotConfiguration
@@ -35,17 +37,22 @@ public class QGBotComponentConfiguration {
      * 可直接覆盖，或通过 [`botConfig { ... }`][botConfig] 组合配置。
      *
      */
-    public var botConfigure: ConfigurableBotConfiguration.() -> Unit = {}
+    public var botConfigure: ConfigurerFunction<ConfigurableBotConfiguration>? = null
 
     /**
      * 使用 [block] 与当前 [botConfigure] 组合。
      *
      */
-    public fun botConfig(block: ConfigurableBotConfiguration.() -> Unit) {
+    public fun botConfig(block: ConfigurerFunction<ConfigurableBotConfiguration>) {
         val bc = botConfigure
-        botConfigure = {
-            bc()
-            block()
+        if (bc == null) {
+            botConfigure = block
+            return
+        }
+
+        botConfigure = ConfigurerFunction {
+            bc.invokeWith(this)
+            block.invokeWith(this)
         }
     }
 

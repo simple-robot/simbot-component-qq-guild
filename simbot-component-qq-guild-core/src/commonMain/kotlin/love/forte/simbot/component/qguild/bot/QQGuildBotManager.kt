@@ -100,7 +100,7 @@ public abstract class QQGuildBotManager : BotManager, JobBasedBotManager() {
      * 参考 [Job.linkTo]。
      *
      * 如果 [coroutineContext][ConfigurableBotConfiguration.coroutineContext]
-     * 中不存在自定义的Job，则会直接使用 [QQGuildBotManager][love.forte.simbot.component.qguild.QQGuildBotManager]
+     * 中不存在自定义的Job，则会直接使用 [QQGuildBotManager][love.forte.simbot.component.qguild.bot.QQGuildBotManager]
      * 内的 [Job] 作为 parent Job 。
      *
      */
@@ -108,7 +108,7 @@ public abstract class QQGuildBotManager : BotManager, JobBasedBotManager() {
         appId: String,
         secret: String,
         token: String,
-        block: QGBotComponentConfiguration.() -> Unit = {},
+        block: ConfigurerFunction<QGBotComponentConfiguration>? = null,
     ): QGBot
 
     /**
@@ -125,7 +125,7 @@ public abstract class QQGuildBotManager : BotManager, JobBasedBotManager() {
      *
      * 如果 [coroutineContext][ConfigurableBotConfiguration.coroutineContext]
      * 中不存在自定义的Job，则会直接使用
-     * [QQGuildBotManager][love.forte.simbot.component.qguild.QQGuildBotManager]
+     * [QQGuildBotManager][love.forte.simbot.component.qguild.bot.QQGuildBotManager]
      * 内的 [Job] 作为 parent Job 。
      *
      */
@@ -133,7 +133,7 @@ public abstract class QQGuildBotManager : BotManager, JobBasedBotManager() {
         appId: String,
         secret: String,
         token: String
-    ): QGBot = register(appId, secret, token) {}
+    ): QGBot = register(appId, secret, token, null)
 
     /**
      * 通过所需信息注册一个bot。
@@ -149,13 +149,13 @@ public abstract class QQGuildBotManager : BotManager, JobBasedBotManager() {
      *
      * 如果 [coroutineContext][ConfigurableBotConfiguration.coroutineContext]
      * 中不存在自定义的Job，则会直接使用
-     * [QQGuildBotManager][love.forte.simbot.component.qguild.QQGuildBotManager]
+     * [QQGuildBotManager][love.forte.simbot.component.qguild.bot.QQGuildBotManager]
      * 内的 [Job] 作为 parent Job 。
      *
      */
     public abstract fun register(
         ticket: Bot.Ticket,
-        block: QGBotComponentConfiguration.() -> Unit = {},
+        block: ConfigurerFunction<QGBotComponentConfiguration>? = null,
     ): QGBot
 
     /**
@@ -172,11 +172,11 @@ public abstract class QQGuildBotManager : BotManager, JobBasedBotManager() {
      *
      * 如果 [coroutineContext][ConfigurableBotConfiguration.coroutineContext]
      * 中不存在自定义的Job，则会直接使用
-     * [QQGuildBotManager][love.forte.simbot.component.qguild.QQGuildBotManager]
+     * [QQGuildBotManager][love.forte.simbot.component.qguild.bot.QQGuildBotManager]
      * 内的 [Job] 作为 parent Job 。
      *
      */
-    public fun register(ticket: Bot.Ticket): QGBot = register(ticket) {}
+    public fun register(ticket: Bot.Ticket): QGBot = register(ticket, null)
 
     /**
      * [QQGuildBotManager] 的注册工厂。

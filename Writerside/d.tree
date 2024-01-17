@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE instance-profile
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/product-profile.dtd">
+
+<instance-profile id="d"
+                 name="docs"
+                 start-page="starter-topic.md">
+
+    <toc-element topic="starter-topic.md"/>
+    <toc-element topic="API.md">
+        <toc-element topic="api_ark.md"/>
+        <toc-element topic="api_embed.md"/>
+        <toc-element topic="api_forum.md"/>
+        <toc-element topic="api_role.md"/>
+    </toc-element>
+</instance-profile>
