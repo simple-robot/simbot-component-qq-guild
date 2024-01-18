@@ -38,7 +38,7 @@ kotlin {
         browser()
         nodejs()
 
-        binaries.executable()
+        //binaries.executable()
         useEsModules()
     }
 
@@ -47,7 +47,7 @@ kotlin {
     applyTier3(supportKtorClient = true)
 
     mingwX64 {
-        binaries.executable()
+        //binaries.executable()
     }
 
     sourceSets {

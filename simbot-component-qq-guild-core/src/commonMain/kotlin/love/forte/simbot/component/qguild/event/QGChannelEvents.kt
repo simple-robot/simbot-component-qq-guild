@@ -97,7 +97,7 @@ public abstract class QGChannelUpdateEvent : QGChannelEvent(), ChangeEvent, Chan
     /**
      * 发生的所在频道服务器
      */
-    abstract override suspend fun guild(): QGGuild
+    abstract override suspend fun source(): QGGuild
 }
 
 /**

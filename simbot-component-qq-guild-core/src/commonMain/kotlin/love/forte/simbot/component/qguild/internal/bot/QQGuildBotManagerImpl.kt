@@ -21,6 +21,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import love.forte.simbot.bot.ConflictBotException
+import love.forte.simbot.bot.JobBasedBotManager
 import love.forte.simbot.bot.NoSuchBotException
 import love.forte.simbot.common.atomic.atomic
 import love.forte.simbot.common.collection.ExperimentalSimbotCollectionApi
@@ -52,15 +53,15 @@ import kotlin.coroutines.EmptyCoroutineContext
 internal class QQGuildBotManagerImpl(
     override val eventDispatcher: EventDispatcher,
     override val configuration: QQGuildBotManagerConfiguration,
-    override val component: QQGuildComponent,
+    private val component: QQGuildComponent,
     override val job: Job,
     private val coroutineContext: CoroutineContext // 不应包含 Job
-) : QQGuildBotManager() {
+) : QQGuildBotManager, JobBasedBotManager() {
     companion object {
         private val LOGGER = LoggerFactory.logger<QQGuildBotManagerImpl>()
     }
 
-    override val logger: Logger
+    private val logger: Logger
         get() = LOGGER
 
     /**

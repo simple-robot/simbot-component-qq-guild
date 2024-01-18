@@ -50,7 +50,7 @@ internal class QGChannelUpdateEventImpl(
 ) : QGChannelUpdateEvent() {
     override val id: ID get() = tcgChannelModifyId(1, bot.id, sourceEventEntity.id, hashCode())
     override suspend fun content(): QGTextChannel = _channel
-    override suspend fun guild(): QGGuild = with(sourceEventEntity) {
+    override suspend fun source(): QGGuild = with(sourceEventEntity) {
         bot.queryGuild(guildId) ?: throw NoSuchElementException("guild(id=${guildId})")
     }
 }

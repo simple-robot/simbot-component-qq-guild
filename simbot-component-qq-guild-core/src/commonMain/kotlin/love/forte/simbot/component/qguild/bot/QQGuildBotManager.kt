@@ -21,7 +21,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import love.forte.simbot.application.ApplicationConfiguration
 import love.forte.simbot.bot.BotManager
-import love.forte.simbot.bot.JobBasedBotManager
 import love.forte.simbot.bot.SerializableBotConfiguration
 import love.forte.simbot.bot.UnsupportedBotConfigurationException
 import love.forte.simbot.common.coroutines.linkTo
@@ -34,7 +33,6 @@ import love.forte.simbot.component.qguild.bot.config.QGBotComponentConfiguration
 import love.forte.simbot.component.qguild.bot.config.QGBotFileConfiguration
 import love.forte.simbot.component.qguild.internal.bot.QQGuildBotManagerImpl
 import love.forte.simbot.event.EventDispatcher
-import love.forte.simbot.logger.Logger
 import love.forte.simbot.plugin.PluginConfigureContext
 import love.forte.simbot.plugin.PluginFactory
 import love.forte.simbot.plugin.PluginFactoryConfigurerProvider
@@ -56,11 +54,9 @@ import kotlin.coroutines.EmptyCoroutineContext
  *
  * @author ForteScarlet
  */
-public abstract class QQGuildBotManager : BotManager, JobBasedBotManager() {
-    public abstract val eventDispatcher: EventDispatcher
-    protected abstract val logger: Logger
-    protected abstract val component: QQGuildComponent
-    public abstract val configuration: QQGuildBotManagerConfiguration
+public interface QQGuildBotManager : BotManager {
+    public val eventDispatcher: EventDispatcher
+    public val configuration: QQGuildBotManagerConfiguration
 
     @OptIn(ExperimentalContracts::class)
     private fun checkConfig(configuration: SerializableBotConfiguration): Boolean {
@@ -84,7 +80,9 @@ public abstract class QQGuildBotManager : BotManager, JobBasedBotManager() {
 
         // no config
         val (appId, secret, token) = c.ticket.toTicket()
-        return register(appId, secret, token, c::includeConfig)
+        return register(appId, secret, token) {
+            c.includeConfig(this)
+        }
     }
 
     /**
@@ -104,11 +102,11 @@ public abstract class QQGuildBotManager : BotManager, JobBasedBotManager() {
      * 内的 [Job] 作为 parent Job 。
      *
      */
-    public abstract fun register(
+    public fun register(
         appId: String,
         secret: String,
         token: String,
-        block: ConfigurerFunction<QGBotComponentConfiguration>? = null,
+        block: ConfigurerFunction<QGBotComponentConfiguration>?,
     ): QGBot
 
     /**
@@ -133,7 +131,7 @@ public abstract class QQGuildBotManager : BotManager, JobBasedBotManager() {
         appId: String,
         secret: String,
         token: String
-    ): QGBot = register(appId, secret, token, null)
+    ): QGBot = register(appId, secret, token, block = null)
 
     /**
      * 通过所需信息注册一个bot。
@@ -153,9 +151,9 @@ public abstract class QQGuildBotManager : BotManager, JobBasedBotManager() {
      * 内的 [Job] 作为 parent Job 。
      *
      */
-    public abstract fun register(
+    public fun register(
         ticket: Bot.Ticket,
-        block: ConfigurerFunction<QGBotComponentConfiguration>? = null,
+        block: ConfigurerFunction<QGBotComponentConfiguration>?,
     ): QGBot
 
     /**
@@ -176,7 +174,7 @@ public abstract class QQGuildBotManager : BotManager, JobBasedBotManager() {
      * 内的 [Job] 作为 parent Job 。
      *
      */
-    public fun register(ticket: Bot.Ticket): QGBot = register(ticket, null)
+    public fun register(ticket: Bot.Ticket): QGBot = register(ticket, block = null)
 
     /**
      * [QQGuildBotManager] 的注册工厂。

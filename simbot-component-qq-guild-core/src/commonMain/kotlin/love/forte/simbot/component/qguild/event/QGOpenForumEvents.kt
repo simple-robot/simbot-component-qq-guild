@@ -77,7 +77,7 @@ public abstract class QGOpenForumEvent : QGBotEvent<OpenForumEventData>(), Chann
      * @throws QQGuildApiException API请求过程出现异常
      * @throws NoSuchElementException 对应子频道已不存在
      */
-    override suspend fun guild(): QGGuild =
+    override suspend fun source(): QGGuild =
         bot.guildRelation.guild(guildId) ?: throw NoSuchElementException("guild(id=$guildId)")
 
     /**

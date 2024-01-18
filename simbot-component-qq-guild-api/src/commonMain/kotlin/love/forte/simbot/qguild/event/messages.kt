@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -47,6 +47,19 @@ public sealed class MessageDispatch : Signal.Dispatch() {
 public data class AtMessageCreate(override val s: Long, @SerialName("d") override val data: Message) : MessageDispatch()
 
 /**
+ * 消息事件
+ * `PUBLIC_MESSAGE_DELETE_TYPE`
+ *
+ */
+@Serializable
+@SerialName(EventIntents.PublicGuildMessages.PUBLIC_MESSAGE_DELETE_TYPE)
+public data class PublicMessageDeleteCreate(
+    override val s: Long,
+    @SerialName("d") override val data: Unit /* TODO 文档没找到描述。 */
+) :
+    Signal.Dispatch()
+
+/**
  * 私信消息事件
  * [`DIRECT_MESSAGE_CREATE (intents DIRECT_MESSAGE)`](https://bot.q.qq.com/wiki/develop/api/gateway/direct_message.html#direct-message-create-intents-direct-message)
  *
@@ -56,7 +69,8 @@ public data class AtMessageCreate(override val s: Long, @SerialName("d") overrid
  */
 @Serializable
 @SerialName(EventIntents.DirectMessage.DIRECT_MESSAGE_CREATE_TYPE)
-public data class DirectMessageCreate(override val s: Long, @SerialName("d") override val data: Message) : MessageDispatch()
+public data class DirectMessageCreate(override val s: Long, @SerialName("d") override val data: Message) :
+    MessageDispatch()
 
 /**
  * 与 [MessageAudited] 相关的事件类型。[data] 类型为 [MessageAudited]。
@@ -69,6 +83,24 @@ public sealed class MessageAuditedDispatch : Signal.Dispatch() {
 }
 
 /**
+ * 发送消息事件，代表频道内的全部消息，而不只是 at 机器人的消息。内容与 AT_MESSAGE_CREATE 相同
+ */
+@Serializable
+@SerialName(EventIntents.GuildMessages.MESSAGE_CREATE_TYPE)
+public data class MessageCreate(override val s: Long, @SerialName("d") override val data: Message) : MessageDispatch()
+
+/**
+ * 删除（撤回）消息事件
+ */
+@Serializable
+@SerialName(EventIntents.GuildMessages.MESSAGE_DELETE_TYPE)
+public data class MessageDelete(
+    override val s: Long,
+    @SerialName("d") override val data: Unit /* TODO 文档没找到描述。 */
+) : Signal.Dispatch()
+
+
+/**
  * 消息审核事件
  * [`MESSAGE_AUDIT_PASS（intents MESSAGE_AUDIT）`](https://bot.q.qq.com/wiki/develop/api/gateway/message.html#message-audit-pass-intents-message-audit)
  *
@@ -78,7 +110,8 @@ public sealed class MessageAuditedDispatch : Signal.Dispatch() {
  */
 @Serializable
 @SerialName(EventIntents.MessageAudit.MESSAGE_AUDIT_PASS_TYPE)
-public data class MessageAuditPass(override val s: Long, @SerialName("d") override val data: MessageAudited) : MessageAuditedDispatch()
+public data class MessageAuditPass(override val s: Long, @SerialName("d") override val data: MessageAudited) :
+    MessageAuditedDispatch()
 
 /**
  * 消息审核事件
@@ -90,4 +123,5 @@ public data class MessageAuditPass(override val s: Long, @SerialName("d") overri
  */
 @Serializable
 @SerialName(EventIntents.MessageAudit.MESSAGE_AUDIT_REJECT_TYPE)
-public data class MessageAuditReject(override val s: Long, @SerialName("d") override val data: MessageAudited) : MessageAuditedDispatch()
+public data class MessageAuditReject(override val s: Long, @SerialName("d") override val data: MessageAudited) :
+    MessageAuditedDispatch()

@@ -15,6 +15,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+import love.forte.gradle.common.core.project.setup
 import love.forte.gradle.common.core.repository.Repositories
 
 
@@ -24,6 +25,8 @@ plugins {
     id("simbot-tencent-guild.dokka-multi-module")
     id("simbot-tencent-guild.nexus-publish")
 }
+
+setup(P.ComponentQQGuild)
 
 buildscript {
     repositories {

@@ -90,7 +90,7 @@ internal class QGAtMessageCreateEventImpl(
         }
     }
 
-    override suspend fun guild(): QGGuild {
+    override suspend fun source(): QGGuild {
         return with(sourceEventEntity) {
             bot.queryGuild(guildId) ?: throw NoSuchElementException("guild(id=$guildId)")
         }

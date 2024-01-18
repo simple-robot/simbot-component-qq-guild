@@ -16,10 +16,12 @@
  */
 
 import kotlinx.coroutines.flow.take
+import love.forte.simbot.application.listeners
 import love.forte.simbot.component.qguild.event.QGAtMessageCreateEvent
 import love.forte.simbot.component.qguild.message.QGReplyTo
 import love.forte.simbot.component.qguild.qqGuildBots
 import love.forte.simbot.core.application.SimpleApplication
+import love.forte.simbot.event.ChatChannelMessageEvent
 import love.forte.simbot.event.EventResult
 import love.forte.simbot.event.listen
 import love.forte.simbot.message.messagesOf
@@ -52,7 +54,7 @@ expect fun launchApp(vararg args: String)
 
 internal suspend fun SimpleApplication.onApp(appid: String, token: String) {
 
-    eventDispatcher.apply {
+    listeners {
         listen<QGAtMessageCreateEvent> {
             println("event: $it")
             it.bot.guildRelation.guilds(30)
@@ -70,13 +72,13 @@ internal suspend fun SimpleApplication.onApp(appid: String, token: String) {
             EventResult.empty()
         }
 
-//        listen<ChatChannelMessageEvent> {
-//            println("event: $it")
-//            it.reply("mua2！").also { r ->
-//                println("replied: $r")
-//            }
-//            EventResult.empty()
-//        }
+        listen<ChatChannelMessageEvent> {
+            println("event: $it")
+            it.reply("mua2！").also { r ->
+                println("replied: $r")
+            }
+            EventResult.empty()
+        }
     }
 
     qqGuildBots {

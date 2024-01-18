@@ -128,5 +128,5 @@ public abstract class QGAtMessageCreateEvent : QGMessageEvent(), ChatChannelMess
      * @throws QQGuildApiException 请求失败，例如无权限
      * @throws NoSuchElementException 没有找到结果
      */
-    abstract override suspend fun guild(): QGGuild
+    abstract override suspend fun source(): QGGuild
 }

@@ -15,6 +15,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+import love.forte.gradle.common.core.project.setup
 import love.forte.gradle.common.kotlin.multiplatform.applyTier1
 import love.forte.gradle.common.kotlin.multiplatform.applyTier2
 import love.forte.gradle.common.kotlin.multiplatform.applyTier3
@@ -25,6 +26,8 @@ plugins {
     kotlin("plugin.serialization")
     `qq-guild-dokka-partial-configure`
 }
+
+setup(P.ComponentQQGuild)
 
 configJavaCompileWithModule("simbot.component.qqguild.api")
 //apply(plugin = "qq-guild-dokka-partial-configure")

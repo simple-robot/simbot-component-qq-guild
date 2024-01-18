@@ -20,7 +20,6 @@ import kotlinx.serialization.modules.SerializersModule
 import love.forte.simbot.common.function.ConfigurerFunction
 import love.forte.simbot.common.function.invokeBy
 import love.forte.simbot.component.*
-import love.forte.simbot.core.application.launchSimpleApplication
 import love.forte.simbot.plugin.Plugin
 import love.forte.simbot.plugin.PluginConfigureContext
 import love.forte.simbot.plugin.PluginFactory
@@ -85,12 +84,12 @@ class FooPlugin : Plugin {
     }
 }
 
-suspend fun main() {
-    val app = launchSimpleApplication {
-        install(FooComponent)
-    }
-
-    // Kotlin 可以直接通过扩展函数根据类型寻找目标
-    val fooComponent = app.components.find<FooComponent>()
-    println(fooComponent)
-}
+//suspend fun main() {
+//    val app = launchSimpleApplication {
+//        install(FooComponent)
+//    }
+//
+//    // Kotlin 可以直接通过扩展函数根据类型寻找目标
+//    val fooComponent = app.components.find<FooComponent>()
+//    println(fooComponent)
+//}
