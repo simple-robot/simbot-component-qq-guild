@@ -7,7 +7,8 @@ ktor = "2.3.7"
 openjdk-jmh = "1.35"
 log4j = "2.20.0"
 atomicfu = "0.20.1"
-simbot = "4.0.0-dev6"
+simbot = "4.0.0-dev11"
+reactor = "3.6.2"
 
 [libraries]
 # simbot
@@ -86,3 +87,5 @@ log4j-slf4j2 = { group = "org.apache.logging.log4j", name = "log4j-slf4j2-impl",
 openjdk-jmh-core = { group = "org.openjdk.jmh", name = "jmh-core", version.ref = "openjdk-jmh" }
 openjdk-jmh-generator-annprocess = { group = "org.openjdk.jmh", name = "jmh-generator-annprocess", version.ref = "openjdk-jmh" }
 
+# reactor
+reactor-core = { group = "io.projectreactor", name = "reactor-core", version.ref = "reactor" }

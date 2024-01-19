@@ -76,6 +76,9 @@ kotlin {
 
         jvmTest.dependencies {
             runtimeOnly(libs.ktor.client.cio)
+            runtimeOnly(libs.kotlinx.coroutines.reactor)
+            implementation(libs.reactor.core)
+
             implementation(libs.log4j.api)
             implementation(libs.log4j.core)
             implementation(libs.log4j.slf4j2)
