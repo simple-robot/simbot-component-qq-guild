@@ -158,7 +158,7 @@ public class QQGuildComponentConfiguration
  */
 public class QQGuildComponentFactoryProvider :
     ComponentFactoryProvider<QQGuildComponentConfiguration> {
-    override fun loadConfigurers(): Sequence<QQGuildComponentFactoryConfigurerProvider>? =
+    override fun loadConfigures(): Sequence<QQGuildComponentFactoryConfigurerProvider>? =
         loadQGComponentConfigurers()
 
     override fun provide(): ComponentFactory<*, QQGuildComponentConfiguration> = QQGuildComponent

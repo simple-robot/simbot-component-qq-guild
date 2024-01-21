@@ -279,7 +279,7 @@ public class QQGuildBotManagerConfiguration {
  * Provide [QQGuildBotManager.Factory] to SPI
  */
 public class QQGuildBotManagerProvider : PluginFactoryProvider<QQGuildBotManagerConfiguration> {
-    override fun configurersLoader(): Sequence<QQGuildBotManagerFactoryConfigurerProvider>? =
+    override fun loadConfigures(): Sequence<QQGuildBotManagerFactoryConfigurerProvider>? =
         loadQQGuildBotManagerConfigurers()
 
     override fun provide(): PluginFactory<*, QQGuildBotManagerConfiguration> = QQGuildBotManager
