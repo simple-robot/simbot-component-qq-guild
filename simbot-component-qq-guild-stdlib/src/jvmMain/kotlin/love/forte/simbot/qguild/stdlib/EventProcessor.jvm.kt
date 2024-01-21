@@ -90,13 +90,13 @@ public fun interface JAsyncEventProcessor : EventProcessor {
  * 以异步的形式实现 [EventProcessor]，是提供给 Java 的友好类型。
  * 可直接使用 `EventProcessors.async((event, raw) -> { ... })` 构建。
  */
-public fun interface TypedJAsyncEventProcessor {
+public fun interface TypedJAsyncEventProcessor<T : Signal.Dispatch> {
     /**
      * 处理事件。
      */
     @Throws(Exception::class)
     @NonBlocking
-    public fun async(event: Signal.Dispatch, raw: String): CompletionStage<Void?>
+    public fun async(event: T, raw: String): CompletionStage<Void?>
 }
 
 /**
@@ -122,7 +122,7 @@ public fun <T : Signal.Dispatch> block(type: Class<T>, function: TypedJBlockEven
 /**
  * 构建一个 [JAsyncEventProcessor].
  */
-public fun <T : Signal.Dispatch> async(type: Class<T>, function: TypedJAsyncEventProcessor): JAsyncEventProcessor =
+public fun <T : Signal.Dispatch> async(type: Class<T>, function: TypedJAsyncEventProcessor<T>): JAsyncEventProcessor =
     JAsyncEventProcessor { event, raw ->
         if (type.isInstance(event)) {
             function.async(type.cast(event), raw)

@@ -1,14 +1,18 @@
 [versions]
+kotlin = "1.9.21"
 kotlinx-coroutines = "1.7.3"
 kotlinx-serialization = "1.6.2"
 kotlinx-datetime = "0.5.0"
+dokka = "1.9.10"
 okio = "3.3.0"
 ktor = "2.3.7"
 openjdk-jmh = "1.35"
 log4j = "2.20.0"
-atomicfu = "0.20.1"
-simbot = "4.0.0-dev11"
 reactor = "3.6.2"
+# simbot
+simbot = "4.0.0-dev13"
+suspendTransform = "0.6.0"
+gradleCommon = "0.2.0"
 
 [libraries]
 # simbot
@@ -23,6 +27,7 @@ simbot-common-core = { group = "love.forte.simbot.common", name = "simbot-common
 simbot-common-suspend = { group = "love.forte.simbot.common", name = "simbot-common-suspend-runner", version.ref = "simbot" }
 simbot-common-annotations = { group = "love.forte.simbot.common", name = "simbot-common-annotations", version.ref = "simbot" }
 simbot-common-loop = { group = "love.forte.simbot.common", name = "simbot-common-stage-loop", version.ref = "simbot" }
+simbot-gradle = { group = "love.forte.simbot.gradle", name = "simbot-gradle-suspendtransforms", version.ref = "simbot" }
 
 # jetbrains-annotation
 jetbrains-annotations = "org.jetbrains:annotations:24.0.1"
@@ -89,3 +94,18 @@ openjdk-jmh-generator-annprocess = { group = "org.openjdk.jmh", name = "jmh-gene
 
 # reactor
 reactor-core = { group = "io.projectreactor", name = "reactor-core", version.ref = "reactor" }
+
+# dokka
+dokka-plugin = { group = "org.jetbrains.dokka", name = "dokka-gradle-plugin", version.ref = "dokka" }
+dokka-base = { group = "org.jetbrains.dokka", name = "dokka-base", version.ref = "dokka" }
+
+suspend-transform-gradle = { module = "love.forte.plugin.suspend-transform:suspend-transform-plugin-gradle", version.ref = "suspendTransform" }
+
+# gradle-common
+gradle-common-core = { group = "love.forte.gradle.common", name = "gradle-common-core", version.ref = "gradleCommon" }
+gradle-common-multiplatform = { group = "love.forte.gradle.common", name = "gradle-common-kotlin-multiplatform", version.ref = "gradleCommon" }
+gradle-common-publication = { group = "love.forte.gradle.common", name = "gradle-common-publication", version.ref = "gradleCommon" }
+
+[bundles]
+gradle-common = ["gradle-common-core", "gradle-common-multiplatform", "gradle-common-publication"]
+dokka = ["dokka-plugin", "dokka-base"]

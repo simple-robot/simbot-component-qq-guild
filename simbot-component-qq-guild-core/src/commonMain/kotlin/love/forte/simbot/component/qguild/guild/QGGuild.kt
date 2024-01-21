@@ -24,8 +24,12 @@ import love.forte.simbot.common.id.StringID.Companion.ID
 import love.forte.simbot.common.time.Timestamp
 import love.forte.simbot.component.qguild.ExperimentalQGApi
 import love.forte.simbot.component.qguild.QGObjectiveContainer
-import love.forte.simbot.component.qguild.channel.*
+import love.forte.simbot.component.qguild.channel.QGCategoryChannel
+import love.forte.simbot.component.qguild.channel.QGChannel
+import love.forte.simbot.component.qguild.channel.QGForumChannel
+import love.forte.simbot.component.qguild.channel.QGTextChannel
 import love.forte.simbot.component.qguild.role.QGGuildRole
+import love.forte.simbot.component.qguild.role.QGRole
 import love.forte.simbot.component.qguild.role.QGRoleCreator
 import love.forte.simbot.component.qguild.utils.toTimestamp
 import love.forte.simbot.qguild.QQGuildApiException
@@ -128,7 +132,7 @@ public interface QGGuild : SimbotGuild, CoroutineScope, QGObjectiveContainer<QGS
      *
      * @throws QQGuildApiException 请求失败，例如没有权限
      */
-    @ST(blockingBaseName = "getChannel", blockingSuffix = "", asyncBaseName = "getChannel")
+    @ST(blockingBaseName = "getChannel", blockingSuffix = "", asyncBaseName = "getChannel", reserveBaseName = "getChannel")
     override suspend fun channel(id: ID): QGChannel?
 
     /**
@@ -145,7 +149,7 @@ public interface QGGuild : SimbotGuild, CoroutineScope, QGObjectiveContainer<QGS
      * @throws IllegalStateException 当目标子频道的类型不属于 [分组类型][ChannelType.CATEGORY] 时
      *
      */
-    @ST(blockingBaseName = "getCategory", blockingSuffix = "", asyncBaseName = "getCategory")
+    @ST(blockingBaseName = "getCategory", blockingSuffix = "", asyncBaseName = "getCategory", reserveBaseName = "getCategory")
     public suspend fun category(id: ID): QGCategoryChannel?
 
     /**
@@ -156,7 +160,7 @@ public interface QGGuild : SimbotGuild, CoroutineScope, QGObjectiveContainer<QGS
     /**
      * 获取指定ID的文字频道。
      */
-    @ST(blockingBaseName = "getChatChannel", blockingSuffix = "", asyncBaseName = "getChatChannel")
+    @ST(blockingBaseName = "getChatChannel", blockingSuffix = "", asyncBaseName = "getChatChannel", reserveBaseName = "getChatChannel")
     override suspend fun chatChannel(id: ID): QGTextChannel?
 
     /**
@@ -175,7 +179,7 @@ public interface QGGuild : SimbotGuild, CoroutineScope, QGObjectiveContainer<QGS
      * @throws QQGuildApiException API请求过程中出现的异常
      * @throws IllegalStateException 当目标子频道类型不是 [ChannelType.FORUM] 时
      */
-    @ST(blockingBaseName = "getForum", blockingSuffix = "", asyncBaseName = "getForum")
+    @ST(blockingBaseName = "getForum", blockingSuffix = "", asyncBaseName = "getForum", reserveBaseName = "getForum")
     public suspend fun forum(id: ID): QGForumChannel?
     //endregion
 
@@ -185,7 +189,7 @@ public interface QGGuild : SimbotGuild, CoroutineScope, QGObjectiveContainer<QGS
      *
      * @throws QQGuildApiException 请求失败，例如没有权限
      */
-    @ST(blockingBaseName = "getMember", blockingSuffix = "", asyncBaseName = "getMember")
+    @ST(blockingBaseName = "getMember", blockingSuffix = "", asyncBaseName = "getMember", reserveBaseName = "getMember")
     override suspend fun member(id: ID): QGMember?
 
     /**

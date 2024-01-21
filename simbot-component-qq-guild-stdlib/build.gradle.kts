@@ -59,6 +59,7 @@ kotlin {
             api(project(":simbot-component-qq-guild-api"))
             api(libs.simbot.common.loop)
             api(libs.simbot.common.atomic)
+            api(libs.simbot.common.core)
             compileOnly(libs.simbot.common.annotations)
             // ktor
             api(libs.ktor.client.contentNegotiation)

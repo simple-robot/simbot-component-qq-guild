@@ -24,6 +24,7 @@ import love.forte.simbot.component.qguild.forum.QGThreadCreator
 import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.api.forum.ThreadPublishResult
 import love.forte.simbot.qguild.model.ChannelType
+import love.forte.simbot.qguild.model.forum.Thread
 import love.forte.simbot.suspendrunner.ST
 import love.forte.simbot.qguild.model.Channel as QGSourceChannel
 
@@ -59,7 +60,7 @@ public interface QGForumChannel : QGNonTextChannel {
      *
      * @throws QQGuildApiException api请求异常
      */
-    @ST(blockingBaseName = "getThread", blockingSuffix = "", asyncBaseName = "getThread")
+    @ST(blockingBaseName = "getThread", blockingSuffix = "", asyncBaseName = "getThread", reserveBaseName = "getThread")
     public suspend fun thread(id: ID): QGThread?
 
     /**

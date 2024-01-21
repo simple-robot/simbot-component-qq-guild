@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024. ForteScarlet.
+ * Copyright (c) 2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -15,34 +15,11 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-plugins {
-    `kotlin-dsl`
+// https://stackoverflow.com/questions/67795324/gradle7-version-catalog-how-to-use-it-with-buildsrc
+dependencyResolutionManagement {
+    versionCatalogs {
+        create("libs") {
+            from(files("../gradle/libs.versions.toml"))
+        }
+    }
 }
-
-repositories {
-    mavenCentral()
-    gradlePluginPortal()
-}
-
-val kotlinVersion: String = libs.versions.kotlin.get()
-
-dependencies {
-    implementation(kotlin("gradle-plugin", kotlinVersion))
-    implementation(kotlin("serialization", kotlinVersion))
-    implementation(libs.bundles.dokka)
-
-    // see https://github.com/gradle-nexus/publish-plugin
-    implementation("io.github.gradle-nexus:publish-plugin:1.1.0")
-
-    // simbot suspend transform gradle common
-    implementation(libs.simbot.gradle)
-
-    // suspend transform
-    implementation(libs.suspend.transform.gradle)
-
-    // gradle common
-    implementation(libs.bundles.gradle.common)
-}
-
-
-

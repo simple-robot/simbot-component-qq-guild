@@ -32,9 +32,6 @@ buildscript {
     repositories {
         mavenCentral()
     }
-//    dependencies {
-//        classpath("org.jetbrains.kotlinx:atomicfu-gradle-plugin:${libs.versions.atomicfu.get()}")
-//    }
 }
 
 //group = P.ComponentTencentGuild.GROUP

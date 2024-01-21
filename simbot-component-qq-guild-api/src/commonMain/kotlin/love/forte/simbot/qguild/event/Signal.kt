@@ -113,7 +113,7 @@ public sealed class Signal<D>(@Serializable(Opcode.SerializerByCode::class) publ
      * 当发送心跳成功之后，就会收到该消息
      */
     @Serializable
-    public object HeartbeatACK : Signal<Unit>(Opcode.HeartbeatACK), ReceivedSignal {
+    public data object HeartbeatACK : Signal<Unit>(Opcode.HeartbeatACK), ReceivedSignal {
         /**
          * 没有data信息
          */

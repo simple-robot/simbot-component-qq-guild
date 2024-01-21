@@ -203,7 +203,7 @@ public interface QGBot : Bot {
      *
      * @return API得到的用户信息结果
      */
-    @ST(blockingBaseName = "getMe", blockingSuffix = "", asyncBaseName = "getMe")
+    @ST(blockingBaseName = "getMe", blockingSuffix = "", asyncBaseName = "getMe", reserveBaseName = "getMe")
     public suspend fun me(withCache: Boolean): QGSourceUser
 
     /**

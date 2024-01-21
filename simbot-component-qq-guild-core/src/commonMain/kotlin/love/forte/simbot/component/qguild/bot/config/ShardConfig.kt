@@ -49,7 +49,7 @@ public sealed class ShardConfig {
     @Serializable
     @SerialName("full")
     @UsedOnlyForConfigSerialization
-    public object Full : ShardConfig() {
+    public data object Full : ShardConfig() {
         override val shard: Shard
             get() = Shard.FULL
     }

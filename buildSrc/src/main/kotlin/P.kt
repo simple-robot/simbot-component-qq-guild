@@ -59,7 +59,7 @@ object P {
         override val homepage: String get() = HOMEPAGE
 
 
-        private val baseVersion = v(4, 0, 0) - v("dev4")
+        private val baseVersion = v(4, 0, 0) - v("dev5")
 
         val snapshotVersion = baseVersion - Version.SNAPSHOT
         override val version = if (isSnapshot()) snapshotVersion else baseVersion

@@ -65,7 +65,7 @@ public interface QGGuildRelation : GuildRelation {
      */
     public fun guilds(lastId: ID?, batch: Int): Collectable<QGGuild>
 
-    @ST(blockingBaseName = "getGuild", blockingSuffix = "", asyncBaseName = "getGuild")
+    @ST(blockingBaseName = "getGuild", blockingSuffix = "", asyncBaseName = "getGuild", reserveBaseName = "getGuild")
     override suspend fun guild(id: ID): QGGuild?
 
     /**
@@ -83,7 +83,7 @@ public interface QGGuildRelation : GuildRelation {
      *
      * @throws QQGuildApiException 请求失败，例如没有权限
      */
-    @ST(blockingBaseName = "getChannel", blockingSuffix = "", asyncBaseName = "getChannel")
+    @ST(blockingBaseName = "getChannel", blockingSuffix = "", asyncBaseName = "getChannel", reserveBaseName = "getChannel")
     public suspend fun channel(channelId: ID): QGChannel?
 
     /**
@@ -94,7 +94,7 @@ public interface QGGuildRelation : GuildRelation {
      * @throws QQGuildApiException 请求失败，例如没有权限
      * @throws IllegalStateException 当目标子频道的类型不属于 [文字类型][ChannelType.TEXT] 时
      */
-    @ST(blockingBaseName = "getChatChannel", blockingSuffix = "", asyncBaseName = "getChatChannel")
+    @ST(blockingBaseName = "getChatChannel", blockingSuffix = "", asyncBaseName = "getChatChannel", reserveBaseName = "getChatChannel")
     public suspend fun chatChannel(channelId: ID): QGTextChannel?
 
 
@@ -105,7 +105,7 @@ public interface QGGuildRelation : GuildRelation {
      * @throws IllegalStateException 当目标子频道的类型不属于 [分组类型][ChannelType.CATEGORY] 时
      *
      */
-    @ST(blockingBaseName = "getCategory", blockingSuffix = "", asyncBaseName = "getCategory")
+    @ST(blockingBaseName = "getCategory", blockingSuffix = "", asyncBaseName = "getCategory", reserveBaseName = "getCategory")
     public suspend fun category(channelId: ID): QGCategoryChannel?
 
     /**
@@ -114,7 +114,7 @@ public interface QGGuildRelation : GuildRelation {
      * @throws QQGuildApiException API请求过程中出现的异常
      * @throws IllegalStateException 当目标子频道类型不是 [ChannelType.FORUM] 时
      */
-    @ST(blockingBaseName = "getForumChannel", blockingSuffix = "", asyncBaseName = "getForumChannel")
+    @ST(blockingBaseName = "getForumChannel", blockingSuffix = "", asyncBaseName = "getForumChannel", reserveBaseName = "getForumChannel")
     public suspend fun forumChannel(id: ID): QGForumChannel?
 }
 

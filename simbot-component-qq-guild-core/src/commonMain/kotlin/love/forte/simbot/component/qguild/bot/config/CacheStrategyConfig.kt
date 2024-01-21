@@ -35,10 +35,10 @@ public sealed class CacheStrategyConfig {
      *
      */
     @SerialName("invalid")
-    public object Invalid : CacheStrategyConfig()
+    public data object Invalid : CacheStrategyConfig()
 
     @SerialName("transferability")
-    public object Transferability : CacheStrategyConfig()
+    public data object Transferability : CacheStrategyConfig()
 
 }
 
@@ -55,8 +55,7 @@ public data class CacheConfig(
 
     /**
      * '传递性' 缓存。
-     *
-     * 默认启用。
+     * 默认为 `null`。
      *
      * ```json
      * "config": {

@@ -180,11 +180,12 @@ public data class QGBotFileConfiguration(
          *
          * ```json
          * {
-         *   "config": {
-         *     "clientProperties": {
-         *       "k1": "v1",
-         *       "foo": "bar"
-         *   }
+         *    "config": {
+         *      "clientProperties": {
+         *        "k1": "v1",
+         *        "foo": "bar"
+         *       }
+         *    }
          * }
          * ```
          *
