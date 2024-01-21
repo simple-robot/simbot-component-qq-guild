@@ -18,7 +18,7 @@
 
 <note title="了解simbot">
 
-[**Simple Robot 官网**](https://simbot.forte.love)
+[**Simple Robot 应用手册**](https://simbot.forte.love)
 
 </note>
 

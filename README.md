@@ -25,20 +25,22 @@
 [**Simple Robot v4**](https://github.com/simple-robot/simpler-robot/tree/v4-dev)
 下的子项目，是针对 
 [**QQ频道机器人**](https://bot.q.qq.com/wiki/develop/api/) 
-各方面的实现， 
+各方面的 simbot 组件库实现， 
 包括对 `API` 内容的实现、事件相关的实现以及BOT对于事件的监听与交互等。
 
 - 基于 [`Kotlin`](https://kotlinlang.org/) 提供 [KMP 多平台](https://kotlinlang.org/docs/multiplatform.html) 特性
 - 基于 [`Kotlin coroutines`](https://github.com/Kotlin/kotlinx.coroutines) 与 [`Ktor`](https://ktor.io/) 提供高效易用的API；
-- 基于 [`Kotlin serialization`](https://github.com/Kotlin/kotlinx.serialization) 进行数据序列化/反序列化操作。
+
+- 基于 [`Kotlin`](https://kotlinlang.org/) 提供 [KMP 多平台](https://kotlinlang.org/docs/multiplatform.html) 特性，提供 Java 友好的API。
+- 基于 [`Kotlin coroutines`](https://github.com/Kotlin/kotlinx.coroutines) 与 [`Ktor`](https://ktor.io/) 提供轻量高效的API。
 
 > [!Note]
 > 下文中 `Simple Robot v4` 简称为 `simbot4`
 
 ## 文档
 
-- 了解simbot: [**simbot官网**](https://simbot.forte.love)
-- **QQ频道组件**手册：<https://component-qqguild.simbot.forte.love/>
+- 了解simbot: [**Simple Robot 应用手册**](https://simbot.forte.love)
+- **QQ频道组件**手册：<https://component-qqguild.simbot.forte.love/> (即当前仓库的 GitHub Pages)
 - **API文档**: [**文档引导站点**](https://docs.simbot.forte.love) 中QQ频道的 [**KDoc站点**](https://docs.simbot.forte.love/components/qq-guild)
 
 ---
