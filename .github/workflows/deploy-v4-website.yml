@@ -81,7 +81,7 @@ jobs:
 
   deploy:
     environment:
-      name: github-pages
+      name: github-pages-dev
       url: ${{ steps.deployment.outputs.page_url }}
     # Requires the build job results
     needs: test
