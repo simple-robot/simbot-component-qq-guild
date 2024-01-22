@@ -91,13 +91,13 @@ implementation 'love.forte.simbot.component:simbot-component-qq-guild-core-jvm:%
 ```xml
 <!-- simbot4核心库 -->
 <dependency>
-    <group>love.forte.simbot</group>
+    <groupId>love.forte.simbot</groupId>
     <artifactId>simbot-core-spring-boot-starter</artifactId>
     <version>%minimum-core-version%</version>
 </dependency>
 <!-- QQ频道组件库 -->
 <dependency>
-    <group>love.forte.simbot.component</group>
+    <groupId>love.forte.simbot.component</groupId>
     <artifactId>simbot-component-qq-guild-core-jvm</artifactId>
     <version>%version%</version>
 </dependency>
