@@ -63,7 +63,7 @@ class FooComponent : Component {
 }
 
 class FooComponentFactoryProvider : ComponentFactoryProvider<FooComponentConfiguration> {
-    override fun loadConfigurers(): Sequence<ComponentFactoryConfigurerProvider<FooComponentConfiguration>>? {
+    override fun loadConfigures(): Sequence<ComponentFactoryConfigurerProvider<FooComponentConfiguration>>? {
         return null
     }
 
