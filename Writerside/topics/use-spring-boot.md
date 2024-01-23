@@ -1,3 +1,9 @@
+---
+switcher-label: Java API 风格
+---
+
+<var name="jr" value="Reactor"/>
+
 # 使用 Spring Boot
 
 
@@ -106,16 +112,23 @@ implementation 'love.forte.simbot.component:simbot-component-qq-guild-core-jvm:%
 </tab>
 </tabs>
 
+### 引擎选择
+
+<include from="snippets.md" element-id="engine-choose" />
+
+
 ## Bot 配置
 
 在你的资源目录中: 
 <path>resources/simbot-bots/</path>
-中创建任意的一个或多个bot配置文件，并以 `.bot.json` 作为扩展名。
+中创建任意的一个或多个bot配置文件，并以 `.bot.json` 作为扩展名，
+例如 `mybot.bot.json`。
 
 配置文件的内容可前往参考 [Bot配置文件](bot-config.md) 章节。
 
 > 这个扫描目录是可配置的。
-> 这是属于 simbot4 Spring Boot starter 的配置，下文会有相关的引导链接到 simbot4 应用手册的相关内容处。
+> 这是属于 simbot4 Spring Boot starter 的配置，可参考 
+> [simbot手册: 使用 Spring Boot 3](https://simbot.forte.love/start-use-spring-boot-3.html)。
 
 ## 使用
 ### 添加启动注解
@@ -162,6 +175,355 @@ QQ频道组件支持使用 SPI **自动加载** 组件和插件。
 - 前往 [simbot官方手册](https://simbot.forte.love/) 阅读有关 simbot API 的相关介绍与示例。
 - 前往 [simbot手册: 使用 Spring Boot 3](https://simbot.forte.love/start-use-spring-boot-3.html)
   了解更多 simbot4 Spring Boot starter 的可配置内容以及启动注解等信息。
+
+
+## 简单示例
+
+几个简单的**事件监听**示例。
+
+<tabs>
+<tab title="输出事件日志">
+<tabs group="Code">
+<tab title="Kotlin" group-key="Kotlin">
+
+```Kotlin
+@EnableSimbot // 启用 simbot
+@SpringBootApplication
+class MyApplication
+
+fun main(args: Array<String>) {
+    runApplicarion<MyApplication>(*args)
+}
+
+private val logger = LoggerFactory.getLogger(MyHandlers::class.java)
+
+@Component // 需要交给Spring管理
+class MyHandlers {
+    @Listener // 标记事件处理函数
+    suspend fun handle(event: Event) {
+        logger.info("Event: {}", event)
+    }
+}
+```
+
+</tab>
+<tab title="Java" group-key="Java">
+
+```Java
+@EnableSimbot // 启用 simbot
+@SpringBootApplication
+public class MyApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(MyApplication.class, args);
+    }
+
+    @Component // 需要交给Spring管理
+    public static class MyHandlers {
+        private static final Logger logger = Logger.getLogger(MyHandlers.class);
+      
+        @Listener // 标记事件处理函数
+        public void handle(Event event) {
+            logger.info("Event: {}", event)
+        }
+    }
+}
+```
+
+</tab>
+</tabs>
+</tab>
+<tab title="消息回复(通用)">
+
+此处以 "子频道消息事件" 为例，此事件类型为 `ChatChannelMessageEvent`。
+
+事件逻辑：当收到文本内 **包含"你好"** 的消息，回复"你也好"。
+
+<tabs group="Code">
+<tab title="Kotlin" group-key="Kotlin">
+
+```Kotlin
+@EnableSimbot // 启用 simbot
+@SpringBootApplication
+class MyApplication
+
+fun main(args: Array<String>) {
+    runApplicarion<MyApplication>(*args)
+}
+
+@Component // 需要交给Spring管理
+class MyHandlers {
+    @Listener // 标记事件处理函数
+    @Filter(  // 简单的事件过滤注解
+        value = "你好", // 需要包含的文字
+        matchType = MatchType.TEXT_CONENT // 调整匹配模式为 "文本包含"
+    )
+    // 如果需要，添加此注解来去除匹配用的文本前后的空白字符。
+    // 由于 QQ 频道的公域 bot 都是需要被 at 的，
+    // 而被 at 时，文本消息很有可能存在一些前后空格，所以会比较有用
+    @ContentTrim 
+    suspend fun handle(event: ChatChannelMessageEvent) {
+        event.reply("你也好")
+    }
+}
+```
+
+</tab>
+<tab title="Java" group-key="Java">
+
+```Java
+@EnableSimbot // 启用 simbot
+@SpringBootApplication
+public class MyApplication {
+  public static void main(String[] args) {
+    SpringApplication.run(MyApplication.class, args);
+  }
+
+  @Component // 需要交给Spring管理
+  public static class MyHandlers {
+    @Listener // 标记事件处理函数
+    @Filter(  // 简单的事件过滤注解
+            value = "你好", // 需要包含的文字
+            matchType = MatchType.TEXT_CONENT // 调整匹配模式为 "文本包含"
+    )
+    // 如果需要，添加此注解来去除匹配用的文本前后的空白字符。
+    // 由于 QQ 频道的公域 bot 都是需要被 at 的，
+    // 而被 at 时，文本消息很有可能存在一些前后空格，所以会比较有用
+    @ContentTrim
+    public CompletableFuture<?> handle(ChatChannelMessageEvent event) {
+      return event.replyAsync("你也好");
+              // 当使用异步API (CompletableFuture) 时，
+              // 你需要格外注意异常处理问题。
+              // 如果你不 return，
+              // 那么你就要处理异常，否则你无法感知到异步任务中出现的错误。
+              // 比如：
+              // .whenComplete((value, e) -> {
+              //   if (e != null) {
+              //     // 比如输出错误日志
+              //   }
+              // })
+    }
+  }
+}
+```
+{switcher-key="%ja%"}
+
+```Java
+@EnableSimbot // 启用 simbot
+@SpringBootApplication
+public class MyApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(MyApplication.class, args);
+    }
+
+    @Component // 需要交给Spring管理
+    public static class MyHandlers {
+        @Listener // 标记事件处理函数
+        @Filter(  // 简单的事件过滤注解
+                value = "你好", // 需要包含的文字
+                matchType = MatchType.TEXT_CONENT // 调整匹配模式为 "文本包含"
+        )
+        // 如果需要，添加此注解来去除匹配用的文本前后的空白字符。
+        // 由于 QQ 频道的公域 bot 都是需要被 at 的，
+        // 而被 at 时，文本消息很有可能存在一些前后空格，所以会比较有用
+        @ContentTrim
+        public void handle(ChatChannelMessageEvent event) {
+            event.replyBlocking("你也好");
+        }
+    }
+}
+```
+{switcher-key="%jb%"}
+
+```Java
+@EnableSimbot // 启用 simbot
+@SpringBootApplication
+public class MyApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(MyApplication.class, args);
+    }
+
+    @Component // 需要交给Spring管理
+    public static class MyHandlers {
+        @Listener // 标记事件处理函数
+        @Filter(  // 简单的事件过滤注解
+                value = "你好", // 需要包含的文字
+                matchType = MatchType.TEXT_CONENT // 调整匹配模式为 "文本包含"
+        )
+        // 如果需要，添加此注解来去除匹配用的文本前后的空白字符。
+        // 由于 QQ 频道的公域 bot 都是需要被 at 的，
+        // 而被 at 时，文本消息很有可能存在一些前后空格，所以会比较有用
+        @ContentTrim
+        public Mono<?> handle(ChatChannelMessageEvent event) {
+            return event.replyReserve("你也好")
+                    // 使用此转化器需要确保运行时环境中存在 
+                    // [[[kotlinx-coroutines-reactor|https://github.com/Kotlin/kotlinx.coroutines/tree/master/reactive]]] 的相关依赖。
+                    .transform(SuspendReserves.mono());
+                    // 当使用异步API (比如此处的 Mono) 时，
+                    // 你需要格外注意异常处理问题。
+                    // 如果你不 return，
+                    // 那么你就要处理异常，否则你无法感知到异步任务中出现的错误。
+                    // 比如：
+                    // .doOnError(err -> {
+                    //     // 比如输出错误日志
+                    // });
+        }
+    }
+}
+```
+{switcher-key="%jr%"}
+
+</tab>
+</tabs>
+</tab>
+<tab title="消息回复(QQ频道专属)">
+
+此处以 "QQ频道的公域子频道At消息事件" 为例，
+此事件类型为 `QGAtMessageCreateEvent`。
+
+这个事件是QQ频道组件里实现的专有事件类型，它继承
+`ChatChannelMessageEvent`。
+
+事件逻辑：当收到文本内 **包含"你好"** 的消息，回复"你也好"。
+
+<tabs group="Code">
+<tab title="Kotlin" group-key="Kotlin">
+
+```Kotlin
+@EnableSimbot // 启用 simbot
+@SpringBootApplication
+class MyApplication
+
+fun main(args: Array<String>) {
+    runApplicarion<MyApplication>(*args)
+}
+
+@Component // 需要交给Spring管理
+class MyHandlers {
+    @Listener // 标记事件处理函数
+    @Filter(  // 简单的事件过滤注解
+        value = "你好", // 需要包含的文字
+        matchType = MatchType.TEXT_CONENT // 调整匹配模式为 "文本包含"
+    )
+    // 如果需要，添加此注解来去除匹配用的文本前后的空白字符。
+    // 由于 QQ 频道的公域 bot 都是需要被 at 的，
+    // 而被 at 时，文本消息很有可能存在一些前后空格，所以会比较有用
+    @ContentTrim 
+    suspend fun handle(event: QGAtMessageCreateEvent) {
+        event.reply("你也好")
+    }
+}
+```
+
+</tab>
+<tab title="Java" group-key="Java">
+
+```Java
+@EnableSimbot // 启用 simbot
+@SpringBootApplication
+public class MyApplication {
+  public static void main(String[] args) {
+    SpringApplication.run(MyApplication.class, args);
+  }
+
+  @Component // 需要交给Spring管理
+  public static class MyHandlers {
+    @Listener // 标记事件处理函数
+    @Filter(  // 简单的事件过滤注解
+            value = "你好", // 需要包含的文字
+            matchType = MatchType.TEXT_CONENT // 调整匹配模式为 "文本包含"
+    )
+    // 如果需要，添加此注解来去除匹配用的文本前后的空白字符。
+    // 由于 QQ 频道的公域 bot 都是需要被 at 的，
+    // 而被 at 时，文本消息很有可能存在一些前后空格，所以会比较有用
+    @ContentTrim
+    public CompletableFuture<?> handle(QGAtMessageCreateEvent event) {
+      return event.replyAsync("你也好");
+              // 当使用异步API (CompletableFuture) 时，
+              // 你需要格外注意异常处理问题。
+              // 如果你不 return，
+              // 那么你就要处理异常，否则你无法感知到异步任务中出现的错误。
+              // 比如：
+              // .whenComplete((value, e) -> {
+              //   if (e != null) {
+              //     // 比如输出错误日志
+              //   }
+              // })
+    }
+  }
+}
+```
+{switcher-key="%ja%"}
+
+```Java
+@EnableSimbot // 启用 simbot
+@SpringBootApplication
+public class MyApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(MyApplication.class, args);
+    }
+
+    @Component // 需要交给Spring管理
+    public static class MyHandlers {
+        @Listener // 标记事件处理函数
+        @Filter(  // 简单的事件过滤注解
+                value = "你好", // 需要包含的文字
+                matchType = MatchType.TEXT_CONENT // 调整匹配模式为 "文本包含"
+        )
+        // 如果需要，添加此注解来去除匹配用的文本前后的空白字符。
+        // 由于 QQ 频道的公域 bot 都是需要被 at 的，
+        // 而被 at 时，文本消息很有可能存在一些前后空格，所以会比较有用
+        @ContentTrim
+        public void handle(QGAtMessageCreateEvent event) {
+            event.replyBlocking("你也好");
+        }
+    }
+}
+```
+{switcher-key="%jb%"}
+
+```Java
+@EnableSimbot // 启用 simbot
+@SpringBootApplication
+public class MyApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(MyApplication.class, args);
+    }
+
+    @Component // 需要交给Spring管理
+    public static class MyHandlers {
+        @Listener // 标记事件处理函数
+        @Filter(  // 简单的事件过滤注解
+                value = "你好", // 需要包含的文字
+                matchType = MatchType.TEXT_CONENT // 调整匹配模式为 "文本包含"
+        )
+        // 如果需要，添加此注解来去除匹配用的文本前后的空白字符。
+        // 由于 QQ 频道的公域 bot 都是需要被 at 的，
+        // 而被 at 时，文本消息很有可能存在一些前后空格，所以会比较有用
+        @ContentTrim
+        public Mono<?> handle(QGAtMessageCreateEvent event) {
+            return event.replyReserve("你也好")
+                    // 使用此转化器需要确保运行时环境中存在 
+                    // [[[kotlinx-coroutines-reactor|https://github.com/Kotlin/kotlinx.coroutines/tree/master/reactive]]] 的相关依赖。
+                    .transform(SuspendReserves.mono());
+                    // 当使用响应式API (比如此处的 Mono) 时，
+                    // 你需要格外注意异常处理问题。
+                    // 如果你不 return，
+                    // 那么你就要处理异常，否则你无法感知到异步任务中出现的错误。
+                    // 甚至你如果不 return，可能都无法真正的执行逻辑，因为这个 Mono 没有被消费。
+                    // 比如：
+                    // .doOnError(err -> {
+                    //     // 比如输出错误日志
+                    // });
+        }
+    }
+}
+```
+{switcher-key="%jr%"}
+
+</tab>
+</tabs>
+</tab>
+</tabs>
 
 
 [spring.start]: https://start.spring.io

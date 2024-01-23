@@ -1,5 +1,5 @@
 ---
-switcher-label: Java API
+switcher-label: Java API 风格
 ---
 
 <var name="jr" value="Reactor"/>
@@ -9,6 +9,13 @@ switcher-label: Java API
 <tldr>
 <p>本章节介绍如何使用 <control>API 模块</control> 来构建、请求一个QQ频道的API。</p>
 </tldr>
+
+<tip>
+
+<control>API 模块</control> 是一个“基础”模块，它仅提供针对 QQ频道 API 的封装，
+没有 Bot、事件处理等功能。
+
+</tip>
 
 ## 安装
 
@@ -218,6 +225,8 @@ var api = GetBotGuildListApi.create(100);
 
 // 发起请求并得到结果
 ApiRequests.requestDataReserve(api, client, token, server)
+        // 使用此转化器需要确保运行时环境中存在 
+        // [[[kotlinx-coroutines-reactor|https://github.com/Kotlin/kotlinx.coroutines/tree/master/reactive]]] 的相关依赖。
         .transform(SuspendReserves.mono())
         .subscribe(guildList -> {
             for (var guild : guildList) {

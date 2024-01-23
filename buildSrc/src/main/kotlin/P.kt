@@ -21,22 +21,22 @@ import love.forte.gradle.common.core.project.minus
 import love.forte.gradle.common.core.property.systemProp
 import love.forte.gradle.common.core.project.version as v
 
-val simbotVersion = v(3, 2, 0)
-//- v("RC", 3)
-
-fun simbot(name: String, version: String = simbotVersion.toString()): String = "love.forte.simbot:simbot-$name:$version"
-fun simboot(name: String, version: String = simbotVersion.toString()): String =
-    "love.forte.simbot.boot:simboot-$name:$version"
-
-val simbotApi = simbot("api")
-val simbotCore = simbot("core")
-val simbotLogger = simbot("logger")
-val simbotLoggerJvm = simbot("logger-jvm")
-val simbotLoggerSlf4jImpl = simbot("logger-slf4j-impl")
-
-val simbotUtilLoop = "love.forte.simbot.util:simbot-util-stage-loop:$simbotVersion"
-val simbotUtilSuspendTransformer = "love.forte.simbot.util:simbot-util-suspend-transformer:$simbotVersion"
-val simbotUtilAnnotations = "love.forte.simbot.util:simbot-annotations:$simbotVersion"
+//val simbotVersion = v(3, 2, 0)
+////- v("RC", 3)
+//
+//fun simbot(name: String, version: String = simbotVersion.toString()): String = "love.forte.simbot:simbot-$name:$version"
+//fun simboot(name: String, version: String = simbotVersion.toString()): String =
+//    "love.forte.simbot.boot:simboot-$name:$version"
+//
+//val simbotApi = simbot("api")
+//val simbotCore = simbot("core")
+//val simbotLogger = simbot("logger")
+//val simbotLoggerJvm = simbot("logger-jvm")
+//val simbotLoggerSlf4jImpl = simbot("logger-slf4j-impl")
+//
+//val simbotUtilLoop = "love.forte.simbot.util:simbot-util-stage-loop:$simbotVersion"
+//val simbotUtilSuspendTransformer = "love.forte.simbot.util:simbot-util-suspend-transformer:$simbotVersion"
+//val simbotUtilAnnotations = "love.forte.simbot.util:simbot-annotations:$simbotVersion"
 
 const val SIMBOT_GROUP = "love.forte.simbot"
 
@@ -59,7 +59,7 @@ object P {
         override val homepage: String get() = HOMEPAGE
 
 
-        private val baseVersion = v(4, 0, 0) - v("dev5")
+        private val baseVersion = v(4, 0, 0) - v("dev6")
 
         val snapshotVersion = baseVersion - Version.SNAPSHOT
         override val version = if (isSnapshot()) snapshotVersion else baseVersion

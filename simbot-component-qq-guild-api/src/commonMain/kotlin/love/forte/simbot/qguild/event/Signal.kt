@@ -17,10 +17,7 @@
 
 package love.forte.simbot.qguild.event
 
-import kotlinx.serialization.Contextual
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
 import kotlinx.serialization.builtins.IntArraySerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
@@ -157,7 +154,9 @@ public sealed class Signal<D>(@Serializable(Opcode.SerializerByCode::class) publ
      * @see love.forte.simbot.qguild.event
      *
      */
+    @OptIn(ExperimentalSerializationApi::class)
     @Serializable
+    @JsonClassDiscriminator(Dispatch.DISPATCH_CLASS_DISCRIMINATOR)
     public sealed class Dispatch : Signal<@Contextual Any>(Opcode.Dispatch) {
 
         /**
@@ -203,7 +202,6 @@ public sealed class Signal<D>(@Serializable(Opcode.SerializerByCode::class) publ
         }
 
 
-
         /**
          * 用于承载未知类型事件的事件类型。
          *
@@ -212,12 +210,14 @@ public sealed class Signal<D>(@Serializable(Opcode.SerializerByCode::class) publ
          * [Unknown] 的构建仅由内部完成。
          *
          */
-        public data class Unknown @QGInternalApi constructor(override val s: Long, override val data: JsonElement, val raw: String) : Dispatch()
+        public data class Unknown @QGInternalApi constructor(
+            override val s: Long,
+            override val data: JsonElement,
+            val raw: String
+        ) : Dispatch()
 
     }
 }
-
-
 
 
 /**

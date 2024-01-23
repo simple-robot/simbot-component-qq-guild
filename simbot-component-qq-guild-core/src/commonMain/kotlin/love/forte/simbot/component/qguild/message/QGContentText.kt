@@ -30,7 +30,9 @@ import love.forte.simbot.qguild.message.ContentTextEncoder
  * 直接作用在 [Message.content][love.forte.simbot.qguild.model.Message.content] 上
  * 不经转义处理的消息。
  *
- * 当收到消息类型时便会将 `content` 转化为此类而不是 [Text]。
+ * 当收到消息事件时，
+ * 如果消息中不包含任何其他特殊信息（主要是提及信息，例如提及所有人、提及用户、提及频道等）
+ * 便会将 `content` 直接转化为此类而不是 [Text]。
  *
  * 当发送消息使用 [QGContentText] 时消息内容不会被尝试转义为无[内嵌格式](https://bot.q.qq.com/wiki/develop/api/openapi/message/message_format.html)的消息文本，而是直接追加 [content] 中的内容。
  *

@@ -18,6 +18,7 @@
 package love.forte.simbot.component.qguild.bot.config
 
 import io.ktor.http.*
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.bot.SerializableBotConfiguration
@@ -106,6 +107,7 @@ public data class QGBotFileConfiguration(
      * ```
      *
      */
+    @OptIn(ExperimentalSerializationApi::class)
     @Serializable
     @UsedOnlyForConfigSerialization
     public data class Config(

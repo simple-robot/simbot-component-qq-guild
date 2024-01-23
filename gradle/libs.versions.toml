@@ -10,7 +10,7 @@ openjdk-jmh = "1.35"
 log4j = "2.20.0"
 reactor = "3.6.2"
 # simbot
-simbot = "4.0.0-dev13"
+simbot = "4.0.0-dev14"
 suspendTransform = "0.6.0"
 gradleCommon = "0.2.0"
 

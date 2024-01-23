@@ -4,6 +4,19 @@
 <p>在使用 <b>Spring Boot</b> 时自动注册 bot 所需的配置文件。</p>
 </tldr>
 
+<tip>
+
+如果你在使用 Spring Boot，
+将配置文件放在在你的资源目录中:
+<path>resources/simbot-bots/</path>，
+并以 `.bot.json` 作为扩展名，例如 `mybot.bot.json`。
+
+这个扫描目录是可配置的。
+这是属于 simbot4 Spring Boot starter 的配置，可参考
+[simbot手册: 使用 Spring Boot 3](https://simbot.forte.love/start-use-spring-boot-3.html)。
+
+</tip>
+
 ## 示例
 
 ```json

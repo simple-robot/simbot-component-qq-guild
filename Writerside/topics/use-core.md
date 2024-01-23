@@ -1,5 +1,5 @@
 ---
-switcher-label: Java API
+switcher-label: Java API 风格
 ---
 
 # 使用核心库
@@ -96,6 +96,11 @@ implementation 'love.forte.simbot.component:simbot-component-qq-guild-core-jvm:%
 
 </tab>
 </tabs>
+
+### 引擎选择
+
+<include from="snippets.md" element-id="engine-choose" />
+
 
 ## 使用
 ### 安装到 Application

@@ -22,7 +22,7 @@
             </toc-element>
         </toc-element>
     </toc-element>
-    <toc-element toc-title="快速开始">
+    <toc-element toc-title="开始使用">
         <toc-element topic="use-api.md"/>
         <toc-element topic="use-stdlib.md"/>
         <toc-element topic="use-core.md"/>
@@ -31,9 +31,12 @@
     </toc-element>
     <toc-element topic="bot-config.md"/>
     <toc-element toc-title="API">
+        <toc-element topic="api.md"/>
         <toc-element topic="api_ark.md"/>
         <toc-element topic="api_embed.md"/>
         <toc-element topic="api_forum.md"/>
         <toc-element topic="api_role.md"/>
     </toc-element>
+    <toc-element topic="event.md"/>
+    <toc-element topic="messages.md"/>
 </instance-profile>
