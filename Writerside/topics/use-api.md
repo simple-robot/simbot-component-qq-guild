@@ -19,6 +19,25 @@ API 模块无法直接作为 Simple Robot 组件使用。
 
 </tip>
 
+<procedure collapsible="true" default-state="collapsed" title="适用场景">
+
+当你不确定自己的应用场景是否应该选择 **直接使用** API 模块时，
+这里为你提供了一些参考：
+
+<procedure title="适用">
+
+- 你的应用只需要一个 API 实现库，你希望使用更**原始的**风格调用API。
+- 你的应用**不需要**、或希望**自行处理**对事件的订阅与解析。（包括一切工作，例如建立网络连接）
+
+</procedure>
+<procedure title="不适用">
+
+- 你希望库实现事件订阅能力，可以替你处理网络连接、事件调度等。
+- 你希望有一个 Bot 实现，它可以管理网络连接的生命周期、可以注册事件处理逻辑、替你接收事件，并进行处理。
+
+</procedure>
+</procedure>
+
 ## 安装
 
 <tabs group="build">

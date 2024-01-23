@@ -17,6 +17,30 @@ switcher-label: Java API 风格
 
 </tip>
 
+<procedure collapsible="true" default-state="collapsed" title="适用场景">
+
+当你不确定自己的应用场景是否应该选择 **直接使用** 标准库模块时，
+这里为你提供了一些参考：
+
+<procedure title="适用">
+
+- 你希望有一个 Bot 实现，它可以支持订阅事件、管理网络连接的生命周期、可以注册事件处理逻辑、替你接收事件，并进行处理/调度。
+- 你不需要太多额外的功能，例如处理事件时，如果你想要发消息，那么**自行构建** API 模块中提供的实现。
+- 你不需要多组件协同。
+- 你不需要 Simple Robot 标准库提供的任何功能。
+
+</procedure>
+<procedure title="不适用">
+
+
+- 你希望使用 Simple Robot 标准库提供的功能。
+- 你希望使用一个有更多**高级功能**封装的库，而不是一个仅有基础功能的库。例如处理事件时，你只需要组装好消息文本或封装好的**消息元素对象**，并简单的调用 `send` 即可发送，不需要自行构建 API、自行发送请求。
+- 你希望能够支持多组件协同。
+- 你希望使用支持 Spring Boot 的库。
+
+</procedure>
+</procedure>
+
 ## 安装
 
 <tabs group="build">
