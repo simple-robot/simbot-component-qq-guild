@@ -126,8 +126,8 @@ implementation 'love.forte.simbot.component:simbot-component-qq-guild-core-jvm:%
 
 配置文件的内容可前往参考 [Bot配置文件](bot-config.md) 章节。
 
-> 这个扫描目录是可配置的。
-> 这是属于 simbot4 Spring Boot starter 的配置，可参考 
+> 这个扫描目录是**可配置的**。
+> 这属于 simbot4 Spring Boot starter 的配置，可参考 
 > [simbot手册: 使用 Spring Boot 3](https://simbot.forte.love/start-use-spring-boot-3.html)。
 
 ## 使用

@@ -8,6 +8,15 @@ switcher-label: Java API 风格
 <p>本章节介绍如何使用 <control>标准库(stdlib模块)</control> 来构建 Bot 实例、订阅并处理事件。</p>
 </tldr>
 
+<tip>
+
+<control>标准库模块</control> 是一个“较为基础”的模块，它在 API 模块之上，
+仅提供**最基础**的 Bot 实现和事件处理。是一种**轻量级实现库**。
+
+标准库模块无法直接作为 Simple Robot 组件使用。
+
+</tip>
+
 ## 安装
 
 <tabs group="build">

@@ -56,7 +56,7 @@ API 模块所有的事件封装类型都在包 `love.forte.simbot.qguild.event` 
 API 模块事件封装可以使用在 **标准库模块 (stdlib)** 中，使用 `Bot` 类型对他们进行监听与处理。
 
 
-## simbot Event 实现
+## Simbot 标准库 Event 实现
 
 使用核心库，可以在 simbot4 的 `Application` 或 Spring Boot 中使用这些事件类型实现。
 

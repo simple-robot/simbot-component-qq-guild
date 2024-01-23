@@ -12,8 +12,10 @@ switcher-label: Java API 风格
 
 <tip>
 
-<control>API 模块</control> 是一个“基础”模块，它仅提供针对 QQ频道 API 的封装，
-没有 Bot、事件处理等功能。
+<control>API 模块</control> 是一个“基础”的模块，它仅提供针对 QQ频道 API 的封装，
+没有 Bot、事件处理等功能，是一种“底层库”。
+
+API 模块无法直接作为 Simple Robot 组件使用。
 
 </tip>
 
@@ -93,7 +95,7 @@ love.forte.simbot.qguild.api.user.GetBotGuildListApi
 ```
 </compare>
 
-> 所有的API实现均在包路径 `love.forte.simbot.miyoushe.api` 中。
+> 所有的API实现均在包路径 `love.forte.simbot.qguild.api` 中。
 
 API的应用大差不差，因此此处仅使用部分类型作为示例，
 不会演示所有API。
