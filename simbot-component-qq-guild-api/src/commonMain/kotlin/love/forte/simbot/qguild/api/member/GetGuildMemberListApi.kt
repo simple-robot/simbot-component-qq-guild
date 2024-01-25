@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,6 +17,7 @@
 
 package love.forte.simbot.qguild.api.member
 
+import io.ktor.http.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.DeserializationStrategy
@@ -25,7 +26,6 @@ import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.logger.logger
 import love.forte.simbot.qguild.PrivateDomainOnly
 import love.forte.simbot.qguild.api.GetQQGuildApi
-import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleGetApiDescription
 import love.forte.simbot.qguild.model.SimpleMember
 import kotlin.jvm.JvmOverloads
@@ -61,9 +61,9 @@ public class GetGuildMemberListApi private constructor(
 ) : GetQQGuildApi<List<SimpleMember>>() {
     init {
         require(limit > 0) { "limit must > 0, but $limit" }
-        if (limit > 400) {
+        if (limit > MAX_LIMIT) {
             // or throw error? or ignore?
-            logger.warn("The maximum value of the limit is 400, but {}", limit)
+            logger.warn("The maximum value of the limit is $MAX_LIMIT, but {}", limit)
         }
     }
 
@@ -96,16 +96,14 @@ public class GetGuildMemberListApi private constructor(
             GetGuildMemberListApi(guildId, null, limit)
     }
 
-    private val path = arrayOf("guilds", guildId, "members")
+    override val path: Array<String> = arrayOf("guilds", guildId, "members")
 
-    override val resultDeserializer: DeserializationStrategy<List<SimpleMember>>
+    override val resultDeserializationStrategy: DeserializationStrategy<List<SimpleMember>>
         get() = deserializer
 
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-
-        after?.also { builder.parametersAppender.append("after", it) }
-        builder.parametersAppender.append("limit", limit)
+    override fun URLBuilder.buildUrl() {
+        after?.also { parameters.append("after", it) }
+        parameters.append("limit", limit.toString())
     }
 }
 

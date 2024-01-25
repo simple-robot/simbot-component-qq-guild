@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,15 +17,13 @@
 
 package love.forte.simbot.qguild.api.guild.mute
 
-import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import love.forte.simbot.common.time.TimeUnit
 import love.forte.simbot.qguild.ApiModel
-import love.forte.simbot.qguild.api.QQGuildApi
-import love.forte.simbot.qguild.api.RouteInfoBuilder
-import love.forte.simbot.qguild.api.SimpleApiDescription
-import love.forte.simbot.qguild.time.TimeUnit
+import love.forte.simbot.qguild.api.PatchQQGuildApi
+import love.forte.simbot.qguild.api.SimplePatchApiDescription
 import kotlin.jvm.JvmStatic
 import kotlin.jvm.JvmSynthetic
 import kotlin.time.Duration
@@ -41,9 +39,10 @@ import kotlin.time.Duration
  *
  * @author ForteScarlet
  */
-public class MuteMultiMemberApi private constructor(guildId: String, body: MuteBody) : QQGuildApi<MultiMuteResult>() {
-    public companion object Factory : SimpleApiDescription(
-        HttpMethod.Patch, "/guilds/{guild_id}/mute"
+public class MuteMultiMemberApi private constructor(guildId: String, private val _body: MuteBody) :
+    PatchQQGuildApi<MultiMuteResult>() {
+    public companion object Factory : SimplePatchApiDescription(
+        "/guilds/{guild_id}/mute"
     ) {
 
         /**
@@ -84,19 +83,12 @@ public class MuteMultiMemberApi private constructor(guildId: String, body: MuteB
         }
     }
 
-    private val path = arrayOf("guilds", guildId, "mute")
+    override val path: Array<String> = arrayOf("guilds", guildId, "mute")
 
-    override val resultDeserializer: DeserializationStrategy<MultiMuteResult>
+    override val resultDeserializationStrategy: DeserializationStrategy<MultiMuteResult>
         get() = MultiMuteResult.serializer()
 
-    override val method: HttpMethod
-        get() = HttpMethod.Patch
-
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-    }
-
-    override val body: Any = body
+    override fun createBody(): Any = _body
 }
 
 /**

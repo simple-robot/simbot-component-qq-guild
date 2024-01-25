@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -24,7 +24,6 @@ import love.forte.simbot.qguild.ApiModel
 import love.forte.simbot.qguild.PrivateDomainOnly
 import love.forte.simbot.qguild.api.GetQQGuildApi
 import love.forte.simbot.qguild.api.NumberAsBooleanSerializer
-import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleGetApiDescription
 import love.forte.simbot.qguild.model.forum.Thread
 import kotlin.jvm.JvmStatic
@@ -51,15 +50,10 @@ public class GetThreadListApi private constructor(channelId: String) : GetQQGuil
             GetThreadListApi(channelId)
     }
 
-    private val path = arrayOf("channels", channelId, "threads")
+    override val path: Array<String> = arrayOf("channels", channelId, "threads")
 
-
-    override val resultDeserializer: DeserializationStrategy<ThreadListResult>
+    override val resultDeserializationStrategy: DeserializationStrategy<ThreadListResult>
         get() = ThreadListResult.serializer()
-
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-    }
 }
 
 /**

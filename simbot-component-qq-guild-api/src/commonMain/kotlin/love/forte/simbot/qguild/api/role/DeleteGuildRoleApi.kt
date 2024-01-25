@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,10 +17,9 @@
 
 package love.forte.simbot.qguild.api.role
 
-import io.ktor.http.*
+import love.forte.simbot.qguild.api.DeleteQQGuildApi
 import love.forte.simbot.qguild.api.QQGuildApiWithoutResult
-import love.forte.simbot.qguild.api.RouteInfoBuilder
-import love.forte.simbot.qguild.api.SimpleApiDescription
+import love.forte.simbot.qguild.api.SimpleDeleteApiDescription
 import kotlin.jvm.JvmStatic
 
 /**
@@ -32,26 +31,19 @@ import kotlin.jvm.JvmStatic
  * 需要使用的 `token` 对应的用户具备删除身份组权限。如果是机器人，要求被添加为管理员。
  * @author ForteScarlet
  */
-public class DeleteGuildRoleApi(guildId: String, roleId: String) : QQGuildApiWithoutResult() {
-    public companion object Factory : SimpleApiDescription(
-        HttpMethod.Delete, "/guilds/{guild_id}/roles/{role_id}"
+public class DeleteGuildRoleApi(guildId: String, roleId: String) :
+    QQGuildApiWithoutResult, DeleteQQGuildApi<Unit>() {
+    public companion object Factory : SimpleDeleteApiDescription(
+        "/guilds/{guild_id}/roles/{role_id}"
     ) {
-        
+
         /**
          * 构造 [DeleteGuildRoleApi]
          */
         @JvmStatic
-        public fun create(guildId: String, roleId: String): DeleteGuildRoleApi = DeleteGuildRoleApi(guildId, roleId)
+        public fun create(guildId: String, roleId: String): DeleteGuildRoleApi =
+            DeleteGuildRoleApi(guildId, roleId)
     }
 
-    private val path = arrayOf("guilds", guildId, "roles", roleId)
-    
-    override val method: HttpMethod
-        get() = HttpMethod.Delete
-    
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-    }
-    
-    override val body: Any? get() = null
+    override val path: Array<String> = arrayOf("guilds", guildId, "roles", roleId)
 }

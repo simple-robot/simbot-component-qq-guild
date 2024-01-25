@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -18,6 +18,7 @@
 package love.forte.simbot.qguild.api
 
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -43,4 +44,19 @@ public object NumberAsBooleanSerializer : KSerializer<Boolean> {
      * 将 [Boolean] 转为 [Int]。
      */
     private fun Boolean.toNumber(): Int = if (this) 1 else 0
+}
+
+
+internal object EmptyUnitSerializer : KSerializer<Unit> {
+    private val ser = Unit.serializer()
+    override fun deserialize(decoder: Decoder) {
+        // Just do nothing?
+    }
+
+    override val descriptor: SerialDescriptor
+        get() = ser.descriptor
+
+    override fun serialize(encoder: Encoder, value: Unit) {
+        ser.serialize(encoder, value)
+    }
 }

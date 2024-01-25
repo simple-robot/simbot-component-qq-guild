@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -21,8 +21,7 @@ import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import love.forte.simbot.qguild.api.QQGuildApi
-import love.forte.simbot.qguild.api.RouteInfoBuilder
+import love.forte.simbot.qguild.api.PatchQQGuildApi
 import love.forte.simbot.qguild.api.SimpleApiDescription
 import love.forte.simbot.qguild.model.ColorIntSerializer
 import love.forte.simbot.qguild.model.Role
@@ -42,7 +41,7 @@ import kotlin.jvm.JvmStatic
 public class ModifyGuildRoleApi private constructor(
     guildId: String, roleId: String,
     private val _body: Body,
-) : QQGuildApi<GuildRoleModified>() {
+) : PatchQQGuildApi<GuildRoleModified>() {
     public companion object Factory : SimpleApiDescription(
         HttpMethod.Patch, "/guilds/{guild_id}/roles/{role_id}"
     ) {
@@ -64,22 +63,19 @@ public class ModifyGuildRoleApi private constructor(
 
     }
 
-    private val path = arrayOf("guilds", guildId, "roles", roleId)
+    override val path: Array<String> = arrayOf("guilds", guildId, "roles", roleId)
 
-    override val resultDeserializer: DeserializationStrategy<GuildRoleModified>
+    override val resultDeserializationStrategy: DeserializationStrategy<GuildRoleModified>
         get() = GuildRoleModified.serializer()
 
-    override val method: HttpMethod
-        get() = HttpMethod.Patch
-
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-    }
-
-    override val body: Any get() = _body
+    override fun createBody(): Any = _body
 
     @Serializable
-    private data class Body(val name: String?, @Serializable(ColorIntSerializer::class) val color: Int?, val hoist: Int?) {
+    private data class Body(
+        val name: String?,
+        @Serializable(ColorIntSerializer::class) val color: Int?,
+        val hoist: Int?
+    ) {
         init {
             require(name != null || color != null || hoist != null) {
                 "At least one of the parameters should not be null"

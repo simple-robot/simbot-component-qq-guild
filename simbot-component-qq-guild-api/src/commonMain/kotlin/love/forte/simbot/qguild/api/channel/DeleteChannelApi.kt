@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,13 +17,10 @@
 
 package love.forte.simbot.qguild.api.channel
 
-import io.ktor.http.*
-import kotlinx.serialization.DeserializationStrategy
-import kotlinx.serialization.builtins.serializer
 import love.forte.simbot.qguild.PrivateDomainOnly
-import love.forte.simbot.qguild.api.QQGuildApi
-import love.forte.simbot.qguild.api.RouteInfoBuilder
-import love.forte.simbot.qguild.api.SimpleApiDescription
+import love.forte.simbot.qguild.api.DeleteQQGuildApi
+import love.forte.simbot.qguild.api.QQGuildApiWithoutResult
+import love.forte.simbot.qguild.api.SimpleDeleteApiDescription
 import kotlin.jvm.JvmStatic
 
 
@@ -41,9 +38,10 @@ import kotlin.jvm.JvmStatic
  * @author ForteScarlet
  */
 @PrivateDomainOnly
-public class DeleteChannelApi private constructor(channelId: String) : QQGuildApi<Unit>() {
-    public companion object Factory : SimpleApiDescription(
-        HttpMethod.Delete, "/channels/{channel_id}"
+public class DeleteChannelApi private constructor(channelId: String) : QQGuildApiWithoutResult,
+    DeleteQQGuildApi<Unit>() {
+    public companion object Factory : SimpleDeleteApiDescription(
+        "/channels/{channel_id}"
     ) {
 
         /**
@@ -55,18 +53,5 @@ public class DeleteChannelApi private constructor(channelId: String) : QQGuildAp
 
     }
 
-    private val path = arrayOf("channels", channelId)
-
-    override val resultDeserializer: DeserializationStrategy<Unit>
-        get() = Unit.serializer()
-
-    override val method: HttpMethod
-        get() = HttpMethod.Delete
-
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-    }
-
-    override val body: Any?
-        get() = null
+    override val path: Array<String> = arrayOf("channels", channelId)
 }

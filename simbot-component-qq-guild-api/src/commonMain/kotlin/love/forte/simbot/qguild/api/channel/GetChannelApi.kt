@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -19,7 +19,6 @@ package love.forte.simbot.qguild.api.channel
 
 import kotlinx.serialization.DeserializationStrategy
 import love.forte.simbot.qguild.api.GetQQGuildApi
-import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleGetApiDescription
 import love.forte.simbot.qguild.model.SimpleChannel
 import kotlin.jvm.JvmStatic
@@ -43,12 +42,8 @@ public class GetChannelApi private constructor(channelId: String) : GetQQGuildAp
         public fun create(channelId: String): GetChannelApi = GetChannelApi(channelId)
     }
 
-    private val path = arrayOf("channels", channelId)
+    override val path: Array<String> = arrayOf("channels", channelId)
 
-    override val resultDeserializer: DeserializationStrategy<SimpleChannel>
+    override val resultDeserializationStrategy: DeserializationStrategy<SimpleChannel>
         get() = SimpleChannel.serializer()
-
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,11 +17,10 @@
 
 package love.forte.simbot.qguild.api.channel.permissions
 
-import io.ktor.http.*
 import kotlinx.serialization.Serializable
+import love.forte.simbot.qguild.api.PutQQGuildApi
 import love.forte.simbot.qguild.api.QQGuildApiWithoutResult
-import love.forte.simbot.qguild.api.RouteInfoBuilder
-import love.forte.simbot.qguild.api.SimpleApiDescription
+import love.forte.simbot.qguild.api.SimplePutApiDescription
 import love.forte.simbot.qguild.model.Permissions
 import kotlin.jvm.JvmName
 import kotlin.jvm.JvmStatic
@@ -42,9 +41,9 @@ import kotlin.jvm.JvmStatic
 public class ModifyChannelRolePermissionsApi private constructor(
     channelId: String, roleId: String,
     private val _body: Body
-) : QQGuildApiWithoutResult() {
-    public companion object Factory : SimpleApiDescription(
-        HttpMethod.Put, "/channels/{channel_id}/roles/{role_id}/permissions"
+) : QQGuildApiWithoutResult, PutQQGuildApi<Unit>() {
+    public companion object Factory : SimplePutApiDescription(
+        "/channels/{channel_id}/roles/{role_id}/permissions"
     ) {
 
         /**
@@ -82,17 +81,9 @@ public class ModifyChannelRolePermissionsApi private constructor(
         ): ModifyChannelRolePermissionsApi = create(channelId, memberId, remove = remove)
     }
 
-    private val path = arrayOf("channels", channelId, "roles", roleId, "permissions")
+    override val path: Array<String> = arrayOf("channels", channelId, "roles", roleId, "permissions")
 
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-    }
-
-    override val method: HttpMethod
-        get() = HttpMethod.Put
-
-    override val body: Any
-        get() = _body
+    override fun createBody(): Any = _body
 
     @Serializable
     private data class Body(val add: Permissions?, val remove: Permissions?) {

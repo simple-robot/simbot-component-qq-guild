@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,15 +17,12 @@
 
 package love.forte.simbot.qguild.api.member
 
-import io.ktor.http.*
-import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.serializer
 import love.forte.simbot.qguild.PrivateDomainOnly
-import love.forte.simbot.qguild.api.QQGuildApi
-import love.forte.simbot.qguild.api.RouteInfoBuilder
-import love.forte.simbot.qguild.api.SimpleApiDescription
+import love.forte.simbot.qguild.api.DeleteQQGuildApi
+import love.forte.simbot.qguild.api.QQGuildApiWithoutResult
+import love.forte.simbot.qguild.api.SimpleDeleteApiDescription
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 
@@ -47,9 +44,9 @@ public class DeleteMemberApi private constructor(
     guildId: String,
     userId: String,
     private val _body: Body
-) : QQGuildApi<Unit>() {
-    public companion object Factory : SimpleApiDescription(
-        HttpMethod.Delete, "/guilds/{guild_id}/members/{user_id}"
+) : QQGuildApiWithoutResult, DeleteQQGuildApi<Unit>() {
+    public companion object Factory : SimpleDeleteApiDescription(
+        "/guilds/{guild_id}/members/{user_id}"
     ) {
 
         /**
@@ -71,17 +68,7 @@ public class DeleteMemberApi private constructor(
 
     }
 
-    private val path = arrayOf("guilds", guildId, "members", userId)
-
-    override val resultDeserializer: DeserializationStrategy<Unit>
-        get() = Unit.serializer()
-
-    override val method: HttpMethod
-        get() = HttpMethod.Delete
-
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-    }
+    override val path: Array<String> = arrayOf("guilds", guildId, "members", userId)
 
     override val body: Any
         get() = _body
@@ -104,11 +91,11 @@ public class DeleteMemberApi private constructor(
         }
 
         companion object {
-            private const val deleteHistoryMsgDaysRange =
+            private const val DELETE_HISTORY_MSG_DAYS_RANGE =
                 0 or (1 shl 3) or (1 shl 7) or (1 shl 15) or (1 shl 30) or (1 shl 0)
 
             private fun deleteHistoryMsgDaysRangeContains(value: Int): Boolean {
-                return value <= 30 && (deleteHistoryMsgDaysRange and (1 shl value)) != 0
+                return value <= 30 && (DELETE_HISTORY_MSG_DAYS_RANGE and (1 shl value)) != 0
             }
 
         }

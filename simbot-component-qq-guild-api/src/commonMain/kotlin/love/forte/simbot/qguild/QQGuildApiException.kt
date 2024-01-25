@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -26,9 +26,10 @@ import kotlinx.serialization.json.JsonNull
 /**
  * 初始化 cause, 并得到自身（或结果）
  * 在 JVM 平台上生效。
+ * 在其他平台会使用 [addSuppressed] 添加 [cause]。
  */
-@PublishedApi
-internal expect inline fun <reified T : Throwable> T.initCause0(cause: Throwable): T
+@QGInternalApi
+public expect inline fun <reified T : Throwable> T.initCause0(cause: Throwable): T
 
 /**
  * QQ频道API请求过程中出现的异常
@@ -68,9 +69,9 @@ public fun QQGuildApiException.copyCurrent(): QQGuildApiException = addStackTrac
  *
  * @suppress internal API to add suppressed for api exception
  */
-@InternalApi
+@QGInternalApi
 public inline fun <E : QQGuildApiException> E.addStackTrace(block: () -> String? = { null }): E {
-    addSuppressed(APIStackException(block()))
+    addSuppressed(APIStack(block()))
     return this
 }
 
@@ -78,9 +79,9 @@ public inline fun <E : QQGuildApiException> E.addStackTrace(block: () -> String?
  *
  * @see addStackTrace
  */
-@InternalApi
+@QGInternalApi
 @PublishedApi
-internal class APIStackException @PublishedApi internal constructor(message: String? = null) : Exception(message)
+internal class APIStack @PublishedApi internal constructor(message: String? = null) : Exception(message)
 
 /**
  * 判断 [QQGuildApiException.value] 的值是否为 `404`

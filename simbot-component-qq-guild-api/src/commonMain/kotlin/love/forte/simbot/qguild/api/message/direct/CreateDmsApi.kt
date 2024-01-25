@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,12 +17,10 @@
 
 package love.forte.simbot.qguild.api.message.direct
 
-import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.api.PostQQGuildApi
-import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimplePostApiDescription
 import love.forte.simbot.qguild.model.DirectMessageSession
 import kotlin.jvm.JvmStatic
@@ -45,8 +43,8 @@ import kotlin.jvm.JvmStatic
  * @author ForteScarlet
  */
 public class CreateDmsApi private constructor(
-    recipientId: String,
-    sourceGuildId: String,
+    private val recipientId: String,
+    private val sourceGuildId: String,
 ) : PostQQGuildApi<DirectMessageSession>() {
     public companion object Factory : SimplePostApiDescription(
         "/users/@me/dms"
@@ -66,14 +64,13 @@ public class CreateDmsApi private constructor(
             CreateDmsApi(recipientId, sourceGuildId)
     }
 
-    override val resultDeserializer: DeserializationStrategy<DirectMessageSession>
+    override val resultDeserializationStrategy: DeserializationStrategy<DirectMessageSession>
         get() = DirectMessageSession.serializer()
 
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = pathSegments
-    }
+    override val path: Array<String>
+        get() = pathSegments
 
-    override val body: Any = Body(recipientId, sourceGuildId)
+    override fun createBody(): Any = Body(recipientId, sourceGuildId)
 
     @Serializable
     private data class Body(

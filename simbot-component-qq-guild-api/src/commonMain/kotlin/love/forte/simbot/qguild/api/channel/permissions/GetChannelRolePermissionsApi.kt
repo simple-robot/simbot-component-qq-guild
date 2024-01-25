@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -19,7 +19,6 @@ package love.forte.simbot.qguild.api.channel.permissions
 
 import kotlinx.serialization.DeserializationStrategy
 import love.forte.simbot.qguild.api.GetQQGuildApi
-import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleGetApiDescription
 import love.forte.simbot.qguild.model.ChannelPermissions
 import kotlin.jvm.JvmStatic
@@ -47,15 +46,10 @@ public class GetChannelRolePermissionsApi(
         @JvmStatic
         public fun create(channelId: String, roleId: String): GetChannelRolePermissionsApi =
             GetChannelRolePermissionsApi(channelId, roleId)
-
     }
 
-    override val resultDeserializer: DeserializationStrategy<ChannelPermissions>
+    override val resultDeserializationStrategy: DeserializationStrategy<ChannelPermissions>
         get() = ChannelPermissions.serializer()
 
-    private val path = arrayOf("channels", channelId, "roles", roleId, "permissions")
-
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-    }
+    override val path: Array<String> = arrayOf("channels", channelId, "roles", roleId, "permissions")
 }

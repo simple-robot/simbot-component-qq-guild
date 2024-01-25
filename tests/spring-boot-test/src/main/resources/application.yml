@@ -1,0 +1,6 @@
+simbot:
+  application:
+    application-launch-mode: thread
+  bots:
+    configuration-json-resources:
+      - 'classpath:simbot-bots/*.bot.json'

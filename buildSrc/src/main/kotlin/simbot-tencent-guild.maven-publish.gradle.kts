@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -30,145 +30,50 @@ plugins {
 val (isSnapshotOnly, isReleaseOnly, isPublishConfigurable) = checkPublishConfigurable()
 
 
-logger.info("isSnapshotOnly: $isSnapshotOnly")
-logger.info("isReleaseOnly: $isReleaseOnly")
-logger.info("isPublishConfigurable: $isPublishConfigurable")
-
-
+logger.info("isSnapshotOnly: {}", isSnapshotOnly)
+logger.info("isReleaseOnly: {}", isReleaseOnly)
+logger.info("isPublishConfigurable: {}", isPublishConfigurable)
 
 if (!isCi || isLinux) {
     checkPublishConfigurable {
         jvmConfigPublishing {
             project = P.ComponentQQGuild
-            publicationName = "tencentGuildDist"
+            publicationName = "QQGuildDist"
+            isSnapshot = isSnapshot().also {
+                logger.info("jvmConfigPublishing.isSnapshot: {}", it)
+            }
+
             val jarSources by tasks.registering(Jar::class) {
                 archiveClassifier.set("sources")
                 from(sourceSets["main"].allSource)
             }
 
             val jarJavadoc by tasks.registering(Jar::class) {
+                if (!(isSnapshot || isSnapshot())) {
+                    dependsOn(tasks.dokkaHtml)
+                    from(tasks.dokkaHtml.flatMap { it.outputDirectory })
+                }
                 archiveClassifier.set("javadoc")
             }
 
             artifact(jarSources)
             artifact(jarJavadoc)
 
-            isSnapshot = isSnapshot().also {
-                logger.info("jvmConfigPublishing.isSnapshot: {}", it)
-            }
             releasesRepository = ReleaseRepository
             snapshotRepository = SnapshotRepository
-            gpg = if (isSnapshot()) null else Gpg.ofSystemPropOrNull()
+            gpg = Gpg.ofSystemPropOrNull()
         }
-
-        if (isSnapshot()) {
-            publishing {
-                publications.withType<MavenPublication> {
-                    version = P.ComponentQQGuild.snapshotVersion.toString()
-                }
-            }
-        }
-
-        publishing {
-            publications.withType<MavenPublication> {
-                show()
-            }
-        }
-
-
     }
+
+    show()
 }
-
-
-//
-//if (isPublishConfigurable) {
-//    val sonatypeUsername: String? = systemProp("OSSRH_USER")
-//    val sonatypePassword: String? = systemProp("OSSRH_PASSWORD")
-//
-//    if (sonatypeUsername == null || sonatypePassword == null) {
-//        println("[WARN] - sonatype.username or sonatype.password is null, cannot config nexus publishing.")
-//    }
-//
-//    val jarSources by tasks.registering(Jar::class) {
-//        archiveClassifier.set("sources")
-//        from(sourceSets["main"].allSource)
-//    }
-//
-//    val jarJavadoc by tasks.registering(Jar::class) {
-//        archiveClassifier.set("javadoc")
-//    }
-//
-//    publishing {
-//        publications {
-//            create<MavenPublication>("tencentGuildDist") {
-//                from(components["java"])
-//                artifact(jarSources)
-//                artifact(jarJavadoc)
-//
-//                groupId = project.group.toString()
-//                artifactId = project.name
-//                version = project.version.toString()
-//                description = project.description?.toString() ?: P.ComponentTencentGuild.DESCRIPTION
-//
-//                pom {
-//                    show()
-//
-//                    name.set("${project.group}:${project.name}")
-//                    description.set(project.description?.toString() ?: P.ComponentTencentGuild.DESCRIPTION)
-//                    url.set("https://github.com/simple-robot/simbot-component-qq-guild")
-//                    licenses {
-//                        license {
-//                            name.set("GNU GENERAL PUBLIC LICENSE, Version 3")
-//                            url.set("https://www.gnu.org/licenses/gpl-3.0-standalone.html")
-//                        }
-//                        license {
-//                            name.set("GNU LESSER GENERAL PUBLIC LICENSE, Version 3")
-//                            url.set("https://www.gnu.org/licenses/lgpl-3.0-standalone.html")
-//                        }
-//                    }
-//                    scm {
-//                        url.set("https://github.com/simple-robot/simbot-component-qq-guild")
-//                        connection.set("scm:git:https://github.com/simple-robot/simbot-component-qq-guild.git")
-//                        developerConnection.set("scm:git:ssh://git@github.com/simple-robot/simbot-component-tencent-guild.git")
-//                    }
-//
-//                    setupDevelopers()
-//                }
-//            }
-//
-//
-//
-//            repositories {
-//                configMaven(Sonatype.Central, sonatypeUsername, sonatypePassword)
-//                configMaven(Sonatype.Snapshot, sonatypeUsername, sonatypePassword)
-//            }
-//        }
-//    }
-//
-//
-//    signing {
-//        val keyId = System.getenv("GPG_KEY_ID")
-//        val secretKey = System.getenv("GPG_SECRET_KEY")
-//        val password = System.getenv("GPG_PASSWORD")
-//
-//        setRequired {
-//            !project.version.toString().endsWith("SNAPSHOT")
-//        }
-//
-//        useInMemoryPgpKeys(keyId, secretKey, password)
-//
-//        sign(publishing.publications["tencentGuildDist"])
-//    }
-//
-//
-//    println("[publishing-configure] - [$name] configured.")
-//}
-
 
 
 inline val Project.sourceSets: SourceSetContainer
     get() = extensions.getByName("sourceSets") as SourceSetContainer
 
+internal val TaskContainer.dokkaHtml: TaskProvider<org.jetbrains.dokka.gradle.DokkaTask>
+    get() = named<org.jetbrains.dokka.gradle.DokkaTask>("dokkaHtml")
 
 fun Project.show() {
     //// show project info

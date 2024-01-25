@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -21,8 +21,14 @@ rootProject.name = "qq-guild"
 //include(":builder-generator")
 include(":simbot-component-qq-guild-api")
 include(":simbot-component-qq-guild-stdlib")
-include(":simbot-component-qq-guild-core-common")
 include(":simbot-component-qq-guild-core")
-include(":simbot-component-qq-guild-benchmark")
+//include(":simbot-component-qq-guild-core")
+//include(":simbot-component-qq-guild-benchmark")
 
+// tests
+//if (!System.getenv("IS_CI").toBoolean()) {
+//    include(":tests:application-test")
+//    include(":tests:spring-boot-test")
+//    include(":tests:plugin-test")
+//}
 

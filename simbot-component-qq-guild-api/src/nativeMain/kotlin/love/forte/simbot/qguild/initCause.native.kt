@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -20,5 +20,4 @@ package love.forte.simbot.qguild
 /**
  * @suppress
  */
-@PublishedApi
-internal actual inline fun <reified T : Throwable> T.initCause0(cause: Throwable): T = this
+public actual inline fun <reified T : Throwable> T.initCause0(cause: Throwable): T = this.also { addSuppressed(cause) }

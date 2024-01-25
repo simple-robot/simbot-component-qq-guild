@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -18,24 +18,25 @@
 import love.forte.gradle.common.core.project.ProjectDetail
 import love.forte.gradle.common.core.project.Version
 import love.forte.gradle.common.core.project.minus
+import love.forte.gradle.common.core.property.systemProp
 import love.forte.gradle.common.core.project.version as v
 
-val simbotVersion = v(3, 2, 0)
-//- v("RC", 3)
-
-fun simbot(name: String, version: String = simbotVersion.toString()): String = "love.forte.simbot:simbot-$name:$version"
-fun simboot(name: String, version: String = simbotVersion.toString()): String =
-    "love.forte.simbot.boot:simboot-$name:$version"
-
-val simbotApi = simbot("api")
-val simbotCore = simbot("core")
-val simbotLogger = simbot("logger")
-val simbotLoggerJvm = simbot("logger-jvm")
-val simbotLoggerSlf4jImpl = simbot("logger-slf4j-impl")
-
-val simbotUtilLoop = "love.forte.simbot.util:simbot-util-stage-loop:$simbotVersion"
-val simbotUtilSuspendTransformer = "love.forte.simbot.util:simbot-util-suspend-transformer:$simbotVersion"
-val simbotUtilAnnotations = "love.forte.simbot.util:simbot-annotations:$simbotVersion"
+//val simbotVersion = v(3, 2, 0)
+////- v("RC", 3)
+//
+//fun simbot(name: String, version: String = simbotVersion.toString()): String = "love.forte.simbot:simbot-$name:$version"
+//fun simboot(name: String, version: String = simbotVersion.toString()): String =
+//    "love.forte.simbot.boot:simboot-$name:$version"
+//
+//val simbotApi = simbot("api")
+//val simbotCore = simbot("core")
+//val simbotLogger = simbot("logger")
+//val simbotLoggerJvm = simbot("logger-jvm")
+//val simbotLoggerSlf4jImpl = simbot("logger-slf4j-impl")
+//
+//val simbotUtilLoop = "love.forte.simbot.util:simbot-util-stage-loop:$simbotVersion"
+//val simbotUtilSuspendTransformer = "love.forte.simbot.util:simbot-util-suspend-transformer:$simbotVersion"
+//val simbotUtilAnnotations = "love.forte.simbot.util:simbot-annotations:$simbotVersion"
 
 const val SIMBOT_GROUP = "love.forte.simbot"
 
@@ -58,19 +59,10 @@ object P {
         override val homepage: String get() = HOMEPAGE
 
 
-        private val baseVersion = v(
-            "${simbotVersion.major}.${simbotVersion.minor}",
-            0, 0
-        )
+        private val baseVersion = v(4, 0, 0) - v("dev6")
 
-        //private val alphaSuffix = v("beta", 2)
-
-        override val version = baseVersion // - alphaSuffix
         val snapshotVersion = baseVersion - Version.SNAPSHOT
-
-        val versionIfSnap get() = (if (isSnapshot()) snapshotVersion else version).toString()
-
-        val VERSION: String get() = versionIfSnap.toString()
+        override val version = if (isSnapshot()) snapshotVersion else baseVersion
 
         override val developers: List<Developer> = developers {
             developer {
@@ -118,3 +110,5 @@ private fun initIsSnapshot(): Boolean {
 }
 
 fun isSnapshot(): Boolean = _isSnapshot
+
+fun isSimbotLocal(): Boolean = systemProp("SIMBOT_LOCAL").toBoolean()

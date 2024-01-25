@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -25,14 +25,14 @@ package love.forte.simbot.qguild
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 @RequiresOptIn("API marked for Java use, not recommended for Kotlin.", level = RequiresOptIn.Level.WARNING)
-public annotation class Api4J
+public annotation class QGApi4J
 /**
  * 一个仅服务于JS的API。对于Kotlin来讲通常有更优选择。
  */
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 @RequiresOptIn("API marked for JS use, not recommended for Kotlin.", level = RequiresOptIn.Level.WARNING)
-public annotation class Api4JS
+public annotation class QGApi4JS
 
 // 好吧可能 OptIn 的 annotation 不能用 actual
 
@@ -42,4 +42,4 @@ public annotation class Api4JS
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 @RequiresOptIn("Internal API", level = RequiresOptIn.Level.WARNING)
-public annotation class InternalApi
+public annotation class QGInternalApi

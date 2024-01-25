@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -21,7 +21,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.ApiModel
 import love.forte.simbot.qguild.ErrInfo
-import love.forte.simbot.qguild.InternalApi
+import love.forte.simbot.qguild.QGInternalApi
 import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.qguild.api.message.direct.DmsSendApi
@@ -83,7 +83,7 @@ public class MessageAuditedException : QQGuildApiException {
     public companion object {
         private val AUDIT_ERROR_CODES = setOf(304023, 304024)
 
-        @InternalApi
+        @QGInternalApi
         internal fun isAuditResultCode(code: Int): Boolean = code in AUDIT_ERROR_CODES
     }
 }

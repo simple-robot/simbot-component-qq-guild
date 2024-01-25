@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -19,9 +19,9 @@ package love.forte.simbot.qguild.api.message
 
 import io.ktor.http.*
 import love.forte.simbot.qguild.PrivateDomainOnly
+import love.forte.simbot.qguild.api.DeleteQQGuildApi
 import love.forte.simbot.qguild.api.QQGuildApiWithoutResult
-import love.forte.simbot.qguild.api.RouteInfoBuilder
-import love.forte.simbot.qguild.api.SimpleApiDescription
+import love.forte.simbot.qguild.api.SimpleDeleteApiDescription
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 
@@ -38,9 +38,9 @@ import kotlin.jvm.JvmStatic
 @PrivateDomainOnly
 public class DeleteMessageApi private constructor(
     channelId: String, messageId: String, private val hidetip: Boolean? = null
-) : QQGuildApiWithoutResult() {
-    public companion object Factory : SimpleApiDescription(
-        HttpMethod.Delete, "/channels/{channel_id}/messages/{message_id}"
+) : QQGuildApiWithoutResult, DeleteQQGuildApi<Unit>() {
+    public companion object Factory : SimpleDeleteApiDescription(
+        "/channels/{channel_id}/messages/{message_id}"
     ) {
 
         /**
@@ -54,18 +54,11 @@ public class DeleteMessageApi private constructor(
             DeleteMessageApi(channelId, messageId, hidetip)
     }
 
-    override val method: HttpMethod
-        get() = HttpMethod.Delete
-
     // /channels/{channel_id}/messages/{message_id}?hidetip=false
-    private val path = arrayOf("channels", channelId, "messages", messageId)
+    override val path: Array<String> = arrayOf("channels", channelId, "messages", messageId)
 
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-        hidetip?.also { builder.parametersAppender.append("hidetip", it) }
+    override fun URLBuilder.buildUrl() {
+        hidetip?.also { parameters.append("hidetip", it.toString()) }
     }
-
-    override val body: Any?
-        get() = null
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -18,10 +18,7 @@
 
 package love.forte.simbot.qguild.api.message
 
-import io.ktor.client.*
-import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
-import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.utils.io.core.*
 import kotlinx.serialization.*
@@ -30,10 +27,11 @@ import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
-import love.forte.simbot.qguild.ErrInfo
-import love.forte.simbot.qguild.InternalApi
-import love.forte.simbot.qguild.QQGuildApiException
-import love.forte.simbot.qguild.api.*
+import love.forte.simbot.qguild.QGInternalApi
+import love.forte.simbot.qguild.QQGuild
+import love.forte.simbot.qguild.api.MessageAuditedException
+import love.forte.simbot.qguild.api.PostQQGuildApi
+import love.forte.simbot.qguild.api.SimplePostApiDescription
 import love.forte.simbot.qguild.api.message.MessageSendApi.Body.Builder
 import love.forte.simbot.qguild.message.ContentTextDecoder
 import love.forte.simbot.qguild.message.ContentTextEncoder
@@ -134,93 +132,35 @@ import kotlin.jvm.JvmSynthetic
  */
 public class MessageSendApi private constructor(
     channelId: String,
-    body: Body, // TencentMessageForSending || MultiPartFormDataContent
-) : QQGuildApi<Message>() {
+    private val _body: Body, // TencentMessageForSending || MultiPartFormDataContent
+) : PostQQGuildApi<Message>() {
     public companion object Factory : SimplePostApiDescription(
         "/channels/{channel_id}/messages"
     ) {
-        /** 类似于 [io.ktor.serialization.kotlinx.json.DefaultJson] */
+        internal val FormDataHeader = headers {
+            append(HttpHeaders.ContentType, ContentType.MultiPart.FormData)
+        }
+
         internal val defaultJson: Json
-            get() = Json {
-                encodeDefaults = true
-                isLenient = true
-                allowSpecialFloatingPointValues = true
-                allowStructuredMapKeys = true
-                prettyPrint = false
-                useArrayPolymorphism = false
-            }
+            get() = QQGuild.DefaultJson
 
         /**
-         * 构造 [MessageSendApi]
+         * 提供 [Body] 构造 [MessageSendApi]
          */
         @JvmStatic
         public fun create(channelId: String, body: Body): MessageSendApi = MessageSendApi(channelId, body)
     }
 
-    override val body: Any = body.toRealBody(defaultJson)
+    override fun createBody(): Any = _body.toRealBody(defaultJson)
 
-    private val path = arrayOf("channels", channelId, "messages")
+    override val path: Array<String> = arrayOf("channels", channelId, "messages")
 
-    override val resultDeserializer: DeserializationStrategy<Message>
+    override val resultDeserializationStrategy: DeserializationStrategy<Message>
         get() = Message.serializer()
 
-    override val method: HttpMethod
-        get() = HttpMethod.Post
+    override val headers: Headers
+        get() = if (body is MultiPartFormDataContent) FormDataHeader else Headers.Empty
 
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-        if (body is MultiPartFormDataContent) {
-            builder.contentType = ContentType.MultiPart.FormData
-        }
-    }
-
-    /**
-     * 使用当前API发送消息
-     *
-     * @throws MessageAuditedException 当响应状态为表示消息审核的 `304023`、`304024` 时
-     * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
-     * @throws love.forte.simbot.qguild.QQGuildApiException 请求过程中出现了错误（http状态码 !in 200 .. 300）
-     */
-    override suspend fun doRequest(client: HttpClient, server: Url, token: String, decoder: StringFormat): Message {
-        return super.doRequest(client, server, token, decoder)
-    }
-
-    /**
-     * 使用当前API发送消息
-     *
-     *
-     *  @throws MessageAuditedException 当响应状态为表示消息审核的 `304023`、`304024` 时
-     *  @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
-     *  @throws love.forte.simbot.qguild.QQGuildApiException 请求过程中出现了错误（http状态码 !in 200 .. 300）
-     */
-    override suspend fun doRequestRaw(client: HttpClient, server: Url, token: String): String {
-        val resp: HttpResponse
-        val text = requestForText(client, server, token) { resp = it }
-
-        checkStatus(text, DefaultErrInfoDecoder, resp.status)
-
-        if (text.isEmpty() && resp.status.isSuccess()) {
-            return "{}"
-        }
-
-        if (resp.status == HttpStatusCode.Accepted) {
-            // decode as error data
-            val errorInfo = DefaultErrInfoDecoder.decodeFromString(ErrInfo.serializer(), text)
-            // maybe audited
-            if (MessageAuditedException.isAuditResultCode(errorInfo.code)) {
-                throw MessageAuditedException(
-                    DefaultErrInfoDecoder.decodeFromJsonElement(MessageAudit.serializer(), errorInfo.data).messageAudit,
-                    errorInfo,
-                    resp.status.value,
-                    resp.status.description
-                )
-            }
-
-            throw QQGuildApiException(errorInfo, resp.status.value, resp.status.description)
-        }
-
-        return text
-    }
 
     /**
      * [MessageSendApi] 所需参数。详情参考 [文档](https://bot.q.qq.com/wiki/develop/api/openapi/message/post_messages.html#%E9%80%9A%E7%94%A8%E5%8F%82%E6%95%B0)
@@ -300,9 +240,54 @@ public class MessageSendApi private constructor(
          * 各属性参考 [Body] 内同名属性。
          *
          */
-        @OptIn(InternalApi::class)
         @Suppress("MemberVisibilityCanBePrivate")
-        public class Builder : BaseMessageSendBodyBuilder() {
+        public class Builder {
+            /**
+             * [fileImage] 直接set时支持的类型：
+             *
+             * 所有平台：
+             * - [ByteArray]
+             * - [InputProvider]
+             * - [ByteReadPacket]
+             * - [ChannelProvider]
+             *
+             * JVM 平台：
+             * - `java.nio.Path`
+             * - `java.io.File`
+             * - `java.net.URL`
+             * - `java.net.URI`
+             */
+            public var fileImage: Any? = null
+                set(value) {
+                    when (value) {
+                        null -> {
+                            field = value
+                        }
+
+                        is ByteArray -> {
+                            field = value
+                        }
+
+                        is InputProvider -> {
+                            field = value
+                        }
+
+                        is ByteReadPacket -> {
+                            field = value
+                        }
+
+                        is ChannelProvider -> {
+                            field = value
+                        }
+
+                        else -> {
+                            checkFileImage(value)
+                            field = value
+                        }
+                    }
+
+                }
+
             public var content: String? = null
             public var embed: Message.Embed? = null
             public var ark: Message.Ark? = null
@@ -367,6 +352,12 @@ public class MessageSendApi private constructor(
         public companion object {
 
             /**
+             * 得到一个 [Builder]。
+             */
+            @JvmStatic
+            public fun builder(): Builder = Builder()
+
+            /**
              * 构造一个 [Body].
              *
              * ```kotlin
@@ -401,20 +392,7 @@ public inline fun MessageSendApi.Factory.create(channelId: String, builder: Buil
     create(channelId, MessageSendApi.Body.invoke(builder))
 
 
-/**
- * 提供一些需要由不同平台额外实现的基类。
- * 主要针对 `fileImage`。
- */
-@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
-@InternalApi
-public expect abstract class BaseMessageSendBodyBuilder() {
-    public open var fileImage: Any?
-        protected set
-    /*
-     * 追加额外的平台功能，但是不能有抽象方法
-     */
-}
-
+internal expect fun checkFileImage(fileImage: Any)
 
 // // TencentMessageForSending || MultiPartFormDataContent
 /**
@@ -448,7 +426,6 @@ private const val FILE_IMAGE_PROPERTY_NAME = "file_image"
  * - [resolveOther] support other platform type.
  */
 
-@OptIn(InternalApi::class)
 private fun FormBuilder.appendFileImage(fileImage: Any?) {
     when (fileImage) {
         is ByteArray -> {
@@ -500,7 +477,7 @@ private fun FormBuilder.appendFileImage(fileImage: Any?) {
  * 类型以外可能支持的类型。
  *
  */
-@InternalApi
+@QGInternalApi
 public expect fun FormBuilder.resolveOther(fileImage: Any?)
 
 

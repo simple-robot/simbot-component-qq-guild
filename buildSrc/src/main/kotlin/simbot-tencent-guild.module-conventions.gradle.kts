@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -15,69 +15,27 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 import love.forte.gradle.common.core.project.setup
-import love.forte.gradle.common.core.repository.Repositories
-import org.jetbrains.dokka.DokkaConfiguration
-import org.jetbrains.dokka.gradle.DokkaTaskPartial
-import java.net.URL
 
 
 plugins {
-    `java-library`
-    kotlin("jvm")
-    kotlin("plugin.serialization")
     idea
 }
 
 setup(P.ComponentQQGuild)
-if (isSnapshot()) {
-    version = P.ComponentQQGuild.snapshotVersion.toString()
-}
 
-repositories {
-    mavenCentral()
-    maven {
-        url = uri(Repositories.Snapshot.URL)
-        mavenContent {
-            snapshotsOnly()
-        }
-    }
-}
-
-dependencies {
-    testImplementation(kotlin("test-junit5"))
-}
-
-
-tasks.getByName<Test>("test") {
-    useJUnitPlatform()
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions {
-        javaParameters = true
-        jvmTarget = "1.8"
-        freeCompilerArgs = freeCompilerArgs + listOf("-Xjvm-default=all")
-    }
-}
-
-tasks.withType<JavaCompile> {
-    sourceCompatibility = "1.8"
-    targetCompatibility = "1.8"
-    options.encoding = "UTF-8"
-}
-
-kotlin {
-    explicitApi()
-    sourceSets.configureEach {
-        languageSettings {
-            optIn("kotlin.RequiresOptIn")
-        }
-    }
-
-    sourceSets.getByName("test").kotlin {
-        srcDir("src/samples")
-    }
-}
+//
+//kotlin {
+//    explicitApi()
+//    sourceSets.configureEach {
+//        languageSettings {
+//            optIn("kotlin.RequiresOptIn")
+//        }
+//    }
+//
+//    sourceSets.getByName("test").kotlin {
+//        srcDir("src/samples")
+//    }
+//}
 
 configurations.all {
     // check for updates every build
@@ -91,11 +49,3 @@ idea {
         isDownloadJavadoc = true
     }
 }
-
-
-//// show project info
-logger.info("========================================================")
-logger.info("== project.group:   ${group}")
-logger.info("== project.name:    ${name}")
-logger.info("== project.version: ${version}")
-logger.info("========================================================")

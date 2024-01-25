@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,13 +17,10 @@
 
 package love.forte.simbot.qguild.api.guild.mute
 
-import io.ktor.http.*
-import kotlinx.serialization.DeserializationStrategy
-import kotlinx.serialization.builtins.serializer
-import love.forte.simbot.qguild.api.QQGuildApi
-import love.forte.simbot.qguild.api.RouteInfoBuilder
-import love.forte.simbot.qguild.api.SimpleApiDescription
-import love.forte.simbot.qguild.time.TimeUnit
+import love.forte.simbot.common.time.TimeUnit
+import love.forte.simbot.qguild.api.PatchQQGuildApi
+import love.forte.simbot.qguild.api.QQGuildApiWithoutResult
+import love.forte.simbot.qguild.api.SimplePatchApiDescription
 import kotlin.jvm.JvmStatic
 import kotlin.jvm.JvmSynthetic
 import kotlin.time.Duration
@@ -32,15 +29,11 @@ import kotlin.time.Duration
 /**
  * @suppress
  */
-public abstract class BaseMuteAllApi internal constructor(guildId: String, body: MuteBody) : QQGuildApi<Unit>() {
-    override val method: HttpMethod get() = HttpMethod.Patch
-    private val path = arrayOf("guilds", guildId, "mute")
-    override val resultDeserializer: DeserializationStrategy<Unit> get() = Unit.serializer()
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-    }
-
-    override val body: Any = body
+public abstract class BaseMuteAllApi internal constructor(guildId: String, private val _body: MuteBody) :
+    QQGuildApiWithoutResult,
+    PatchQQGuildApi<Unit>() {
+    override val path: Array<String> = arrayOf("guilds", guildId, "mute")
+    override fun createBody(): Any = _body
 }
 
 /**
@@ -56,10 +49,9 @@ public abstract class BaseMuteAllApi internal constructor(guildId: String, body:
  * @author ForteScarlet
  */
 public class MuteAllApi private constructor(guildId: String, body: MuteBody) : BaseMuteAllApi(guildId, body) {
-    public companion object Factory : SimpleApiDescription(
-        HttpMethod.Patch, "/guilds/{guild_id}/mute"
+    public companion object Factory : SimplePatchApiDescription(
+        "/guilds/{guild_id}/mute"
     ) {
-
         /**
          * 使用 `mute_seconds` 的方式构建 [MuteAllApi]
          * @param muteSeconds 禁言多少秒
@@ -69,7 +61,6 @@ public class MuteAllApi private constructor(guildId: String, body: MuteBody) : B
         @JvmSynthetic
         public fun create(guildId: String, muteSeconds: Duration): MuteAllApi =
             createBySeconds(guildId, muteSeconds.inWholeSeconds)
-
 
         /**
          * 使用 `mute_seconds` 的方式构建 [MuteAllApi]
@@ -88,7 +79,6 @@ public class MuteAllApi private constructor(guildId: String, body: MuteBody) : B
         @JvmStatic
         public fun createUnmute(guildId: String): MuteAllApi = MuteAllApi(guildId, MuteBody.Unmute)
 
-
         private fun createBySeconds(guildId: String, seconds: Long): MuteAllApi {
             return when {
                 seconds == 0L -> MuteAllApi(guildId, MuteBody.Unmute)
@@ -98,19 +88,4 @@ public class MuteAllApi private constructor(guildId: String, body: MuteBody) : B
         }
 
     }
-
-    override val method: HttpMethod
-        get() = HttpMethod.Patch
-
-    private val path = arrayOf("guilds", guildId, "mute")
-
-    override val resultDeserializer: DeserializationStrategy<Unit>
-        get() = Unit.serializer()
-
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-    }
-
-    override val body: Any = body
-
 }

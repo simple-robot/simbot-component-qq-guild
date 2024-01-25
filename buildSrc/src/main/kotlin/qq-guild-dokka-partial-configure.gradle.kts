@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -15,7 +15,6 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-import org.gradle.kotlin.dsl.withType
 import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.gradle.DokkaTaskPartial
 import java.net.URL
@@ -50,10 +49,10 @@ tasks.withType<DokkaTaskPartial>().configureEach {
         }
 
         // samples
-        samples.from(
-            project.files(),
-            project.files("src/samples"),
-        )
+//        samples.from(
+//            project.files(),
+//            project.files("src/samples"),
+//        )
 
         sourceLink {
             localDirectory.set(projectDir.resolve("src"))

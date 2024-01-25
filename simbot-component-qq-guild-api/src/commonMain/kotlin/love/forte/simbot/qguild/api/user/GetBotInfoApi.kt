@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -22,7 +22,6 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import love.forte.simbot.qguild.api.ApiDescription
 import love.forte.simbot.qguild.api.GetQQGuildApi
-import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleGetApiDescription
 import love.forte.simbot.qguild.api.user.GetBotInfoApi.Description
 import love.forte.simbot.qguild.model.User
@@ -46,12 +45,8 @@ public object GetBotInfoApi : GetQQGuildApi<User>() {
      */
     public object Description : SimpleGetApiDescription("/users/@me")
 
-    private val pathSec = arrayOf("users", "@me")
-    override val resultDeserializer: DeserializationStrategy<User> = BotInfoDeserializationStrategy
-
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = pathSec
-    }
+    override val path: Array<String> = arrayOf("users", "@me")
+    override val resultDeserializationStrategy: DeserializationStrategy<User> = BotInfoDeserializationStrategy
 }
 
 private object BotInfoDeserializationStrategy : DeserializationStrategy<User> {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,10 +17,8 @@
 
 package love.forte.simbot.qguild.api.channel.pins
 
-import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
-import love.forte.simbot.qguild.api.QQGuildApi
-import love.forte.simbot.qguild.api.RouteInfoBuilder
+import love.forte.simbot.qguild.api.GetQQGuildApi
 import love.forte.simbot.qguild.api.SimpleGetApiDescription
 import love.forte.simbot.qguild.model.PinsMessage
 import kotlin.jvm.JvmStatic
@@ -35,7 +33,7 @@ import kotlin.jvm.JvmStatic
  */
 public class GetPinsMessageApi private constructor(
     channelId: String
-) : QQGuildApi<PinsMessage>() {
+) : GetQQGuildApi<PinsMessage>() {
     public companion object Factory : SimpleGetApiDescription("/channels/{channel_id}/pins") {
 
         /**
@@ -47,16 +45,7 @@ public class GetPinsMessageApi private constructor(
         public fun create(channelId: String): GetPinsMessageApi = GetPinsMessageApi(channelId)
     }
 
-    private val path = arrayOf("channels", channelId, "pins")
+    override val path: Array<String> = arrayOf("channels", channelId, "pins")
 
-
-    override val resultDeserializer: DeserializationStrategy<PinsMessage> get() = PinsMessage.serializer()
-
-    override val method: HttpMethod get() = HttpMethod.Get
-
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-    }
-
-    override val body: Any? get() = null
+    override val resultDeserializationStrategy: DeserializationStrategy<PinsMessage> get() = PinsMessage.serializer()
 }

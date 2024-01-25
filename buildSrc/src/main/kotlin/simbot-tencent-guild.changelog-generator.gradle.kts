@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -28,22 +28,38 @@ tasks.create("createChangelog") {
         }
         val file = File(changelogDir, "$version.md")
         if (!file.exists()) {
-            file.createNewFile()
+
+            val libs = rootProject.extensions.getByType<VersionCatalogsExtension>()
+                .named("libs")
+
+            val simbotVersion = libs.findVersion("simbot").get()
+
             val coreVersion = simbotVersion
-            val autoGenerateText = """
-                > 对应核心版本: [**v$coreVersion**](https://github.com/simple-robot/simpler-robot/releases/tag/v$coreVersion)
-                
-                > **Warning**
-                > **目前版本处于 `BETA` 阶段，代表我们会尽量保证不再大面积变更API，且仍然可能存在一些未知问题、未完善的内容和落后于官方更新的内容。**
-                
-                我们欢迎并期望着您的的[反馈](https://github.com/simple-robot/simbot-component-qq-guild/issues)或[协助](https://github.com/simple-robot/simbot-component-qq-guild/pulls)，
-                感谢您的贡献与支持！
+            val autoGenerateText = buildString {
+                appendLine("> 对应核心版本: [**v$coreVersion**](https://github.com/simple-robot/simpler-robot/releases/tag/v$coreVersion)\n\n")
 
-                也欢迎您为我们献上一颗 `star`，这是对我们最大的鼓励与认可！
-                
-            """.trimIndent()
+                if ("dev" in version) {
+                    appendLine(
+                        """
+                        > [!warning]
+                        > **目前版本处于 `dev` 阶段，代表此版本是一个开发预览版，可能不稳定、可能随时发生更改、且不保证可用性。**
+                        
+                        
+                    """.trimIndent()
+                    )
+                }
 
+                appendLine(
+                    """
+                    我们欢迎并期望着您的的[反馈](https://github.com/simple-robot/simbot-component-qq-guild/issues)或[协助](https://github.com/simple-robot/simbot-component-qq-guild/pulls)，
+                    感谢您的贡献与支持！
 
+                    也欢迎您为我们献上一颗 `star`，这是对我们最大的鼓励与认可！
+                """.trimIndent()
+                )
+            }
+
+            file.createNewFile()
             file.writeText(autoGenerateText)
         }
     }
@@ -75,5 +91,15 @@ tasks.create("updateWebsiteVersionJson") {
 
 
 fun repoRow(moduleName: String, group: String, id: String, version: String): String {
-    return "| $moduleName | [$moduleName: v$version](https://repo1.maven.org/maven2/${group.replace(".", "/")}/${id.replace(".", "/")}/$version) | [$moduleName: v$version](https://search.maven.org/artifact/$group/$id/$version/jar)  |"
+    return "| $moduleName | [$moduleName: v$version](https://repo1.maven.org/maven2/${
+        group.replace(
+            ".",
+            "/"
+        )
+    }/${
+        id.replace(
+            ".",
+            "/"
+        )
+    }/$version) | [$moduleName: v$version](https://search.maven.org/artifact/$group/$id/$version/jar)  |"
 }

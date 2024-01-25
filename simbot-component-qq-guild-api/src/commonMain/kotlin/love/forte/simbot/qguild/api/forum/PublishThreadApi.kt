@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,14 +17,12 @@
 
 package love.forte.simbot.qguild.api.forum
 
-import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.ApiModel
-import love.forte.simbot.qguild.api.QQGuildApi
-import love.forte.simbot.qguild.api.RouteInfoBuilder
-import love.forte.simbot.qguild.api.SimpleApiDescription
+import love.forte.simbot.qguild.api.PutQQGuildApi
+import love.forte.simbot.qguild.api.SimplePutApiDescription
 import kotlin.jvm.JvmStatic
 
 /**
@@ -35,8 +33,8 @@ import kotlin.jvm.JvmStatic
  */
 public class PublishThreadApi private constructor(
     channelId: String, private val _body: Body
-) : QQGuildApi<ThreadPublishResult>() {
-    public companion object Factory : SimpleApiDescription(HttpMethod.Put, "/channels/{channel_id}/threads") {
+) : PutQQGuildApi<ThreadPublishResult>() {
+    public companion object Factory : SimplePutApiDescription("/channels/{channel_id}/threads") {
 
         /**
          * 构造 [PublishThreadApi]
@@ -59,7 +57,12 @@ public class PublishThreadApi private constructor(
          * @param format 帖子文本格式。see [ThreadPublishFormat]
          */
         @JvmStatic
-        public fun create(channelId: String, title: String, content: String, format: ThreadPublishFormat): PublishThreadApi =
+        public fun create(
+            channelId: String,
+            title: String,
+            content: String,
+            format: ThreadPublishFormat
+        ): PublishThreadApi =
             create(channelId, title, content, format.value)
 
         /**
@@ -116,19 +119,12 @@ public class PublishThreadApi private constructor(
 
     }
 
-    override val method: HttpMethod
-        get() = HttpMethod.Put
+    override val path: Array<String> = arrayOf("channels", channelId, "threads")
 
-    private val path = arrayOf("channels", channelId, "threads")
-
-    override val resultDeserializer: DeserializationStrategy<ThreadPublishResult>
+    override val resultDeserializationStrategy: DeserializationStrategy<ThreadPublishResult>
         get() = ThreadPublishResult.serializer()
 
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-    }
-
-    override val body: Any get() = _body
+    override fun createBody(): Any = _body
 
     @Serializable
     private data class Body(val title: String, val content: String, val format: Int)

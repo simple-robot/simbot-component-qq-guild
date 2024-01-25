@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,16 +17,13 @@
 
 package love.forte.simbot.qguild.event
 
-import kotlinx.serialization.Contextual
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
 import kotlinx.serialization.builtins.IntArraySerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
-import love.forte.simbot.qguild.InternalApi
+import love.forte.simbot.qguild.QGInternalApi
 import love.forte.simbot.qguild.event.Signal.Dispatch.Unknown
 import love.forte.simbot.qguild.event.Signal.Resume.Data
 import kotlin.jvm.JvmField
@@ -113,7 +110,7 @@ public sealed class Signal<D>(@Serializable(Opcode.SerializerByCode::class) publ
      * 当发送心跳成功之后，就会收到该消息
      */
     @Serializable
-    public object HeartbeatACK : Signal<Unit>(Opcode.HeartbeatACK), ReceivedSignal {
+    public data object HeartbeatACK : Signal<Unit>(Opcode.HeartbeatACK), ReceivedSignal {
         /**
          * 没有data信息
          */
@@ -157,7 +154,9 @@ public sealed class Signal<D>(@Serializable(Opcode.SerializerByCode::class) publ
      * @see love.forte.simbot.qguild.event
      *
      */
+    @OptIn(ExperimentalSerializationApi::class)
     @Serializable
+    @JsonClassDiscriminator(Dispatch.DISPATCH_CLASS_DISCRIMINATOR)
     public sealed class Dispatch : Signal<@Contextual Any>(Opcode.Dispatch) {
 
         /**
@@ -203,7 +202,6 @@ public sealed class Signal<D>(@Serializable(Opcode.SerializerByCode::class) publ
         }
 
 
-
         /**
          * 用于承载未知类型事件的事件类型。
          *
@@ -212,12 +210,14 @@ public sealed class Signal<D>(@Serializable(Opcode.SerializerByCode::class) publ
          * [Unknown] 的构建仅由内部完成。
          *
          */
-        public data class Unknown @InternalApi constructor(override val s: Long, override val data: JsonElement, val raw: String) : Dispatch()
+        public data class Unknown @QGInternalApi constructor(
+            override val s: Long,
+            override val data: JsonElement,
+            val raw: String
+        ) : Dispatch()
 
     }
 }
-
-
 
 
 /**
