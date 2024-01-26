@@ -29,6 +29,7 @@ plugins {
 
 setup(P.ComponentQQGuild)
 
+useK2()
 configJavaCompileWithModule("simbot.component.qqguild.api")
 //apply(plugin = "qq-guild-dokka-partial-configure")
 apply(plugin = "qq-guild-multiplatform-maven-publish")

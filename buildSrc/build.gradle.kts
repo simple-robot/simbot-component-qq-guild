@@ -22,6 +22,7 @@ plugins {
 repositories {
     mavenCentral()
     gradlePluginPortal()
+    mavenLocal()
 }
 
 val kotlinVersion: String = libs.versions.kotlin.get()
@@ -44,5 +45,8 @@ dependencies {
     implementation(libs.bundles.gradle.common)
 }
 
-
-
+//tasks.withType<KotlinCompile> {
+//    kotlinOptions {
+//        languageVersion = "2.0"
+//    }
+//}
