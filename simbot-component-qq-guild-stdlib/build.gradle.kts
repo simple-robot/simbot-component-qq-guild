@@ -29,6 +29,7 @@ plugins {
 
 setup(P.ComponentQQGuild)
 
+useK2()
 configJavaCompileWithModule("simbot.component.qqguild.stdlib")
 apply(plugin = "qq-guild-multiplatform-maven-publish")
 

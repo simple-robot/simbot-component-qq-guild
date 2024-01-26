@@ -16,8 +16,8 @@
 
     </toc-element>
     <toc-element topic="bot-config.md"/>
-    <toc-element toc-title="API">
-        <toc-element topic="api.md"/>
+    <toc-element toc-title="API与部分能力">
+        <toc-element topic="api-list.md"/>
         <toc-element topic="api_ark.md"/>
         <toc-element topic="api_embed.md"/>
         <toc-element topic="api_forum.md"/>
