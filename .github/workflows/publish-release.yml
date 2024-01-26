@@ -2,7 +2,7 @@ name: Publish Release
 on:
   push:
     tags:
-      - v3.**.**
+      - v4.**.**
 
 env:
   IS_CI: true
@@ -33,7 +33,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: 11
+          java-version: 21
           cache: 'gradle'
 
       # setup Gradle
@@ -99,7 +99,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: 11
+          java-version: 21
 
       # setup Gradle
       - name: Gradle publish snapshot
@@ -135,7 +135,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: 11
+          java-version: 21
 
       # setup Gradle
       - name: Gradle generate documentation
@@ -156,7 +156,7 @@ jobs:
         with:
           personal_token: ${{ secrets.PUSH_TOKEN }}
           external_repository: simple-robot-library/simbot3-api-docs
-          publish_branch: kdoc-deploy/component-qq-guild-v3
+          publish_branch: kdoc-deploy/component-qq-guild
           publish_dir: ./build/dokka/html
           # deploy to sub dir
-          destination_dir: components/qq-guild-v3
+          destination_dir: components/qq-guild

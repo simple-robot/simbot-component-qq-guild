@@ -5,11 +5,16 @@ on:
       - main
       - dev/ver/**
       - dev/main
-
     paths:
-      - '**src/main/kotlin/**.kt'
-      - '**src/main/java/**.java'
-      - 'buildSrc/**'
+      - 'buildSrc'
+      - '**src/**/kotlin/**.kt'
+      - '**src/**/java/**.java'
+      - '**/src/**/kotlin/**.kt'
+      - '**/src/**/java/**.java'
+      - '**/build.gradle.kts'
+      - 'build.gradle.kts'
+      - 'settings.gradle.kts'
+      - 'gradle.properties'
 
   # 手动触发工作流
   workflow_dispatch:
@@ -45,7 +50,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: 11
+          java-version: 21
 
       # setup Gradle
       - name: Gradle test and publish snapshot
@@ -77,7 +82,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: 11
+          java-version: 21
 
       # setup Gradle
       - name: Gradle generate documentation
@@ -99,7 +104,7 @@ jobs:
         with:
           personal_token: ${{ secrets.PUSH_TOKEN }}
           external_repository: simple-robot-library/simbot3-api-docs
-          publish_branch: kdoc-deploy/snapshots/component-qq-guild-v3
+          publish_branch: kdoc-deploy/snapshots/component-qq-guild
           publish_dir: ./build/dokka/html
           # deploy to sub dir
-          destination_dir: snapshots/components/qq-guild-v3
+          destination_dir: snapshots/components/qq-guild

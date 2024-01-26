@@ -80,8 +80,8 @@ ktor-client-winhttp = { group = "io.ktor", name = "ktor-client-winhttp", version
 # see https://ktor.io/docs/http-client-engines.html#darwin
 ktor-client-darwin = { group = "io.ktor", name = "ktor-client-darwin", version.ref = "ktor" }
 
-# nodejs
-#kotlinx-nodejs = ""
+# nodejsn
+##kotlinx-odejs = ""
 
 # log4j
 log4j-api = { group = "org.apache.logging.log4j", name = "log4j-api", version.ref = "log4j" }

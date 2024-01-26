@@ -28,15 +28,17 @@ repositories {
 }
 
 fun org.jetbrains.dokka.gradle.AbstractDokkaTask.configOutput(format: String) {
-    moduleName.set("Simple Robot Component | QQ Guild")
+    moduleName.set("Simple Robot 组件 | QQ Guild")
     outputDirectory.set(rootProject.file("build/dokka/$format"))
 }
 
 tasks.named<org.jetbrains.dokka.gradle.DokkaMultiModuleTask>("dokkaHtmlMultiModule") {
     configOutput("html")
-    if (isSnapshot()) {
-        version = P.ComponentQQGuild.snapshotVersion.toString()
+
+    rootProject.file("README.md").takeIf { it.exists() }?.also {
+        includes.from(it)
     }
+
     pluginConfiguration<DokkaBase, DokkaBaseConfiguration> {
         customAssets = listOf(rootProject.file(".simbot/dokka-assets/logo-icon.svg"))
         customStyleSheets = listOf(rootProject.file(".simbot/dokka-assets/css/kdoc-style.css"))

@@ -2,11 +2,11 @@ name: Deploy Website
 on:
   push:
     branches:
-#      - main
-#      - dev/ver/**
-#      - dev/main
-      - v4-dev/main
-      - v4-dev/v4-upgrade
+      - main
+      - dev/ver/**
+      - dev/main
+#      - v4-dev/main
+#      - v4-dev/v4-upgrade
 
     paths:
       - 'Writerside/**'
