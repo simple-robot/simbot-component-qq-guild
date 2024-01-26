@@ -13,44 +13,503 @@ API 模块所有的事件封装类型都在包 `love.forte.simbot.qguild.event` 
 
 所有事件封装类型均继承密封类 `love.forte.simbot.qguild.event.Signal.Dispatch`。 
 
-<deflist type="wide">
-<def title="ChannelCreate">子频道创建事件 <code>CHANNEL_CREATE</code> </def>
-<def title="ChannelUpdate">子频道修改事件 <code>CHANNEL_UPDATE</code> </def>
-<def title="ChannelDelete">子频道删除事件 <code>CHANNEL_DELETE</code> </def>
-<def title="ForumThreadCreate">主题创建事件 <code>FORUM_THREAD_CREATE</code></def>
-<def title="ForumThreadUpdate">主题更新事件 <code>FORUM_THREAD_UPDATE</code></def>
-<def title="ForumThreadDelete">主题删除事件 <code>FORUM_THREAD_DELETE</code></def>
-<def title="ForumPostCreate">帖子创建事件 <code>FORUM_POST_CREATE</code></def>
-<def title="ForumPostDelete">帖子删除事件 <code>FORUM_POST_DELETE</code></def>
-<def title="ForumReplyCreate">回复创建事件 <code>FORUM_REPLY_CREATE</code> </def>
-<def title="ForumReplyDelete">回复删除事件 <code>FORUM_REPLY_DELETE</code> </def>
-<def title="ForumPublishAuditResult">帖子审核事件 <code>FORUM_PUBLISH_AUDIT_RESULT</code> </def>
-<def title="OpenForumThreadCreate">"开放"创建主题事件 <code>OPEN_FORUM_THREAD_CREATE</code> </def>
-<def title="OpenForumThreadUpdate">"开放"更新主题事件 <code>OPEN_FORUM_THREAD_UPDATE</code> </def>
-<def title="OpenForumThreadDelete">"开放"删除主题事件 <code>OPEN_FORUM_THREAD_DELETE</code> </def>
-<def title="OpenForumPostCreate">"开放"帖子创建(评论)事件 <code>OPEN_FORUM_POST_CREATE</code> </def>
-<def title="OpenForumPostDelete">"开放"帖子删除(评论)事件 <code>OPEN_FORUM_POST_DELETE</code> </def>
-<def title="OpenForumReplyCreate">"开放"回复创建事件 <code>OPEN_FORUM_REPLY_CREATE</code> </def>
-<def title="OpenForumReplyDelete">"开放"回复删除事件 <code>OPEN_FORUM_REPLY_DELETE</code> </def>
-<def title="GuildCreate">Bot加入频道事件 <code>GUILD_CREATE</code></def>
-<def title="GuildUpdate">频道信息变更事件 <code>GUILD_UPDATE</code></def>
-<def title="GuildDelete">Bot因各种原因退出频道事件 <code>GUILD_DELETE</code></def>
-<def title="GuildMemberAdd">新用户加入频道事件 <code>GUILD_MEMBER_ADD</code></def>
-<def title="GuildMemberUpdate">用户的频道属性发生变化事件 <code>GUILD_MEMBER_UPDATE</code></def>
-<def title="GuildMemberRemove">用户离开频道事件 <code>GUILD_MEMBER_REMOVE</code></def>
-<def title="AtMessageCreate">收到公域at消息事件 <code>AT_MESSAGE_CREATE</code></def>
+<deflist>
+<def title="Ready">
+
+`love.forte.simbot.qguild.event.Ready`
+
+事件类型名: `"READY"`
+
+鉴权成功之后，后台会下发的 Ready Event.
+
+</def>
+<def title="Resumed">
+
+`love.forte.simbot.qguild.event.Resumed`
+
+事件类型名: `"RESUMED"`
+
+<a ignore-vars="true" href="https://bot.q.qq.com/wiki/develop/api/gateway/reference.html">4.恢复连接</a>
+恢复成功之后，就开始补发遗漏事件，所有事件补发完成之后，会下发一个 `Resumed Event`
+
+</def>
+<def title="ChannelDispatch">
+
+`love.forte.simbot.qguild.event.ChannelDispatch`
+
+channel相关的事件类型。[data] 类型为 [EventChannel]。
+
+</def>
+<def title="ChannelCreate">
+
+`love.forte.simbot.qguild.event.ChannelCreate`
+
+事件类型名: `"CHANNEL_CREATE"`
+
+子频道事件 <a ignore-vars="true" href="https://bot.q.qq.com/wiki/develop/api/gateway/channel.html#channel-create">CHANNEL_CREATE</a>
+
+**发送时机**
+
+- 子频道被创建
+
+</def>
+<def title="ChannelUpdate">
+
+`love.forte.simbot.qguild.event.ChannelUpdate`
+
+事件类型名: `"CHANNEL_UPDATE"`
+
+子频道事件 <a ignore-vars="true" href="https://bot.q.qq.com/wiki/develop/api/gateway/channel.html#channel-update">CHANNEL_UPDATE</a>
+
+**发送时机**
+
+- 子频道信息变更
+
+</def>
+<def title="ChannelDelete">
+
+`love.forte.simbot.qguild.event.ChannelDelete`
+
+事件类型名: `"CHANNEL_DELETE"`
+
+子频道事件 <a ignore-vars="true" href="https://bot.q.qq.com/wiki/develop/api/gateway/channel.html#channel-delete">CHANNEL_DELETE</a>
+
+**发送时机**
+
+- 子频道被删除
+
+</def>
+<def title="ForumDispatch">
+
+`love.forte.simbot.qguild.event.ForumDispatch`
+
+<a ignore-vars="true" href="https://bot.q.qq.com/wiki/develop/api/gateway/forum.html#forum-event-intents-forum-event">论坛事件(ForumEvent)</a>
+
+**发送时机**
+
+用户在话题子频道内发帖、评论、回复评论时产生该事件
+
+**主题事件**
+
+- FORUM_THREAD_CREATE
+- FORUM_THREAD_UPDATE
+- FORUM_THREAD_DELETE
+  事件内容为`Thread`对象
+
+**帖子事件**
+
+- FORUM_POST_CREATE
+- FORUM_POST_DELETE
+  事件内容为`Post`对象
+
+**回复事件**
+
+- FORUM_REPLY_CREATE
+- FORUM_REPLY_DELETE
+  事件内容为`Reply`对象
+
+**帖子审核事件**
+
+- FORUM_PUBLISH_AUDIT_RESULT
+  事件内容为`AuditResult`对象
+
+</def>
+<def title="ForumThreadDispatch">
+
+`love.forte.simbot.qguild.event.ForumThreadDispatch`
+
+论坛事件：主题事件
+
+</def>
+<def title="ForumThreadCreate">
+
+`love.forte.simbot.qguild.event.ForumThreadCreate`
+
+事件类型名: `"FORUM_THREAD_CREATE"`
+
+主题创建事件。
+
+</def>
+<def title="ForumThreadUpdate">
+
+`love.forte.simbot.qguild.event.ForumThreadUpdate`
+
+事件类型名: `"FORUM_THREAD_UPDATE"`
+
+主题更新事件。
+
+</def>
+<def title="ForumThreadDelete">
+
+`love.forte.simbot.qguild.event.ForumThreadDelete`
+
+事件类型名: `"FORUM_THREAD_DELETE"`
+
+主题删除事件。
+
+</def>
+<def title="ForumPostDispatch">
+
+`love.forte.simbot.qguild.event.ForumPostDispatch`
+
+论坛事件：帖子事件
+
+</def>
+<def title="ForumPostCreate">
+
+`love.forte.simbot.qguild.event.ForumPostCreate`
+
+事件类型名: `"FORUM_POST_CREATE"`
+
+帖子创建事件
+
+</def>
+<def title="ForumPostDelete">
+
+`love.forte.simbot.qguild.event.ForumPostDelete`
+
+事件类型名: `"FORUM_POST_DELETE"`
+
+帖子删除事件
+
+</def>
+<def title="ForumReplyDispatch">
+
+`love.forte.simbot.qguild.event.ForumReplyDispatch`
+
+论坛事件：回复事件
+
+</def>
+<def title="ForumReplyCreate">
+
+`love.forte.simbot.qguild.event.ForumReplyCreate`
+
+事件类型名: `"FORUM_REPLY_CREATE"`
+
+回复创建事件
+
+</def>
+<def title="ForumReplyDelete">
+
+`love.forte.simbot.qguild.event.ForumReplyDelete`
+
+事件类型名: `"FORUM_REPLY_DELETE"`
+
+回复删除事件
+
+</def>
+<def title="ForumPublishAuditResult">
+
+`love.forte.simbot.qguild.event.ForumPublishAuditResult`
+
+事件类型名: `"FORUM_PUBLISH_AUDIT_RESULT"`
+
+帖子审核事件
+
+</def>
+<def title="EventGuildDispatch">
+
+`love.forte.simbot.qguild.event.EventGuildDispatch`
+
+Guild相关事件类型。[data] 类型为 [EventGuild]。
+
+</def>
+<def title="GuildCreate">
+
+`love.forte.simbot.qguild.event.GuildCreate`
+
+事件类型名: `"GUILD_CREATE"`
+
+<a ignore-vars="true" href="https://bot.q.qq.com/wiki/develop/api/gateway/guild.html#guild-create">GUILD_CREATE</a>
+
+**发送时机**
+
+- 机器人被加入到某个频道的时候
+
+</def>
+<def title="GuildUpdate">
+
+`love.forte.simbot.qguild.event.GuildUpdate`
+
+事件类型名: `"GUILD_UPDATE"`
+
+<a ignore-vars="true" href="https://bot.q.qq.com/wiki/develop/api/gateway/guild.html#guild-update">GUILD_UPDATE</a>
+
+**发送时机**
+
+- 频道信息变更
+- 事件内容为变更后的数据
+
+</def>
+<def title="GuildDelete">
+
+`love.forte.simbot.qguild.event.GuildDelete`
+
+事件类型名: `"GUILD_DELETE"`
+
+<a ignore-vars="true" href="https://bot.q.qq.com/wiki/develop/api/gateway/guild.html#guild-delete">GUILD_DELETE</a>
+
+**发送时机**
+
+- 频道被解散
+- 机器人被移除
+- 事件内容为变更前的数据
+
+</def>
+<def title="GuildMemberAdd">
+
+`love.forte.simbot.qguild.event.GuildMemberAdd`
+
+事件类型名: `"GUILD_MEMBER_ADD"`
+
+<a ignore-vars="true" href="https://bot.q.qq.com/wiki/develop/api/gateway/guild_member.html#guild-member-add">`GUILD_MEMBER_ADD`</a>
+
+**发送时机**
+
+- 新用户加入频道
+
+</def>
+<def title="GuildMemberUpdate">
+
+`love.forte.simbot.qguild.event.GuildMemberUpdate`
+
+事件类型名: `"GUILD_MEMBER_UPDATE"`
+
+<a ignore-vars="true" href="https://bot.q.qq.com/wiki/develop/api/gateway/guild_member.html#guild-member-update">`GUILD_MEMBER_UPDATE`</a>
+
+**发送时机**
+
+- 用户的频道属性发生变化，如频道昵称，或者身份组
+
+</def>
+<def title="GuildMemberRemove">
+
+`love.forte.simbot.qguild.event.GuildMemberRemove`
+
+事件类型名: `"GUILD_MEMBER_REMOVE"`
+
+<a ignore-vars="true" href="https://bot.q.qq.com/wiki/develop/api/gateway/guild_member.html#guild-member-remove">`GUILD_MEMBER_REMOVE`</a>
+
+**发送时机**
+
+- 用户离开频道
+
+</def>
+<def title="MessageDispatch">
+
+`love.forte.simbot.qguild.event.MessageDispatch`
+
+与 `message` 相关的事件类型。[data] 类型为 [Message]
+
+</def>
+<def title="AtMessageCreate">
+
+`love.forte.simbot.qguild.event.AtMessageCreate`
+
+事件类型名: `"AT_MESSAGE_CREATE"`
+
+消息事件
+<a ignore-vars="true" href="https://bot.q.qq.com/wiki/develop/api/gateway/message.html#at-message-create-intents-public-guild-messages">`AT_MESSAGE_CREATE（intents PUBLIC_GUILD_MESSAGES）`</a>
+
+**发送时机**
+
+- 用户发送消息，@当前机器人或回复机器人消息时
+- 为保障消息投递的速度，消息顺序我们虽然会尽量有序，但是并不保证是严格有序的，
+  如开发者对消息顺序有严格有序的需求，可以自行缓冲消息事件之后，基于`seq`进行排序
+
+</def>
 <def title="PublicMessageDeleteCreate">
-<code>PUBLIC_MESSAGE_DELETE</code>
-<warning>此事件官网文档似乎没有详细说明，请慎重使用</warning>
+
+`love.forte.simbot.qguild.event.PublicMessageDeleteCreate`
+
+事件类型名: `"PUBLIC_MESSAGE_DELETE"`
+
+消息事件
+`PUBLIC_MESSAGE_DELETE_TYPE`
+
 </def>
-<def title="DirectMessageCreate">私信消息事件 <code>DIRECT_MESSAGE_CREATE</code></def>
-<def title="MessageCreate">(私域)发送消息事件 <code>MESSAGE_CREATE</code></def>
+<def title="DirectMessageCreate">
+
+`love.forte.simbot.qguild.event.DirectMessageCreate`
+
+事件类型名: `"DIRECT_MESSAGE_CREATE"`
+
+私信消息事件
+<a ignore-vars="true" href="https://bot.q.qq.com/wiki/develop/api/gateway/direct_message.html#direct-message-create-intents-direct-message">`DIRECT_MESSAGE_CREATE (intents DIRECT_MESSAGE)`</a>
+
+**发送时机**
+
+- 用户通过私信发消息给机器人时
+
+</def>
+<def title="MessageAuditedDispatch">
+
+`love.forte.simbot.qguild.event.MessageAuditedDispatch`
+
+与`MessageAudited] 相关的事件类型。[data`类型为 [MessageAudited]。
+
+</def>
+<def title="MessageCreate">
+
+`love.forte.simbot.qguild.event.MessageCreate`
+
+事件类型名: `"MESSAGE_CREATE"`
+
+发送消息事件，代表频道内的全部消息，而不只是 at 机器人的消息。内容与 AT_MESSAGE_CREATE 相同
+
+</def>
 <def title="MessageDelete">
-<code>MESSAGE_DELETE</code>
-<warning>此事件官网文档似乎没有详细说明，请慎重使用</warning>
+
+`love.forte.simbot.qguild.event.MessageDelete`
+
+事件类型名: `"MESSAGE_DELETE"`
+
+删除（撤回）消息事件
+
 </def>
-<def title="MessageAuditPass">消息审核通过事件 <code>MESSAGE_AUDIT_PASS</code></def>
-<def title="MessageAuditReject">消息审核不通过事件 <code>MESSAGE_AUDIT_REJECT</code></def>
+<def title="MessageAuditPass">
+
+`love.forte.simbot.qguild.event.MessageAuditPass`
+
+事件类型名: `"MESSAGE_AUDIT_PASS"`
+
+消息审核事件
+<a ignore-vars="true" href="https://bot.q.qq.com/wiki/develop/api/gateway/message.html#message-audit-pass-intents-message-audit">`MESSAGE_AUDIT_PASS（intents MESSAGE_AUDIT）`</a>
+
+**发送时机**
+
+- 消息审核通过
+
+</def>
+<def title="MessageAuditReject">
+
+`love.forte.simbot.qguild.event.MessageAuditReject`
+
+事件类型名: `"MESSAGE_AUDIT_REJECT"`
+
+消息审核事件
+<a ignore-vars="true" href="https://bot.q.qq.com/wiki/develop/api/gateway/message.html#message-audit-reject-intents-message-audit">`MESSAGE_AUDIT_REJECT（intents MESSAGE_AUDIT）`</a>
+
+**发送时机**
+
+- 消息审核不通过
+
+</def>
+<def title="OpenForumDispatch">
+
+`love.forte.simbot.qguild.event.OpenForumDispatch`
+
+<a ignore-vars="true" href="https://bot.q.qq.com/wiki/develop/api/gateway/open_forum.html">开放论坛事件(OpenForumEvent)</a> 相关的事件父类。
+
+**发送时机**
+
+用户在话题子频道内发帖、评论、回复评论时产生该事件
+
+**主题事件**
+
+- OPEN_FORUM_THREAD_CREATE
+- OPEN_FORUM_THREAD_UPDATE
+- OPEN_FORUM_THREAD_DELETE
+  参考 [OpenForumThreadDispatch]
+
+**帖子（评论）事件**
+
+- OPEN_FORUM_POST_CREATE
+- OPEN_FORUM_POST_DELETE
+  参考 [OpenForumPostDispatch]
+
+**回复事件**
+
+- OPEN_FORUM_REPLY_CREATE
+- OPEN_FORUM_REPLY_DELETE
+  参考 [OpenForumReplyDispatch]
+
+</def>
+<def title="OpenForumThreadDispatch">
+
+`love.forte.simbot.qguild.event.OpenForumThreadDispatch`
+
+开放论坛事件的 **_主题事件_**。
+
+</def>
+<def title="OpenForumThreadCreate">
+
+`love.forte.simbot.qguild.event.OpenForumThreadCreate`
+
+事件类型名: `"OPEN_FORUM_THREAD_CREATE"`
+
+主题事件：创建主题
+
+</def>
+<def title="OpenForumThreadUpdate">
+
+`love.forte.simbot.qguild.event.OpenForumThreadUpdate`
+
+事件类型名: `"OPEN_FORUM_THREAD_UPDATE"`
+
+主题事件：更新主题
+
+</def>
+<def title="OpenForumThreadDelete">
+
+`love.forte.simbot.qguild.event.OpenForumThreadDelete`
+
+事件类型名: `"OPEN_FORUM_THREAD_DELETE"`
+
+主题事件：删除主题
+
+</def>
+<def title="OpenForumPostDispatch">
+
+`love.forte.simbot.qguild.event.OpenForumPostDispatch`
+
+开放论坛事件的 **_帖子（评论）事件_**。
+
+</def>
+<def title="OpenForumPostCreate">
+
+`love.forte.simbot.qguild.event.OpenForumPostCreate`
+
+事件类型名: `"OPEN_FORUM_POST_CREATE"`
+
+帖子事件：创建帖子（评论）
+
+</def>
+<def title="OpenForumPostDelete">
+
+`love.forte.simbot.qguild.event.OpenForumPostDelete`
+
+事件类型名: `"OPEN_FORUM_POST_DELETE"`
+
+帖子事件：删除帖子（评论）
+
+</def>
+<def title="OpenForumReplyDispatch">
+
+`love.forte.simbot.qguild.event.OpenForumReplyDispatch`
+
+开放论坛事件的 **_回复事件_**。
+
+</def>
+<def title="OpenForumReplyCreate">
+
+`love.forte.simbot.qguild.event.OpenForumReplyCreate`
+
+事件类型名: `"OPEN_FORUM_REPLY_CREATE"`
+
+回复事件：创建回复
+
+</def>
+<def title="OpenForumReplyDelete">
+
+`love.forte.simbot.qguild.event.OpenForumReplyDelete`
+
+事件类型名: `"OPEN_FORUM_REPLY_DELETE"`
+
+回复事件：删除回复
+
+</def>
+
 </deflist>
 
 API 模块事件封装可以使用在 **标准库模块 (stdlib)** 中，使用 `Bot` 类型对他们进行监听与处理。

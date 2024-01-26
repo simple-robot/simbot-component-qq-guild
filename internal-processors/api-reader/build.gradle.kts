@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -15,22 +15,34 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = "qq-guild"
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
-// internals
-include(":internal-processors:api-reader")
+plugins {
+    kotlin("jvm")
+}
 
-//include(":builder-generator")
-include(":simbot-component-qq-guild-api")
-include(":simbot-component-qq-guild-stdlib")
-include(":simbot-component-qq-guild-core")
-//include(":simbot-component-qq-guild-core")
-//include(":simbot-component-qq-guild-benchmark")
+repositories {
+    mavenCentral()
+}
 
-// tests
-//if (!System.getenv("IS_CI").toBoolean()) {
-//    include(":tests:application-test")
-//    include(":tests:spring-boot-test")
-//    include(":tests:plugin-test")
-//}
+kotlin {
+    jvmToolchain(11)
+    compilerOptions {
+        javaParameters = true
+        jvmTarget.set(JvmTarget.JVM_11)
+    }
+}
+
+configJavaCompileWithModule()
+
+dependencies {
+//    implementation(project(":annotations"))
+    api(libs.ksp)
+    api(libs.kotlinPoet.ksp)
+    testImplementation(kotlin("test-junit5"))
+}
+
+tasks.getByName<Test>("test") {
+    useJUnitPlatform()
+}
 

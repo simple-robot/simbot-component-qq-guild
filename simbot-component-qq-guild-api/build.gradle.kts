@@ -20,11 +20,13 @@ import love.forte.gradle.common.kotlin.multiplatform.applyTier1
 import love.forte.gradle.common.kotlin.multiplatform.applyTier2
 import love.forte.gradle.common.kotlin.multiplatform.applyTier3
 import love.forte.plugin.suspendtrans.gradle.withKotlinTargets
+import util.isCi
 
 plugins {
     kotlin("multiplatform")
     kotlin("plugin.serialization")
     `qq-guild-dokka-partial-configure`
+    alias(libs.plugins.ksp)
 }
 
 setup(P.ComponentQQGuild)
@@ -112,3 +114,12 @@ kotlin {
 
 }
 
+dependencies {
+    add("kspJvm", project(":internal-processors:api-reader"))
+}
+
+ksp {
+    arg("qg.api.reader.enable", (!isCi).toString())
+    arg("qg.api.finder.api.output", rootDir.resolve("generated-docs/api-list.md").absolutePath)
+    arg("qg.api.finder.event.output", rootDir.resolve("generated-docs/event-list.md").absolutePath)
+}
