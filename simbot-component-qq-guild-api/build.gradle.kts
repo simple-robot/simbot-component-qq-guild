@@ -89,7 +89,6 @@ kotlin {
 
         jvmTest.dependencies {
             implementation(libs.ktor.client.cio)
-//            implementation(simbotApi) // use @Api4J annotation
             implementation(libs.log4j.api)
             implementation(libs.log4j.core)
             implementation(libs.log4j.slf4j2)
@@ -99,10 +98,11 @@ kotlin {
 
         jsMain.dependencies {
             api(libs.ktor.client.js)
+            implementation(libs.simbot.common.annotations)
         }
 
-        jsTest.dependencies {
-            api(libs.ktor.client.js)
+        nativeMain.dependencies {
+            implementation(libs.simbot.common.annotations)
         }
 
         mingwTest.dependencies {

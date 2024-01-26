@@ -48,12 +48,7 @@ allprojects {
                 snapshotsOnly()
             }
         }
-        //mavenLocal()
     }
-//
-//    configurations.all {
-//        resolutionStrategy.cacheChangingModulesFor(15, TimeUnit.MINUTES)
-//    }
 }
 
 idea {
