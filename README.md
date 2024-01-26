@@ -28,6 +28,10 @@
 各方面的 simbot 组件库实现， 
 包括对 `API` 内容的实现、事件相关的实现以及BOT对于事件的监听与交互等。
 
+QQ频道组件库可以作为底层API依赖使用、
+轻量级的QQ频道事件调度框架使用，
+也可以基于 simbot 核心库的种种快速开发一个功能强大的QQ频道机器人！
+
 - 基于 [`Kotlin`](https://kotlinlang.org/) 提供 [KMP 多平台](https://kotlinlang.org/docs/multiplatform.html) 特性
 - 基于 [`Kotlin coroutines`](https://github.com/Kotlin/kotlinx.coroutines) 与 [`Ktor`](https://ktor.io/) 提供高效易用的API；
 
@@ -84,7 +88,8 @@
 
 ## 法欧莉
 
-如果你想看一看通过 `simbot-qq-guild` 组件的具体作品，可以前往QQ频道添加亲爱的 [法欧莉斯卡雷特](https://qun.qq.com/qunpro/robot/share?robot_appid=101986850) 来体验。
+如果你想看一看使用QQ频道组件实现的具体作品，
+可以前往QQ频道添加亲爱的 [法欧莉斯卡雷特](https://qun.qq.com/qunpro/robot/share?robot_appid=101986850) 来体验喔~
 
 
 ## License
