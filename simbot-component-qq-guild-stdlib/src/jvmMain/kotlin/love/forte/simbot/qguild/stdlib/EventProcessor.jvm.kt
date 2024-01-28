@@ -25,7 +25,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.future.await
 import kotlinx.coroutines.runInterruptible
 import love.forte.simbot.qguild.event.Signal
-import love.forte.simbot.suspendrunner.runInBlocking
 import org.jetbrains.annotations.Blocking
 import org.jetbrains.annotations.NonBlocking
 import java.util.concurrent.CompletableFuture
@@ -47,8 +46,6 @@ public fun interface JBlockEventProcessor : EventProcessor {
 
     @JvmSynthetic
     override suspend fun Signal.Dispatch.invoke(raw: String) {
-        runInBlocking { }
-
         runInterruptible(Dispatchers.IO) { block(this, raw) }
     }
 }
