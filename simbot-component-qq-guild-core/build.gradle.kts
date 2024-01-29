@@ -57,7 +57,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            api(libs.simbot.api)
+            compileOnly(libs.simbot.api)
             api(project(":simbot-component-qq-guild-stdlib"))
             compileOnly(libs.simbot.common.annotations)
             // ktor
@@ -88,10 +88,12 @@ kotlin {
         }
 
         jsMain.dependencies {
+            implementation(libs.simbot.api)
             api(libs.simbot.common.annotations)
         }
 
         nativeMain.dependencies {
+            implementation(libs.simbot.api)
             api(libs.simbot.common.annotations)
         }
 
