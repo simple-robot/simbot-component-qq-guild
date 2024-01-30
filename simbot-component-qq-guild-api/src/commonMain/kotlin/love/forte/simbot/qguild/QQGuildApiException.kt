@@ -41,7 +41,19 @@ public open class QQGuildApiException : RuntimeException {
     public val value: Int
     public val description: String
 
-    public constructor(value: Int, description: String) : super("$value: $description") {
+    public constructor(value: Int, description: String) : this(
+        value = value,
+        description = description,
+        message = "$value: $description"
+    )
+
+    public constructor(
+        info: ErrInfo?,
+        value: Int,
+        description: String,
+    ) : this(value = value, description = description, message = "$value: $description; response info: $info")
+
+    public constructor(value: Int, description: String, message: String) : super(message) {
         this.info = null
         this.value = value
         this.description = description
@@ -51,13 +63,22 @@ public open class QQGuildApiException : RuntimeException {
         info: ErrInfo?,
         value: Int,
         description: String,
-    ) : super("$value: $description; response info: $info") {
+        message: String = "$value: $description; response info: $info"
+    ) : super(message) {
         this.info = info
         this.value = value
         this.description = description
     }
-
 }
+
+/**
+ * 当 API 相应结果反序列化失败
+ */
+public open class QQGuildResultSerializationException(
+    value: Int,
+    description: String,
+    message: String = "$value: $description"
+) : QQGuildApiException(value, description, message)
 
 /**
  * @suppress

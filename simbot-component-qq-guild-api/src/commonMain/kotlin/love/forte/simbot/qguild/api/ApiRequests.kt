@@ -28,16 +28,16 @@ import io.ktor.client.statement.*
 import io.ktor.client.utils.*
 import io.ktor.http.*
 import io.ktor.http.content.*
+import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.StringFormat
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.json.Json
 import love.forte.simbot.common.serialization.guessSerializer
 import love.forte.simbot.logger.isDebugEnabled
-import love.forte.simbot.qguild.ErrInfo
-import love.forte.simbot.qguild.QQGuild
-import love.forte.simbot.qguild.QQGuildApiException
+import love.forte.simbot.qguild.*
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -212,16 +212,30 @@ internal fun checkStatus(
     status: HttpStatusCode,
     resp: HttpResponse,
 ) {
+    // 如果出现了序列化异常，抛出 QQGuildResultSerializationException
+    fun <T> decodeFromStringWithCatch(deserializer: DeserializationStrategy<T>, string: String): T {
+        return try {
+            decoder.decodeFromString(deserializer, remainingText)
+        } catch (serEx: SerializationException) {
+            // 反序列化异常
+            throw QQGuildResultSerializationException(status.value, status.description, "Response(status=${status.value}) deserialization failed: ${serEx.message}").also {
+                it.initCause0(serEx)
+            }
+        }
+    }
+
+
     // TODO 201,202 异步操作成功，虽然说成功，但是会返回一个 error body，需要特殊处理
     if (!status.isSuccess()) {
-        val info = decoder.decodeFromString(ErrInfo.serializer(), remainingText)
+        val info = decodeFromStringWithCatch(ErrInfo.serializer(), remainingText)
+
         // throw err
         throw QQGuildApiException(info, status.value, status.description)
     }
 
     // 202 消息审核
     if (status == HttpStatusCode.Accepted) {
-        val info = decoder.decodeFromString(ErrInfo.serializer(), remainingText)
+        val info = decodeFromStringWithCatch(ErrInfo.serializer(), remainingText)
         // maybe audited
         if (MessageAuditedException.isAuditResultCode(info.code)) {
             throw MessageAuditedException(
