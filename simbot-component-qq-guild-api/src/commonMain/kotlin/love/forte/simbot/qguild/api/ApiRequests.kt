@@ -186,7 +186,19 @@ public suspend fun <R : Any> QQGuildApi<R>.requestData(
 
     checkStatus(text, QQGuild.DefaultJson, resp.status, resp)
 
-    return decodeResponse(decoder, text)
+    return try {
+        decodeResponse(decoder, text)
+    } catch (serEx: SerializationException) {
+        val status = resp.status
+        // 反序列化异常
+        throw QQGuildResultSerializationException(
+            status.value,
+            status.description,
+            "Response(status=${status.value}) deserialization failed: ${serEx.message}"
+        ).also {
+            it.initCause0(serEx)
+        }
+    }
 }
 
 
@@ -213,12 +225,16 @@ internal fun checkStatus(
     resp: HttpResponse,
 ) {
     // 如果出现了序列化异常，抛出 QQGuildResultSerializationException
-    fun <T> decodeFromStringWithCatch(deserializer: DeserializationStrategy<T>, string: String): T {
+    fun <T> decodeFromStringWithCatch(deserializer: DeserializationStrategy<T>): T {
         return try {
             decoder.decodeFromString(deserializer, remainingText)
         } catch (serEx: SerializationException) {
             // 反序列化异常
-            throw QQGuildResultSerializationException(status.value, status.description, "Response(status=${status.value}) deserialization failed: ${serEx.message}").also {
+            throw QQGuildResultSerializationException(
+                status.value,
+                status.description,
+                "Response(status=${status.value}) deserialization failed: ${serEx.message}"
+            ).also {
                 it.initCause0(serEx)
             }
         }
@@ -227,7 +243,7 @@ internal fun checkStatus(
 
     // TODO 201,202 异步操作成功，虽然说成功，但是会返回一个 error body，需要特殊处理
     if (!status.isSuccess()) {
-        val info = decodeFromStringWithCatch(ErrInfo.serializer(), remainingText)
+        val info = decodeFromStringWithCatch(ErrInfo.serializer())
 
         // throw err
         throw QQGuildApiException(info, status.value, status.description)
@@ -235,7 +251,7 @@ internal fun checkStatus(
 
     // 202 消息审核
     if (status == HttpStatusCode.Accepted) {
-        val info = decodeFromStringWithCatch(ErrInfo.serializer(), remainingText)
+        val info = decodeFromStringWithCatch(ErrInfo.serializer())
         // maybe audited
         if (MessageAuditedException.isAuditResultCode(info.code)) {
             throw MessageAuditedException(
