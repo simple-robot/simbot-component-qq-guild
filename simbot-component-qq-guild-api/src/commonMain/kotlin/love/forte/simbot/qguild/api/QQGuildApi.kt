@@ -25,8 +25,12 @@ import love.forte.simbot.logger.Logger
 import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.qguild.QQGuild
 
-@PublishedApi
-internal val apiLogger: Logger = LoggerFactory.getLogger("love.forte.simbot.qguild.api")
+/**
+ * 用于在 [QQGuildApi.request] 及其衍生API中输出相关日志的 [Logger]。
+ * 开启 `love.forte.simbot.qguild.api` 的 `DEBUG` 级别日志可以得到更多在 API 请求过程中产生的信息。
+ * 注意：这可能会暴露其中的参数、返回值等，请注意保护敏感信息。
+ */
+public val apiLogger: Logger = LoggerFactory.getLogger("love.forte.simbot.qguild.api")
 
 /**
  * [有关 traceID](https://bot.q.qq.com/wiki/develop/api/openapi/error/error.html#%E6%9C%89%E5%85%B3-traceid)
