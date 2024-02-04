@@ -4,5 +4,5 @@
     <var name="jb" value="阻塞"/>
     <var name="ja" value="异步"/>
     <var name="version" value="4.0.0-dev6"/>
-    <var name="minimum-core-version" value="4.0.0-dev14"/>
+    <var name="minimum-core-version" value="4.0.0-dev18"/>
 </vars>
