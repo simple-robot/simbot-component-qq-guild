@@ -15,7 +15,7 @@
         <locale-code>zh-CN</locale-code>
         <noindex-content>false</noindex-content>
         <algolia-id>VLLZ4JZE8Z</algolia-id>
-        <algolia-index>doc</algolia-index>
+        <algolia-index>qg-doc</algolia-index>
         <algolia-api-key>e60d9ee16618a0ad3a338ecc73cb840e</algolia-api-key>
         <web-root>http://component-qqguild.simbot.forte.love</web-root>
     </variables>
