@@ -18,5 +18,5 @@
 package qg.internal.processors.apireader
 
 val linkRegex = Regex("\\[(?<name>.+)]\\((?<link>.+)\\)")
-val refRegex = Regex(" \\[(.+)] ")
+val refRegex = Regex(" ?\\[([a-zA-Z0-9-_.$]+)] ?")
 val titleRegex = Regex("#+ (.+)")

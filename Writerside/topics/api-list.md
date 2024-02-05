@@ -6,13 +6,13 @@
 > 因为那是最贴合真实情况且最全面的。
 
 <deflist>
-<def title="GatewayApis">
+<def title="GatewayApis" id="love_forte_simbot_qguild_api_GatewayApis">
 
 `love.forte.simbot.qguild.api.GatewayApis`
 
 获取网关信息。
 
-通过`Normal] 或 [Shared`的形式根据bot信息获取使用 Websocket 接入时间通知的链接。
+通过 `Normal` 或 `Shared` 的形式根据bot信息获取使用 Websocket 接入时间通知的链接。
 
 > <a ignore-vars="true" href="https://bot.q.qq.com/wiki/develop/api/gateway/reference.html">参考文档</a>
 
@@ -20,7 +20,7 @@
 
 
 <deflist>
-<def title="Normal">
+<def title="Normal" id="love_forte_simbot_qguild_api_GatewayApis_Normal">
 
 `love.forte.simbot.qguild.api.Normal`
 
@@ -30,7 +30,7 @@
 
 
 </def>
-<def title="Shared">
+<def title="Shared" id="love_forte_simbot_qguild_api_GatewayApis_Shared">
 
 `love.forte.simbot.qguild.api.Shared`
 
@@ -43,7 +43,7 @@
 
 </deflist>
 </def>
-<def title="CreateAnnouncesApi">
+<def title="CreateAnnouncesApi" id="love_forte_simbot_qguild_api_announces_CreateAnnouncesApi">
 
 `love.forte.simbot.qguild.api.announces.CreateAnnouncesApi`
 
@@ -55,7 +55,7 @@
 
 
 </def>
-<def title="DeleteAnnouncesApi">
+<def title="DeleteAnnouncesApi" id="love_forte_simbot_qguild_api_announces_DeleteAnnouncesApi">
 
 `love.forte.simbot.qguild.api.announces.DeleteAnnouncesApi`
 
@@ -66,7 +66,7 @@
 
 
 </def>
-<def title="DemandApiPermissionApi">
+<def title="DemandApiPermissionApi" id="love_forte_simbot_qguild_api_apipermission_DemandApiPermissionApi">
 
 `love.forte.simbot.qguild.api.apipermission.DemandApiPermissionApi`
 
@@ -82,7 +82,7 @@
 
 
 </def>
-<def title="GetApiPermissionListApi">
+<def title="GetApiPermissionListApi" id="love_forte_simbot_qguild_api_apipermission_GetApiPermissionListApi">
 
 `love.forte.simbot.qguild.api.apipermission.GetApiPermissionListApi`
 
@@ -93,7 +93,7 @@
 
 
 </def>
-<def title="CreateChannelApi">
+<def title="CreateChannelApi" id="love_forte_simbot_qguild_api_channel_CreateChannelApi">
 
 `love.forte.simbot.qguild.api.channel.CreateChannelApi`
 
@@ -107,7 +107,7 @@
 
 
 </def>
-<def title="DeleteChannelApi">
+<def title="DeleteChannelApi" id="love_forte_simbot_qguild_api_channel_DeleteChannelApi">
 
 `love.forte.simbot.qguild.api.channel.DeleteChannelApi`
 
@@ -126,7 +126,7 @@
 
 
 </def>
-<def title="GetChannelApi">
+<def title="GetChannelApi" id="love_forte_simbot_qguild_api_channel_GetChannelApi">
 
 `love.forte.simbot.qguild.api.channel.GetChannelApi`
 
@@ -135,7 +135,7 @@
 
 
 </def>
-<def title="GetChannelOnlineNumsApi">
+<def title="GetChannelOnlineNumsApi" id="love_forte_simbot_qguild_api_channel_GetChannelOnlineNumsApi">
 
 `love.forte.simbot.qguild.api.channel.GetChannelOnlineNumsApi`
 
@@ -146,7 +146,7 @@
 
 
 </def>
-<def title="GetGuildChannelListApi">
+<def title="GetGuildChannelListApi" id="love_forte_simbot_qguild_api_channel_GetGuildChannelListApi">
 
 `love.forte.simbot.qguild.api.channel.GetGuildChannelListApi`
 
@@ -157,7 +157,7 @@
 
 
 </def>
-<def title="ModifyChannelApi">
+<def title="ModifyChannelApi" id="love_forte_simbot_qguild_api_channel_ModifyChannelApi">
 
 `love.forte.simbot.qguild.api.channel.ModifyChannelApi`
 
@@ -171,7 +171,7 @@
 
 
 </def>
-<def title="GetChannelMemberPermissionsApi">
+<def title="GetChannelMemberPermissionsApi" id="love_forte_simbot_qguild_api_channel_permissions_GetChannelMemberPermissionsApi">
 
 `love.forte.simbot.qguild.api.channel.permissions.GetChannelMemberPermissionsApi`
 
@@ -185,7 +185,7 @@
 
 
 </def>
-<def title="GetChannelRolePermissionsApi">
+<def title="GetChannelRolePermissionsApi" id="love_forte_simbot_qguild_api_channel_permissions_GetChannelRolePermissionsApi">
 
 `love.forte.simbot.qguild.api.channel.permissions.GetChannelRolePermissionsApi`
 
@@ -198,7 +198,7 @@
 
 
 </def>
-<def title="ModifyChannelMemberPermissionsApi">
+<def title="ModifyChannelMemberPermissionsApi" id="love_forte_simbot_qguild_api_channel_permissions_ModifyChannelMemberPermissionsApi">
 
 `love.forte.simbot.qguild.api.channel.permissions.ModifyChannelMemberPermissionsApi`
 
@@ -214,7 +214,7 @@
 
 
 </def>
-<def title="ModifyChannelRolePermissionsApi">
+<def title="ModifyChannelRolePermissionsApi" id="love_forte_simbot_qguild_api_channel_permissions_ModifyChannelRolePermissionsApi">
 
 `love.forte.simbot.qguild.api.channel.permissions.ModifyChannelRolePermissionsApi`
 
@@ -230,7 +230,7 @@
 
 
 </def>
-<def title="AddPinsMessageApi">
+<def title="AddPinsMessageApi" id="love_forte_simbot_qguild_api_channel_pins_AddPinsMessageApi">
 
 `love.forte.simbot.qguild.api.channel.pins.AddPinsMessageApi`
 
@@ -245,7 +245,7 @@
 
 
 </def>
-<def title="DeletePinsMessageApi">
+<def title="DeletePinsMessageApi" id="love_forte_simbot_qguild_api_channel_pins_DeletePinsMessageApi">
 
 `love.forte.simbot.qguild.api.channel.pins.DeletePinsMessageApi`
 
@@ -253,12 +253,12 @@
 
 用于删除子频道 `channel_id` 下指定 `message_id` 的精华消息。
 
-- 删除子频道内全部精华消息，请将 `message_id` 设置为 [`all`][DELETE_ALL_MESSAGE_ID]。
+- 删除子频道内全部精华消息，请将 `message_id` 设置为 [`all`] `DELETE_ALL_MESSAGE_ID` 。
 
 
 
 </def>
-<def title="GetPinsMessageApi">
+<def title="GetPinsMessageApi" id="love_forte_simbot_qguild_api_channel_pins_GetPinsMessageApi">
 
 `love.forte.simbot.qguild.api.channel.pins.GetPinsMessageApi`
 
@@ -269,7 +269,7 @@
 
 
 </def>
-<def title="CreateScheduleApi">
+<def title="CreateScheduleApi" id="love_forte_simbot_qguild_api_channel_schedules_CreateScheduleApi">
 
 `love.forte.simbot.qguild.api.channel.schedules.CreateScheduleApi`
 
@@ -286,7 +286,7 @@
 
 
 </def>
-<def title="DeleteScheduleApi">
+<def title="DeleteScheduleApi" id="love_forte_simbot_qguild_api_channel_schedules_DeleteScheduleApi">
 
 `love.forte.simbot.qguild.api.channel.schedules.DeleteScheduleApi`
 
@@ -299,7 +299,7 @@
 
 
 </def>
-<def title="GetScheduleApi">
+<def title="GetScheduleApi" id="love_forte_simbot_qguild_api_channel_schedules_GetScheduleApi">
 
 `love.forte.simbot.qguild.api.channel.schedules.GetScheduleApi`
 
@@ -310,7 +310,7 @@
 
 
 </def>
-<def title="GetScheduleListApi">
+<def title="GetScheduleListApi" id="love_forte_simbot_qguild_api_channel_schedules_GetScheduleListApi">
 
 `love.forte.simbot.qguild.api.channel.schedules.GetScheduleListApi`
 
@@ -323,7 +323,7 @@
 
 
 </def>
-<def title="ModifyScheduleApi">
+<def title="ModifyScheduleApi" id="love_forte_simbot_qguild_api_channel_schedules_ModifyScheduleApi">
 
 `love.forte.simbot.qguild.api.channel.schedules.ModifyScheduleApi`
 
@@ -336,7 +336,7 @@
 
 
 </def>
-<def title="DeleteThreadApi">
+<def title="DeleteThreadApi" id="love_forte_simbot_qguild_api_forum_DeleteThreadApi">
 
 `love.forte.simbot.qguild.api.forum.DeleteThreadApi`
 
@@ -347,7 +347,7 @@
 
 
 </def>
-<def title="GetThreadApi">
+<def title="GetThreadApi" id="love_forte_simbot_qguild_api_forum_GetThreadApi">
 
 `love.forte.simbot.qguild.api.forum.GetThreadApi`
 
@@ -359,7 +359,7 @@
 
 
 </def>
-<def title="GetThreadListApi">
+<def title="GetThreadListApi" id="love_forte_simbot_qguild_api_forum_GetThreadListApi">
 
 `love.forte.simbot.qguild.api.forum.GetThreadListApi`
 
@@ -370,7 +370,7 @@
 
 
 </def>
-<def title="PublishThreadApi">
+<def title="PublishThreadApi" id="love_forte_simbot_qguild_api_forum_PublishThreadApi">
 
 `love.forte.simbot.qguild.api.forum.PublishThreadApi`
 
@@ -380,7 +380,7 @@
 
 
 </def>
-<def title="GetGuildApi">
+<def title="GetGuildApi" id="love_forte_simbot_qguild_api_guild_GetGuildApi">
 
 `love.forte.simbot.qguild.api.guild.GetGuildApi`
 
@@ -390,7 +390,7 @@
 
 
 </def>
-<def title="MuteAllApi">
+<def title="MuteAllApi" id="love_forte_simbot_qguild_api_guild_mute_MuteAllApi">
 
 `love.forte.simbot.qguild.api.guild.mute.MuteAllApi`
 
@@ -406,7 +406,7 @@
 
 
 </def>
-<def title="MuteMemberApi">
+<def title="MuteMemberApi" id="love_forte_simbot_qguild_api_guild_mute_MuteMemberApi">
 
 `love.forte.simbot.qguild.api.guild.mute.MuteMemberApi`
 
@@ -420,7 +420,7 @@
 
 
 </def>
-<def title="MuteMultiMemberApi">
+<def title="MuteMultiMemberApi" id="love_forte_simbot_qguild_api_guild_mute_MuteMultiMemberApi">
 
 `love.forte.simbot.qguild.api.guild.mute.MuteMultiMemberApi`
 
@@ -434,7 +434,7 @@
 
 
 </def>
-<def title="DeleteMemberApi">
+<def title="DeleteMemberApi" id="love_forte_simbot_qguild_api_member_DeleteMemberApi">
 
 `love.forte.simbot.qguild.api.member.DeleteMemberApi`
 
@@ -449,7 +449,7 @@
 
 
 </def>
-<def title="GetGuildMemberListApi">
+<def title="GetGuildMemberListApi" id="love_forte_simbot_qguild_api_member_GetGuildMemberListApi">
 
 `love.forte.simbot.qguild.api.member.GetGuildMemberListApi`
 
@@ -467,7 +467,7 @@
 
 
 </def>
-<def title="GetGuildRoleMemberListApi">
+<def title="GetGuildRoleMemberListApi" id="love_forte_simbot_qguild_api_member_GetGuildRoleMemberListApi">
 
 `love.forte.simbot.qguild.api.member.GetGuildRoleMemberListApi`
 
@@ -483,7 +483,7 @@
 
 
 </def>
-<def title="GetMemberApi">
+<def title="GetMemberApi" id="love_forte_simbot_qguild_api_member_GetMemberApi">
 
 `love.forte.simbot.qguild.api.member.GetMemberApi`
 
@@ -494,7 +494,7 @@
 
 
 </def>
-<def title="DeleteMessageApi">
+<def title="DeleteMessageApi" id="love_forte_simbot_qguild_api_message_DeleteMessageApi">
 
 `love.forte.simbot.qguild.api.message.DeleteMessageApi`
 
@@ -508,7 +508,7 @@
 
 
 </def>
-<def title="GetMessageApi">
+<def title="GetMessageApi" id="love_forte_simbot_qguild_api_message_GetMessageApi">
 
 `love.forte.simbot.qguild.api.message.GetMessageApi`
 
@@ -519,7 +519,7 @@
 
 
 </def>
-<def title="MessageSendApi">
+<def title="MessageSendApi" id="love_forte_simbot_qguild_api_message_MessageSendApi">
 
 `love.forte.simbot.qguild.api.message.MessageSendApi`
 
@@ -604,7 +604,7 @@
 | `<` | `&lt;` |
 | `>` | `&gt;` |
 
-可参考使用`ContentTextDecoder`和 [ContentTextEncoder]
+可参考使用 `ContentTextDecoder` 和 `ContentTextEncoder`
 
 
 **消息审核**
@@ -612,10 +612,10 @@
 
 > 其中推送、回复消息的 code 错误码 `304023`、`304024` 会在 响应数据包 `data` 中返回 `MessageAudit` 审核消息的信息
 
-当响应结果为上述错误码时，请求实体对象结果的API时会抛出`MessageAuditedException`异常并携带相关的对象信息。
+当响应结果为上述错误码时，请求实体对象结果的API时会抛出 `MessageAuditedException` 异常并携带相关的对象信息。
 
 详见文档 <a ignore-vars="true" href="https://bot.q.qq.com/wiki/develop/api/openapi/message/post_messages.html">发送消息</a> 中的相关描述以及
-[MessageAuditedException] 的文档描述。
+`MessageAuditedException` 的文档描述。
 
 <hr />
 
@@ -625,7 +625,7 @@
 
 
 </def>
-<def title="CreateDmsApi">
+<def title="CreateDmsApi" id="love_forte_simbot_qguild_api_message_direct_CreateDmsApi">
 
 `love.forte.simbot.qguild.api.message.direct.CreateDmsApi`
 
@@ -648,7 +648,7 @@
 
 
 </def>
-<def title="DeleteDmsApi">
+<def title="DeleteDmsApi" id="love_forte_simbot_qguild_api_message_direct_DeleteDmsApi">
 
 `love.forte.simbot.qguild.api.message.direct.DeleteDmsApi`
 
@@ -660,7 +660,7 @@
 
 
 </def>
-<def title="DmsSendApi">
+<def title="DmsSendApi" id="love_forte_simbot_qguild_api_message_direct_DmsSendApi">
 
 `love.forte.simbot.qguild.api.message.direct.DmsSendApi`
 
@@ -683,19 +683,19 @@
 
 **参数**
 
-和`发送消息][MessageSendApi`参数一致。
+和 [发送消息] `MessageSendApi` 参数一致。
 
 
 **返回**
 
-和`发送消息][MessageSendApi`返回一致。
+和 [发送消息] `MessageSendApi` 返回一致。
 
 
 
 
 
 </def>
-<def title="GetMessageSettingApi">
+<def title="GetMessageSettingApi" id="love_forte_simbot_qguild_api_message_setting_GetMessageSettingApi">
 
 `love.forte.simbot.qguild.api.message.setting.GetMessageSettingApi`
 
@@ -705,7 +705,7 @@
 
 
 </def>
-<def title="AddMemberRoleApi">
+<def title="AddMemberRoleApi" id="love_forte_simbot_qguild_api_role_AddMemberRoleApi">
 
 `love.forte.simbot.qguild.api.role.AddMemberRoleApi`
 
@@ -714,13 +714,13 @@
 用于将频道 `guild_id` 下的用户 `user_id` 添加到身份组 `role_id` 。
 
 - 需要使用的 `token` 对应的用户具备增加身份组成员权限。如果是机器人，要求被添加为管理员。
-- 如果要增加的身份组 `ID` 是 [`5-子频道管理员`][love.forte.simbot.qguild.model.Role.DEFAULT_ID_CHANNEL_ADMIN]，
+- 如果要增加的身份组 `ID` 是 [`5-子频道管理员`] `love.forte.simbot.qguild.model.Role.DEFAULT_ID_CHANNEL_ADMIN` ，
   需要增加 `channel` 对象来指定具体是哪个子频道。
 
 
 
 </def>
-<def title="CreateGuildRoleApi">
+<def title="CreateGuildRoleApi" id="love_forte_simbot_qguild_api_role_CreateGuildRoleApi">
 
 `love.forte.simbot.qguild.api.role.CreateGuildRoleApi`
 
@@ -734,7 +734,7 @@
 
 
 </def>
-<def title="DeleteGuildRoleApi">
+<def title="DeleteGuildRoleApi" id="love_forte_simbot_qguild_api_role_DeleteGuildRoleApi">
 
 `love.forte.simbot.qguild.api.role.DeleteGuildRoleApi`
 
@@ -746,7 +746,7 @@
 
 
 </def>
-<def title="GetGuildRoleListApi">
+<def title="GetGuildRoleListApi" id="love_forte_simbot_qguild_api_role_GetGuildRoleListApi">
 
 `love.forte.simbot.qguild.api.role.GetGuildRoleListApi`
 
@@ -757,7 +757,7 @@
 
 
 </def>
-<def title="ModifyGuildRoleApi">
+<def title="ModifyGuildRoleApi" id="love_forte_simbot_qguild_api_role_ModifyGuildRoleApi">
 
 `love.forte.simbot.qguild.api.role.ModifyGuildRoleApi`
 
@@ -771,7 +771,7 @@
 
 
 </def>
-<def title="RemoveMemberRoleApi">
+<def title="RemoveMemberRoleApi" id="love_forte_simbot_qguild_api_role_RemoveMemberRoleApi">
 
 `love.forte.simbot.qguild.api.role.RemoveMemberRoleApi`
 
@@ -780,13 +780,13 @@
 用于将 用户 `user_id` 从 频道 `guild_id` 的 `role_id` 身份组中移除。
 
 - 需要使用的 `token` 对应的用户具备删除身份组成员权限。如果是机器人，要求被添加为管理员。
-- 如果要删除的身份组 `ID` 是 [`5-子频道管理员`][love.forte.simbot.qguild.model.Role.DEFAULT_ID_CHANNEL_ADMIN]，
+- 如果要删除的身份组 `ID` 是 [`5-子频道管理员`] `love.forte.simbot.qguild.model.Role.DEFAULT_ID_CHANNEL_ADMIN` ，
   需要增加 `channel` 对象来指定具体是哪个子频道。
 
 
 
 </def>
-<def title="GetBotGuildListApi">
+<def title="GetBotGuildListApi" id="love_forte_simbot_qguild_api_user_GetBotGuildListApi">
 
 `love.forte.simbot.qguild.api.user.GetBotGuildListApi`
 
@@ -798,7 +798,7 @@
 
 
 </def>
-<def title="GetBotInfoApi">
+<def title="GetBotInfoApi" id="love_forte_simbot_qguild_api_user_GetBotInfoApi">
 
 `love.forte.simbot.qguild.api.user.GetBotInfoApi`
 
@@ -806,13 +806,15 @@
 
 用于获取当前用户（机器人）详情。
 
-由于`GetBotInfoApi] 本身为 `object` 类型, 因此 [ApiDescription] 由内部对象 [Description`提供而不是伴生对象。
+由于 `GetBotInfoApi` 本身为 `object` 类型, 因此 `ApiDescription` 由内部对象 `Description` 提供而不是伴生对象。
 
-[GetBotInfoApi] 得到的`User] 中，[User.isBot`始终为 `true`。
+`GetBotInfoApi` 得到的 `User` 中， `User.isBot` 始终为 `true`。
 
 
 
 </def>
 
 </deflist>
+
+
 

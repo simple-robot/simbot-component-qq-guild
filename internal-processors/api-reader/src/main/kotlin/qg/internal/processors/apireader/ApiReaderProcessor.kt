@@ -25,6 +25,7 @@ import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.squareup.kotlinpoet.ksp.toClassName
 import java.io.BufferedWriter
 import java.io.File
 import java.nio.file.StandardOpenOption
@@ -100,7 +101,9 @@ class ApiReaderProcessor(private val environment: SymbolProcessorEnvironment) : 
 private fun BufferedWriter.writeDeflistTo(list: List<KSClassDeclaration>) {
     write("<deflist>\n")
     list.forEach { declaration ->
-        write("<def title=\"${declaration.simpleName.asString()}\">\n")
+        val className = declaration.toClassName().canonicalName
+        val idName = className.replace('.', '_')
+        write("<def title=\"${declaration.simpleName.asString()}\" id=\"$idName\">\n")
         newLine()
         write("`${declaration.packageName.asString()}.${declaration.simpleName.asString()}`\n")
         newLine()
@@ -112,7 +115,7 @@ private fun BufferedWriter.writeDeflistTo(list: List<KSClassDeclaration>) {
             ?.map { line ->
                 line
                     .replace(linkRegex, "<a ignore-vars=\\\"true\\\" href=\\\"$2\\\">$1</a>")
-                    .replace(refRegex, "`$1`")
+                    .replace(refRegex, " `$1` ")
                     .replace(titleRegex, "\n**$1**\n")
             }
 
