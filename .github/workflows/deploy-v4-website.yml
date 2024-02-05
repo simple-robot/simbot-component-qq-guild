@@ -32,7 +32,6 @@ env:
   ALGOLIA_ARTIFACT: algolia-indexes-QG.zip
   ALGOLIA_APP_NAME: VLLZ4JZE8Z
   ALGOLIA_INDEX_NAME: qg-doc
-  ALGOLIA_KEY: ${{ secrets.ALGOLIA_KEY }}
 
 jobs:
   build:
@@ -144,7 +143,7 @@ jobs:
       - name: Unzip artifact
         run: |
           unzip -O UTF-8 -qq ${{ env.ALGOLIA_ARTIFACT }} -d algolia-indexes
-          env "algolia-key=${{env.ALGOLIA_KEY}}" java -jar /opt/builder/help-publication-agent.jar \
+          env "algolia-key=${{secrets.ALGOLIA_KEY}}" java -jar /opt/builder/help-publication-agent.jar \
           update-index \
           --application-name ${{env.ALGOLIA_APP_NAME}} \
           --index-name ${{env.ALGOLIA_INDEX_NAME}} \
