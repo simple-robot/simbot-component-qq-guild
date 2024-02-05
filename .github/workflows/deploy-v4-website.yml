@@ -10,6 +10,7 @@ on:
 
     paths:
       - 'Writerside/**'
+      - '.github/workflows/deploy-v4-website.yml'
   # Specify to run a workflow manually from the Actions tab on GitHub
   workflow_dispatch:
 
