@@ -19,8 +19,10 @@ package love.forte.simbot.component.qguild.internal.forum
 
 import love.forte.simbot.ability.DeleteFailureException
 import love.forte.simbot.ability.DeleteOption
-import love.forte.simbot.ability.StandardDeleteOption.*
 import love.forte.simbot.ability.StandardDeleteOption.Companion.standardAnalysis
+import love.forte.simbot.ability.StandardDeleteOption.IGNORE_ON_FAILURE
+import love.forte.simbot.ability.StandardDeleteOption.IGNORE_ON_NO_SUCH_TARGET
+import love.forte.simbot.ability.isIgnoreOnFailure
 import love.forte.simbot.component.qguild.forum.QGThread
 import love.forte.simbot.component.qguild.guild.QGMember
 import love.forte.simbot.component.qguild.internal.bot.QGBotImpl
@@ -72,7 +74,7 @@ internal class QGThreadImpl(
                 return
             }
 
-            if (IGNORE_ON_ANY_FAILURE !in stdOpts) {
+            if (!stdOpts.isIgnoreOnFailure) {
                 throw e
             }
         }

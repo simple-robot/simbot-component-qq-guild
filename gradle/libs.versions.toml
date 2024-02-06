@@ -1,6 +1,6 @@
 [versions]
 kotlin = "1.9.22"
-kotlinx-coroutines = "1.7.3"
+kotlinx-coroutines = "1.8.0-RC2"
 kotlinx-serialization = "1.6.2"
 kotlinx-datetime = "0.5.0"
 dokka = "1.9.10"
@@ -10,7 +10,7 @@ openjdk-jmh = "1.35"
 log4j = "2.20.0"
 reactor = "3.6.2"
 # simbot
-simbot = "4.0.0-dev15"
+simbot = "4.0.0-dev18"
 suspendTransform = "0.7.0-beta1"
 gradleCommon = "0.2.0"
 # ksp
@@ -31,7 +31,7 @@ simbot-common-core = { group = "love.forte.simbot.common", name = "simbot-common
 simbot-common-suspend = { group = "love.forte.simbot.common", name = "simbot-common-suspend-runner", version.ref = "simbot" }
 simbot-common-annotations = { group = "love.forte.simbot.common", name = "simbot-common-annotations", version.ref = "simbot" }
 simbot-common-loop = { group = "love.forte.simbot.common", name = "simbot-common-stage-loop", version.ref = "simbot" }
-simbot-gradle = { group = "love.forte.simbot.gradle", name = "simbot-gradle-suspendtransforms", version = "4.0.0-dev15" }
+simbot-gradle = { group = "love.forte.simbot.gradle", name = "simbot-gradle-suspendtransforms", version.ref = "simbot" }
 
 # jetbrains-annotation
 jetbrains-annotations = "org.jetbrains:annotations:24.0.1"
