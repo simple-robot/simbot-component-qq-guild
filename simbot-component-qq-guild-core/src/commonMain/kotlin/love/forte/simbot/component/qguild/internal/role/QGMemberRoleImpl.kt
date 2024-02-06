@@ -19,8 +19,10 @@ package love.forte.simbot.component.qguild.internal.role
 
 import love.forte.simbot.ability.DeleteFailureException
 import love.forte.simbot.ability.DeleteOption
-import love.forte.simbot.ability.StandardDeleteOption.*
 import love.forte.simbot.ability.StandardDeleteOption.Companion.standardAnalysis
+import love.forte.simbot.ability.StandardDeleteOption.IGNORE_ON_FAILURE
+import love.forte.simbot.ability.StandardDeleteOption.IGNORE_ON_NO_SUCH_TARGET
+import love.forte.simbot.ability.isIgnoreOnFailure
 import love.forte.simbot.common.id.ID
 import love.forte.simbot.common.id.literal
 import love.forte.simbot.component.qguild.ExperimentalQGApi
@@ -82,7 +84,7 @@ internal class QGMemberRoleImpl(
                 return
             }
 
-            if (IGNORE_ON_ANY_FAILURE !in stdOpts) {
+            if (!stdOpts.isIgnoreOnFailure) {
                 throw e
             }
         }

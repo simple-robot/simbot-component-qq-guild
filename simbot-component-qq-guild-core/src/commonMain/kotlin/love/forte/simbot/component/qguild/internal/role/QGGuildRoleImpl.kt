@@ -21,8 +21,10 @@ import io.ktor.util.internal.*
 import kotlinx.coroutines.flow.map
 import love.forte.simbot.ability.DeleteFailureException
 import love.forte.simbot.ability.DeleteOption
-import love.forte.simbot.ability.StandardDeleteOption.*
 import love.forte.simbot.ability.StandardDeleteOption.Companion.standardAnalysis
+import love.forte.simbot.ability.StandardDeleteOption.IGNORE_ON_FAILURE
+import love.forte.simbot.ability.StandardDeleteOption.IGNORE_ON_NO_SUCH_TARGET
+import love.forte.simbot.ability.isIgnoreOnFailure
 import love.forte.simbot.common.collectable.Collectable
 import love.forte.simbot.common.collectable.asCollectable
 import love.forte.simbot.common.id.ID
@@ -96,7 +98,7 @@ internal class QGGuildRoleImpl(
                 return
             }
 
-            if (IGNORE_ON_ANY_FAILURE !in stdOpts) {
+            if (!stdOpts.isIgnoreOnFailure) {
                 throw e
             }
         }
