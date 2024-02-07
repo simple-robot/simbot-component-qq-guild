@@ -112,6 +112,13 @@ bot开发配置中的 `Token`。
 当值为特殊值：`"SANDBOX"` 时会选择使用 `QQGuild.SANDBOX_URL_STRING`，
 也就是沙箱服务器地址。
 
+| 配置值         | 实际值                                   |
+|-------------|---------------------------------------|
+| `null`      | `"https://api.sgroup.qq.com"`         |
+| `"SANDBOX"` | `"https://sandbox.api.sgroup.qq.com"` |
+| 其他          | 与配置值一致                                |
+
+
 </def>
 <def title="shard">
 
