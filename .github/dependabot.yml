@@ -2,6 +2,8 @@ version: 2
 updates:
   - package-ecosystem: gradle
     directory: /
-    target-branch: "v4-dev"
+    target-branch: "dev/main"
     schedule:
       interval: daily
+    labels:
+      - dependencies
