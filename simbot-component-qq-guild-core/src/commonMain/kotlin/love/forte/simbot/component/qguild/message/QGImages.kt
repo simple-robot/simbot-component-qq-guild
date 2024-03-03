@@ -17,14 +17,20 @@
 
 package love.forte.simbot.component.qguild.message
 
+import love.forte.simbot.message.Image
+import love.forte.simbot.message.OfflineImage
+
 
 /**
  * 用于发送的图片类型
+ * @see Image
+ * @suppress TODO
  */
 public class QGOfflineImage // TODO
 
 /**
  * 收到的图片类型
- *
+ * @see OfflineImage
+ * @suppress TODO
  */
 public class QGImage // TODO

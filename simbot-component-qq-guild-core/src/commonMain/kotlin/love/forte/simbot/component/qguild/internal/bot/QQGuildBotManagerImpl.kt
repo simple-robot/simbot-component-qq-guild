@@ -19,7 +19,6 @@ package love.forte.simbot.component.qguild.internal.bot
 
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import love.forte.simbot.bot.ConflictBotException
 import love.forte.simbot.bot.JobBasedBotManager
 import love.forte.simbot.bot.NoSuchBotException
@@ -72,11 +71,7 @@ internal class QQGuildBotManagerImpl(
 
     init {
         job.invokeOnCompletion {
-            // TODO to clear
-            bots.removeIf {
-                it.cancel("BotManager was on completion")
-                true
-            }
+            bots.clear()
         }
     }
 
