@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -22,7 +22,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.ApiModel
 import love.forte.simbot.qguild.api.PostQQGuildApi
-import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimplePostApiDescription
 import love.forte.simbot.qguild.model.ColorIntSerializer
 import love.forte.simbot.qguild.model.Role
@@ -68,16 +67,12 @@ public class CreateGuildRoleApi private constructor(
             CreateGuildRoleApi(guildId, NewBody(name, color, hoist))
     }
 
-    private val path = arrayOf("guilds", guildId, "roles")
+    override val path: Array<String> = arrayOf("guilds", guildId, "roles")
 
-    override val resultDeserializer: DeserializationStrategy<GuildRoleCreated> get() = GuildRoleCreated.serializer()
+    override val resultDeserializationStrategy: DeserializationStrategy<GuildRoleCreated>
+        get() = GuildRoleCreated.serializer()
 
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-    }
-
-    override val body: Any get() = _body
-
+    override fun createBody(): Any? = _body
 
     @Serializable
     private data class NewBody(

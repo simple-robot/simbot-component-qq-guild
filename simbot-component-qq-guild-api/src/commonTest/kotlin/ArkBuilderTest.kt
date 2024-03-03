@@ -26,7 +26,6 @@ class ArkBuilderTest {
 
     @Test
     fun test() {
-
         val ark = buildArk("0") {
             // 增加kvs
             kvs {

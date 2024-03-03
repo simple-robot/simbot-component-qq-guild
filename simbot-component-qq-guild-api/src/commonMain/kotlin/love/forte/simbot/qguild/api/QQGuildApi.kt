@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,34 +17,20 @@
 
 package love.forte.simbot.qguild.api
 
-import io.ktor.client.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.client.utils.*
 import io.ktor.http.*
-import io.ktor.http.content.*
-import io.ktor.serialization.kotlinx.json.*
-import kotlinx.serialization.*
-import kotlinx.serialization.builtins.*
-import kotlinx.serialization.descriptors.StructureKind
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.builtins.serializer
+import love.forte.simbot.common.apidefinition.*
 import love.forte.simbot.logger.Logger
 import love.forte.simbot.logger.LoggerFactory
-import love.forte.simbot.logger.isDebugEnabled
-import love.forte.simbot.qguild.ErrInfo
-import love.forte.simbot.qguild.InternalApi
 import love.forte.simbot.qguild.QQGuild
-import love.forte.simbot.qguild.QQGuildApiException
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
-import kotlin.jvm.JvmSynthetic
 
-@PublishedApi
-internal val apiLogger: Logger = LoggerFactory.getLogger("love.forte.simbot.qguild.api")
+/**
+ * 用于在 [QQGuildApi.request] 及其衍生API中输出相关日志的 [Logger]。
+ * 开启 `love.forte.simbot.qguild.api` 的 `DEBUG` 级别日志可以得到更多在 API 请求过程中产生的信息。
+ * 注意：这可能会暴露其中的参数、返回值等，请注意保护敏感信息。
+ */
+public val apiLogger: Logger = LoggerFactory.getLogger("love.forte.simbot.qguild.api")
 
 /**
  * [有关 traceID](https://bot.q.qq.com/wiki/develop/api/openapi/error/error.html#%E6%9C%89%E5%85%B3-traceid)
@@ -58,68 +44,10 @@ internal val apiLogger: Logger = LoggerFactory.getLogger("love.forte.simbot.qgui
 @PublishedApi
 internal const val TRACE_ID_HEAD: String = "X-Tps-trace-ID"
 
-
-/**
- * 用于多平台实现的最小目标。
- *
- * 在JVM平台和JS平台中分别提供对应的 blocking/async 兼容函数。
- * 但是不应追加新的抽象函数。
- *
- * _仅内部平台实现用_
- *
- * @see QQGuildApi
- */
-@InternalApi
-public expect abstract class PlatformQQGuildApi<out R>() {
-
-    /**
-     * 使用此api发起一次请求，并得到预期中的结果。
-     *
-     * @param client 用于本次http请求的client。默认使用 [QQGuildApi.DefaultHttpClient]。
-     * @param server 请求目标服务器。See also: [QQGuild.URL]、[QQGuild.SANDBOX_URL]。
-     * @param token 用于本次请求鉴权的token。
-     * @param decoder 用于本次请求结果的反序列化器。不出意外的话应该是 [Json] 序列化器，默认使用 [QQGuildApi.DefaultJsonDecoder]。
-     *
-     * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
-     * @throws love.forte.simbot.qguild.QQGuildApiException 请求过程中出现了错误（http状态码 !in 200 .. 300）
-     *
-     * @see ErrInfo
-     */
-    @JvmSynthetic
-    public abstract suspend fun doRequest(
-        client: HttpClient = QQGuildApi.DefaultHttpClient,
-        server: Url,
-        token: String,
-        decoder: StringFormat = QQGuildApi.DefaultJsonDecoder,
-    ): R
-
-    /**
-     * 使用此api发起一次请求，并得到响应结果的字符串。
-     *
-     * @param client 用于本次http请求的client。默认使用 [QQGuildApi.DefaultHttpClient]。
-     * @param server 请求目标服务器。See also: [QQGuild.URL]、[QQGuild.SANDBOX_URL]。
-     * @param token 用于本次请求鉴权的token。
-     *
-     * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
-     * @throws love.forte.simbot.qguild.QQGuildApiException 请求过程中出现了错误（http状态码 !in 200 .. 300）
-     *
-     * @see ErrInfo
-     */
-    @JvmSynthetic
-    public abstract suspend fun doRequestRaw(
-        client: HttpClient = QQGuildApi.DefaultHttpClient,
-        server: Url,
-        token: String,
-    ): String
-
-    public companion object
-}
-
-
 /**
  * 表示为一个QQ频道的API。
  *
- * 通过 [doRequest] 发起一次请求。
+ * 通过 [requestData] 发起一次请求。
  *
  * ### 日志
  *
@@ -139,346 +67,101 @@ public expect abstract class PlatformQQGuildApi<out R>() {
  * -Dsimbot.qguild.api.logger.color.enable=false
  * ```
  */
-public abstract class QQGuildApi<out R> : PlatformQQGuildApi<R>() {
+public interface QQGuildApi<out R : Any> : ApiDefinition<R> {
 
     /**
      * 得到响应值的反序列化器.
      */
-    public abstract val resultDeserializer: DeserializationStrategy<R>
+    override val resultDeserializationStrategy: DeserializationStrategy<R>
 
+    /**
+     * 最终用于请求的目标地址。
+     * 默认会使用 [QQGuild.URL]
+     * 作为其域名地址。
+     */
+    override val url: Url
 
     /**
      * 此api请求方式
      */
-    public abstract val method: HttpMethod
-
-
-    /**
-     * 此请求对应的api路由路径以及路径参数。
-     * 例如：`/guild/list`
-     */
-    public abstract fun route(builder: RouteInfoBuilder)
-
+    override val method: HttpMethod
 
     /**
      * 此次请求所发送的数据。为null则代表没有参数。
      */
-    public abstract val body: Any?
-
-
-    /**
-     * 当通过 [doRequest] 得到成功结果后进行的操作。
-     */
-    public open fun post(resp: @UnsafeVariance R) {}
-
-    /**
-     * 使用此api发起一次请求，并得到预期中的结果。
-     *
-     * ## Body序列化
-     *
-     * 参数 [client] 不强制要求必须安装 [ContentNegotiation] 插件，
-     * 如果未安装此插件且 API 的请求过程中存在 body，则内部会使用一个默认的序列化器 (不是 [decoder])
-     * 进行一个与此插件 _类似的_ 逻辑去寻找 body 的序列化信息。此时要求 API 的 body 必须支持 Kotlinx 的序列化。
-     *
-     * @param client 用于本次http请求的client。默认使用 [QQGuildApi.DefaultHttpClient]。
-     * @param server 请求目标服务器。See also: [QQGuild.URL]、[QQGuild.SANDBOX_URL]。
-     * @param token 用于本次请求鉴权的token。
-     * @param decoder 用于本次请求结果的反序列化器。不出意外的话应该是 [Json] 序列化器，默认使用 [QQGuildApi.DefaultJsonDecoder]。
-     *
-     * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
-     * @throws love.forte.simbot.qguild.QQGuildApiException 请求过程中出现了错误。
-     *
-     * @see ErrInfo
-     */
-    @JvmSynthetic
-    public override suspend fun doRequest(
-        client: HttpClient,
-        server: Url,
-        token: String,
-        decoder: StringFormat,
-    ): R {
-        val text = doRequestRaw(client, server, token)
-
-        return decodeResponse(decoder, text)
-    }
-
-
-    /**
-     * 使用此api发起一次请求，并得到响应结果的字符串。
-     *
-     * ## Body序列化
-     *
-     * 参数 [client] 不强制要求必须安装 [ContentNegotiation] 插件，
-     * 如果未安装此插件且 API 的请求过程中存在 body，则内部会使用一个默认的序列化器进行一个与此插件
-     * _类似的_ 逻辑去寻找 body 的序列化信息。此时要求 API 的 body 必须支持 Kotlinx 的序列化。
-     *
-     * @see ErrInfo
-     *
-     * @param client 用于本次http请求的client。默认使用 [QQGuildApi.DefaultHttpClient]。
-     * @param server 请求目标服务器。See also: [QQGuild.URL]、[QQGuild.SANDBOX_URL]。
-     * @param token 用于本次请求鉴权的token。
-     *
-     * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
-     * @throws love.forte.simbot.qguild.QQGuildApiException 请求过程中出现了错误（http状态码 !in 200 .. 300）
-     */
-    @JvmSynthetic
-    override suspend fun doRequestRaw(client: HttpClient, server: Url, token: String): String {
-        val resp: HttpResponse
-        val text = requestForText(client, server, token) { resp = it }
-
-        checkStatus(text, DefaultErrInfoDecoder, resp.status)
-
-        if (text.isEmpty() && resp.status.isSuccess()) {
-            return "{}"
-        }
-
-        return text
-    }
-
-    public companion object {
-
-        /**
-         * 可以使用的默认 [HttpClient]。
-         *
-         * 通过 [`HttpClient()`][HttpClient] 构建懒加载并没有任何额外配置。
-         *
-         * JVM平台下需要添加可用的引擎依赖到classpath中以支持自动加载。
-         *
-         */
-        public val DefaultHttpClient: HttpClient by lazy {
-            HttpClient {
-                install(ContentNegotiation) {
-                    json(DefaultJsonDecoder)
-                }
-            }
-        }
-
-        internal val DefaultErrInfoDecoder = Json {
-            isLenient = true
-            ignoreUnknownKeys = true
-            allowSpecialFloatingPointValues = true
-            allowStructuredMapKeys = true
-            prettyPrint = false
-            useArrayPolymorphism = false
-        }
-
-        /**
-         * 部分API中默认使用的Json序列化器。
-         *
-         * ```kotlin
-         * Json {
-         *     isLenient = true
-         *     ignoreUnknownKeys = true
-         *     allowSpecialFloatingPointValues = true
-         *     allowStructuredMapKeys = true
-         *     prettyPrint = false
-         *     useArrayPolymorphism = false
-         * }
-         * ```
-         *
-         */
-        @InternalApi
-        public val DefaultJsonDecoder: Json = Json(DefaultErrInfoDecoder) {}
-    }
-
-
-    protected suspend fun requestForResponse(client: HttpClient, server: Url, token: String, json: Json = DefaultJsonDecoder): HttpResponse {
-        val api = this
-
-        return client.request {
-            method = api.method
-
-            headers {
-                this[HttpHeaders.Authorization] = token
-            }
-
-
-            url {
-                takeFrom(server)
-
-                // route builder
-                val routeBuilder = RouteInfoBuilder { name, value ->
-                    parameters.append(name, value.toString())
-                }
-
-                api.route(routeBuilder)
-
-                when (val body = api.body) {
-                    null -> {
-                        setBody(EmptyContent)
-                    }
-                    is OutgoingContent -> {
-                        setBody(body)
-                    }
-
-                    else -> {
-                        if (client.pluginOrNull(ContentNegotiation) != null) {
-                            setBody(body)
-                        } else {
-                            try {
-                                val ser = guessSerializer(body, json.serializersModule)
-                                val bodyJson = json.encodeToString(ser, body)
-                                setBody(bodyJson)
-                            } catch (e: Throwable) {
-                                try {
-                                    setBody(body)
-                                } catch (e0: Throwable) {
-                                    e0.addSuppressed(e)
-                                    throw e0
-                                }
-                            }
-
-                        }
-                    }
-                }
-
-
-
-                routeBuilder.apiPath?.let { apiPath -> appendPathSegments(components = apiPath) }
-                routeBuilder.contentType?.let {
-                    headers {
-                        this[HttpHeaders.ContentType] = it.toString()
-                    }
-                }
-            }
-
-            apiLogger.debug("[{} /{}] =====> {}, body: {}", method.logName, url.encodedPath, url.host, api.body)
-        }
-    }
-
-
-    /**
-     * 通过 [requestForResponse] 得到响应，读取为文本并输出debug日志后返回。
-     * 不会进行校验。
-     */
-    @OptIn(ExperimentalContracts::class)
-    protected suspend inline fun requestForText(client: HttpClient, server: Url, token: String, useResp: (HttpResponse) -> Unit = {}): String {
-        contract {
-            callsInPlace(useResp, InvocationKind.EXACTLY_ONCE)
-        }
-
-        val resp = requestForResponse(client, server, token)
-        useResp(resp)
-
-        val text = resp.bodyAsText()
-
-        if (apiLogger.isDebugEnabled) {
-            val traceId = resp.headers[TRACE_ID_HEAD]
-            apiLogger.debug(
-                "[{} {}] <===== status: {}, body: {}, traceID: {}",
-                method.logName,
-                resp.request.url.encodedPath,
-                resp.status,
-                text,
-                traceId
-            )
-        }
-
-        return text
-    }
-}
-
-
-
-
-//region Ktor ContentNegotiation guessSerializer
-// see KotlinxSerializationJsonExtensions.kt
-// see SerializerLookup.kt
-
-@Suppress("UNCHECKED_CAST")
-private fun guessSerializer(value: Any?, module: SerializersModule): KSerializer<Any> = when (value) {
-    null -> String.serializer().nullable
-    is List<*> -> ListSerializer(value.elementSerializer(module))
-    is Array<*> -> value.firstOrNull()?.let { guessSerializer(it, module) } ?: ListSerializer(String.serializer())
-    is Set<*> -> SetSerializer(value.elementSerializer(module))
-    is Map<*, *> -> {
-        val keySerializer = value.keys.elementSerializer(module)
-        val valueSerializer = value.values.elementSerializer(module)
-        MapSerializer(keySerializer, valueSerializer)
-    }
-
-    else -> {
-        @OptIn(InternalSerializationApi::class, ExperimentalSerializationApi::class)
-        module.getContextual(value::class) ?: value::class.serializer()
-    }
-} as KSerializer<Any>
-
-
-@OptIn(ExperimentalSerializationApi::class)
-private fun Collection<*>.elementSerializer(module: SerializersModule): KSerializer<*> {
-    val serializers: List<KSerializer<*>> =
-        filterNotNull().map { guessSerializer(it, module) }.distinctBy { it.descriptor.serialName }
-
-    if (serializers.size > 1) {
-        error(
-            "Serializing collections of different element types is not yet supported. " +
-                    "Selected serializers: ${serializers.map { it.descriptor.serialName }}",
-        )
-    }
-
-    val selected = serializers.singleOrNull() ?: String.serializer()
-
-    if (selected.descriptor.isNullable) {
-        return selected
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    selected as KSerializer<Any>
-
-    if (any { it == null }) {
-        return selected.nullable
-    }
-
-    return selected
-}
-//endregion
-
-@Suppress("UNCHECKED_CAST")
-@OptIn(ExperimentalSerializationApi::class)
-internal fun <R> QQGuildApi<R>.decodeResponse(
-    decoder: StringFormat, remainingText: String
-): R {
-    if (resultDeserializer === Unit.serializer()) {
-        return Unit as R
-    }
-
-    if (remainingText.isEmpty() && resultDeserializer.descriptor.kind is StructureKind.OBJECT) {
-        return decoder.decodeFromString(resultDeserializer, "{}")
-    }
-
-    return decoder.decodeFromString(resultDeserializer, remainingText)
-}
-
-internal fun checkStatus(
-    remainingText: String,
-    decoder: StringFormat,
-    status: HttpStatusCode
-) {
-    // TODO 201,202 异步操作成功，虽然说成功，但是会返回一个 error body，需要特殊处理
-    if (!status.isSuccess()) {
-        val info = decoder.decodeFromString(ErrInfo.serializer(), remainingText)
-        // throw err
-        throw QQGuildApiException(info, status.value, status.description)
-    }
-}
-
-public abstract class QQGuildApiWithoutResult : QQGuildApi<Unit>() {
-    override val resultDeserializer: DeserializationStrategy<Unit>
-        get() = Unit.serializer()
-}
-
-public abstract class GetQQGuildApi<R> : QQGuildApi<R>() {
-    override val method: HttpMethod
-        get() = HttpMethod.Get
-
     override val body: Any?
-        get() = null
+
+    public companion object
 }
 
-public abstract class PostQQGuildApi<R> : QQGuildApi<R>() {
-    override val method: HttpMethod
-        get() = HttpMethod.Post
+public interface QQGuildApiWithoutResult : QQGuildApi<Unit> {
+    override val resultDeserializationStrategy: DeserializationStrategy<Unit>
+        get() = Unit.serializer() //EmptyUnitSerializer
+}
 
+public abstract class GetQQGuildApi<R : Any> : GetApiDefinition<R>(), QQGuildApi<R> {
+    protected abstract val path: Array<String>
+
+    /**
+     * 已经完成 [path] 拼接后、追加其他额外内容（例如parameter）时使用
+     */
+    protected open fun URLBuilder.buildUrl() {}
+
+    override val url: Url
+        get() = URLBuilder(QQGuild.URL).apply {
+            appendEncodedPathSegments(components = path)
+            buildUrl()
+        }.build()
+}
+
+public abstract class PostQQGuildApi<R : Any> : PostApiDefinition<R>(), QQGuildApi<R> {
+    protected abstract val path: Array<String>
+
+    /**
+     * 已经完成 [path] 拼接后、追加其他额外内容（例如parameter）时使用
+     */
+    protected open fun URLBuilder.buildUrl() {}
+
+    override val url: Url
+        get() = URLBuilder(QQGuild.URL).apply {
+            appendEncodedPathSegments(components = path)
+            buildUrl()
+        }.build()
+}
+
+public abstract class PutQQGuildApi<R : Any> : PutApiDefinition<R>(), QQGuildApi<R> {
+    protected abstract val path: Array<String>
+
+    /**
+     * 已经完成 [path] 拼接后、追加其他额外内容（例如parameter）时使用
+     */
+    protected open fun URLBuilder.buildUrl() {}
+
+    override val url: Url
+        get() = URLBuilder(QQGuild.URL).apply {
+            appendEncodedPathSegments(components = path)
+            buildUrl()
+        }.build()
+}
+
+public abstract class DeleteQQGuildApi<R : Any> : DeleteApiDefinition<R>(), QQGuildApi<R> {
+    protected abstract val path: Array<String>
+
+    /**
+     * 已经完成 [path] 拼接后、追加其他额外内容（例如parameter）时使用
+     */
+    protected open fun URLBuilder.buildUrl() {}
+
+    override val url: Url
+        get() = URLBuilder(QQGuild.URL).apply {
+            appendEncodedPathSegments(components = path)
+            buildUrl()
+        }.build()
+}
+
+public abstract class PatchQQGuildApi<R : Any> : PutQQGuildApi<R>(), QQGuildApi<R> {
+    override val method: HttpMethod
+        get() = HttpMethod.Patch
 }
 
 internal fun HttpMethod.defaultForLogName(): String = when (this) {

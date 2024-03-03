@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,7 +17,9 @@
 
 package love.forte.simbot.qguild.api
 
-import kotlinx.serialization.*
+import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.api.GatewayApis.Normal
 import love.forte.simbot.qguild.api.GatewayApis.Shared
 
@@ -35,22 +37,18 @@ import love.forte.simbot.qguild.api.GatewayApis.Shared
  * @author ForteScarlet
  */
 public sealed class GatewayApis<R : GatewayInfo>(
-    protected val path: Array<String>,
-    override val resultDeserializer: DeserializationStrategy<R>
+    override val path: Array<String>,
+    override val resultDeserializationStrategy: DeserializationStrategy<R>
 ) : GetQQGuildApi<R>() {
-    
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-    }
-    
+
     /**
      * 获取通用 WSS 接入点
      *
      * > [参考文档](https://bot.q.qq.com/wiki/develop/api/openapi/wss/url_get.html)
      */
     public object Normal : GatewayApis<Gateway>(arrayOf("gateway"), Gateway.serializer())
-    
-    
+
+
     /**
      * 获取带分片 WSS 接入点
      *

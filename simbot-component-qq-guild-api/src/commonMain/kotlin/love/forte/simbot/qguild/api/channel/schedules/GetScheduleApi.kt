@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -19,7 +19,6 @@ package love.forte.simbot.qguild.api.channel.schedules
 
 import kotlinx.serialization.DeserializationStrategy
 import love.forte.simbot.qguild.api.GetQQGuildApi
-import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleGetApiDescription
 import love.forte.simbot.qguild.model.Schedule
 import kotlin.jvm.JvmStatic
@@ -48,11 +47,8 @@ public class GetScheduleApi private constructor(
         public fun create(channelId: String, scheduleId: String): GetScheduleApi = GetScheduleApi(channelId, scheduleId)
     }
 
-    override val resultDeserializer: DeserializationStrategy<Schedule> get() = Schedule.serializer()
+    override val resultDeserializationStrategy: DeserializationStrategy<Schedule> get() = Schedule.serializer()
 
-    private val path = arrayOf("channels", channelId, "schedules", scheduleId)
+    override val path: Array<String> = arrayOf("channels", channelId, "schedules", scheduleId)
 
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,8 +17,6 @@
 
 import org.jetbrains.dokka.base.DokkaBase
 import org.jetbrains.dokka.base.DokkaBaseConfiguration
-import org.gradle.api.plugins.JavaBasePlugin
-import java.io.File
 import java.time.Year
 
 plugins {
@@ -30,15 +28,17 @@ repositories {
 }
 
 fun org.jetbrains.dokka.gradle.AbstractDokkaTask.configOutput(format: String) {
-    moduleName.set("Simple Robot Component Tencent Guild")
+    moduleName.set("Simple Robot 组件 | QQ Guild")
     outputDirectory.set(rootProject.file("build/dokka/$format"))
 }
 
 tasks.named<org.jetbrains.dokka.gradle.DokkaMultiModuleTask>("dokkaHtmlMultiModule") {
     configOutput("html")
-    if (isSnapshot()) {
-        version = P.ComponentQQGuild.snapshotVersion.toString()
+
+    rootProject.file("README.md").takeIf { it.exists() }?.also {
+        includes.from(it)
     }
+
     pluginConfiguration<DokkaBase, DokkaBaseConfiguration> {
         customAssets = listOf(rootProject.file(".simbot/dokka-assets/logo-icon.svg"))
         customStyleSheets = listOf(rootProject.file(".simbot/dokka-assets/css/kdoc-style.css"))

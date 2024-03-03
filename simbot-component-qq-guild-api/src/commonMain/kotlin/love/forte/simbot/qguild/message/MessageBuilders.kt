@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -201,15 +201,6 @@ public class EmbedBuilder {
      * MessageEmbedField 对象数组	字段信息
      */
     public var fields: MutableList<Message.Embed.Field> = mutableListOf()
-
-    /**
-     * 向 [fields] 中添加一个元素。
-     *
-     */
-    @Deprecated("'value' is deprecated.", ReplaceWith("addField(name)"))
-    public fun addField(name: String, value: String) {
-        addField(name)
-    }
 
     /**
      * 向 [fields] 中添加一个元素。

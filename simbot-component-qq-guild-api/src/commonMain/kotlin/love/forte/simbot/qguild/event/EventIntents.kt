@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -115,7 +115,7 @@ public sealed class EventIntents {
      * ```
      *
      */
-    public object Guilds : EventIntents() {
+    public data object Guilds : EventIntents() {
         /** 频道事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
@@ -151,7 +151,7 @@ public sealed class EventIntents {
      *   - GUILD_MEMBER_REMOVE    // 当成员被移除时
      * ```
      */
-    public object GuildMembers : EventIntents() {
+    public data object GuildMembers : EventIntents() {
         /** 频道成员事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
@@ -179,7 +179,7 @@ public sealed class EventIntents {
      * ```
      */
     @PrivateDomainOnly
-    public object GuildMessages : EventIntents() {
+    public data object GuildMessages : EventIntents() {
         /** 频道消息事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
@@ -202,7 +202,7 @@ public sealed class EventIntents {
      *   - MESSAGE_REACTION_REMOVE // 为消息删除表情表态
      * ```
      */
-    public object GuildMessageReactions : EventIntents() {
+    public data object GuildMessageReactions : EventIntents() {
         /** 表情表态事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
@@ -226,7 +226,7 @@ public sealed class EventIntents {
      *   - DIRECT_MESSAGE_DELETE   // 删除（撤回）消息事件
      * ```
      */
-    public object DirectMessage : EventIntents() {
+    public data object DirectMessage : EventIntents() {
         /** 表情表态事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
@@ -255,7 +255,7 @@ public sealed class EventIntents {
      *   - OPEN_FORUM_REPLY_DELETE      // 当用户删除评论时
      * ```
      */
-    public object OpenForumsEvent : EventIntents() {
+    public data object OpenForumsEvent : EventIntents() {
         /** 论坛事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
@@ -294,7 +294,7 @@ public sealed class EventIntents {
      *   - AUDIO_OR_LIVE_CHANNEL_MEMBER_EXIT   // 当用户离开音视频/直播子频道
      * ```
      */
-    public object AudioOrLiveChannelMember : EventIntents() {
+    public data object AudioOrLiveChannelMember : EventIntents() {
         /** 音视频/直播子频道成员进出事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
@@ -317,7 +317,7 @@ public sealed class EventIntents {
      *   - INTERACTION_CREATE     // 互动事件创建时
      * ```
      */
-    public object Interaction : EventIntents() {
+    public data object Interaction : EventIntents() {
         /** 互动事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
@@ -338,7 +338,7 @@ public sealed class EventIntents {
      * - MESSAGE_AUDIT_REJECT   // 消息审核不通过
      * ```
      */
-    public object MessageAudit : EventIntents() {
+    public data object MessageAudit : EventIntents() {
         /** 互动事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
@@ -369,7 +369,7 @@ public sealed class EventIntents {
      * ```
      */
     @PrivateDomainOnly
-    public object ForumsEvent : EventIntents() {
+    public data object ForumsEvent : EventIntents() {
         /** 论坛事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
@@ -414,7 +414,7 @@ public sealed class EventIntents {
      * ```
      */
     @PrivateDomainOnly
-    public object AudioAction : EventIntents() {
+    public data object AudioAction : EventIntents() {
         /** 论坛事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
@@ -445,7 +445,7 @@ public sealed class EventIntents {
      * ```
      */
     @PrivateDomainOnly
-    public object PublicGuildMessages : EventIntents() {
+    public data object PublicGuildMessages : EventIntents() {
         /** 论坛事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
@@ -481,15 +481,24 @@ public sealed class EventIntents {
     }
 }
 
-@Deprecated("Unused")
-public enum class Events {
-
-}
-
-
-
-
-
+/**
+ * [EventIntents] 的所有实现类型的数组。
+ * **注意：获取时不会拷贝，也因此不要修改其中任何元素的值。**
+ */
+public val EventIntentsInstances: Array<EventIntents> = arrayOf(
+    Guilds,
+    GuildMembers,
+    GuildMessages,
+    GuildMessageReactions,
+    DirectMessage,
+    OpenForumsEvent,
+    AudioOrLiveChannelMember,
+    Interaction,
+    MessageAudit,
+    ForumsEvent,
+    AudioAction,
+    PublicGuildMessages,
+)
 
 /**
  * 鉴权成功之后，后台会下发的 Ready Event.

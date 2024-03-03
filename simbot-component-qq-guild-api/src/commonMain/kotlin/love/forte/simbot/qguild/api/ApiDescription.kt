@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -31,7 +31,6 @@ import io.ktor.http.*
  * @author ForteScarlet
  */
 public interface ApiDescription {
-
     /**
      * API 接口名，例如 `/guilds/{guild_id}/members/{user_id}`
      */
@@ -76,4 +75,22 @@ public abstract class SimpleGetApiDescription(path: String) :
  */
 public abstract class SimplePostApiDescription(path: String) :
     SimpleApiDescription(HttpMethod.Post, path)
+
+/**
+ * [SimpleApiDescription] 的基本抽象实现，[method] 提供为 [HttpMethod.Put]
+ */
+public abstract class SimplePutApiDescription(path: String) :
+    SimpleApiDescription(HttpMethod.Put, path)
+
+/**
+ * [SimpleApiDescription] 的基本抽象实现，[method] 提供为 [HttpMethod.Delete]
+ */
+public abstract class SimpleDeleteApiDescription(path: String) :
+    SimpleApiDescription(HttpMethod.Delete, path)
+
+/**
+ * [SimpleApiDescription] 的基本抽象实现，[method] 提供为 [HttpMethod.Patch]
+ */
+public abstract class SimplePatchApiDescription(path: String) :
+    SimpleApiDescription(HttpMethod.Patch, path)
 

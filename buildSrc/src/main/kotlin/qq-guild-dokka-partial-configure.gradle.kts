@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -15,10 +15,9 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-import org.gradle.kotlin.dsl.withType
 import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.gradle.DokkaTaskPartial
-import java.net.URL
+import java.net.URI
 
 plugins {
     id("org.jetbrains.dokka")
@@ -50,15 +49,15 @@ tasks.withType<DokkaTaskPartial>().configureEach {
         }
 
         // samples
-        samples.from(
-            project.files(),
-            project.files("src/samples"),
-        )
+//        samples.from(
+//            project.files(),
+//            project.files("src/samples"),
+//        )
 
         sourceLink {
             localDirectory.set(projectDir.resolve("src"))
             val relativeTo = projectDir.relativeTo(rootProject.projectDir)
-            remoteUrl.set(URL("${P.ComponentQQGuild.HOMEPAGE}/tree/main/$relativeTo/src"))
+            remoteUrl.set(URI.create("${P.ComponentQQGuild.HOMEPAGE}/tree/main/$relativeTo/src/").toURL())
             remoteLineSuffix.set("#L")
         }
 
@@ -68,24 +67,24 @@ tasks.withType<DokkaTaskPartial>().configureEach {
         }
 
 
-        fun externalDocumentation(docUrl: URL) {
+        fun externalDocumentation(docUri: URI) {
             externalDocumentationLink {
-                url.set(docUrl)
-                packageListUrl.set(URL(docUrl, "${docUrl.path}/package-list"))
+                url.set(docUri.toURL())
+                packageListUrl.set(docUri.resolve("package-list").toURL())
             }
         }
 
         // kotlin-coroutines doc
-        externalDocumentation(URL("https://kotlinlang.org/api/kotlinx.coroutines"))
+        externalDocumentation(URI.create("https://kotlinlang.org/api/kotlinx.coroutines/"))
 
         // kotlin-serialization doc
-        externalDocumentation(URL("https://kotlinlang.org/api/kotlinx.serialization"))
+        externalDocumentation(URI.create("https://kotlinlang.org/api/kotlinx.serialization/"))
 
         // ktor
-        externalDocumentation(URL("https://api.ktor.io"))
+        externalDocumentation(URI.create("https://api.ktor.io/"))
 
         // simbot doc
-        externalDocumentation(URL("https://docs.simbot.forte.love/main"))
+        externalDocumentation(URI.create("https://docs.simbot.forte.love/main/"))
 
     }
 }

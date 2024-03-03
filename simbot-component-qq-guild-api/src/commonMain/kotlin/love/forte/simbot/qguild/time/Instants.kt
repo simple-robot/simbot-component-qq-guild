@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -16,6 +16,7 @@
  */
 
 package love.forte.simbot.qguild.time
+
 
 /**
  * 用在一些不支持获取时间的地方使用的默认值 `"0000-01-01T08:00:00.000+08:00"`。

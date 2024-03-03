@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,18 +17,17 @@
 
 package love.forte.simbot.qguild.api.channel
 
-import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.PrivateDomainOnly
-import love.forte.simbot.qguild.api.QQGuildApi
-import love.forte.simbot.qguild.api.RouteInfoBuilder
-import love.forte.simbot.qguild.api.SimpleApiDescription
+import love.forte.simbot.qguild.api.PatchQQGuildApi
+import love.forte.simbot.qguild.api.SimplePatchApiDescription
 import love.forte.simbot.qguild.model.PrivateType
 import love.forte.simbot.qguild.model.SimpleChannel
 import love.forte.simbot.qguild.model.SpeakPermission
 import kotlin.jvm.JvmStatic
+import kotlin.jvm.JvmSynthetic
 
 
 /**
@@ -44,9 +43,9 @@ import kotlin.jvm.JvmStatic
 @PrivateDomainOnly
 public class ModifyChannelApi private constructor(
     channelId: String, override val body: Body
-) : QQGuildApi<SimpleChannel>() {
-    public companion object Factory : SimpleApiDescription(
-        HttpMethod.Patch, "/channels/{channel_id}"
+) : PatchQQGuildApi<SimpleChannel>() {
+    public companion object Factory : SimplePatchApiDescription(
+        "/channels/{channel_id}"
     ) {
 
         /**
@@ -54,21 +53,23 @@ public class ModifyChannelApi private constructor(
          *
          */
         @JvmStatic
-        public fun create(channelId: String, body: Body): ModifyChannelApi = ModifyChannelApi(channelId, body)
+        public fun create(channelId: String, body: Body): ModifyChannelApi =
+            ModifyChannelApi(channelId, body)
 
+        /**
+         * 使用 [Body.Builder] 构造 [Body] 并将其作为参数构造 [ModifyChannelApi].
+         */
+        @JvmSynthetic
+        public inline fun create(channelId: String, block: Body.Builder.() -> Unit): ModifyChannelApi =
+            create(channelId, Body.builder().also(block).build())
     }
 
-    private val path = arrayOf("channels", channelId)
+    override val path: Array<String> = arrayOf("channels", channelId)
 
-    override val resultDeserializer: DeserializationStrategy<SimpleChannel>
+    override fun createBody(): Any? = null
+
+    override val resultDeserializationStrategy: DeserializationStrategy<SimpleChannel>
         get() = SimpleChannel.serializer()
-
-    override val method: HttpMethod
-        get() = HttpMethod.Patch
-
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-    }
 
     /**
      * 用于 [ModifyChannelApi] 的请求体。
@@ -98,5 +99,74 @@ public class ModifyChannelApi private constructor(
          * 子频道发言权限 [SpeakPermission]
          */
         @SerialName("speak_permission") val speakPermission: SpeakPermission? = null
-    )
+    ) {
+        /**
+         * [Builder] for [Body]
+         */
+        @Suppress("MemberVisibilityCanBePrivate")
+        public class Builder {
+            /**
+             * @see Body.name
+             */
+            public var name: String? = null
+
+            /**
+             * @see Body.position
+             */
+            public var position: Int? = null
+
+            /**
+             * @see Body.parentId
+             */
+            public var parentId: String? = null
+
+            /**
+             * @see Body.privateType
+             */
+            public var privateType: PrivateType? = null
+
+            /**
+             * @see Body.speakPermission
+             */
+            public var speakPermission: SpeakPermission? = null
+
+            public fun name(value: String?): Builder = apply {
+                this.name = value
+            }
+
+            public fun position(value: Int?): Builder = apply {
+                this.position = value
+            }
+
+            public fun parentId(value: String?): Builder = apply {
+                this.parentId = value
+            }
+
+            public fun privateType(value: PrivateType?): Builder = apply {
+                this.privateType = value
+            }
+
+            public fun speakPermission(value: SpeakPermission?): Builder = apply {
+                this.speakPermission = value
+            }
+
+            public fun build(): Body = Body(
+                name = name,
+                position = position,
+                parentId = parentId,
+                privateType = privateType,
+                speakPermission = speakPermission,
+            )
+
+        }
+
+        public companion object {
+            /**
+             * 创建一个 [Builder].
+             */
+            @JvmStatic
+            public fun builder(): Builder = Builder()
+        }
+
+    }
 }

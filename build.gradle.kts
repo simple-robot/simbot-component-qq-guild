@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -15,20 +15,22 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+import love.forte.gradle.common.core.project.setup
+import love.forte.gradle.common.core.repository.Repositories
+
+
 plugins {
+    idea
     id("simbot-tencent-guild.changelog-generator")
     id("simbot-tencent-guild.dokka-multi-module")
-    id("simbot-tencent-guild.root-module-conventions")
     id("simbot-tencent-guild.nexus-publish")
 }
+
+setup(P.ComponentQQGuild)
 
 buildscript {
     repositories {
         mavenCentral()
-    }
-
-    dependencies {
-        classpath("org.jetbrains.kotlinx:atomicfu-gradle-plugin:${libs.versions.atomicfu.get()}")
     }
 }
 
@@ -37,15 +39,29 @@ buildscript {
 
 logger.info("=== Current version: {} ===", version)
 
-subprojects {
+allprojects {
     repositories {
         mavenCentral()
-        love.forte.gradle.common.core.repository.Repositories.Snapshot.Default.apply {
-            configMaven {
-                mavenContent {
-                    snapshotsOnly()
-                }
+        maven {
+            url = uri(Repositories.Snapshot.URL)
+            mavenContent {
+                snapshotsOnly()
             }
         }
     }
 }
+
+idea {
+    module.apply {
+        isDownloadSources = true
+    }
+    project {
+        modules.forEach { module ->
+            module.apply {
+                isDownloadSources = true
+            }
+        }
+    }
+}
+
+

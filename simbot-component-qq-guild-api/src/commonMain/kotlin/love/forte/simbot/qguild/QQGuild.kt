@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,9 +17,10 @@
 
 package love.forte.simbot.qguild
 
+//import kotlin.js.ExperimentalJsExport
+//import kotlin.js.JsExport
 import io.ktor.http.*
-import kotlin.js.ExperimentalJsExport
-import kotlin.js.JsExport
+import kotlinx.serialization.json.Json
 import kotlin.jvm.JvmField
 
 /**
@@ -29,9 +30,8 @@ import kotlin.jvm.JvmField
  *
  *
  */
-@OptIn(ExperimentalJsExport::class)
-@JsExport
-@Suppress("NON_EXPORTABLE_TYPE")
+//@OptIn(ExperimentalJsExport::class)
+//@JsExport
 public object QQGuild {
     /**
      * 正式环境接口域名 `https://api.sgroup.qq.com`
@@ -66,6 +66,31 @@ public object QQGuild {
      */
     @JvmField
     public val SANDBOX_URL: Url = Url(SANDBOX_URL_STRING)
+
+    /**
+     * 部分API中默认使用的Json序列化器。
+     *
+     * ```kotlin
+     * Json {
+     *     isLenient = true
+     *     ignoreUnknownKeys = true
+     *     allowSpecialFloatingPointValues = true
+     *     allowStructuredMapKeys = true
+     *     prettyPrint = false
+     *     useArrayPolymorphism = false
+     * }
+     * ```
+     *
+     */
+    @JvmField
+    public val DefaultJson: Json = Json {
+        isLenient = true
+        ignoreUnknownKeys = true
+        allowSpecialFloatingPointValues = true
+        allowStructuredMapKeys = true
+        prettyPrint = false
+        useArrayPolymorphism = false
+    }
 }
 
 

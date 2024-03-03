@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,10 +17,9 @@
 
 package love.forte.simbot.qguild.api.channel.pins
 
-import io.ktor.http.*
+import love.forte.simbot.qguild.api.DeleteQQGuildApi
 import love.forte.simbot.qguild.api.QQGuildApiWithoutResult
-import love.forte.simbot.qguild.api.RouteInfoBuilder
-import love.forte.simbot.qguild.api.SimpleApiDescription
+import love.forte.simbot.qguild.api.SimpleDeleteApiDescription
 import love.forte.simbot.qguild.api.channel.pins.DeletePinsMessageApi.Factory.DELETE_ALL_MESSAGE_ID
 import kotlin.jvm.JvmStatic
 
@@ -36,8 +35,8 @@ import kotlin.jvm.JvmStatic
  */
 public class DeletePinsMessageApi private constructor(
     channelId: String, messageId: String
-) : QQGuildApiWithoutResult() {
-    public companion object Factory : SimpleApiDescription(HttpMethod.Delete, "/channels/{channel_id}/pins/{message_id}") {
+) : QQGuildApiWithoutResult, DeleteQQGuildApi<Unit>() {
+    public companion object Factory : SimpleDeleteApiDescription("/channels/{channel_id}/pins/{message_id}") {
 
         /**
          * 当要删除的目标为全部时使用的 `message_id` 。
@@ -68,13 +67,5 @@ public class DeletePinsMessageApi private constructor(
             DeletePinsMessageApi(channelId, DELETE_ALL_MESSAGE_ID)
     }
 
-    private val path = arrayOf("channels", channelId, "pins", messageId)
-
-    override val method: HttpMethod get() = HttpMethod.Delete
-
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-    }
-
-    override val body: Any? get() = null
+    override val path: Array<String> = arrayOf("channels", channelId, "pins", messageId)
 }

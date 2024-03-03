@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,11 +17,9 @@
 
 package love.forte.simbot.qguild.api.channel.pins
 
-import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
-import love.forte.simbot.qguild.api.QQGuildApi
-import love.forte.simbot.qguild.api.RouteInfoBuilder
-import love.forte.simbot.qguild.api.SimpleApiDescription
+import love.forte.simbot.qguild.api.PutQQGuildApi
+import love.forte.simbot.qguild.api.SimplePutApiDescription
 import love.forte.simbot.qguild.model.PinsMessage
 import kotlin.jvm.JvmStatic
 
@@ -39,8 +37,8 @@ import kotlin.jvm.JvmStatic
  */
 public class AddPinsMessageApi private constructor(
     channelId: String, messageId: String
-) : QQGuildApi<PinsMessage>() {
-    public companion object Factory : SimpleApiDescription(HttpMethod.Put, "/channels/{channel_id}/pins/{message_id}") {
+) : PutQQGuildApi<PinsMessage>() {
+    public companion object Factory : SimplePutApiDescription("/channels/{channel_id}/pins/{message_id}") {
 
         /**
          * 构造一个 [AddPinsMessageApi]
@@ -53,16 +51,9 @@ public class AddPinsMessageApi private constructor(
             AddPinsMessageApi(channelId, messageId)
     }
 
-    private val path = arrayOf("channels", channelId, "pins", messageId)
+    override val path: Array<String> = arrayOf("channels", channelId, "pins", messageId)
 
+    override val resultDeserializationStrategy: DeserializationStrategy<PinsMessage> get() = PinsMessage.serializer()
 
-    override val resultDeserializer: DeserializationStrategy<PinsMessage> get() = PinsMessage.serializer()
-
-    override val method: HttpMethod get() = HttpMethod.Put
-
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-    }
-
-    override val body: Any? get() = null
+    override fun createBody(): Any? = null
 }

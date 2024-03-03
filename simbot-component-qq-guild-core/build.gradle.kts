@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -15,34 +15,90 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+import love.forte.gradle.common.core.project.setup
+import love.forte.gradle.common.kotlin.multiplatform.applyTier1
+import love.forte.gradle.common.kotlin.multiplatform.applyTier2
+import love.forte.gradle.common.kotlin.multiplatform.applyTier3
+
 plugins {
-    `simbot-tcg-suspend-transform-configure`
-    id("simbot-tencent-guild.module-conventions")
-    id("simbot-tencent-guild.maven-publish")
+    kotlin("multiplatform")
     kotlin("plugin.serialization")
     `qq-guild-dokka-partial-configure`
+    `simbot-tcg-suspend-transform-configure`
 }
 
+setup(P.ComponentQQGuild)
+
+useK2()
+configJavaCompileWithModule("simbot.component.qqguild.core")
+apply(plugin = "qq-guild-multiplatform-maven-publish")
+
+configJsTestTasks()
+
 kotlin {
+    explicitApi()
+    applyDefaultHierarchyTemplate()
+
     sourceSets.configureEach {
         languageSettings {
-            optIn("love.forte.simbot.InternalSimbotApi")
-            optIn("love.forte.simbot.qguild.InternalApi")
+            optIn("love.forte.simbot.qguild.QGInternalApi")
+        }
+    }
+
+    configKotlinJvm()
+
+    js(IR) {
+        configJs()
+    }
+
+    applyTier1()
+    applyTier2()
+    applyTier3(supportKtorClient = true)
+
+    sourceSets {
+        commonMain.dependencies {
+            compileOnly(libs.simbot.api)
+            api(project(":simbot-component-qq-guild-stdlib"))
+            compileOnly(libs.simbot.common.annotations)
+            // ktor
+            api(libs.ktor.client.contentNegotiation)
+            api(libs.ktor.serialization.kotlinxJson)
+            api(libs.ktor.client.ws)
+            // datetime
+            api(libs.kotlinx.datetime)
+        }
+
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(kotlin("reflect"))
+            implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.kotlinx.serialization.json)
+            api(libs.simbot.core)
+            api(libs.simbot.common.core)
+        }
+
+        jvmTest.dependencies {
+            runtimeOnly(libs.ktor.client.cio)
+            runtimeOnly(libs.kotlinx.coroutines.reactor)
+            implementation(libs.reactor.core)
+
+            implementation(libs.log4j.api)
+            implementation(libs.log4j.core)
+            implementation(libs.log4j.slf4j2)
+        }
+
+        jsMain.dependencies {
+            implementation(libs.simbot.api)
+            api(libs.simbot.common.annotations)
+        }
+
+        nativeMain.dependencies {
+            implementation(libs.simbot.api)
+            api(libs.simbot.common.annotations)
+        }
+
+        mingwTest.dependencies {
+            implementation(libs.ktor.client.winhttp)
         }
     }
 }
-
-dependencies {
-    api(project(":simbot-component-qq-guild-core-common"))
-    compileOnly(simbotCore)
-
-    compileOnly(libs.kotlinx.serialization.properties)
-    compileOnly(libs.charleskorn.kaml)
-
-    testImplementation(simbotCore)
-    testImplementation(libs.charleskorn.kaml)
-    testImplementation(simbotLoggerSlf4jImpl)
-    testImplementation("love.forte.simbot:simbot-logger-slf4j-impl:3.0.0-RC.3")
-
-}
-

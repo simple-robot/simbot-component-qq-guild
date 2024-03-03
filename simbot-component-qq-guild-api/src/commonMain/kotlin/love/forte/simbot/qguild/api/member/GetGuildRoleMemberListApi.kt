@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,6 +17,7 @@
 
 package love.forte.simbot.qguild.api.member
 
+import io.ktor.http.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.DeserializationStrategy
@@ -26,7 +27,6 @@ import love.forte.simbot.logger.logger
 import love.forte.simbot.qguild.ApiModel
 import love.forte.simbot.qguild.PrivateDomainOnly
 import love.forte.simbot.qguild.api.GetQQGuildApi
-import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimpleGetApiDescription
 import love.forte.simbot.qguild.model.SimpleMember
 import kotlin.jvm.JvmOverloads
@@ -92,15 +92,14 @@ public class GetGuildRoleMemberListApi private constructor(
         ): GetGuildRoleMemberListApi = GetGuildRoleMemberListApi(guildId, roleId, null, limit)
     }
 
-    private val path = arrayOf("guilds", guildId, "roles", roleId, "members")
+    override val path: Array<String> = arrayOf("guilds", guildId, "roles", roleId, "members")
 
-    override val resultDeserializer: DeserializationStrategy<GuildRoleMemberList>
+    override val resultDeserializationStrategy: DeserializationStrategy<GuildRoleMemberList>
         get() = GuildRoleMemberList.serializer()
 
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-        startIndex?.also { builder.parametersAppender.append("start_index", startIndex) }
-        builder.parametersAppender.append("limit", limit)
+    override fun URLBuilder.buildUrl() {
+        startIndex?.also { parameters.append("start_index", startIndex) }
+        parameters.append("limit", limit.toString())
     }
 }
 

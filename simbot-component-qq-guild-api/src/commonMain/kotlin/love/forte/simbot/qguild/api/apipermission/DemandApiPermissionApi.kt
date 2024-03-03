@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -22,7 +22,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.api.ApiDescription
 import love.forte.simbot.qguild.api.PostQQGuildApi
-import love.forte.simbot.qguild.api.RouteInfoBuilder
 import love.forte.simbot.qguild.api.SimplePostApiDescription
 import love.forte.simbot.qguild.model.ApiPermissionDemand
 import love.forte.simbot.qguild.model.ApiPermissionDemandIdentify
@@ -81,14 +80,13 @@ public class DemandApiPermissionApi private constructor(
 
     }
 
-    private val path = arrayOf("guilds", guildId, "api_permission", "demand")
+    override val path: Array<String> = arrayOf("guilds", guildId, "api_permission", "demand")
 
-    override val resultDeserializer: DeserializationStrategy<ApiPermissionDemand>
+    override fun createBody(): Any? = null
+
+    override val resultDeserializationStrategy: DeserializationStrategy<ApiPermissionDemand>
         get() = ApiPermissionDemand.serializer()
 
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-    }
 
     /**
      * 用于在 [DemandApiPermissionApi] 中进行请求的

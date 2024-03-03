@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -18,21 +18,12 @@
 package love.forte.simbot.qguild.api.message
 
 import io.ktor.client.request.forms.*
-import love.forte.simbot.qguild.InternalApi
+import love.forte.simbot.qguild.QGInternalApi
 
 /**
  * native平台没有额外的类型支持
  *
  */
+@QGInternalApi
 public actual fun FormBuilder.resolveOther(fileImage: Any?) {
-}
-
-/**
- * 提供一些需要由不同平台额外实现的基类。
- * 主要针对 `fileImage`。
- */
-@InternalApi
-public actual abstract class BaseMessageSendBodyBuilder actual constructor() {
-    public actual open var fileImage: Any? = null
-    protected set
 }

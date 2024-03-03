@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -18,12 +18,10 @@
 package love.forte.simbot.qguild.api.message.direct
 
 import io.ktor.http.*
-import kotlinx.serialization.DeserializationStrategy
-import kotlinx.serialization.builtins.serializer
 import love.forte.simbot.qguild.PrivateDomainOnly
-import love.forte.simbot.qguild.api.QQGuildApi
-import love.forte.simbot.qguild.api.RouteInfoBuilder
-import love.forte.simbot.qguild.api.SimpleApiDescription
+import love.forte.simbot.qguild.api.DeleteQQGuildApi
+import love.forte.simbot.qguild.api.QQGuildApiWithoutResult
+import love.forte.simbot.qguild.api.SimpleDeleteApiDescription
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 
@@ -41,9 +39,9 @@ public class DeleteDmsApi private constructor(
     guildId: String,
     messageId: String,
     private val hidetip: Boolean? = null,
-) : QQGuildApi<Unit>() {
-    public companion object Factory : SimpleApiDescription(
-        HttpMethod.Delete, "/dms/{guild_id}/messages/{message_id}"
+) : QQGuildApiWithoutResult, DeleteQQGuildApi<Unit>() {
+    public companion object Factory : SimpleDeleteApiDescription(
+        "/dms/{guild_id}/messages/{message_id}"
     ) {
 
         /**
@@ -56,23 +54,11 @@ public class DeleteDmsApi private constructor(
         @JvmOverloads
         public fun create(guildId: String, messageId: String, hidetip: Boolean? = null): DeleteDmsApi =
             DeleteDmsApi(guildId, messageId, hidetip)
-
     }
 
-    override val resultDeserializer: DeserializationStrategy<Unit>
-        get() = Unit.serializer()
+    override val path: Array<String> = arrayOf("dms", guildId, "messages", messageId)
 
-    override val method: HttpMethod
-        get() = HttpMethod.Delete
-
-    private val path = arrayOf("dms", guildId, "messages", messageId)
-
-    override fun route(builder: RouteInfoBuilder) {
-        builder.apiPath = path
-        hidetip?.also { builder.parametersAppender.append("hidetip", it) }
-
+    override fun URLBuilder.buildUrl() {
+        hidetip?.also { parameters.append("hidetip", it.toString()) }
     }
-
-    override val body: Any?
-        get() = null
 }

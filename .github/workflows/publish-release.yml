@@ -2,7 +2,7 @@ name: Publish Release
 on:
   push:
     tags:
-      - v3.**.**
+      - v4.**.**
 
 env:
   IS_CI: true
@@ -26,28 +26,28 @@ jobs:
     steps:
       # 检出仓库代码
       - name: Check Out Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # setup Java
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: 11
+          java-version: 21
           cache: 'gradle'
 
       # setup Gradle
       - name: Gradle Run Test
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/actions/setup-gradle@v3
         with:
-          gradle-version: 7.6
+          gradle-version: 8.5
           arguments: assemble test -Porg.gradle.daemon=false
 
       # setup Gradle
       - name: Publish Release
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/actions/setup-gradle@v3
         with:
-          gradle-version: 7.6
+          gradle-version: 8.5
           arguments: |
             publishToSonatype
             closeAndReleaseStagingRepository
@@ -71,7 +71,7 @@ jobs:
     steps:
       # 检出仓库代码
       - name: Check Out Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
         # Create gitHub release
       - name: Create Github Release
@@ -80,7 +80,9 @@ jobs:
           token: ${{ secrets.PUSH_TOKEN }}
           body_path: .changelog/${{ github.ref_name }}.md
           generate_release_notes: true
-          prerelease: ${{ contains(github.ref_name, 'preview') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'alpha') }}
+          prerelease: ${{ contains(github.ref_name, 'preview') || contains(github.ref_name, 'alpha') }}
+
+  #  || contains(github.ref_name, 'beta')
 
   publish-snapshot:
     name: Publish snapshot
@@ -92,20 +94,20 @@ jobs:
     steps:
       # 检出仓库代码
       - name: Check out repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # setup Java
       - name: Setup java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: 11
+          java-version: 21
 
       # setup Gradle
       - name: Gradle publish snapshot
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/actions/setup-gradle@v3
         with:
-          gradle-version: 7.6
+          gradle-version: 8.5
           arguments: |
             publishToSonatype
             closeAndReleaseStagingRepository
@@ -126,22 +128,22 @@ jobs:
     steps:
       # 检出仓库代码
       - name: Check out repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
           fetch-depth: 0
       # setup Java
       - name: Setup java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: 11
+          java-version: 21
 
       # setup Gradle
       - name: Gradle generate documentation
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/actions/setup-gradle@v3
         with:
-          gradle-version: 7.6
+          gradle-version: 8.5
           arguments: |
             dokkaHtmlMultiModule
             --info 

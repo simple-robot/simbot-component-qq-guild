@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -15,191 +15,114 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-import love.forte.gradle.common.kotlin.multiplatform.NativeTargets
+import love.forte.gradle.common.core.project.setup
+import love.forte.gradle.common.kotlin.multiplatform.applyTier1
+import love.forte.gradle.common.kotlin.multiplatform.applyTier2
+import love.forte.gradle.common.kotlin.multiplatform.applyTier3
+import love.forte.plugin.suspendtrans.gradle.withKotlinTargets
+import util.isCi
 
 plugins {
     kotlin("multiplatform")
-    `qq-guild-multiplatform-maven-publish`
-//    id("simbot-tencent-guild.module-conventions")
-//    id("simbot-tencent-guild.maven-publish")
     kotlin("plugin.serialization")
     `qq-guild-dokka-partial-configure`
+    alias(libs.plugins.ksp)
 }
 
-repositories {
-    mavenCentral()
-}
+setup(P.ComponentQQGuild)
+
+useK2()
+configJavaCompileWithModule("simbot.component.qqguild.api")
+//apply(plugin = "qq-guild-dokka-partial-configure")
+apply(plugin = "qq-guild-multiplatform-maven-publish")
+
+//configJsTestTasks()
 
 kotlin {
     explicitApi()
+    applyDefaultHierarchyTemplate()
 
     sourceSets.configureEach {
         languageSettings {
-            optIn("love.forte.simbot.qguild.InternalApi")
+            optIn("love.forte.simbot.qguild.QGInternalApi")
         }
     }
 
-    jvm {
-        withJava()
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "1.8"
-                javaParameters = true
-                freeCompilerArgs = freeCompilerArgs + listOf("-Xjvm-default=all")
-            }
-        }
-        testRuns["test"].executionTask.configure {
-            useJUnitPlatform()
-        }
-    }
+    configKotlinJvm()
 
     js(IR) {
-        nodejs()
-        binaries.library()
+        configJs()
     }
 
+    applyTier1()
+    applyTier2()
+    applyTier3(supportKtorClient = true)
 
-    val mainPresets = mutableSetOf<org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet>()
-    val testPresets = mutableSetOf<org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet>()
-
-    // https://kotlinlang.org/docs/native-target-support.html
-    // 针对 kotlin target support 中的列表结合 ktor-client 平台的支持提供的平台能力。
-    // 注释掉的内容是Ktor尚不支持的平台
-//    val supportTargets = setOf(
-//        // Tier 1
-//        "linuxX64",
-//        "macosX64",
-//        "macosArm64",
-//        "iosSimulatorArm64",
-//        "iosX64",
-//
-//        // Tier 2
-////        "linuxArm64",
-//        "watchosSimulatorArm64",
-//        "watchosX64",
-//        "watchosArm32",
-//        "watchosArm64",
-//        "tvosSimulatorArm64",
-//        "tvosX64",
-//        "tvosArm64",
-//        "iosArm64",
-//
-//        // Tier 3
-////        "androidNativeArm32",
-////        "androidNativeArm64",
-////        "androidNativeX86",
-////        "androidNativeX64",
-//        "mingwX64",
-////        "watchosDeviceArm64",
-//    )
-
-    val targets = NativeTargets.Official.all.intersect(NativeTargets.KtorClient.all) + setOf("mingwX64")
-
-    targets {
-        presets.filterIsInstance<org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeTargetPreset<*>>()
-            .filter { it.name in targets }
-            .forEach { presets ->
-                val target = fromPreset(presets, presets.name)
-                val mainSourceSet = target.compilations["main"].kotlinSourceSets.first()
-                val testSourceSet = target.compilations["test"].kotlinSourceSets.first()
-
-                val tn = target.name
-                when {
-                    // just for test
-                    // main中只使用HttpClient但用不到引擎，没必要指定
-
-                    // win
-                    tn.startsWith("mingw") -> {
-                        testSourceSet.dependencies {
-                            implementation(libs.ktor.client.winhttp)
-                        }
-                    }
-                    // linux: CIO..?
-                    tn.startsWith("linux") -> {
-                        testSourceSet.dependencies {
-                            implementation(libs.ktor.client.cio)
-                        }
-                    }
-
-                    // darwin based
-                    tn.startsWith("macos")
-                            || tn.startsWith("ios")
-                            || tn.startsWith("watchos")
-                            || tn.startsWith("tvos") -> {
-                        testSourceSet.dependencies {
-                            implementation(libs.ktor.client.darwin)
-                        }
-                    }
-                }
-
-                mainPresets.add(mainSourceSet)
-                testPresets.add(testSourceSet)
-            }
+    withKotlinTargets { target ->
+        targets.findByName(target.name)?.compilations?.all {
+            // 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+            kotlinOptions.freeCompilerArgs += "-Xexpect-actual-classes"
+        }
     }
 
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                api(libs.ktor.client.core)
-                api(libs.ktor.client.contentNegotiation)
-                api(libs.ktor.serialization.kotlinxJson)
-                api(libs.kotlinx.serialization.json)
-                api(simbotLogger)
-            }
+        commonMain.dependencies {
+            api(libs.kotlinx.coroutines.core)
+
+            api(libs.simbot.logger)
+            api(libs.simbot.common.apidefinition)
+            api(libs.simbot.common.suspend)
+            api(libs.simbot.common.core)
+            compileOnly(libs.simbot.common.annotations)
+
+            api(libs.ktor.client.core)
+            api(libs.ktor.client.contentNegotiation)
+            api(libs.kotlinx.serialization.json)
         }
 
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test"))
-                implementation(libs.kotlinx.coroutines.test)
-            }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.kotlinx.coroutines.debug)
+            implementation(libs.kotlinx.coroutines.test)
+            // https://ktor.io/docs/http-client-testing.html
+            implementation(libs.ktor.client.mock)
         }
 
-        getByName("jvmMain") {
-            dependencies {
-                compileOnly(simbotApi) // use @Api4J annotation
-            }
+        jvmMain.dependencies {
+//            compileOnly(libs.simbot.api) // use @Api4J annotation
         }
 
-        getByName("jvmTest") {
-            dependencies {
-                implementation(libs.ktor.client.cio)
-                implementation(simbotApi) // use @Api4J annotation
-                implementation(libs.log4j.api)
-                implementation(libs.log4j.core)
-                implementation(libs.log4j.slf4j2)
-            }
+        jvmTest.dependencies {
+            implementation(libs.ktor.client.cio)
+            implementation(libs.log4j.api)
+            implementation(libs.log4j.core)
+            implementation(libs.log4j.slf4j2)
+            implementation(libs.kotlinx.coroutines.reactor)
+            implementation(libs.reactor.core)
         }
 
-        getByName("jsMain") {
-            dependencies {
-                api(libs.ktor.client.js)
-            }
+        jsMain.dependencies {
+            api(libs.ktor.client.js)
+            implementation(libs.simbot.common.annotations)
         }
 
-        val nativeMain by creating {
-            dependsOn(commonMain)
+        nativeMain.dependencies {
+            implementation(libs.simbot.common.annotations)
         }
 
-        val nativeTest by creating {
-            dependsOn(commonTest)
+        mingwTest.dependencies {
+            implementation(libs.ktor.client.winhttp)
         }
-
-        configure(mainPresets) { dependsOn(nativeMain) }
-        configure(testPresets) { dependsOn(nativeTest) }
-
     }
 
 }
 
-// suppress all?
-//tasks.withType<org.jetbrains.dokka.gradle.DokkaTaskPartial>().configureEach {
-//    dokkaSourceSets.configureEach {
-//        suppress.set(true)
-//        perPackageOption {
-//            suppress.set(true)
-//        }
-//    }
-//}
+dependencies {
+    add("kspJvm", project(":internal-processors:api-reader"))
+}
 
-
+ksp {
+    arg("qg.api.reader.enable", (!isCi).toString())
+    arg("qg.api.finder.api.output", rootDir.resolve("generated-docs/api-list.md").absolutePath)
+    arg("qg.api.finder.event.output", rootDir.resolve("generated-docs/event-list.md").absolutePath)
+}

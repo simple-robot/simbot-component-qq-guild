@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. ForteScarlet.
+ * Copyright (c) 2021-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -22,33 +22,31 @@ plugins {
 repositories {
     mavenCentral()
     gradlePluginPortal()
+    mavenLocal()
 }
 
-val kotlinVersion = "1.8.21"
-val dokkaPluginVersion = "1.8.10"
-val suspendTransformVersion = "0.3.1"
-val gradleCommon = "0.1.1"
-//val atomicfuVersion = "0.20.0"
+val kotlinVersion: String = libs.versions.kotlin.get()
 
 dependencies {
     implementation(kotlin("gradle-plugin", kotlinVersion))
     implementation(kotlin("serialization", kotlinVersion))
-    implementation("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaPluginVersion")
-    implementation("org.jetbrains.dokka:dokka-base:$dokkaPluginVersion")
-
-    // https://github.com/Kotlin/kotlinx-atomicfu
-//    implementation("org.jetbrains.kotlinx:atomicfu-gradle-plugin:$atomicfuVersion")
+    implementation(libs.bundles.dokka)
 
     // see https://github.com/gradle-nexus/publish-plugin
     implementation("io.github.gradle-nexus:publish-plugin:1.1.0")
 
-//    implementation("love.forte.plugin.suspend-transform:suspend-transform-plugin-gradle:0.0.5")
-    implementation("love.forte.plugin.suspend-transform:suspend-transform-plugin-gradle:$suspendTransformVersion")
-    implementation("love.forte.gradle.common:gradle-common-core:$gradleCommon")
-    implementation("love.forte.gradle.common:gradle-common-kotlin-multiplatform:$gradleCommon")
-    implementation("love.forte.gradle.common:gradle-common-publication:$gradleCommon")
+    // simbot suspend transform gradle common
+    implementation(libs.simbot.gradle)
 
+    // suspend transform
+    implementation(libs.suspend.transform.gradle)
+
+    // gradle common
+    implementation(libs.bundles.gradle.common)
 }
 
-
-
+//tasks.withType<KotlinCompile> {
+//    kotlinOptions {
+//        languageVersion = "2.0"
+//    }
+//}
