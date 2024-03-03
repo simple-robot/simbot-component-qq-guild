@@ -16,14 +16,15 @@
  */
 
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.withType
 
 
 fun Project.useK2(languageVersion: String = "2.0") {
-    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions {
-            // useK2
-            this.languageVersion = languageVersion
-        }
-    }
+    // 暂时关闭 K2，
+    // 知道 Kotlin 2.0 文档版发布
+//    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+//        kotlinOptions {
+//            // useK2
+//            this.languageVersion = languageVersion
+//        }
+//    }
 }
