@@ -3,16 +3,16 @@ on:
   push:
     branches:
       - main
-      - dev/ver/**
       - dev/main
-#      - v4-dev/main
-#      - v4-dev/v4-upgrade
-
     paths:
       - 'Writerside/**'
       - '.github/workflows/deploy-v4-website.yml'
+
+    tags-ignore:
+      - v4.**.**
   # Specify to run a workflow manually from the Actions tab on GitHub
   workflow_dispatch:
+
 
 # Gives the workflow permissions to clone the repo and create a page deployment
 permissions:
