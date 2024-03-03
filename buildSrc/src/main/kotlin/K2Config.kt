@@ -19,8 +19,7 @@ import org.gradle.api.Project
 
 
 fun Project.useK2(languageVersion: String = "2.0") {
-    // 暂时关闭 K2，
-    // 知道 Kotlin 2.0 文档版发布
+    logger.warn("暂时关闭 K2， 直到 Kotlin 2.0 稳定版发布。languageVersion = $languageVersion")
 //    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 //        kotlinOptions {
 //            // useK2
