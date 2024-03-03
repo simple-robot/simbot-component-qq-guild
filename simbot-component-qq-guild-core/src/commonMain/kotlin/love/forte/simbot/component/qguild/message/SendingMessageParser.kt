@@ -17,15 +17,11 @@
 
 package love.forte.simbot.component.qguild.message
 
-import love.forte.simbot.annotations.ExperimentalSimbotAPI
 import love.forte.simbot.component.qguild.ExperimentalQGApi
 import love.forte.simbot.message.Messages
 import love.forte.simbot.message.emptyMessages
 import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.qguild.model.Message
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
 import kotlin.jvm.JvmName
 import kotlin.jvm.JvmOverloads
 import love.forte.simbot.message.Message as SimbotMessage
@@ -184,7 +180,7 @@ public object MessageParsers {
      *
      * @return 解析结果的 [MessageSendApi.Body.Builder] 序列。
      */
-    @OptIn(ExperimentalSimbotAPI::class, ExperimentalContracts::class, ExperimentalQGApi::class)
+    @OptIn(ExperimentalQGApi::class)
     @JvmOverloads
     @JvmName("parse")
     public suspend inline fun parse(
@@ -192,13 +188,6 @@ public object MessageParsers {
         crossinline onEachPre: MessageSendApi.Body.Builder.() -> Unit = {},
         onEachPost: MessageSendApi.Body.Builder.() -> Unit = {},
     ): List<MessageSendApi.Body.Builder> {
-        contract {
-            callsInPlace(onEachPre, InvocationKind.AT_LEAST_ONCE)
-            callsInPlace(onEachPost, InvocationKind.AT_LEAST_ONCE)
-        }
-
-//        val builder = MessageSendApi.Body.Builder().also(onEachPre)
-
         val context = SendingMessageParser.BuilderContext { MessageSendApi.Body.Builder().also(onEachPre) }
 
         when (message) {
