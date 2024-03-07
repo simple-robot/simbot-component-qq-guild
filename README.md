@@ -21,25 +21,19 @@
 
 </div>
 
-这是 
-[**Simple Robot v4**](https://github.com/simple-robot/simpler-robot/tree/v4-dev)
-下的子项目，是针对 
-[**QQ频道机器人**](https://bot.q.qq.com/wiki/develop/api/) 
-各方面的 simbot 组件库实现， 
-包括对 `API` 内容的实现、事件相关的实现以及BOT对于事件的监听与交互等。
+这是一个基于 [Kotlin coroutines](https://github.com/Kotlin/kotlinx.coroutines)
+的 [**QQ频道机器人**][qg bot doc] API/SDK
+Kotlin 多平台库，异步高效、Java友好。
 
-QQ频道组件库可以作为底层API依赖使用、
-轻量级的QQ频道事件调度框架使用，
-也可以基于 simbot 核心库的种种快速开发一个功能强大的QQ频道机器人！
+它同样是一个 [Simple Robot v4][simbot4 gh] (下文简称 simbot)
+的组件库，是 simbot 的子项目之一。
+借助 simbot 核心库提供的能力，它可以支持更多高级功能和封装，比如组件协同、Spring支持等。
 
-- 基于 [`Kotlin`](https://kotlinlang.org/) 提供 [KMP 多平台](https://kotlinlang.org/docs/multiplatform.html) 特性
-- 基于 [`Kotlin coroutines`](https://github.com/Kotlin/kotlinx.coroutines) 与 [`Ktor`](https://ktor.io/) 提供高效易用的API；
+它可以作为一个低级别的 API/SDK 辅助依赖库，
+也可在 simbot 核心库的支持下用作为一个轻量级的快速开发框架！
 
-- 基于 [`Kotlin`](https://kotlinlang.org/) 提供 [KMP 多平台](https://kotlinlang.org/docs/multiplatform.html) 特性，提供 Java 友好的API。
-- 基于 [`Kotlin coroutines`](https://github.com/Kotlin/kotlinx.coroutines) 与 [`Ktor`](https://ktor.io/) 提供轻量高效的API。
-
-> [!Note]
-> 下文中 `Simple Robot v4` 简称为 `simbot4`
+序列化和网络请求相关分别基于 [Kotlin serialization](https://github.com/Kotlin/kotlinx.serialization)
+和 [Ktor](https://ktor.io/).
 
 ## 文档
 
@@ -109,3 +103,8 @@ You should have received a copy of the GNU Lesser General Public License along w
 If not, see <https://www.gnu.org/licenses/>.
 ```
 
+
+[simbot4 gh]: https://github.com/simple-robot/simpler-robot/tree/v4-dev
+[simbot doc]: https://simbot.forte.love
+[qg bot doc]: https://bot.q.qq.com/wiki/develop/api/
+[KMP]: https://kotlinlang.org/docs/multiplatform.html

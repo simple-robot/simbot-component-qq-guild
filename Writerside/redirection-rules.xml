@@ -10,4 +10,8 @@
         <description>Created after removal of "角色 QGRole" from Simple Robot | QQ频道</description>
         <accepts>QGRole.html</accepts>
     </rule>
+    <rule id="24c96b8b">
+        <description>Created after removal of "关于文档" from Simple Robot | QQ频道</description>
+        <accepts>About.html</accepts>
+    </rule>
 </rules>

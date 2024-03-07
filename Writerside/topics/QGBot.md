@@ -1,3 +1,0 @@
-# QGBot
-
-Start typing here...

@@ -1,3 +1,1 @@
-# 频道 QGGuild
-
-Start typing here...
+# 频道 Guild
