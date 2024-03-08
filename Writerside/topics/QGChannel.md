@@ -2,6 +2,8 @@
 
 TODO
 
+## 组件库中的子频道 {id="component-channels"}
+
 ## QGForumChannel
 
 
