@@ -6,7 +6,7 @@
 
 ## API模块 {id='api-module'}
 
-假如你只使用了API模块，那么就需要普通地API的正常流程来发送图片: 
+假如你只使用了API模块，那么就需要普通地使用API来发送图片: 
 使用 `MessageSendApi` 中的 `fileImage` 或 `image` 属性上传图片。
 
 其中 `image` 比较简单，就是一个图片的地址。
