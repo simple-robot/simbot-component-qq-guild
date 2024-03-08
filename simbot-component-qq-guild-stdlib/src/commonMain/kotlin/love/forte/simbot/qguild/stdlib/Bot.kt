@@ -76,17 +76,40 @@ public interface Bot : CoroutineScope {
      * 也同样因此，尽可能避免在 [registerPreProcessor] 中执行任何耗时逻辑，这可能会对事件处理流程造成严重阻塞。
      *
      * @see EventProcessor
+     * @suppress use [subscribe]
      *
      * @param processor 用于处理事件的函数类型
      */
-    public fun registerPreProcessor(processor: EventProcessor): DisposableHandle
+    @Deprecated("Use `subscribe(PRE, processor)`", ReplaceWith("subscribe(SubscribeSequence.PRE, processor)"))
+    public fun registerPreProcessor(processor: EventProcessor): DisposableHandle =
+        subscribe(SubscribeSequence.PRE, processor)
 
     /**
      * 添加一个事件处理器。
-     *
+     * @suppress use [subscribe]
      * @see EventProcessor
      */
-    public fun registerProcessor(processor: EventProcessor): DisposableHandle
+    @Deprecated("Use `subscribe(processor)`", ReplaceWith("subscribe(processor)"))
+    public fun registerProcessor(processor: EventProcessor): DisposableHandle =
+        subscribe(SubscribeSequence.NORMAL, processor)
+
+    /**
+     * 订阅事件并使用 [processor] 对其进行处理。
+     *
+     * @see EventProcessor
+     * @see SubscribeSequence
+     */
+    public fun subscribe(sequence: SubscribeSequence, processor: EventProcessor): DisposableHandle
+
+    /**
+     * 订阅事件并使用 [processor] 对其进行处理。
+     * 默认使用 [SubscribeSequence.NORMAL] 级别。
+     *
+     * @see EventProcessor
+     * @see SubscribeSequence
+     */
+    public fun subscribe(processor: EventProcessor): DisposableHandle =
+        subscribe(SubscribeSequence.NORMAL, processor)
 
     /**
      * [票据](https://bot.q.qq.com/wiki/develop/api/#%E7%A5%A8%E6%8D%AE)
@@ -187,3 +210,24 @@ public interface Bot : CoroutineScope {
     public suspend fun me(): User
 }
 
+/**
+ * 订阅事件用的事件处理器的顺序模式
+ */
+public enum class SubscribeSequence {
+    /**
+     * 预处理级别。
+     * 使用 [PRE]
+     * 所注册的所有事件处理器会在接收到事件的时候以**同步顺序**的方式依次执行，
+     * 而后再交由下游的 processor 处理。
+     *
+     * 尽可能避免在 [PRE] 中执行任何耗时逻辑，
+     * 这可能会对事件处理流程造成严重阻塞。
+     */
+    PRE,
+
+    /**
+     * 普通级别。始终在所有 [PRE] 之后执行，
+     * 且会作为一个整体在异步中处理。
+     */
+    NORMAL;
+}

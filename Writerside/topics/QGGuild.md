@@ -35,7 +35,7 @@ bot.process<GuildCreate> {
 <tab title="Java" group-key="Java">
 
 ```Java
-bot.registerProcessor(EventProcessors.async(GuildCreate.class, (event, raw) -> {
+bot.subscribe(EventProcessors.async(GuildCreate.class, (event, raw) -> {
     EventGuild guild = event.getData();
     // ...
     return CompletableFuture.completedFuture(null);
@@ -44,7 +44,7 @@ bot.registerProcessor(EventProcessors.async(GuildCreate.class, (event, raw) -> {
 {switcher-key="%ja%"}
 
 ```Java
-bot.registerProcessor(EventProcessors.block(GuildCreate.class, (event, raw) -> {
+bot.subscribe(EventProcessors.block(GuildCreate.class, (event, raw) -> {
     EventGuild guild = event.getData();
 }));
 ```
