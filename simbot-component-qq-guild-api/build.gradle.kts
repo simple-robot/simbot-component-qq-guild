@@ -27,6 +27,7 @@ plugins {
     kotlin("plugin.serialization")
     `qq-guild-dokka-partial-configure`
     alias(libs.plugins.ksp)
+    `qq-guild-module-config`
 }
 
 setup(P.ComponentQQGuild)

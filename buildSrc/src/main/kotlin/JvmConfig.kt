@@ -41,7 +41,7 @@ inline fun KotlinJvmTarget.configJava(crossinline block: KotlinJvmTarget.() -> U
 
     testRuns["test"].executionTask.configure {
         useJUnitPlatform {
-            val dir = project.rootProject.layout.buildDirectory.dir("test-reports/html/${project.name}")
+            val dir = project.rootProject.layout.buildDirectory.dir("test-reports/jvm/html/${project.name}")
             reports.html.outputLocation.set(dir)
         }
     }

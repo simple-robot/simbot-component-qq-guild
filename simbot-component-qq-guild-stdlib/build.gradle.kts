@@ -25,6 +25,7 @@ plugins {
     kotlin("plugin.serialization")
     `qq-guild-dokka-partial-configure`
     `simbot-tcg-suspend-transform-configure`
+    `qq-guild-module-config`
 }
 
 setup(P.ComponentQQGuild)
