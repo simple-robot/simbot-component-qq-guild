@@ -2,7 +2,7 @@
 switcher-label: Java API 风格
 ---
 
-# 论坛 Forum
+# 论坛 QGForum
 
 QQ频道中有一些针对 `论坛子频道` 的API。([参考文档](https://bot.q.qq.com/wiki/develop/api/openapi/forum/model.html#thread))
 

@@ -1,7 +1,7 @@
 ---
 switcher-label: Java API 风格
-toc_max_heading_level: 3
 ---
+<show-structure for="chapter,procedure" depth="3"/>
 
 # QGBot
 

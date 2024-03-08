@@ -16,9 +16,6 @@
 
 > <a ignore-vars="true" href="https://bot.q.qq.com/wiki/develop/api/gateway/reference.html">参考文档</a>
 
-
-
-
 <deflist>
 <def title="Normal" id="love_forte_simbot_qguild_api_GatewayApis_Normal">
 

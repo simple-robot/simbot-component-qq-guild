@@ -2,10 +2,10 @@
 switcher-label: Java API 风格
 ---
 
-# 使用标准库
+# 使用标准库模块
 
 <tldr>
-<p>本章节介绍如何使用 <control>标准库(stdlib模块)</control> 来构建 Bot 实例、订阅并处理事件。</p>
+<p>本章节介绍如何使用 <control>标准库模块(stdlib模块)</control> 来构建 Bot 实例、订阅并处理事件。</p>
 </tldr>
 
 <tip>

@@ -4,7 +4,7 @@ switcher-label: Java API 风格
 
 <var name="jr" value="Reactor"/>
 
-# 使用 API
+# 使用 API 模块
 
 <tldr>
 <p>本章节介绍如何使用 <control>API 模块</control> 来构建、请求一个QQ频道的API。</p>
@@ -16,6 +16,10 @@ switcher-label: Java API 风格
 没有 Bot、事件处理等功能，是一种“底层库”。
 
 API 模块无法直接作为 Simple Robot 组件使用。
+
+有关模块概述可前往
+<a href="modules.md" />
+了解。
 
 </tip>
 
@@ -118,8 +122,19 @@ love.forte.simbot.qguild.api.user.GetBotGuildListApi
 
 API的应用大差不差，因此此处仅使用部分类型作为示例，
 不会演示所有API。
-如果想浏览或寻找需要的 API，可前往 [APIDoc引导](https://docs.simbot.forte.love)
-中进入QQ频道组件的 KDoc 查阅，或可以简单的借助IDE的智能提示进行寻找。
+
+<tip title="更多">
+
+如果想浏览或寻找需要的 API，可前往
+<a href="api-list.md" />
+或
+[API文档](%api-doc%)
+查阅，或借助IDE的智能提示。
+
+有关使用 API 的更多说明可前往
+<a href="api.md" />。
+
+</tip>
 
 以 [获取用户（BOT）频道服务器列表](https://bot.q.qq.com/wiki/develop/api/openapi/user/guilds.html) 为例。
 

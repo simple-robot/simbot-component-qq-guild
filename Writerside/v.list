@@ -2,6 +2,7 @@
 <!DOCTYPE vars SYSTEM "https://resources.jetbrains.com/writerside/1.0/vars.dtd">
 <vars>
     <var name="copyright-year" value="2023-2024"/>
+    <var name="api-doc" value="https://docs.simbot.forte.love"/>
     <var name="jb" value="阻塞"/>
     <var name="ja" value="异步"/>
     <var name="version" value="4.0.0-beta2"/>

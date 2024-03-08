@@ -1,4 +1,4 @@
-# 消息类型
+# 消息
 
 <tldr>
 
@@ -33,3 +33,8 @@
 </def>
 </deflist>
 
+## 使用消息元素
+
+在simbot中，使用组件的消息元素与使用其他消息元素别无二致。
+
+> 你可以前往 [Simple Robot 应用手册](https://simbot.forte.love/basic-messages.html) 了解更多。
