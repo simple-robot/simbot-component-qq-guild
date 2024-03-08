@@ -10,8 +10,8 @@
 
 **QQ频道组件** 
 是一个基于 [Kotlin coroutines](https://github.com/Kotlin/kotlinx.coroutines)
-的 [**QQ频道机器人**][qg bot doc] API/SDK
-Kotlin 多平台库，异步高效、Java友好。
+对 [**QQ频道机器人**][qg bot doc] 进行实现的 API/SDK
+[Kotlin 多平台](https://kotlinlang.org/docs/multiplatform.html)库，异步高效、Java友好。
 
 它同样是一个 [Simple Robot v4][simbot4 gh] (下文简称 simbot)
 的组件库，是 simbot 的子项目之一。
