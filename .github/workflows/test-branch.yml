@@ -48,3 +48,11 @@ jobs:
 #            --build-cache
 #            -Porg.gradle.daemon=false
 #            -Porg.gradle.jvmargs="-Xmx4g -Xms2g -XX:MaxMetaspaceSize=1g -Dfile.encoding=UTF-8"
+
+      - name: Upload test reports
+        uses: actions/upload-artifact@v4
+        if: ${{ always() }}
+        with:
+          name: test-reports-${{ matrix.os }}
+          path: build/test-reports
+          retention-days: 7
