@@ -1,3 +1,4 @@
+import io.ktor.client.engine.mock.*
 import love.forte.simbot.qguild.event.GuildCreate
 import love.forte.simbot.qguild.stdlib.Bot
 import love.forte.simbot.qguild.stdlib.ConfigurableBotConfiguration
@@ -19,7 +20,10 @@ class BotSubscribeRegisterTest {
     fun subscribeTest() {
         val bot = BotImpl(
             Bot.Ticket("", "", ""),
-            ConfigurableBotConfiguration()
+            ConfigurableBotConfiguration().apply {
+                apiClientEngine = MockEngine { respondOk() }
+                wsClientEngine = MockEngine { respondOk() }
+            }
         )
 
         bot.subscribe {
