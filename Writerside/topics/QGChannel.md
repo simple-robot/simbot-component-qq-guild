@@ -63,6 +63,9 @@ bot.subscribe(EventProcessors.block(ChannelCreate.class, (event, raw) -> {
 </tab>
 </tabs>
 
+> 详细的事件列表请参考
+> <a href="event.md" />
+> 或 [API文档](%api-doc%)。
 
 ## 组件库中的子频道 {id="component-channels"}
 
@@ -72,6 +75,7 @@ bot.subscribe(EventProcessors.block(ChannelCreate.class, (event, raw) -> {
 
 ## 获取子频道 {id="get-channels"}
 
+组件中 `QGChannel` 类型实现了simbot标准API中的 `Channel` 类型，并提供与子频道相关的功能。
 如果你想要获取一个 `QGChannel`，你可以在 `QGBot`、`QGGuild` 或一个与子频道相关的事件中获取。
 
 在 `QGBot` 中获取子频道你可以前往参考
@@ -190,6 +194,9 @@ channel.sendReserve(Messages.of(
 
 </tab>
 </tabs>
+
+> 有关消息元素、消息发送的更多内容前往参考
+> <a href="messages.md" />
 
 ### QGForumChannel
 

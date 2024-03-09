@@ -8,3 +8,10 @@ switcher-label: Java API 风格
 
 QQ频道中有一些针对 `角色` 的API。
 
+## API中的角色 {id="api-roles"}
+
+## Stdlib模块中的角色 {id="stdlib-roles"}
+
+## 组件库中的角色 {id="component-roles"}
+
+`QGRole`
