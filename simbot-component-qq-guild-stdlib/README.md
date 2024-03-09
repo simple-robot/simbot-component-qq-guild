@@ -113,7 +113,7 @@ val bot = BotFactory.create(
 
 // 订阅事件。事件类型参考 Signal.Dispatch 的实现类类型
 // 监听Signal.Dispatch即代表监听所有事件
-bot.registerProcessor<Signal.Dispatch> { raw ->
+bot.subscribe<Signal.Dispatch> { raw ->
     // 当前函数 receiver 即为事件本体
     println(this) // -> this: 事件本体
     // 函数体参数为事件的原始JSON字符串
@@ -121,7 +121,7 @@ bot.registerProcessor<Signal.Dispatch> { raw ->
 }
 
 // 监听频道信息更新事件
-bot.registerProcessor<GuildUpdate> { raw ->
+bot.subscribe<GuildUpdate> { raw ->
     this.data.opUserId // 操作人ID
 
     // 事件中请求API
@@ -129,7 +129,7 @@ bot.registerProcessor<GuildUpdate> { raw ->
     println(member)
 }
 
-bot.registerProcessor { raw ->
+bot.subscribe { raw ->
     // 订阅所有事件
 }
 

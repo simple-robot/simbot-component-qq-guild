@@ -157,7 +157,7 @@ var bot = BotFactory.create(botId, botSecret, botToken, configuration);
 
 ### 订阅事件 {id='bot-subscribe-event'}
 
-你可以通过 `registerProcessor` 来订阅全部或指定类型的事件。
+你可以通过 `subscribe` 来订阅全部或指定类型的事件。
 
 <tip>
 
@@ -173,10 +173,10 @@ var bot = BotFactory.create(botId, botSecret, botToken, configuration);
 
 **订阅全部事件**
 
-使用 `registerProcessor` 注册一个普通的事件处理器，此处理器会接收并处理所有类型的事件。
+使用 `subscribe` 注册一个普通的事件处理器，此处理器会接收并处理所有类型的事件。
 
 ```Kotlin
-bot.registerProcessor { raw ->
+bot.subscribe { raw ->
     // raw 代表事件的原始JSON字符串
     // this: Signal.Dispatch, 也就是解析出来的事件结构体
     println("event: $this")
@@ -187,7 +187,7 @@ bot.registerProcessor { raw ->
 
 **订阅指定类型的事件**
 
-使用扩展函数 `registerProcessor` 注册一个针对具体 `Signal.Dispatch` 事件类型的事件处理器，
+使用扩展函数 `subscribe` 注册一个针对具体 `Signal.Dispatch` 事件类型的事件处理器，
 它只有在接收到的 `Signal.Dispatch` 与目标类型一致时才会处理。
 
 此示例展示处理 `AtMessageCreate` 也就公域是消息事件，
@@ -208,10 +208,10 @@ bot.process<AtMessageCreate> {
 
 **订阅全部事件**
 
-使用 `registerProcessor` 注册一个普通的事件处理器，此处理器会接收并处理所有类型的事件。
+使用 `subscribe` 注册一个普通的事件处理器，此处理器会接收并处理所有类型的事件。
 
 ```Java
-bot.registerProcessor(EventProcessors.async((event, raw) -> {
+bot.subscribe(EventProcessors.async((event, raw) -> {
     // raw 代表事件的原始JSON字符串
     // event: Signal.Dispatch, 也就是解析出来的事件结构体
     System.out.println("event: " + event);
@@ -225,7 +225,7 @@ bot.registerProcessor(EventProcessors.async((event, raw) -> {
 {switcher-key="%ja%"}
 
 ```Java
-bot.registerProcessor(EventProcessors.block((event, raw) -> {
+bot.subscribe(EventProcessors.block((event, raw) -> {
     // raw 代表事件的原始JSON字符串
     // event: Signal.Dispatch, 也就是解析出来的事件结构体
     System.out.println("event: " + event);
@@ -237,14 +237,14 @@ bot.registerProcessor(EventProcessors.block((event, raw) -> {
 
 **订阅指定类型的事件**
 
-使用 `registerProcessor` 注册一个指定了具体类型的事件处理器，
+使用 `subscribe` 注册一个指定了具体类型的事件处理器，
 它只有在接收到的 `Signal.Dispatch` 与目标类型一致时才会处理。
 
 此示例展示处理 `AtMessageCreate` 也就公域是消息事件，
 并在对方发送了包含 `"stop"` 的文本时终止 bot。
 
 ```Java
-bot.registerProcessor(EventProcessors.async(AtMessageCreate.class, (event, raw) -> {
+bot.subscribe(EventProcessors.async(AtMessageCreate.class, (event, raw) -> {
     if (event.getData().getContent().contains("stop")) {
         // 终止 bot
         bot.cancel();
@@ -256,7 +256,7 @@ bot.registerProcessor(EventProcessors.async(AtMessageCreate.class, (event, raw) 
 {switcher-key="%ja%"}
 
 ```Java
-bot.registerProcessor(EventProcessors.block(AtMessageCreate.class, (event, raw) -> {
+bot.subscribe(EventProcessors.block(AtMessageCreate.class, (event, raw) -> {
     if (event.getData().getContent().contains("stop")) {
         // 终止 bot
         bot.cancel();

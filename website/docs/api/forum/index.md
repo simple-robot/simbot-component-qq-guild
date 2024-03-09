@@ -374,7 +374,7 @@ val bot = BotFactory.create("app id", "sec", "token") {
     intents += EventIntents.OpenForumsEvent.intents
 }
 
-bot.registerProcessor<OpenForumThreadCreate> { raw ->
+bot.subscribe<OpenForumThreadCreate> { raw ->
     println("OpenForumThreadCreate:     $this")
     println("OpenForumThreadCreate.raw: $raw")
 }

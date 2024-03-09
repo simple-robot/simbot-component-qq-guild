@@ -25,6 +25,7 @@ plugins {
     kotlin("plugin.serialization")
     `qq-guild-dokka-partial-configure`
     `simbot-tcg-suspend-transform-configure`
+    `qq-guild-module-config`
 }
 
 setup(P.ComponentQQGuild)
@@ -71,6 +72,7 @@ kotlin {
         commonTest.dependencies {
             implementation(kotlin("test"))
             implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.ktor.client.mock)
         }
 
         jvmTest.dependencies {

@@ -391,7 +391,7 @@ Bot bot = BotFactory.create("appid", "sec", "token", (config) -> {
         );
     });
 
-bot.registerProcessor(EventProcessors.async(OpenForumThreadCreate.class, (event, raw) -> {
+bot.subscribe(EventProcessors.async(OpenForumThreadCreate.class, (event, raw) -> {
         System.out.println("OpenForumThreadCreate:     " + event);
         System.out.println("OpenForumThreadCreate.raw: " + raw);
         return CompletableFuture.completedFuture(null); // Void?
