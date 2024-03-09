@@ -96,7 +96,7 @@ var guild = event.getContentBlocking()
 
 ```Java
 QGGuildCreateEvent event = ...
-var guild = event.getContentReserve()
+event.getContentReserve()
         // 例如转为 Reactor 的 `Mono`
         .transform(SuspendReserves.mono())
         .subscribe(guild -> { ... })

@@ -820,7 +820,9 @@ bot.sendTo("channel id".ID, "消息内容".toText() + At("user id".ID))
 ```
 
 </tab>
-<tab title="Java" group-key="Java" switcher-key="%ja%">
+<tab title="Java" group-key="Java">
+
+<if switcher-key="%ja%">
 
 ```Java
 QGBot bot = ...
@@ -861,8 +863,9 @@ return CompletableFuture.allOf(sendTask1, sendTask2)
         .thenApply($ -> EventResult.empty()); // 任务全部完成后，返回事件结果
 ```
 
-</tab>
-<tab title="Java" group-key="Java" switcher-key="%jb%">
+</if>
+
+<if switcher-key="%jb%">
 
 ```Java
 QGBot bot = ...
@@ -873,6 +876,8 @@ bot.sendToBlocking(Identifies.of("channel id"), Messages.of(
         At.of(Identifies.of("user id"))
 ));
 ```
+
+</if>
 
 </tab>
 </tabs>
