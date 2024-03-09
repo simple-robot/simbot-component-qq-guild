@@ -30,7 +30,7 @@ switcher-label: Java API 风格
 <tab title="Kotlin" group-key="Kotlin">
 
 ```Kotlin
-bot.process<GuildMemberAdd> {
+bot.subscribe<GuildMemberAdd> {
     val member: EventMember = data
 }
 ```

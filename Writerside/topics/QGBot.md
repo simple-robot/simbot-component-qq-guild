@@ -195,7 +195,7 @@ bot.subscribe { raw ->
 
 ```Kotlin
 // 注册一个普通的事件处理器，此处理器会接收并处理所有类型的事件
-bot.process<AtMessageCreate> {
+bot.subscribe<AtMessageCreate> {
     if ("stop" in data.content) {
         // 终止 bot
         bot.cancel()

@@ -13,7 +13,7 @@ switcher-label: Java API 风格
 > <a href="api_forum.md" /> ，
 > 本章节不过多讨论。
 
-## API中的子频道 {id="api-channels"}
+## API中的Channel {id="api-channels"}
 
 万物起源于API。你在API模块中会遇到一些用来获取、操作子频道相关的API。
 
@@ -25,7 +25,7 @@ switcher-label: Java API 风格
 > <a href="api-list.md" />
 > 或 [API文档](%api-doc%)。
 
-## Stdlib模块中的子频道 {id="stdlib-channels"}
+## Stdlib模块中的Channel {id="stdlib-channels"}
 
 当你直接使用标准库模块时，你可以在一些与子频道相关的事件中得到它的信息。
 
@@ -36,7 +36,7 @@ switcher-label: Java API 风格
 <tab title="Kotlin" group-key="Kotlin">
 
 ```Kotlin
-bot.process<ChannelCreate> {
+bot.subscribe<ChannelCreate> {
     val channel: EventChannel = data
 }
 ```
@@ -67,13 +67,13 @@ bot.subscribe(EventProcessors.block(ChannelCreate.class, (event, raw) -> {
 > <a href="event.md" />
 > 或 [API文档](%api-doc%)。
 
-## 组件库中的子频道 {id="component-channels"}
+## 组件库中的QGChannel {id="component-channels"}
 
 组件库模块中，`QGChannel` 类型即为实现了simbot标准API中 `Channel` 类型的实现类型。
 它基于stdlib模块的 `Channel` (这个不是指simbot标准API中的 `Channel`)
 提供更进一步的功能。
 
-## 获取子频道 {id="get-channels"}
+## 获取QGChannel {id="get-channels"}
 
 组件中 `QGChannel` 类型实现了simbot标准API中的 `Channel` 类型，并提供与子频道相关的功能。
 如果你想要获取一个 `QGChannel`，你可以在 `QGBot`、`QGGuild` 或一个与子频道相关的事件中获取。
@@ -123,7 +123,7 @@ event.getContentReserve()
 </tab>
 </tabs>
 
-## 子频道类型 {id='channel-types'}
+## QGChannel类型 {id='channel-types'}
 
 在QQ频道中，一个子频道可能有多个不同的类型，例如文字、论坛、分组等等。
 而在这里面只有使用**文字子频道**才能够发送消息。

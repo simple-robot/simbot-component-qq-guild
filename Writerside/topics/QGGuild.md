@@ -26,7 +26,7 @@ API模块中部分用于获取频道信息的API中会返回一些与 `Guild` �
 <tab title="Kotlin" group-key="Kotlin">
 
 ```Kotlin
-bot.process<GuildCreate> {
+bot.subscribe<GuildCreate> {
     val guild: EventGuild = data
 }
 ```
