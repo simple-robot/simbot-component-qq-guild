@@ -36,6 +36,14 @@ jobs:
             artifacts/report.json
           retention-days: 7
 
+      - name: Upload documentation reports
+        uses: actions/upload-artifact@v4
+        if: ${{ always() }}
+        with:
+          name: 'report.json'
+          path: artifacts/report.json
+          retention-days: 7
+
   # Add the job below and artifacts/report.json on Upload documentation step above if you want to fail the build when documentation contains errors
   test:
     name: Test documentation built
