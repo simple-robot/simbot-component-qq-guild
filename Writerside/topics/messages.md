@@ -58,7 +58,9 @@ channel.send("消息内容".toText() + At("user id".ID))
 ```
 
 </tab>
-<tab title="Java" group-key="Java" switcher-key="%ja%">
+<tab title="Java" group-key="Java">
+
+<if switcher-key="%ja%">
 
 ```Java
 QGTextChannel channel = ...
@@ -70,36 +72,39 @@ var sendTask2 = channel.sendAsync(Messages.of(
 ));
 ```
 
-</tab>
-<tab title="Java" group-key="Java" switcher-key="%jb%">
+</if>
+
+<if switcher-key="%jb%">
 
 ```Java
 QGTextChannel channel = ...
 
-channel.sendBlocking("消息内容");
+        channel.sendBlocking("消息内容");
 channel.sendBlocking(Messages.of(
         Text.of("文本消息"),
         At.of(Identifies.of("user id"))
-));
+        ));
 ```
 
-</tab>
-<tab title="Java" group-key="Java" switcher-key="%jr%">
+</if>
+
+<if switcher-key="%jr%">
 
 ```Java
 QGTextChannel channel = ...
 
-channel.sendReserve("消息内容")
+        channel.sendReserve("消息内容")
         .transform(SuspendReserves.mono())
         .subscribe(receipt -> { ... });
 
-channel.sendReserve(Messages.of(
+        channel.sendReserve(Messages.of(
         Text.of("文本消息"),
         At.of(Identifies.of("user id"))
-    )).transform(SuspendReserves.mono())
+        )).transform(SuspendReserves.mono())
         .subscribe(receipt -> { ... });
 ```
 
+</if>
 </tab>
 </tabs>
 
