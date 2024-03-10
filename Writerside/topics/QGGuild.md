@@ -193,17 +193,6 @@ QGGuild guild = ...
 // 假设这是某个子频道的ID
 var id = Identifies.of(1234L);
 
-final var channel = guild.getChannel(id);
-final var chatChannel = guild.getChatChannel(id);
-final var forum = guild.getForum(id);
-```
-{switcher-key='%ja%'}
-
-```Java
-QGGuild guild = ...
-// 假设这是某个子频道的ID
-var id = Identifies.of(1234L);
-
 guild.getChannelAsync(id)
         .thenAccept(channel -> {...});
 
@@ -212,6 +201,17 @@ guild.getChatChannelAsync(id)
 
 guild.getForumAsync(id)
         .thenAccept(channel -> {...});
+```
+{switcher-key='%ja%'}
+
+```Java
+QGGuild guild = ...
+// 假设这是某个子频道的ID
+var id = Identifies.of(1234L);
+
+final var channel = guild.getChannel(id);
+final var chatChannel = guild.getChatChannel(id);
+final var forum = guild.getForum(id);
 ```
 {switcher-key='%jb%'}
 
@@ -242,22 +242,37 @@ guild.getForumReserve(id)
 ```Java
 QGGuild guild = ...
 
-// 可以使用 SuspendReserves.list 转为 List
-var channelList = guild.getChannels().transform(SuspendReserves.list());
+// 可以直接在异步中遍历
+// 第一个参数 scope 可以选择 QGGuild、QGBot 等，
+// 或者直接使用 GlobalScope
+guild.getChannels().collectAsync(GlobalScope.INSTANCE, channel -> { });
 
+// 可以使用 Collectables.collectAsync
 var chatChannelsCollectable = guild.getChatChannels();
-// 可以使用 Collectables 转成 Stream 或 List
-Collectables.asStream(chatChannelsCollectable)
-        .forEach(chatChannel -> {});
+Collectables.collectAsync(chatChannelsCollectable, Collectors.toList())
+        .thenAccept(chatChannelList -> {});
 
+// 可以直接使用 Collectable的扩展
 var forumsCollectable = guild.getForums();
-var forumList = Collectables.toList(forumsCollectable);
+Collectables.toListAsync(forumsCollectable);
+        .thenAccept(forum -> {...});
 ```
 {switcher-key='%ja%'}
 
 ```Java
 QGGuild guild = ...
 
+// 可以使用 SuspendReserves.list 转为 List
+var channelList = guild.getChannels().transform(SuspendReserves.list());
+
+// 可以使用 Collectables 转成 Stream 或 List
+var chatChannelsCollectable = guild.getChatChannels();
+Collectables.asStream(chatChannelsCollectable)
+        .forEach(chatChannel -> {});
+
+// 可以直接使用 Collectable的扩展
+var forumsCollectable = guild.getForums();
+var forumList = Collectables.toList(forumsCollectable);
 ```
 {switcher-key='%jb%'}
 
@@ -267,18 +282,16 @@ QGGuild guild = ...
 // 可以直接在异步中遍历
 // CoroutineScope 可以选择 QGBot、QGGuild等
 // 也可以选择 GlobalScope
-guild.getChannels()
-        .collectAsync(guild, channel -> {  });
+guild.getChannels().collectAsync(GlobalScope.INSTANCE, channel -> { });
 
-final var chatChannelsCollectable = guild.getChatChannels();
-// 可以使用 Collectables 在异步中转为 List
-// CoroutineScope 如果不填默认 GlobalScope.INSTANCE
-        Collectables.toListAsync(chatChannelsCollectable, GlobalScope.INSTANCE)
-                .thenAccept(chatChannelList -> {  });
+// 可以使用 Collectables 转成 Flux
+var chatChannelsCollectable = guild.getChatChannels();
+Collectables.asFlux(chatChannelsCollectable)
+        .subscribe(chatChannel -> {});
 
-final var forumsCollectable = guild.getForums();
-        Collectables.toListAsync(forumsCollectable)
-                .thenAccept(forumList -> {  });
+var forumsCollectable = guild.getForums();
+Collectables.asFlux(forumsCollectable)
+        .subscribe(forum -> {});
 ```
 {switcher-key='%jr%'}
 
@@ -292,6 +305,113 @@ final var forumsCollectable = guild.getForums();
 > 更多有关子频道的信息可前往参考
 <a href="QGMember.md" />。
 
+<tabs group="code">
+<tab title="Kotlin" group-key="Kotlin">
+
+**寻找指定ID的成员**
+
+```Kotlin
+val guild: QGGuild = ...
+// 假设这是某个成员的ID
+val id = 1234L.ID
+
+val member = guild.member(id)
+```
+
+**批量获取成员**
+
+```Kotlin
+val guild: QGGuild = ...
+
+guild.members
+    // .asFlow() // 也可以转成 Flow
+    .collect { member ->  }
+```
+
+</tab>
+<tab title="Java" group-key="Java">
+
+**寻找指定ID的成员**
+
+```Java
+QGGuild guild = ...
+// 假设这是某个成员的ID
+var id = Identifies.of(1234L);
+
+guild.getMemberAsync(id)
+        .thenAccept(member -> {...});
+```
+{switcher-key='%ja%'}
+
+```Java
+QGGuild guild = ...
+// 假设这是某个成员的ID
+var id = Identifies.of(1234L);
+
+var member = guild.getMember(id);
+```
+{switcher-key='%jb%'}
+
+```Java
+QGGuild guild = ...
+// 假设这是某个成员的ID
+var id = Identifies.of(1234L);
+
+guild.getMemberReserve(id)
+        // 假设转化为 Reactor 的 `Mono`
+        .transform(SuspendReserves.mono())
+        .subscribe(member -> {});
+```
+{switcher-key='%jr%'}
+
+**批量获取成员**
+
+```Java
+QGGuild guild = ...
+
+// 可以直接在异步中遍历
+// 第一个参数 scope 可以选择 QGGuild、QGBot 等，
+// 或者直接使用 GlobalScope
+guild.getMembers().collectAsync(GlobalScope.INSTANCE, member -> { });
+
+// 可以使用 Collectables.toListAsync / collectAsync
+var chatChannelsCollectable = guild.members(100); // batch: 内部每次查询的批次量
+Collectables.toListAsync(chatChannelsCollectable)
+        .thenAccept(chatChannelList -> {});
+```
+{switcher-key='%ja%'}
+
+```Java
+QGGuild guild = ...
+
+// 可以使用 SuspendReserves.list 转为 List
+var memberList = guild.getMembers().transform(SuspendReserves.list());
+
+var membersCollectable = guild.members(100); // batch: 内部每次查询的批次量
+// 可以使用 Collectables 转成 Stream 或 List
+Collectables.asStream(membersCollectable)
+        .forEach(member -> {});
+```
+{switcher-key='%jb%'}
+
+```Java
+QGGuild guild = ...
+        
+// 可以直接在异步中遍历
+// 第一个参数 scope 可以选择 QGGuild、QGBot 等，
+// 或者直接使用 GlobalScope
+guild.getMembers().collectAsync(GlobalScope.INSTANCE, member -> { });
+
+var membersCollectable = guild.members(100); // batch: 内部每次查询的批次量
+// 可以使用 Collectables 转为 Flux
+Collectables.asFlux(membersCollectable)
+        .subscribe(member -> {  });
+```
+{switcher-key='%jr%'}
+
+</tab>
+</tabs>
+
 ### 获取权限 {id="get-permissions"}
 
 你可以在 `QGGuild` 中获取到当前频道对 bot 的权限限制信息 `ApiPermissions`。
@@ -299,9 +419,196 @@ final var forumsCollectable = guild.getForums();
 > 更多有关频道权限的信息可前往参考
 <a href="ApiPermission.md" />。
 
-### 获取角色 {id="get-roles"}
+<tabs group="code">
+<tab title="Kotlin" group-key="Kotlin">
 
-你可以在 `QGGuild` 中获取到角色类型 `QGRole`。
+```Kotlin
+val guild: QGGuild = ...
+
+val permissions = guild.permissions()
+```
+
+</tab>
+<tab title="Java" group-key="Java">
+
+```Java
+QGGuild guild = ...
+
+guild.getPermissionsAsync()
+        .thenAccept(permissions -> {  });
+```
+{switcher-key='%ja%'}
+
+```Java
+QGGuild guild = ...
+
+var permissions = guild.getPermissions();
+```
+{switcher-key='%jb%'}
+
+```Java
+QGGuild guild = ...
+
+guild.getPermissionsReserve()
+        .transform(SuspendReserves.mono())
+        .subscribe(permissions -> {  });
+```
+{switcher-key='%jr%'}
+
+</tab>
+</tabs>
+
+### 操作角色 {id="guild-roles"}
+
+`QGGuild` 中存在一些对 `QGGuildRole` 进行获取或操作的 API。
 
 > 更多有关子频道的信息可前往参考
 <a href="api_role.md" />。
+
+#### 获取角色 {id="get-roles"}
+
+你可以在 `QGGuild` 中获取到角色类型 `QGGuildRole`。
+
+<tabs group="code">
+<tab title="Kotlin" group-key="Kotlin">
+
+**批量获取角色**
+
+```Kotlin
+val guild: QGGuild = ...
+
+guild.roles
+    // .asFlow() // 也可以转成 Flow
+    .collect { member ->  }
+```
+
+</tab>
+<tab title="Java" group-key="Java">
+
+**批量获取角色**
+
+```Java
+QGGuild guild = ...
+
+// 可以直接在异步中遍历
+// 第一个参数 scope 可以选择 QGGuild、QGBot 等，
+// 或者直接使用 GlobalScope
+guild.getRoles().collectAsync(GlobalScope.INSTANCE, role -> { });
+
+// 可以使用 Collectables.toListAsync / collectAsync
+var rolesCollectable = guild.getRoles();
+Collectables.toListAsync(rolesCollectable)
+        .thenAccept(role -> {});
+```
+{switcher-key='%ja%'}
+
+```Java
+QGGuild guild = ...
+
+// 可以使用 SuspendReserves.list 转为 List
+var roleList = guild.getRoles().transform(SuspendReserves.list());
+
+// 可以使用 Collectables 转成 Stream 或 List
+var rolesCollectable = guild.getRoles();
+Collectables.asStream(rolesCollectable)
+        .forEach(role -> {});
+```
+{switcher-key='%jb%'}
+
+```Java
+QGGuild guild = ...
+
+// 可以直接在异步中遍历
+// CoroutineScope 可以选择 QGBot、QGGuild 等
+// 也可以选择 GlobalScope
+guild.getRoles().collectAsync(GlobalScope.INSTANCE, role -> {  });
+
+// 可以使用 Collectables 转为 Flux
+var rolesCollectable = guild.getRoles();
+Collectables.asFlux(rolesCollectable)
+        .subscribe(role -> {  });
+```
+{switcher-key='%jr%'}
+
+</tab>
+</tabs>
+
+#### 创建角色 {id='create-role'}
+
+在 `QGGuild` 中可以通过 `roleCreator` 得到一个用来创建 `QGGuildRole` 的构建器。
+
+<tabs group="code">
+<tab title="Kotlin" group-key="Kotlin">
+
+```Kotlin
+val guild: QGGuild = ...
+
+val creator = guild.roleCreator()
+// 一些属性...
+creator.name = ...
+creator.isHoist = ...
+creator.color = ...
+
+// 请求API创建一个新角色
+val role = creator.create()
+```
+
+Kotlin 中可以使用扩展函数 `createRole` 来简化：
+
+```Kotlin
+val guild: QGGuild = ...
+
+// 请求API创建一个新角色
+val role = guild.createRole {
+    name = ...
+    isHoist = ...
+    color = ...
+}
+```
+
+</tab>
+<tab title="Java" group-key="Java">
+
+```Java
+QGGuild guild = ...
+var creator = guild.roleCreator();
+
+creator.setName("123");
+creator.setHoist(false);
+creator.setColor(0);
+
+// 请求API创建一个新角色
+creator.createAsync().thenAccept(role -> {});
+```
+{switcher-key='%ja%'}
+
+```Java
+QGGuild guild = ...
+var creator = guild.roleCreator();
+
+creator.setName("123");
+creator.setHoist(false);
+creator.setColor(0);
+
+// 请求API创建一个新角色
+var role = creator.createBlocking();
+```
+{switcher-key='%jb%'}
+
+```Java
+QGGuild guild = ...
+var creator = guild.roleCreator();
+
+creator.setName("123");
+creator.setHoist(false);
+creator.setColor(0);
+
+// 请求API创建一个新角色
+creator.createReserve()
+        .transform(SuspendReserves.mono())
+        .subscribe(role -> {});
+```
+{switcher-key='%jr%'}
+
+</tab>
+</tabs>

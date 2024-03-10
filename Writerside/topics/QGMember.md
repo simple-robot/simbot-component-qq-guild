@@ -180,3 +180,72 @@ member.sendReserve(Messages.of(
 
 > 有关消息元素、消息发送的更多内容前往参考
 > <a href="messages.md" />
+
+
+## 角色操作 {id='roles'}
+
+`QGMember` 拥有一些获取或操作自身角色 (`QGMemberRole`) 的API。
+
+> 有关角色的更多内容前往参考
+> <a href="api_role.md" />。
+
+### 获取角色 {id='get-roles'}
+
+<tabs group="code">
+<tab title="Kotlin" group-key="Kotlin">
+
+```Kotlin
+val member: QGMember = ...
+// 获取当前用户拥有的角色集合
+val roles = member.roles
+```
+
+</tab>
+<tab title="Java" group-key="Java">
+
+```Java
+QGmember member = ...
+
+// 可以直接在异步中遍历
+// 第一个参数 scope 可以选择 QGGuild、QGBot 等，
+// 或者直接使用 GlobalScope
+member.getRoles().collectAsync(GlobalScope.INSTANCE, member -> { });
+
+// 可以使用 Collectables.toListAsync / collectAsync
+var rolesCollectable = member.getRoles();
+Collectables.toListAsync(rolesCollectable)
+        .thenAccept(role -> {});
+```
+{switcher-key='%ja%'}
+
+```Java
+QGmember member = ...
+
+// 可以使用 SuspendReserves.list 转为 List
+var roleList = member.getRoles().transform(SuspendReserves.list());
+
+// 可以使用 Collectables 转成 Stream 或 List
+var rolesCollectable = member.getRoles();
+Collectables.asStream(rolesCollectable)
+        .forEach(role -> {});
+```
+{switcher-key='%jb%'}
+
+```Java
+QGmember member = ...
+        
+// 可以直接在异步中遍历
+// 第一个参数 scope 可以选择 QGGuild、QGBot 等，
+// 或者直接使用 GlobalScope
+member.getRoles().collectAsync(GlobalScope.INSTANCE, role -> { });
+
+var rolesCollectable = guild.getRoles();
+// 可以使用 Collectables 转为 Flux
+Collectables.asFlux(rolesCollectable)
+        .subscribe(role -> {  });
+```
+{switcher-key='%jr%'}
+
+</tab>
+</tabs>
+
