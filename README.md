@@ -2,7 +2,11 @@
 
 <!--suppress HtmlDeprecatedAttribute -->
 <div align="center">
-<img src=".simbot/logo.png" alt="logo" style="width:230px; height:230px; border-radius:50%; " />
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".simbot/logo-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset=".simbot/logo.svg">
+  <img alt="simbot logo" src=".simbot/logo.svg" width="260" />
+</picture>
 <h2>
     ~ Simple Robot ~ <br/> <small>QQ频道组件</small>
 </h2>
