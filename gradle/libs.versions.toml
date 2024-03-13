@@ -8,7 +8,7 @@ okio = "3.3.0"
 ktor = "2.3.8"
 openjdk-jmh = "1.37"
 log4j = "2.23.0"
-reactor = "3.6.2"
+reactor = "3.6.4"
 # simbot
 simbot = "4.0.0-beta1"
 suspendTransform = "0.7.0-beta1"
