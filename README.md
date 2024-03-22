@@ -41,19 +41,12 @@
 
 ## 文档与引导
 
-- [组织首页](https://github.com/simple-robot/) 了解更多有关组件、文档、以及社群等相关信息！
-- [社群](https://simbot.forte.love/communities.html) 文档中也有提供社群信息喔
-- [应用手册][doc-homepage]
+- QQ频道组件手册: [应用手册](https://component-qqguild.simbot.forte.love/) (即当前仓库的 GitHub Pages)
+- 了解simbot: [Simple Robot 应用手册](https://simbot.forte.love)
 - [文档引导站&API文档](https://docs.simbot.forte.love)
+- [**社群**](https://simbot.forte.love/communities.html) 文档中也有提供社群信息喔
+- 前往 [组织首页](https://github.com/simple-robot/) 了解更多有关组件、文档、以及社群等相关信息！
 
-
-## 文档与引导
-
-- 了解simbot: [**Simple Robot 应用手册**](https://simbot.forte.love)
-- [**QQ频道组件**手册](https://component-qqguild.simbot.forte.love/) (即当前仓库的 GitHub Pages)
-- [文档引导站&API文档](https://docs.simbot.forte.love)
-- 前往 [组织首页](https://github.com/simple-robot/) 了解更多有关其他组件、文档、以及社群等相关信息！
-- [社群](https://simbot.forte.love/communities.html): 文档中也有提供社群信息喔
 
 ---
 
