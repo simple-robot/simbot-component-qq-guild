@@ -98,8 +98,8 @@ kotlin {
             implementation(libs.log4j.api)
             implementation(libs.log4j.core)
             implementation(libs.log4j.slf4j2)
-            implementation(libs.kotlinx.coroutines.reactor)
-            implementation(libs.reactor.core)
+//            implementation(libs.kotlinx.coroutines.reactor)
+//            implementation(libs.reactor.core)
         }
 
         jsMain.dependencies {
