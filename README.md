@@ -47,7 +47,6 @@
 - [**社群**](https://simbot.forte.love/communities.html) 文档中也有提供社群信息喔
 - 前往 [组织首页](https://github.com/simple-robot/) 了解更多有关组件、文档、以及社群等相关信息！
 
-
 ---
 
 我们欢迎并期望着您的
@@ -87,7 +86,7 @@
 
 👉 [前往模块](simbot-component-qq-guild-core) 了解更多。
 
-## 法欧莉
+## 法欧莉!
 
 如果你想看一看使用QQ频道组件实现的具体作品，
 可以前往QQ频道添加亲爱的 [法欧莉斯卡雷特](https://qun.qq.com/qunpro/robot/share?robot_appid=101986850) 来体验喔~
