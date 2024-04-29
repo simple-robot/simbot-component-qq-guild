@@ -79,7 +79,7 @@ kotlin {
         }
 
         jvmTest.dependencies {
-            runtimeOnly(libs.ktor.client.cio)
+            implementation(libs.ktor.client.cio)
 //            runtimeOnly(libs.kotlinx.coroutines.reactor)
 //            implementation(libs.reactor.core)
 
