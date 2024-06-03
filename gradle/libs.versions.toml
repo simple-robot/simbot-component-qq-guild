@@ -1,20 +1,24 @@
 [versions]
-kotlin = "1.9.22"
-kotlinx-coroutines = "1.8.0"
+kotlin = "2.0.0"
+kotlinx-coroutines = "1.8.1"
 kotlinx-serialization = "1.6.3"
-kotlinx-datetime = "0.5.0"
+kotlinx-datetime = "0.6.0"
 dokka = "1.9.20"
 ktor = "2.3.8"
 openjdk-jmh = "1.37"
 log4j = "2.23.0"
 # simbot
-simbot = "4.0.0-beta1"
-suspendTransform = "0.7.0-beta1"
-gradleCommon = "0.2.0"
+simbot = "4.0.0-RC2"
+suspendTransform = "0.8.0-beta1"
+gradleCommon = "0.3.0"
 # ksp
-ksp = "1.9.22-1.0.18"
+ksp = "2.0.0-1.0.21"
 # https://square.github.io/kotlinpoet/
 kotlinPoet = "1.16.0"
+# https://detekt.dev/docs/intro
+# TODO apply detekt
+detekt = "1.23.3"
+
 
 [libraries]
 # simbot
@@ -107,6 +111,10 @@ gradle-common-publication = { group = "love.forte.gradle.common", name = "gradle
 
 [plugins]
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+# binary-compatibility-validator
+# https://github.com/Kotlin/binary-compatibility-validator
+kotlinxBinaryCompatibilityValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version = "0.15.0-Beta.2" }
 
 [bundles]
 gradle-common = ["gradle-common-core", "gradle-common-multiplatform", "gradle-common-publication"]

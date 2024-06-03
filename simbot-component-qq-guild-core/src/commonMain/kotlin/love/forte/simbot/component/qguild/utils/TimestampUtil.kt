@@ -29,7 +29,7 @@ import love.forte.simbot.component.qguild.ExperimentalQGApi
  * @see String.toInstant
  */
 @ExperimentalQGApi
-public fun String.toTimestamp(): Timestamp = KxInstantTimestamp(toInstant())
+public fun String.toTimestamp(): Timestamp = KxInstantTimestamp(Instant.parse(this))
 
 private class KxInstantTimestamp(private val instant: Instant) : Timestamp {
     override val milliseconds: Long = instant.toEpochMilliseconds()
