@@ -12,7 +12,7 @@ simbot = "4.0.0-RC2"
 suspendTransform = "0.8.0-beta1"
 gradleCommon = "0.3.0"
 # ksp
-ksp = "2.0.0-1.0.21"
+ksp = "2.0.0-1.0.22"
 # https://square.github.io/kotlinpoet/
 kotlinPoet = "1.17.0"
 # https://detekt.dev/docs/intro
