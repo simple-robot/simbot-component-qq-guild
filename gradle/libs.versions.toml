@@ -1,22 +1,24 @@
 [versions]
-kotlin = "1.9.22"
-kotlinx-coroutines = "1.8.0"
+kotlin = "2.0.0"
+kotlinx-coroutines = "1.8.1"
 kotlinx-serialization = "1.6.3"
-kotlinx-datetime = "0.5.0"
-dokka = "1.9.10"
-okio = "3.3.0"
+kotlinx-datetime = "0.6.0"
+dokka = "1.9.20"
 ktor = "2.3.8"
 openjdk-jmh = "1.37"
-log4j = "2.23.0"
-reactor = "3.6.2"
+log4j = "2.23.1"
 # simbot
-simbot = "4.0.0-beta1"
-suspendTransform = "0.7.0-beta1"
-gradleCommon = "0.2.0"
+simbot = "4.0.0-RC3"
+suspendTransform = "0.8.0-beta1"
+gradleCommon = "0.4.0"
 # ksp
-ksp = "1.9.22-1.0.17"
+ksp = "2.0.0-1.0.22"
 # https://square.github.io/kotlinpoet/
-kotlinPoet = "1.16.0"
+kotlinPoet = "1.17.0"
+# https://detekt.dev/docs/intro
+# TODO apply detekt
+detekt = "1.23.6"
+
 
 [libraries]
 # simbot
@@ -34,7 +36,7 @@ simbot-common-loop = { group = "love.forte.simbot.common", name = "simbot-common
 simbot-gradle = { group = "love.forte.simbot.gradle", name = "simbot-gradle-suspendtransforms", version.ref = "simbot" }
 
 # jetbrains-annotation
-jetbrains-annotations = "org.jetbrains:annotations:24.0.1"
+jetbrains-annotations = "org.jetbrains:annotations:24.1.0"
 
 # kotlinx-coroutines
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
@@ -44,8 +46,6 @@ kotlinx-coroutines-reactor = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 kotlinx-coroutines-rx2 = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-rx2", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-rx3 = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-rx3", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-guava = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-guava", version.ref = "kotlinx-coroutines" }
-kotlinx-coroutines-slf4j = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-slf4j", version.ref = "kotlinx-coroutines" }
-kotlinx-coroutines-play-services = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-debug = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-debug", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
 
@@ -56,7 +56,7 @@ kotlinx-serialization-hocon = { group = "org.jetbrains.kotlinx", name = "kotlinx
 kotlinx-serialization-protobuf = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-protobuf", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-cbor = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-cbor", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-properties = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-properties", version.ref = "kotlinx-serialization" }
-charleskorn-kaml = "com.charleskorn.kaml:kaml:0.49.0"
+charleskorn-kaml = "com.charleskorn.kaml:kaml:0.59.0"
 
 # kotlinx-datetime
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinx-datetime" }
@@ -93,17 +93,10 @@ log4j-api = { group = "org.apache.logging.log4j", name = "log4j-api", version.re
 log4j-core = { group = "org.apache.logging.log4j", name = "log4j-core", version.ref = "log4j" }
 log4j-slf4j2 = { group = "org.apache.logging.log4j", name = "log4j-slf4j2-impl", version.ref = "log4j" }
 
-# jmh
-openjdk-jmh-core = { group = "org.openjdk.jmh", name = "jmh-core", version.ref = "openjdk-jmh" }
-openjdk-jmh-generator-annprocess = { group = "org.openjdk.jmh", name = "jmh-generator-annprocess", version.ref = "openjdk-jmh" }
-
 # ksp
 ksp = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
 # https://square.github.io/kotlinpoet/interop-ksp/
 kotlinPoet-ksp = { module = "com.squareup:kotlinpoet-ksp", version.ref = "kotlinPoet" }
-
-# reactor
-reactor-core = { group = "io.projectreactor", name = "reactor-core", version.ref = "reactor" }
 
 # dokka
 dokka-plugin = { group = "org.jetbrains.dokka", name = "dokka-gradle-plugin", version.ref = "dokka" }
@@ -118,6 +111,10 @@ gradle-common-publication = { group = "love.forte.gradle.common", name = "gradle
 
 [plugins]
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+# binary-compatibility-validator
+# https://github.com/Kotlin/binary-compatibility-validator
+kotlinxBinaryCompatibilityValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version = "0.15.0-Beta.2" }
 
 [bundles]
 gradle-common = ["gradle-common-core", "gradle-common-multiplatform", "gradle-common-publication"]

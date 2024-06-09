@@ -161,14 +161,19 @@ internal class BotImpl(
     internal val preProcessorQueue: ConcurrentQueue<EventProcessor> = createConcurrentQueue()
 
 
-    override fun registerPreProcessor(processor: EventProcessor): DisposableHandle {
-        preProcessorQueue.add(processor)
-        return DisposableHandleImpl(preProcessorQueue, processor)
-    }
+    override fun subscribe(sequence: SubscribeSequence, processor: EventProcessor): DisposableHandle {
+        return when (sequence) {
+            SubscribeSequence.PRE -> {
+                preProcessorQueue.add(processor)
+                DisposableHandleImpl(preProcessorQueue, processor)
+            }
 
-    override fun registerProcessor(processor: EventProcessor): DisposableHandle {
-        processorQueue.add(processor)
-        return DisposableHandleImpl(processorQueue, processor)
+            SubscribeSequence.NORMAL -> {
+
+                processorQueue.add(processor)
+                DisposableHandleImpl(processorQueue, processor)
+            }
+        }
     }
 
     private class DisposableHandleImpl(queue: ConcurrentQueue<EventProcessor>, subject: EventProcessor) :

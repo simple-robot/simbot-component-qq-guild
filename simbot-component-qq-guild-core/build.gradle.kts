@@ -25,11 +25,11 @@ plugins {
     kotlin("plugin.serialization")
     `qq-guild-dokka-partial-configure`
     `simbot-tcg-suspend-transform-configure`
+    `qq-guild-module-config`
 }
 
 setup(P.ComponentQQGuild)
 
-useK2()
 configJavaCompileWithModule("simbot.component.qqguild.core")
 apply(plugin = "qq-guild-multiplatform-maven-publish")
 
@@ -78,9 +78,9 @@ kotlin {
         }
 
         jvmTest.dependencies {
-            runtimeOnly(libs.ktor.client.cio)
-            runtimeOnly(libs.kotlinx.coroutines.reactor)
-            implementation(libs.reactor.core)
+            implementation(libs.ktor.client.cio)
+//            runtimeOnly(libs.kotlinx.coroutines.reactor)
+//            implementation(libs.reactor.core)
 
             implementation(libs.log4j.api)
             implementation(libs.log4j.core)

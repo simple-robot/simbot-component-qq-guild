@@ -23,16 +23,34 @@ import love.forte.simbot.qguild.event.Signal
  * 用当前 [Bot] 订阅一个指定类型 [E] 的事件。
  *
  * ```kotlin
- * bot.registerProcessor<Signal.Dispatch> { raw ->
+ * bot.process<Signal.Dispatch> { raw ->
  *      // ...
  * }
  * ```
  *
  */
+@Deprecated(
+    "Use `subscribe`", ReplaceWith("this.subscribe<E>(SubscribeSequence.NORMAL, block)"),
+)
 public inline fun <reified E : Signal.Dispatch> Bot.process(
     crossinline block: suspend E.(raw: String) -> Unit
+): DisposableHandle = subscribe<E>(SubscribeSequence.NORMAL, block)
+
+/**
+ * 用当前 [Bot] 订阅一个指定类型 [E] 的事件。
+ *
+ * ```kotlin
+ * bot.subscribe<Signal.Dispatch> { raw ->
+ *      // ...
+ * }
+ * ```
+ *
+ */
+public inline fun <reified E : Signal.Dispatch> Bot.subscribe(
+    sequence: SubscribeSequence = SubscribeSequence.NORMAL,
+    crossinline block: suspend E.(raw: String) -> Unit
 ): DisposableHandle {
-    return registerProcessor { raw ->
+    return subscribe(sequence) { raw ->
         if (this is E) {
             block(raw)
         }

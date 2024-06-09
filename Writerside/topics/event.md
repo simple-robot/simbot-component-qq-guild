@@ -6,7 +6,7 @@ QQ频道组件中的**事件类型**包含两个层面：
 2. **核心模块** 中，基于 API 模块中的事件封装，对 simbot4 标准库中的 `Event` 事件类型的实现。
 
 
-## API 模块事件封装
+## API 模块事件封装 {id="api-events"}
 
 API 模块所有的事件封装类型都在包 `love.forte.simbot.qguild.event` 中，
 并且基本上命名与官网API中的事件类型名称有一定关联。
@@ -515,7 +515,7 @@ Guild相关事件类型。 `data` 类型为 `EventGuild` 。
 API 模块事件封装可以使用在 **标准库模块 (stdlib)** 中，使用 `Bot` 类型对他们进行监听与处理。
 
 
-## Simbot 标准库 Event 实现
+## 组件模块的标准 Event 实现 {id="component-events"}
 
 使用核心库，可以在 simbot4 的 `Application` 或 Spring Boot 中使用这些事件类型实现。
 

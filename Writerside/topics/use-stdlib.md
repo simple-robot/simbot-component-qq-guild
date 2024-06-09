@@ -2,10 +2,10 @@
 switcher-label: Java API 风格
 ---
 
-# 使用标准库
+# 使用标准库模块
 
 <tldr>
-<p>本章节介绍如何使用 <control>标准库(stdlib模块)</control> 来构建 Bot 实例、订阅并处理事件。</p>
+<p>本章节介绍如何使用 <control>标准库模块(stdlib模块)</control> 来构建 Bot 实例、订阅并处理事件。</p>
 </tldr>
 
 <tip>
@@ -134,9 +134,9 @@ val bot = BotFactory.create(ticket) {
 }
 
 // 注册事件有一些不同但类似的方式
-// 1️⃣ 通过 registerProcessor 注册一个普通的事件处理器，此处理器会接收并处理所有类型的事件
-//     registerProcessor 是最基本的注册方式，也是其他方式的最终汇集点
-bot.registerProcessor { raw ->
+// 1️⃣ 通过 subscribe 注册一个普通的事件处理器，此处理器会接收并处理所有类型的事件
+//     subscribe 是最基本的注册方式，也是其他方式的最终汇集点
+bot.subscribe { raw ->
     // raw 代表事件的原始JSON字符串
     // this: Signal.Dispatch, 也就是解析出来的事件结构体
     println("event: $this")
@@ -193,9 +193,9 @@ Bot bot = BotFactory.create(ticket, config -> {
     // 其他各种配置...
 });
 
-// 通过 registerProcessor 注册一个普通的事件处理器，
+// 通过 subscribe 注册一个普通的事件处理器，
 // 此处理器会接收并处理所有类型的事件
-bot.registerProcessor(EventProcessors.async((event, raw) -> {
+bot.subscribe(EventProcessors.async((event, raw) -> {
     // raw 代表事件的原始JSON字符串
     // event: Signal.Dispatch, 也就是解析出来的事件结构体
     System.out.println("event: " + event);
@@ -206,10 +206,10 @@ bot.registerProcessor(EventProcessors.async((event, raw) -> {
     return CompletableFuture.completedFuture(null);
 }));
 
-// 通过 registerProcessor 注册一个普通的事件处理器，
+// 通过 subscribe 注册一个普通的事件处理器，
 // 此处理器会接收并处理指定的类型 AtMessageCreate 的事件
 // 此示例展示处理 AtMessageCreate 也就公域是消息事件，并在对方发送了包含 'stop' 的文本时终止 bot。
-bot.registerProcessor(EventProcessors.async(AtMessageCreate.class, (event, raw) -> {
+bot.subscribe(EventProcessors.async(AtMessageCreate.class, (event, raw) -> {
     System.out.println("event message: $data");
 
     if (event.getData().getContent().contains("stop")) {
@@ -258,9 +258,9 @@ Bot bot = BotFactory.create(ticket, config -> {
     // 其他各种配置...
 });
 
-// 通过 registerProcessor 注册一个普通的事件处理器，
+// 通过 subscribe 注册一个普通的事件处理器，
 // 此处理器会接收并处理所有类型的事件
-bot.registerProcessor(EventProcessors.block((event, raw) -> {
+bot.subscribe(EventProcessors.block((event, raw) -> {
     // raw 代表事件的原始JSON字符串
     // event: Signal.Dispatch, 也就是解析出来的事件结构体
     System.out.println("event: " + event);
@@ -268,10 +268,10 @@ bot.registerProcessor(EventProcessors.block((event, raw) -> {
     System.out.println("raw: " + raw);
 }));
 
-// 通过 registerProcessor 注册一个普通的事件处理器，
+// 通过 subscribe 注册一个普通的事件处理器，
 // 此处理器会接收并处理指定的类型 AtMessageCreate 的事件
 // 此示例展示处理 AtMessageCreate 也就公域是消息事件，并在对方发送了包含 'stop' 的文本时终止 bot。
-bot.registerProcessor(EventProcessors.block(AtMessageCreate.class, (event, raw) -> {
+bot.subscribe(EventProcessors.block(AtMessageCreate.class, (event, raw) -> {
     System.out.println("event message: $data");
 
     if (event.getData().getContent().contains("stop")) {

@@ -107,7 +107,7 @@ async function config() {
                 }],
 
                 // Replace with your project's social card
-                image: 'img/logo.png',
+                image: 'img/logo.svg',
                 docs: {
                     sidebar: {
                         hideable: true,

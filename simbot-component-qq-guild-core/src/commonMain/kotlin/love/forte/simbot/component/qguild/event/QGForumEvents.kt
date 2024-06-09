@@ -269,5 +269,3 @@ public abstract class QGForumPublishAuditResultEvent : QGForumEvent() {
     override fun toString(): String =
         "QGForumPublishAuditResultEvent(sourceEventEntity=$sourceEventEntity)"
 }
-
-// TODO Open forum event?

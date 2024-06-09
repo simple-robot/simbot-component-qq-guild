@@ -2,7 +2,7 @@
 switcher-label: Java API 风格
 ---
 
-# 论坛 Forum
+# 论坛 QGForum
 
 QQ频道中有一些针对 `论坛子频道` 的API。([参考文档](https://bot.q.qq.com/wiki/develop/api/openapi/forum/model.html#thread))
 
@@ -391,7 +391,7 @@ Bot bot = BotFactory.create("appid", "sec", "token", (config) -> {
         );
     });
 
-bot.registerProcessor(EventProcessors.async(OpenForumThreadCreate.class, (event, raw) -> {
+bot.subscribe(EventProcessors.async(OpenForumThreadCreate.class, (event, raw) -> {
         System.out.println("OpenForumThreadCreate:     " + event);
         System.out.println("OpenForumThreadCreate.raw: " + raw);
         return CompletableFuture.completedFuture(null); // Void?

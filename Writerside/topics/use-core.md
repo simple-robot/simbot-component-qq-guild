@@ -2,11 +2,11 @@
 switcher-label: Java API 风格
 ---
 
-# 使用核心库
+# 使用核心库模块
 
 
 <tldr>
-<p>使用 <control>核心库(core 模块)</control> 配合 simbot4 核心库来将QQ频道作为 simbot4 的组件之一应用在 <code>Application</code> 中。</p>
+<p>使用 <control>核心库模块(core 模块)</control> 配合 simbot4 核心库来将QQ频道作为 simbot4 的组件之一应用在 <code>Application</code> 中。</p>
 </tldr>
 
 <note>

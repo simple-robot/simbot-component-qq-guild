@@ -19,6 +19,8 @@ package love.forte.simbot.component.qguild.internal.bot
 
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import love.forte.simbot.bot.ConflictBotException
 import love.forte.simbot.bot.JobBasedBotManager
 import love.forte.simbot.bot.NoSuchBotException
@@ -35,7 +37,9 @@ import love.forte.simbot.component.qguild.bot.QGBot
 import love.forte.simbot.component.qguild.bot.QQGuildBotManager
 import love.forte.simbot.component.qguild.bot.QQGuildBotManagerConfiguration
 import love.forte.simbot.component.qguild.bot.config.QGBotComponentConfiguration
+import love.forte.simbot.component.qguild.internal.event.QGBotRegisteredEventImpl
 import love.forte.simbot.event.EventDispatcher
+import love.forte.simbot.event.onEachError
 import love.forte.simbot.logger.Logger
 import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.logger.logger
@@ -154,13 +158,20 @@ internal class QQGuildBotManagerImpl(
 
         bots.add(newBot)
 
-        onCompletion {
+        newBot.onCompletion {
             // remove self on completion
             bots.remove(newBot)
         }
 
-        // TODO
-//        eventProcessor.pushAndLaunch(newBot, QGBotRegisteredEventImpl(bot))
+        newBot.launch {
+            val event = QGBotRegisteredEventImpl(newBot)
+            eventDispatcher
+                .push(event)
+                .onEachError { e ->
+                    logger.error("Event {} process failed: {}", event, e, e.content)
+                }
+                .collect()
+        }
 
         return newBot
     }

@@ -25,11 +25,11 @@ plugins {
     kotlin("plugin.serialization")
     `qq-guild-dokka-partial-configure`
     `simbot-tcg-suspend-transform-configure`
+    `qq-guild-module-config`
 }
 
 setup(P.ComponentQQGuild)
 
-useK2()
 configJavaCompileWithModule("simbot.component.qqguild.stdlib")
 apply(plugin = "qq-guild-multiplatform-maven-publish")
 
@@ -71,6 +71,7 @@ kotlin {
         commonTest.dependencies {
             implementation(kotlin("test"))
             implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.ktor.client.mock)
         }
 
         jvmTest.dependencies {

@@ -24,6 +24,7 @@ plugins {
     id("simbot-tencent-guild.changelog-generator")
     id("simbot-tencent-guild.dokka-multi-module")
     id("simbot-tencent-guild.nexus-publish")
+    alias(libs.plugins.kotlinxBinaryCompatibilityValidator)
 }
 
 setup(P.ComponentQQGuild)
@@ -65,3 +66,22 @@ idea {
 }
 
 
+apiValidation {
+    ignoredPackages.add("*.internal.*")
+
+    this.ignoredProjects.addAll(
+        listOf("api-reader")
+    )
+
+    // 实验性和内部API可能无法保证二进制兼容
+    nonPublicMarkers.addAll(
+        listOf(
+            "love.forte.simbot.annotations.ExperimentalSimbotAPI",
+            "love.forte.simbot.annotations.InternalSimbotAPI",
+            "love.forte.simbot.qguild.QGInternalApi",
+            "love.forte.simbot.component.qguild.ExperimentalQGApi",
+        ),
+    )
+
+    apiDumpDirectory = "api"
+}

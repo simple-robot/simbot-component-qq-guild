@@ -26,11 +26,11 @@ import love.forte.simbot.message.OfflineImage
  * @see Image
  * @suppress TODO
  */
-public class QGOfflineImage // TODO
+internal class QGOfflineImage // TODO
 
 /**
  * 收到的图片类型
  * @see OfflineImage
  * @suppress TODO
  */
-public class QGImage // TODO
+internal class QGImage // TODO

@@ -18,6 +18,7 @@
 package love.forte.simbot.component.qguild.channel
 
 import love.forte.simbot.common.id.ID
+import love.forte.simbot.component.qguild.guild.QGGuild
 import love.forte.simbot.definition.Category
 import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.model.Channel
@@ -53,9 +54,10 @@ public interface QGCategory : Category {
     override val id: ID
 
     /**
-     * 当前子频道分组ID。分组信息未初始化时，值同 [id]。
-     * 如果需要获取真正的名称，判断当前类型是否为 [QGCategory]
-     * 或直接通过 [resolveToChannel] 实时查询新的结果。
+     * 当前子频道分组的名称。会通过 [resolveToChannel]
+     * 获取子频道信息后返回名称。
+     *
+     * @see resolveToChannel
      */
     @STP
     override suspend fun name(): String?

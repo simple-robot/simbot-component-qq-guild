@@ -49,7 +49,7 @@ private fun QGBotImpl.member0(eventMember: EventMember): QGMemberImpl =
  */
 internal fun QGBotImpl.registerEventProcessor(): DisposableHandle {
     val bot = this
-    return source.registerProcessor { raw ->
+    return source.subscribe { raw ->
         when (val event = this) {
             //region Guild相关
             is GuildCreate -> {

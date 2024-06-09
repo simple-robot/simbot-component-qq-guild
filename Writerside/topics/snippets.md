@@ -203,3 +203,58 @@ implementation 'io.ktor:ktor-client-darwin:$ktor_version'
 
 </snippet>
 
+<snippet id="deps">
+<var name="module" value=""></var>
+<var name="module-jvm" value="%module%-jvm"></var>
+
+<tabs group="build">
+<tab title="Gradle(Kotlin DSL)" group-key="kts">
+
+```Kotlin
+implementation("love.forte.simbot.component:%module%:%version%")
+```
+
+<tip>
+
+如果你使用 Java 而不配合使用 Gradle 的 `kotlin` 插件,
+那么你需要指定依赖的后缀为 `-jvm`。
+
+```Kotlin
+implementation("love.forte.simbot.component:%module-jvm%:%version%")
+```
+
+</tip>
+
+</tab>
+<tab title="Gradle(Groovy)" group-key="groovy">
+
+```Groovy
+implementation 'love.forte.simbot.component:%module%:%version%'
+```
+
+<tip>
+
+如果你使用 Java 而不配合使用 Gradle 的 `kotlin` 插件,
+那么你需要指定依赖的后缀为 `-jvm`。
+
+```Groovy
+implementation 'love.forte.simbot.component:%module-jvm%:%version%'
+```
+
+</tip>
+
+</tab>
+<tab title="Maven" group-key="maven">
+
+```xml
+<dependency>
+    <groupId>love.forte.simbot.component</groupId>
+    <artifactId>%module-jvm%</artifactId>
+    <version>%version%</version>
+</dependency>
+```
+
+</tab>
+</tabs>
+
+</snippet>

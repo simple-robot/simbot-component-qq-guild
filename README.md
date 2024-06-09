@@ -2,7 +2,11 @@
 
 <!--suppress HtmlDeprecatedAttribute -->
 <div align="center">
-<img src=".simbot/logo.png" alt="logo" style="width:230px; height:230px; border-radius:50%; " />
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".simbot/logo-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset=".simbot/logo.svg">
+  <img alt="simbot logo" src=".simbot/logo.svg" width="260" />
+</picture>
 <h2>
     ~ Simple Robot ~ <br/> <small>QQ频道组件</small>
 </h2>
@@ -21,31 +25,27 @@
 
 </div>
 
-这是 
-[**Simple Robot v4**](https://github.com/simple-robot/simpler-robot/tree/v4-dev)
-下的子项目，是针对 
-[**QQ频道机器人**](https://bot.q.qq.com/wiki/develop/api/) 
-各方面的 simbot 组件库实现， 
-包括对 `API` 内容的实现、事件相关的实现以及BOT对于事件的监听与交互等。
+这是一个基于 [Kotlin coroutines](https://github.com/Kotlin/kotlinx.coroutines)
+对 [**QQ频道机器人**][qg bot doc] 进行实现的 API/SDK
+[Kotlin 多平台][KMP]库，异步高效、Java友好。
 
-QQ频道组件库可以作为底层API依赖使用、
-轻量级的QQ频道事件调度框架使用，
-也可以基于 simbot 核心库的种种快速开发一个功能强大的QQ频道机器人！
+它同样是一个 [Simple Robot v4][simbot4 gh] (下文简称 simbot)
+的组件库，是 simbot 的子项目之一。
+借助 simbot 核心库提供的能力，它可以支持更多高级功能和封装，比如组件协同、Spring支持等。
 
-- 基于 [`Kotlin`](https://kotlinlang.org/) 提供 [KMP 多平台](https://kotlinlang.org/docs/multiplatform.html) 特性
-- 基于 [`Kotlin coroutines`](https://github.com/Kotlin/kotlinx.coroutines) 与 [`Ktor`](https://ktor.io/) 提供高效易用的API；
+它可以作为一个低级别的 API/SDK 辅助依赖库，
+也可在 simbot 核心库的支持下用作为一个轻量级的快速开发框架！
 
-- 基于 [`Kotlin`](https://kotlinlang.org/) 提供 [KMP 多平台](https://kotlinlang.org/docs/multiplatform.html) 特性，提供 Java 友好的API。
-- 基于 [`Kotlin coroutines`](https://github.com/Kotlin/kotlinx.coroutines) 与 [`Ktor`](https://ktor.io/) 提供轻量高效的API。
+序列化和网络请求相关分别基于 [Kotlin serialization](https://github.com/Kotlin/kotlinx.serialization)
+和 [Ktor](https://ktor.io/).
 
-> [!Note]
-> 下文中 `Simple Robot v4` 简称为 `simbot4`
+## 文档与引导
 
-## 文档
-
-- 了解simbot: [**Simple Robot 应用手册**](https://simbot.forte.love)
-- **QQ频道组件**手册：<https://component-qqguild.simbot.forte.love/> (即当前仓库的 GitHub Pages)
-- **API文档**: [**文档引导站点**](https://docs.simbot.forte.love) 中QQ频道的 [**KDoc站点**](https://docs.simbot.forte.love/components/qq-guild)
+- QQ频道组件手册: [应用手册](https://component-qqguild.simbot.forte.love/) (即当前仓库的 GitHub Pages)
+- 了解simbot: [Simple Robot 应用手册](https://simbot.forte.love)
+- [文档引导站&API文档](https://docs.simbot.forte.love)
+- [**社群**](https://simbot.forte.love/communities.html) 文档中也有提供社群信息喔
+- 前往 [组织首页](https://github.com/simple-robot/) 了解更多有关组件、文档、以及社群等相关信息！
 
 ---
 
@@ -84,9 +84,9 @@ QQ频道组件库可以作为底层API依赖使用、
 的组件实现，
 是一个相对高度封装的模块，并提供simbot4大部分能力，包括事件监听、多组件协同、Spring Boot Starter 等。
 
-👉 [前往模块](simbot-component-qq-guild-core-1) 了解更多。
+👉 [前往模块](simbot-component-qq-guild-core) 了解更多。
 
-## 法欧莉
+## 法欧莉!
 
 如果你想看一看使用QQ频道组件实现的具体作品，
 可以前往QQ频道添加亲爱的 [法欧莉斯卡雷特](https://qun.qq.com/qunpro/robot/share?robot_appid=101986850) 来体验喔~
@@ -97,15 +97,24 @@ QQ频道组件库可以作为底层API依赖使用、
 `simbot-component-qq-guild` 使用 `LGPLv3` 许可证开源。
 
 ```
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General 
-Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) 
+This program is free software: you can redistribute it and/or 
+modify it under the terms of the GNU Lesser General 
+Public License as published by the Free Software Foundation, 
+either version 3 of the License, or (at your option) 
 any later version.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
-warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
-details.
+This program is distributed in the hope that it will be useful, 
+but WITHOUT ANY WARRANTY; without even the implied 
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+See the GNU Lesser General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public License along with this program. 
+You should have received a copy of the GNU Lesser General Public 
+License along with this program. 
 If not, see <https://www.gnu.org/licenses/>.
 ```
 
+
+[simbot4 gh]: https://github.com/simple-robot/simpler-robot/tree/v4-dev
+[simbot doc]: https://simbot.forte.love
+[qg bot doc]: https://bot.q.qq.com/wiki/develop/api/
+[KMP]: https://kotlinlang.org/docs/multiplatform.html

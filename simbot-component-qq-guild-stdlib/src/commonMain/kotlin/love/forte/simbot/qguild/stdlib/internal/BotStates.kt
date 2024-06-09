@@ -358,21 +358,25 @@ internal class ReceiveEvent(
                     val dispatch = try {
                         bot.wsDecoder.decodeFromJsonElement(Signal.Dispatch.serializer(), json)
                     } catch (serEx: SerializationException) {
-                        if (serEx.message?.startsWith("Polymorphic serializer was not found for") == true) {
-                            // 未知的事件类型
-                            val disSeq = runCatching {
-                                json.jsonObject["s"]?.jsonPrimitive?.longOrNull ?: seq.value
-                            }.getOrElse { seq.value }
-                            Signal.Dispatch.Unknown(disSeq, json, raw).also {
-                                val t =
-                                    kotlin.runCatching { json.jsonObject[Signal.Dispatch.DISPATCH_CLASS_DISCRIMINATOR]?.jsonPrimitive?.content }
-                                        .getOrNull()
+//                        if (tryCheckIsPolymorphicException(serEx)) {
+                        // 未知的事件类型
+                        val disSeq = runCatching {
+                            json.jsonObject["s"]?.jsonPrimitive?.longOrNull ?: seq.value
+                        }.getOrElse { seq.value }
+                        Signal.Dispatch.Unknown(disSeq, json, raw).also {
+                            val t =
+                                kotlin.runCatching { json.jsonObject[Signal.Dispatch.DISPATCH_CLASS_DISCRIMINATOR]?.jsonPrimitive?.content }
+                                    .getOrNull()
+                            if (tryCheckIsPolymorphicException(serEx)) {
                                 logger.warn("Unknown event type {}, decode it as Unknown event: {}", t, it)
+                            } else {
+                                logger.warn("Unknown event type {}, decode it as Unknown event: {}", t, it, serEx)
                             }
-                        } else {
-                            // throw out
-                            throw serEx
                         }
+//                        } else {
+//                            // throw out
+//                            throw serEx
+//                        }
                     }
                     logger.debug("Received dispatch: {}", dispatch)
                     val dispatchSeq = dispatch.seq
@@ -405,6 +409,20 @@ internal class ReceiveEvent(
         // next: self
         return this
     }
+}
+
+private fun tryCheckIsPolymorphicException(exception: SerializationException): Boolean {
+    // 似乎是某个版本的错误提示，但是至少在 JSON v1.6.3 已经不适用了
+    if (exception.message?.startsWith("Polymorphic serializer was not found for") == true) {
+        return true
+    }
+
+    // kotlinx.serialization.json.internal.JsonDecodingException: Serializer for subclass 'MESSAGE_REACTION_ADD' is not found in the polymorphic scope of 'Dispatch'
+    if (exception.message?.contains("is not found in the polymorphic scope of") == true) {
+        return true
+    }
+
+    return false
 }
 
 @OptIn(ExperimentalSimbotCollectionApi::class)
