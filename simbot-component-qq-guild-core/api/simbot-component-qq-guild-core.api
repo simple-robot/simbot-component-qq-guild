@@ -1458,10 +1458,6 @@ public final class love/forte/simbot/component/qguild/message/QGEmbedKt {
 	public static final fun buildQGEmbed (Lkotlin/jvm/functions/Function1;)Llove/forte/simbot/component/qguild/message/QGEmbed;
 }
 
-public final class love/forte/simbot/component/qguild/message/QGImage {
-	public fun <init> ()V
-}
-
 public abstract class love/forte/simbot/component/qguild/message/QGMessageContent : love/forte/simbot/message/MessageContent {
 	public fun <init> ()V
 	public synthetic fun delete ([Llove/forte/simbot/ability/DeleteOption;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -1484,10 +1480,6 @@ public final class love/forte/simbot/component/qguild/message/QGMessageForSendin
 public abstract interface class love/forte/simbot/component/qguild/message/QGMessageReceipt : love/forte/simbot/message/MessageReceipt {
 	public synthetic fun delete ([Llove/forte/simbot/ability/DeleteOption;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun delete$suspendImpl (Llove/forte/simbot/component/qguild/message/QGMessageReceipt;[Llove/forte/simbot/ability/DeleteOption;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
-public final class love/forte/simbot/component/qguild/message/QGOfflineImage {
-	public fun <init> ()V
 }
 
 public final class love/forte/simbot/component/qguild/message/QGReference : love/forte/simbot/component/qguild/message/QGMessageElement {
