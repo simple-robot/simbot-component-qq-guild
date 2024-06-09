@@ -8,9 +8,9 @@ ktor = "2.3.8"
 openjdk-jmh = "1.37"
 log4j = "2.23.1"
 # simbot
-simbot = "4.0.0-RC2"
+simbot = "4.0.0-RC3"
 suspendTransform = "0.8.0-beta1"
-gradleCommon = "0.3.0"
+gradleCommon = "0.4.0"
 # ksp
 ksp = "2.0.0-1.0.22"
 # https://square.github.io/kotlinpoet/
