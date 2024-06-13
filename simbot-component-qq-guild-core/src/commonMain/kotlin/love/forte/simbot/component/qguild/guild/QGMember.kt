@@ -39,6 +39,7 @@ import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.api.MessageAuditedException
 import love.forte.simbot.qguild.api.guild.mute.MuteMemberApi
 import love.forte.simbot.suspendrunner.ST
+import kotlin.jvm.JvmSynthetic
 import kotlin.time.Duration
 import love.forte.simbot.qguild.model.Member as QGSourceMember
 
@@ -140,7 +141,7 @@ public interface QGMember : Member, CoroutineScope, QGObjectiveContainer<QGSourc
      * @throws QQGuildApiException 请求产生的异常
      * @throws IllegalArgumentException 如果 [duration] 小于0
      */
-    @ST
+    @JvmSynthetic
     public suspend fun mute(duration: Duration)
 
     /**
