@@ -23,6 +23,7 @@ import kotlinx.coroutines.CoroutineScope
 import love.forte.simbot.common.collectable.Collectable
 import love.forte.simbot.common.id.ID
 import love.forte.simbot.common.id.StringID.Companion.ID
+import love.forte.simbot.common.time.TimeUnit
 import love.forte.simbot.common.time.Timestamp
 import love.forte.simbot.component.qguild.ExperimentalQGApi
 import love.forte.simbot.component.qguild.QGObjectiveContainer
@@ -36,7 +37,10 @@ import love.forte.simbot.message.MessageContent
 import love.forte.simbot.message.Text
 import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.api.MessageAuditedException
+import love.forte.simbot.qguild.api.guild.mute.MuteMemberApi
 import love.forte.simbot.suspendrunner.ST
+import kotlin.jvm.JvmSynthetic
+import kotlin.time.Duration
 import love.forte.simbot.qguild.model.Member as QGSourceMember
 
 /**
@@ -75,6 +79,7 @@ public interface QGMember : Member, CoroutineScope, QGObjectiveContainer<QGSourc
     @OptIn(ExperimentalQGApi::class)
     public val joinTime: Timestamp
         get() = source.joinedAt.toTimestamp()
+
     /**
      * 成员拥有的角色
      */
@@ -120,4 +125,49 @@ public interface QGMember : Member, CoroutineScope, QGObjectiveContainer<QGSourc
      */
     @ST
     override suspend fun send(messageContent: MessageContent): QGMessageReceipt
+
+    /**
+     * 禁言频道服务器中的此成员。
+     *
+     * 如果 [duration]  所代表的秒值为 `0`
+     * 则代表取消禁言，同 [unmute]。
+     *
+     * 如果 [duration] 小于0则会抛出 [IllegalArgumentException]。
+     *
+     * @param duration 持续时间
+     *
+     * @see MuteMemberApi
+     *
+     * @throws QQGuildApiException 请求产生的异常
+     * @throws IllegalArgumentException 如果 [duration] 小于0
+     */
+    @JvmSynthetic
+    public suspend fun mute(duration: Duration)
+
+    /**
+     * 禁言频道服务器中的此成员。
+     *
+     * 如果 [duration] 在单位 [unit]
+     * 下所代表的秒值为 `0` 则代表取消禁言，同 [unmute]。
+     *
+     * 如果 [duration] 小于0则会抛出 [IllegalArgumentException]。
+     *
+     * @param duration 持续时间
+     * @param unit [duration] 的时间单位
+     *
+     * @see MuteMemberApi
+     *
+     * @throws QQGuildApiException 请求产生的异常
+     * @throws IllegalArgumentException 如果 [duration] 小于0
+     */
+    @ST
+    public suspend fun mute(duration: Long, unit: TimeUnit)
+
+    /**
+     * 取消此成员在频道服务器中的禁言状态。
+     *
+     * @throws QQGuildApiException 请求产生的异常
+     */
+    @ST
+    public suspend fun unmute()
 }

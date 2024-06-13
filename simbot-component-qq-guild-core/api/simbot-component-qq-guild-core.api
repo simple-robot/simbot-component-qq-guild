@@ -1240,6 +1240,11 @@ public abstract interface class love/forte/simbot/component/qguild/guild/QGMembe
 	public fun getJoinTime ()Llove/forte/simbot/common/time/Timestamp;
 	public fun getName ()Ljava/lang/String;
 	public fun getNick ()Ljava/lang/String;
+	public abstract fun mute (JLjava/util/concurrent/TimeUnit;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract synthetic fun mute-VtjQ1oo (JLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun muteAsync (JLjava/util/concurrent/TimeUnit;)Ljava/util/concurrent/CompletableFuture;
+	public abstract fun muteBlocking (JLjava/util/concurrent/TimeUnit;)V
+	public abstract fun muteReserve (JLjava/util/concurrent/TimeUnit;)Llove/forte/simbot/suspendrunner/reserve/SuspendReserve;
 	public abstract synthetic fun send (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract synthetic fun send (Llove/forte/simbot/message/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract synthetic fun send (Llove/forte/simbot/message/MessageContent;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -1255,6 +1260,10 @@ public abstract interface class love/forte/simbot/component/qguild/guild/QGMembe
 	public fun sendReserve (Ljava/lang/String;)Llove/forte/simbot/suspendrunner/reserve/SuspendReserve;
 	public fun sendReserve (Llove/forte/simbot/message/Message;)Llove/forte/simbot/suspendrunner/reserve/SuspendReserve;
 	public fun sendReserve (Llove/forte/simbot/message/MessageContent;)Llove/forte/simbot/suspendrunner/reserve/SuspendReserve;
+	public abstract synthetic fun unmute (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun unmuteAsync ()Ljava/util/concurrent/CompletableFuture;
+	public fun unmuteBlocking ()V
+	public fun unmuteReserve ()Llove/forte/simbot/suspendrunner/reserve/SuspendReserve;
 }
 
 public final class love/forte/simbot/component/qguild/internal/bot/QGBotImpl$inlined$sam$i$java_util_function_Function$0 : java/util/function/Function {
