@@ -76,7 +76,7 @@ public class MuteMemberApi private constructor(guildId: String, userId: String, 
             return when {
                 seconds == 0L -> MuteMemberApi(guildId, userId, MuteBody.Unmute)
                 seconds > 0L -> MuteMemberApi(guildId, userId, MuteBody(muteSeconds = seconds.toString()))
-                else -> throw IllegalStateException("mute seconds must >= 0, but $seconds")
+                else -> throw IllegalArgumentException("mute seconds must >= 0, but $seconds")
             }
         }
     }
