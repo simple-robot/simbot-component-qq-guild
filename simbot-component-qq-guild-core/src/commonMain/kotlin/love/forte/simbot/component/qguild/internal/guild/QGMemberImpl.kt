@@ -24,6 +24,7 @@ import love.forte.simbot.common.collectable.asCollectable
 import love.forte.simbot.common.id.ID
 import love.forte.simbot.common.id.StringID.Companion.ID
 import love.forte.simbot.common.id.literal
+import love.forte.simbot.common.time.TimeUnit
 import love.forte.simbot.component.qguild.ExperimentalQGApi
 import love.forte.simbot.component.qguild.guild.QGMember
 import love.forte.simbot.component.qguild.internal.bot.QGBotImpl
@@ -38,6 +39,7 @@ import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.addStackTrace
+import love.forte.simbot.qguild.api.guild.mute.MuteMemberApi
 import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.qguild.api.message.direct.CreateDmsApi
 import love.forte.simbot.qguild.api.message.direct.DmsSendApi
@@ -46,6 +48,7 @@ import love.forte.simbot.qguild.stdlib.requestDataBy
 import kotlin.concurrent.Volatile
 import kotlin.coroutines.CoroutineContext
 import kotlin.jvm.JvmSynthetic
+import kotlin.time.Duration
 import love.forte.simbot.qguild.model.Member as QGSourceMember
 
 /**
@@ -136,6 +139,31 @@ internal class QGMemberImpl(
             throw e.addStackTrace { "member.send" }
         }
     }
+
+    override suspend fun mute(duration: Duration) {
+        MuteMemberApi.create(
+            guildId.literal,
+            user.id,
+            duration
+        ).requestDataBy(bot.source)
+    }
+
+    override suspend fun mute(duration: Long, unit: TimeUnit) {
+        MuteMemberApi.create(
+            guildId.literal,
+            user.id,
+            duration,
+            unit
+        ).requestDataBy(bot.source)
+    }
+
+    override suspend fun unmute() {
+        MuteMemberApi.createUnmute(
+            guildId.literal,
+            user.id,
+        ).requestDataBy(bot.source)
+    }
+
 
     override fun toString(): String {
         return "QGMember(id=$id, name=$name, nick=$nick, guildId=$guildId)"
