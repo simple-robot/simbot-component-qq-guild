@@ -701,14 +701,14 @@ public abstract class love/forte/simbot/component/qguild/event/QGBotEvent : love
 	public abstract fun getBot ()Llove/forte/simbot/component/qguild/bot/QGBot;
 }
 
-public abstract class love/forte/simbot/component/qguild/event/QGBotRegisteredEvent : love/forte/simbot/component/qguild/event/QGInternalBotEvent, love/forte/simbot/event/BotEvent {
+public abstract class love/forte/simbot/component/qguild/event/QGBotRegisteredEvent : love/forte/simbot/component/qguild/event/QGInternalBotEvent, love/forte/simbot/event/BotRegisteredEvent {
 	public fun <init> ()V
 	public abstract fun getBot ()Llove/forte/simbot/component/qguild/bot/QGBot;
 	public fun getId ()Llove/forte/simbot/common/id/ID;
 	public fun getTime ()Llove/forte/simbot/common/time/Timestamp;
 }
 
-public abstract class love/forte/simbot/component/qguild/event/QGBotStartedEvent : love/forte/simbot/component/qguild/event/QGInternalBotEvent, love/forte/simbot/event/BotEvent {
+public abstract class love/forte/simbot/component/qguild/event/QGBotStartedEvent : love/forte/simbot/component/qguild/event/QGInternalBotEvent, love/forte/simbot/event/BotStartedEvent {
 	public fun <init> ()V
 	public abstract fun getBot ()Llove/forte/simbot/component/qguild/bot/QGBot;
 	public fun getId ()Llove/forte/simbot/common/id/ID;
