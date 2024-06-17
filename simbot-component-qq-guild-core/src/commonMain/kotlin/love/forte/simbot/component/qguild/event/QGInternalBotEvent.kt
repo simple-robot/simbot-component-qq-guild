@@ -23,7 +23,8 @@ import love.forte.simbot.common.id.UUID
 import love.forte.simbot.common.time.Timestamp
 import love.forte.simbot.component.qguild.bot.QGBot
 import love.forte.simbot.component.qguild.bot.QQGuildBotManager
-import love.forte.simbot.event.BotEvent
+import love.forte.simbot.event.BotRegisteredEvent
+import love.forte.simbot.event.BotStartedEvent
 import love.forte.simbot.event.Event
 
 /**
@@ -42,14 +43,13 @@ public sealed interface QGInternalBotEvent : Event
  * @see QQGuildBotManager
  * @see QQGuildBotManager.register
  */
-public abstract class QGBotRegisteredEvent : QGInternalBotEvent, BotEvent {
+public abstract class QGBotRegisteredEvent : QGInternalBotEvent, BotRegisteredEvent {
     abstract override val bot: QGBot
 
     @OptIn(ExperimentalSimbotAPI::class)
     override val time: Timestamp = Timestamp.now()
     override val id: ID = UUID.random()
 }
-
 
 /**
  * qq频道组件中，每当 [QGBot.start] 被执行的时候会被推送的事件。
@@ -58,7 +58,7 @@ public abstract class QGBotRegisteredEvent : QGInternalBotEvent, BotEvent {
  * @see QGBot
  * @see QGBot.start
  */
-public abstract class QGBotStartedEvent : QGInternalBotEvent, BotEvent {
+public abstract class QGBotStartedEvent : QGInternalBotEvent, BotStartedEvent {
     abstract override val bot: QGBot
 
     @OptIn(ExperimentalSimbotAPI::class)
