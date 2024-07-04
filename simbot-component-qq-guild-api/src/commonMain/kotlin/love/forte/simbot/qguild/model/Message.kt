@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -25,6 +25,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import love.forte.simbot.qguild.ApiModel
 import love.forte.simbot.qguild.message.EmbedBuilder
+import love.forte.simbot.qguild.time.ZERO_ISO_INSTANT
 import kotlin.jvm.JvmStatic
 import kotlin.jvm.JvmSynthetic
 
@@ -359,10 +360,10 @@ public data class Message(
 @ApiModel
 @Serializable
 public data class MessageMember(
-    override val nick: String,
+    override val nick: String = "",
     override val roles: List<String> = emptyList(),
     @SerialName("joined_at")
-    override val joinedAt: String
+    override val joinedAt: String = ZERO_ISO_INSTANT
 ) : Member {
 
     @Transient
