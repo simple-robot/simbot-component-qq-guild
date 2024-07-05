@@ -18,7 +18,9 @@
 import love.forte.gradle.common.core.Gpg
 import love.forte.gradle.common.core.project.setup
 import love.forte.gradle.common.core.property.systemProp
-import love.forte.gradle.common.publication.configure.multiplatformConfigPublishing
+import love.forte.gradle.common.publication.configure.configPublishMaven
+import love.forte.gradle.common.publication.configure.publishingExtension
+import love.forte.gradle.common.publication.configure.setupPom
 
 plugins {
     signing
@@ -29,30 +31,44 @@ plugins {
 setup(P.ComponentQQGuild)
 
 val p = project
-multiplatformConfigPublishing {
-    project = P.ComponentQQGuild
-    isSnapshot = project.version.toString().contains("SNAPSHOT", true)
+val isSnapshot = project.version.toString().contains("SNAPSHOT", true)
 
-    val jarJavadoc by tasks.registering(Jar::class) {
-        group = "documentation"
-        archiveClassifier.set("javadoc")
-        if (!(isSnapshot || isSnapshot() || isSimbotLocal())) {
-            archiveClassifier.set("javadoc")
-            from(tasks.findByName("dokkaHtml"))
+val jarJavadoc by tasks.registering(Jar::class) {
+    group = "documentation"
+    archiveClassifier.set("javadoc")
+    if (!(isSnapshot || isSnapshot() || isSimbotLocal())) {
+        dependsOn(tasks.dokkaHtml)
+        from(tasks.dokkaHtml.flatMap { it.outputDirectory })
+        // from(tasks.findByName("dokkaHtml"))
+    }
+}
+
+publishing {
+    repositories {
+        mavenLocal()
+        if (isSnapshot) {
+            configPublishMaven(SnapshotRepository)
+        } else {
+            configPublishMaven(ReleaseRepository)
         }
     }
 
-    artifact(jarJavadoc)
-    releasesRepository = ReleaseRepository
-    snapshotRepository = SnapshotRepository
-    gpg = Gpg.ofSystemPropOrNull()
+    publications {
+        withType<MavenPublication> {
+            artifacts {
+                artifact(jarJavadoc)
+            }
 
-    if (isSimbotLocal()) {
-        mainHost = null
+            setupPom(project.name, P.ComponentQQGuild)
+        }
     }
+}
 
-    publicationsFromMainHost += listOf("wasm", "wasm32", "wasm_js")
-    mainHostSupportedTargets += listOf("wasm", "wasm32", "wasm_js")
+signing {
+    val gpg = Gpg.ofSystemPropOrNull() ?: return@signing
+    val (keyId, secretKey, password) = gpg
+    useInMemoryPgpKeys(keyId, secretKey, password)
+    sign(publishingExtension.publications)
 }
 
 // TODO see https://github.com/gradle-nexus/publish-plugin/issues/208#issuecomment-1465029831
