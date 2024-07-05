@@ -23,6 +23,7 @@ import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.getByName
 import org.gradle.kotlin.dsl.withType
 import org.gradle.process.CommandLineArgumentProvider
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -30,13 +31,15 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
 
+@OptIn(ExperimentalKotlinGradlePluginApi::class)
 inline fun KotlinJvmTarget.configJava(crossinline block: KotlinJvmTarget.() -> Unit = {}) {
     withJava()
-    compilations.all {
-        kotlinOptions {
-            javaParameters = true
-            freeCompilerArgs = freeCompilerArgs + listOf("-Xjvm-default=all")
-        }
+    compilerOptions {
+        javaParameters.set(true)
+        freeCompilerArgs.addAll(
+            "-Xjvm-default=all"
+        )
+
     }
 
     testRuns["test"].executionTask.configure {

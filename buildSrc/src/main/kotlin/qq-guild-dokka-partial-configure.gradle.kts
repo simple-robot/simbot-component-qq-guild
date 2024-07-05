@@ -27,7 +27,7 @@ plugins {
 // dokka config
 tasks.withType<DokkaTaskPartial>().configureEach {
     dokkaSourceSets.configureEach {
-        version = P.ComponentQQGuild.version.toString()
+        version = P.ComponentQQGuild.version
         documentedVisibilities.set(listOf(DokkaConfiguration.Visibility.PUBLIC, DokkaConfiguration.Visibility.PROTECTED))
         fun checkModule(projectFileName: String): Boolean {
             val moduleMdFile = project.file(projectFileName)
@@ -56,7 +56,7 @@ tasks.withType<DokkaTaskPartial>().configureEach {
 
         sourceLink {
             localDirectory.set(projectDir.resolve("src"))
-            val relativeTo = projectDir.relativeTo(rootProject.projectDir)
+            val relativeTo = projectDir.relativeTo(rootProject.projectDir).path.replace('\\', '/')
             remoteUrl.set(URI.create("${P.ComponentQQGuild.HOMEPAGE}/tree/main/$relativeTo/src/").toURL())
             remoteLineSuffix.set("#L")
         }

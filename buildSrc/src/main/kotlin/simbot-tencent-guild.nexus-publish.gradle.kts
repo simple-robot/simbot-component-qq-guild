@@ -17,7 +17,7 @@
 
 import love.forte.gradle.common.core.project.setup
 import love.forte.gradle.common.core.repository.Repositories
-import love.forte.gradle.common.publication.configure.nexusPublishConfig
+import java.time.Duration
 
 plugins {
     id("io.github.gradle-nexus.publish-plugin")
@@ -31,10 +31,16 @@ if (userInfo == null) {
     logger.warn("sonatype.username or sonatype.password is null, cannot config nexus publishing.")
 }
 
-nexusPublishConfig {
-    projectDetail = P.ComponentQQGuild
+nexusPublishing {
+    packageGroup.set(P.ComponentQQGuild.group)
     useStaging = project.provider { !project.version.toString().endsWith("SNAPSHOT", ignoreCase = true) }
-    repositoriesConfig = {
+
+    transitionCheckOptions {
+        maxRetries = 1000
+        delayBetween = Duration.ofSeconds(2)
+    }
+
+    repositories {
         sonatype {
             snapshotRepositoryUrl.set(uri(Repositories.Snapshot.URL))
             username.set(userInfo?.username)

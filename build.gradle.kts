@@ -35,12 +35,10 @@ buildscript {
     }
 }
 
-//group = P.ComponentTencentGuild.GROUP
-//version = P.ComponentTencentGuild.versionIfSnap
-
 logger.info("=== Current version: {} ===", version)
 
 allprojects {
+    setup(P.ComponentQQGuild)
     repositories {
         mavenCentral()
         maven {

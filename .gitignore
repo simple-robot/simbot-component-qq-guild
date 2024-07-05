@@ -160,3 +160,4 @@ fabric.properties
 generated-docs
 
 .kotlin
+.idea
