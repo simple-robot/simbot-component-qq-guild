@@ -177,6 +177,8 @@ bot开发配置中的 `Token`。
 
 直接使用 `intents` 原始的标记位最终数值。
 
+所有的事件对应的位值信息可前往参考 [官方文档](https://bot.q.qq.com/wiki/develop/api/gateway/intents.html) 。
+
 ```json
 {
   "type": "raw",
