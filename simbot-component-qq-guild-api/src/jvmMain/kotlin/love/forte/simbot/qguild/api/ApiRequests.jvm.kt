@@ -69,10 +69,11 @@ public fun newJson(
 @JvmOverloads
 public fun QQGuildApi<*>.requestBlocking(
     client: HttpClient,
-    token: String,
+    token: String?,
     server: Url = QQGuild.URL,
+    appId: String? = null,
 ): HttpResponse = runInNoScopeBlocking {
-    request(client, token, server)
+    request(client = client, token = token, server = server, appId = appId)
 }
 
 /**
@@ -83,10 +84,11 @@ public fun QQGuildApi<*>.requestBlocking(
 @JvmOverloads
 public fun QQGuildApi<*>.requestTextBlocking(
     client: HttpClient,
-    token: String,
+    token: String?,
     server: Url = QQGuild.URL,
+    appId: String? = null,
 ): String = runInNoScopeBlocking {
-    requestText(client, token, server)
+    requestText(client = client, token = token, server = server, appId = appId)
 }
 
 /**
@@ -96,10 +98,11 @@ public fun QQGuildApi<*>.requestTextBlocking(
 @JvmOverloads
 public fun <R : Any> QQGuildApi<R>.requestDataBlocking(
     client: HttpClient,
-    token: String,
+    token: String?,
     server: Url = QQGuild.URL,
+    appId: String? = null,
 ): R = runInNoScopeBlocking {
-    requestData(client, token, server)
+    requestData(client = client, token = token, server = server, appId = appId)
 }
 
 /**
@@ -113,8 +116,9 @@ public fun QQGuildApi<*>.requestAsync(
     token: String,
     server: Url = QQGuild.URL,
     scope: CoroutineScope? = null,
+    appId: String? = null,
 ): CompletableFuture<HttpResponse> = (scope ?: client).future {
-    request(client, token, server)
+    request(client = client, token = token, server = server, appId = appId)
 }
 
 /**
@@ -128,8 +132,9 @@ public fun QQGuildApi<*>.requestTextAsync(
     token: String,
     server: Url = QQGuild.URL,
     scope: CoroutineScope? = null,
+    appId: String? = null,
 ): CompletableFuture<String> = (scope ?: client).future {
-    requestText(client, token, server)
+    requestText(client = client, token = token, server = server, appId = appId)
 }
 
 /**
@@ -142,8 +147,9 @@ public fun <R : Any> QQGuildApi<R>.requestDataAsync(
     token: String,
     server: Url = QQGuild.URL,
     scope: CoroutineScope? = null,
+    appId: String? = null,
 ): CompletableFuture<R> = (scope ?: client).future {
-    requestData(client, token, server)
+    requestData(client = client, token = token, server = server, appId = appId)
 }
 
 /**
@@ -159,8 +165,9 @@ public fun QQGuildApi<*>.requestReserve(
     token: String,
     server: Url = QQGuild.URL,
     scope: CoroutineScope? = null,
+    appId: String? = null,
 ): SuspendReserve<HttpResponse> = suspendReserve(scope = (scope ?: client), context = EmptyCoroutineContext) {
-    request(client, token, server)
+    request(client = client, token = token, server = server, appId = appId)
 }
 
 /**
@@ -176,8 +183,9 @@ public fun QQGuildApi<*>.requestTextReserve(
     token: String,
     server: Url = QQGuild.URL,
     scope: CoroutineScope? = null,
+    appId: String? = null,
 ): SuspendReserve<String> = suspendReserve(scope = (scope ?: client), context = EmptyCoroutineContext) {
-    requestText(client, token, server)
+    requestText(client = client, token = token, server = server, appId = appId)
 }
 
 /**
@@ -193,6 +201,7 @@ public fun <R : Any> QQGuildApi<R>.requestDataReserve(
     token: String,
     server: Url = QQGuild.URL,
     scope: CoroutineScope? = null,
+    appId: String? = null,
 ): SuspendReserve<R> = suspendReserve(scope = (scope ?: client), context = EmptyCoroutineContext) {
-    requestData(client, token, server)
+    requestData(client = client, token = token, server = server, appId = appId)
 }

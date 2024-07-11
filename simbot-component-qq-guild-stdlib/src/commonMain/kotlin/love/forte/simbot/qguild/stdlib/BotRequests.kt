@@ -36,11 +36,11 @@ import kotlin.jvm.JvmSynthetic
  */
 @JvmSynthetic
 public suspend fun QQGuildApi<*>.requestBy(bot: Bot): HttpResponse {
-    val botToken = bot.botToken()
     return request(
         client = bot.apiClient,
-        token = botToken,
+        token = bot.qqBotToken(),
         server = bot.apiServer,
+        appId = bot.ticket.appId
     )
 }
 
@@ -53,12 +53,12 @@ public suspend inline fun QQGuildApi<*>.requestTextBy(
     bot: Bot,
     useResp: (HttpResponse) -> Unit = {}
 ): String {
-    val botToken = bot.botToken()
     return requestText(
         client = bot.apiClient,
-        token = botToken,
+        token = bot.qqBotToken(),
         server = bot.apiServer,
-        useResp = useResp
+        useResp = useResp,
+        appId = bot.ticket.appId
     )
 }
 
@@ -69,12 +69,12 @@ public suspend inline fun QQGuildApi<*>.requestTextBy(
  */
 @JvmSynthetic
 public suspend inline fun <R : Any> QQGuildApi<R>.requestDataBy(bot: Bot): R {
-    val botToken = bot.botToken()
     return requestData(
         client = bot.apiClient,
-        token = botToken,
+        token = bot.qqBotToken(),
         server = bot.apiServer,
-        decoder = bot.apiDecoder
+        decoder = bot.apiDecoder,
+        appId = bot.ticket.appId
     )
 }
 
@@ -99,6 +99,15 @@ public suspend fun Bot.requestText(api: QQGuildApi<*>): String = api.requestText
 public suspend fun <R : Any> Bot.requestData(api: QQGuildApi<R>): R = api.requestDataBy(this)
 
 
+@Suppress("DEPRECATION")
 @PublishedApi
+@Deprecated("Use qqBotToken", ReplaceWith("qqBotToken()"))
 internal fun Bot.botToken(): String =
     if (this is BotImpl) botToken else "Bot ${ticket.appId}.${ticket.token}"
+
+/**
+ * see [鉴权方式](https://bot.q.qq.com/wiki/develop/api-v2/dev-prepare/interface-framework/api-use.html#%E8%8E%B7%E5%8F%96%E8%B0%83%E7%94%A8%E5%87%AD%E8%AF%81)
+ */
+@PublishedApi
+internal fun Bot.qqBotToken(): String =
+    if (this is BotImpl) qqBotToken else "QQBot $accessToken"

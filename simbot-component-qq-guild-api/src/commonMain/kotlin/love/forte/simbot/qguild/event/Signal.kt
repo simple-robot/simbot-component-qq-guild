@@ -76,7 +76,8 @@ public sealed class Signal<D>(@Serializable(Opcode.SerializerByCode::class) publ
 
         /**
          *
-         * @property token 创建机器人的时候分配的，格式为 `Bot {appid}.{app_token}`
+         * @property token 创建机器人的时候分配的，
+         * 格式为 `QQBot {ACCESS_TOKEN}`
          * @property intents 此次连接所需要接收的事件，具体可参考 [Intents]
          * @property shard 该参数是用来进行水平分片的。该参数是个拥有两个元素的数组。
          * 例如：`[0,4]`，代表分为四个片，当前链接是第 0 个片，业务稍后应该继续建立 shard 为 `[1,4]`, `[2,4]`, `[3,4]` 的链接，才能完整接收事件。更多详细的内容可以参考 [Shard]。
