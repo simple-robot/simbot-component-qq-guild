@@ -39,6 +39,9 @@ import love.forte.simbot.logger.Logger
 import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.qguild.api.GatewayApis
 import love.forte.simbot.qguild.api.GatewayInfo
+import love.forte.simbot.qguild.api.app.AppAccessToken
+import love.forte.simbot.qguild.api.app.GetAppAccessTokenApi
+import love.forte.simbot.qguild.api.requestData
 import love.forte.simbot.qguild.api.user.GetBotInfoApi
 import love.forte.simbot.qguild.event.Ready
 import love.forte.simbot.qguild.event.Shard
@@ -48,6 +51,9 @@ import love.forte.simbot.qguild.stdlib.*
 import love.forte.simbot.qguild.stdlib.DisposableHandle
 import kotlin.concurrent.Volatile
 import kotlin.coroutines.CoroutineContext
+import kotlin.math.max
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 
 /**
@@ -151,15 +157,35 @@ internal class BotImpl(
         }
     }
 
+    /**
+     * 下一次刷新token需要等待事件，最小1秒
+     */
+    private fun flushWaitingDuration(expireIn: Int): Duration =
+        max(1, (expireIn.toFloat() * 0.9f).toInt()).seconds
+
+    /**
+     * `access_token`。
+     * 在使用了 [start] 后会定期刷新，周期为上一个 access_token 有效期的 90%。
+     * 比如如果有效期是 7200，那么下次刷新会在 7200*0.9=6480 秒后刷新。
+     *
+     * 刷新此值的应当只有一个 Job，一般不会产生竞争的情况。
+     */
+    @Volatile
+    override var accessToken: String = ""
+
     override val apiServer: Url = configuration.serverUrl
+
+    @Deprecated("Use qqBotToken", replaceWith = ReplaceWith("qqBotToken"))
     internal val botToken = "Bot ${ticket.appId}.${ticket.token}"
+
+    internal val qqBotToken
+        get() = "QQBot $accessToken"
+
     override val shard: Shard = configuration.shard
     override val apiDecoder: Json = configuration.apiDecoder
 
-
     internal val processorQueue: ConcurrentQueue<EventProcessor> = createConcurrentQueue()
     internal val preProcessorQueue: ConcurrentQueue<EventProcessor> = createConcurrentQueue()
-
 
     override fun subscribe(sequence: SubscribeSequence, processor: EventProcessor): DisposableHandle {
         return when (sequence) {
@@ -221,15 +247,14 @@ internal class BotImpl(
      */
     internal val startLock = Mutex()
 
-    // TODO atomic? lock update?
-//    private val stageLoopJob = atomicRef<Job?>(null)
-
     @Volatile
     private var stageLoopJob: Job? = null
 
+    @Volatile
+    private var flushAccessTokenJob: Job? = null
+
     private val clientLock = Mutex()
 
-    // TODO With Lock
     @Volatile
     private var _client: ClientImpl? = null
     override val client: Bot.Client? get() = _client
@@ -242,20 +267,30 @@ internal class BotImpl(
     }
 
     override suspend fun start() {
-        start(requestData(GatewayApis.Normal))
+        start0 { requestData(GatewayApis.Normal) }
     }
 
     override suspend fun start(gateway: GatewayInfo) {
+        start0 { gateway }
+    }
+
+    private suspend fun start0(gatewayFactory: suspend () -> GatewayInfo) {
         startLock.withLock {
             stageLoopJob?.cancel()
             stageLoopJob = null
+
+            if (flushAccessTokenJob == null) {
+                logger.debug("Initializing flush accessToken job")
+                flushAccessTokenJob = initFlushAccessTokenJob()
+            }
+
+            val gateway = gatewayFactory()
 
             logger.debug("Request gateway {} by shard {}", gateway, shard)
 
             val state = Connect(this, shard, gateway)
 
             logger.debug("Create state loop {}", state)
-
 
             var st: State? = state
             do {
@@ -272,9 +307,59 @@ internal class BotImpl(
                 st.loop()
             }
 
+            stageLoopJob.invokeOnCompletion { reason ->
+                reason?.also {
+                    logger.debug("StageLoopJob is on completion: {}", it.message, it)
+                }
+            }
+
             this.stageLoopJob = stageLoopJob
         }
     }
+
+    private suspend fun initFlushAccessTokenJob(): Job {
+        val api = GetAppAccessTokenApi.create(ticket.appId, ticket.secret)
+
+        val initialToken = getNewAccessToken(api)
+        val firstToken = initialToken.accessToken
+        this.accessToken = firstToken
+        val initialDelay = flushWaitingDuration(initialToken.expiresIn)
+
+        logger.debug(
+            "Initialized token: {}{}***{}{}, next delay: {}",
+            firstToken[0],
+            firstToken[1],
+            firstToken[firstToken.lastIndex - 1],
+            firstToken.last(),
+            initialDelay.toString()
+        )
+
+        return launch {
+            var delay = initialDelay
+            while (isActive) {
+                delay(delay)
+                val appToken = getNewAccessToken(api)
+                this@BotImpl.accessToken = appToken.accessToken
+                delay = this@BotImpl.flushWaitingDuration(appToken.expiresIn)
+                logger.debug(
+                    "Flushed token: {}{}********{}{}, next delay: {}",
+                    firstToken[0],
+                    firstToken[1],
+                    firstToken[firstToken.lastIndex - 1],
+                    firstToken.last(),
+                    delay.toString()
+                )
+            }
+        }
+    }
+
+    private suspend fun getNewAccessToken(api: GetAppAccessTokenApi): AppAccessToken =
+        api.requestData(
+            client = apiClient,
+            token = null,
+            server = null,
+            appId = null
+        )
 
     override fun cancel(reason: Throwable?) {
         if (!job.isActive) return

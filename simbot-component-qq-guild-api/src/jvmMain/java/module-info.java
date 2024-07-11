@@ -26,6 +26,7 @@ module simbot.component.qqguild.api {
     exports love.forte.simbot.qguild.model.forum;
     exports love.forte.simbot.qguild.time;
     exports love.forte.simbot.qguild.api;
+    exports love.forte.simbot.qguild.api.app;
     exports love.forte.simbot.qguild.api.announces;
     exports love.forte.simbot.qguild.api.apipermission;
     exports love.forte.simbot.qguild.api.channel;

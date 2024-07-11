@@ -47,6 +47,17 @@ public interface Bot : CoroutineScope {
     public val ticket: Ticket
 
     /**
+     * 用于API请求的 `access_token`。
+     * 当执行了 [start] 之后会周期性刷新此值，
+     * 直到bot被终止。
+     *
+     * 如果bot尚未被启动，则会始终得到空字符串。
+     *
+     * 这属于敏感信息，请注意保护。
+     */
+    public val accessToken: String
+
+    /**
      * Bot当前的配置信息。
      */
     public val configuration: BotConfiguration
@@ -144,6 +155,8 @@ public interface Bot : CoroutineScope {
 
     /**
      * 启动当前BOT。如果已经存在 [client], 则会关闭已存连接并重新连接。
+     *
+     * 更建议使用 `start(() -> GatewayInfo)`
      *
      * @throws CancellationException 如果当前 bot 已经被关闭
      *

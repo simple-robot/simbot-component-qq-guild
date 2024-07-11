@@ -22,7 +22,6 @@ import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.int
@@ -94,7 +93,7 @@ internal class Connect(
 
         val identify = Signal.Identify(
             Signal.Identify.Data(
-                token = bot.botToken,
+                token = bot.qqBotToken,
                 intents = intents,
                 shard = shard,
                 properties = properties,
@@ -121,7 +120,7 @@ internal class WaitingHello(
         while (session.isActive) {
             val frame = session.incoming.receive() as? Frame.Text ?: continue
             val text = frame.readText()
-            logger.debug("waiting hello : received frame {}", text)
+            logger.debug("Waiting hello : received frame {}", text)
             val json = bot.wsDecoder.parseToJsonElement(text)
             if (json.jsonObject["op"]?.jsonPrimitive?.int == Opcodes.Hello) {
                 hello = bot.wsDecoder.decodeFromJsonElement(Signal.Hello.serializer(), json)
@@ -155,15 +154,36 @@ internal class WaitingReadyEvent(
 ) : State() {
     override suspend fun invoke(): State {
         // 发送 identify
-        logger.debug("Send identify {}", identify)
-        session.send(bot.wsDecoder.encodeToString(Signal.Identify.serializer(), identify))
+        val identifyJson = bot.wsDecoder.encodeToString(Signal.Identify.serializer(), identify)
+        logger.debug("Send identify {}, JSON: {}", identify, identifyJson)
+        session.send(identifyJson)
+        logger.debug("Send identify Successfully.")
+
+//        HeartbeatJob(
+//            bot, hello,
+//            Ready.Data(
+//                "",
+//                "",
+//                User("", ""),
+//                Shard.FULL
+//            ), session
+//        ).invoke()
+
 
         // 等待ready
         var ready: Ready? = null
+        logger.debug("Waiting for Signal ready...")
         while (session.isActive) {
-            val frame = session.incoming.receive() as? Frame.Text ?: continue
+            val frameResult = session.incoming.receiveCatching()
+            if (!frameResult.isSuccess) {
+                val reason = frameResult.exceptionOrNull()
+                val closeReason = session.closeReason.await()
+                throw IllegalStateException("Session closed: $closeReason", reason)
+            }
+
+            val frame = frameResult.getOrThrow() as? Frame.Text ?: continue
             val text = frame.readText()
-            logger.debug("waiting ready event : received frame {}", text)
+            logger.debug("Waiting ready event : received frame {}", text)
             val json = bot.wsDecoder.parseToJsonElement(text)
             if (json.jsonObject["op"]?.jsonPrimitive?.int == Opcodes.Dispatch) {
                 val dispatch = bot.wsDecoder.decodeFromJsonElement(Signal.Dispatch.serializer(), json)
@@ -215,8 +235,6 @@ internal class HeartbeatJob(
             return if (r > heartbeatInterval) 0 else heartbeatInterval - r
         }
 
-//                val heartbeatSupervisorJob = SupervisorJob(session.coroutineContext[Job]!!)
-
         // heartbeat Job
         return session.launch(CoroutineName("bot.${bot.ticket.appId}.heartbeat")) {
             val serializer = Signal.Heartbeat.serializer()
@@ -230,7 +248,6 @@ internal class HeartbeatJob(
                 session.send(bot.wsDecoder.encodeToString(serializer, hb))
             }
         }
-
     }
 }
 
@@ -276,7 +293,7 @@ internal class ReceiveEvent(
             return Resume(bot, client)
         }
 
-        suspend fun onCatchErr(e: Throwable): State? {
+        suspend fun onCatchErr(e: Throwable?): State? {
             val reason = session.closeReason.await()
             if (reason == null) {
                 logger.debug("Session closed and reason is null, try to resume", e)
@@ -326,7 +343,9 @@ internal class ReceiveEvent(
                     }
 
                     bot.cancel(e)
-                    session.cancel(e.message ?: e.toString(), e)
+                    if (session.isActive) {
+                        session.cancel(e?.message ?: e.toString(), e)
+                    }
                     bot.updateClient(null)
                 }
             }
@@ -336,13 +355,12 @@ internal class ReceiveEvent(
         }
 
         logger.trace("Receiving next frame ...")
-        val frame = try {
-            session.incoming.receive()
-        } catch (e: ClosedReceiveChannelException) {
-            return onCatchErr(e)
-        } catch (e: CancellationException) {
-            return onCatchErr(e)
+        val frameResult = session.incoming.receiveCatching()
+        if (!frameResult.isSuccess) {
+            return onCatchErr(frameResult.exceptionOrNull())
         }
+
+        val frame = frameResult.getOrThrow()
 
         try {
             logger.trace("Received next frame: {}", frame)
@@ -481,7 +499,7 @@ internal class Resume(
             bot.wsClient.ws { gateway }.apply {
                 // 发送 Opcode6
                 val resumeSignal =
-                    Signal.Resume(Signal.Resume.Data(bot.botToken, client.readyData.sessionId, client.seq))
+                    Signal.Resume(Signal.Resume.Data(bot.qqBotToken, client.readyData.sessionId, client.seq))
                 send(bot.wsDecoder.encodeToString(Signal.Resume.serializer(), resumeSignal))
             }
         }
