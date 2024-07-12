@@ -19,19 +19,28 @@ package love.forte.simbot.component.qguild.bot
 
 import io.ktor.client.*
 import io.ktor.client.request.*
+import love.forte.simbot.ability.EventMentionAware
 import love.forte.simbot.bot.Bot
 import love.forte.simbot.bot.ContactRelation
-import love.forte.simbot.bot.GroupRelation
 import love.forte.simbot.common.id.ID
 import love.forte.simbot.common.id.StringID.Companion.ID
 import love.forte.simbot.component.qguild.QQGuildComponent
 import love.forte.simbot.component.qguild.channel.QGTextChannel
+import love.forte.simbot.component.qguild.event.QGAtMessageCreateEvent
+import love.forte.simbot.component.qguild.event.QGGroupAtMessageCreateEvent
+import love.forte.simbot.component.qguild.friend.QGFriend
+import love.forte.simbot.component.qguild.group.QGGroup
+import love.forte.simbot.component.qguild.group.QGGroupRelation
 import love.forte.simbot.component.qguild.guild.QGGuildRelation
+import love.forte.simbot.component.qguild.message.QGMedia
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
+import love.forte.simbot.event.Event
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.api.MessageAuditedException
+import love.forte.simbot.qguild.api.files.UploadGroupFilesApi
+import love.forte.simbot.qguild.api.files.UploadUserFilesApi
 import love.forte.simbot.suspendrunner.ST
 import love.forte.simbot.suspendrunner.STP
 import kotlin.jvm.JvmSynthetic
@@ -51,7 +60,7 @@ import love.forte.simbot.qguild.stdlib.Bot as QGSourceBot
  *
  * @author ForteScarlet
  */
-public interface QGBot : Bot {
+public interface QGBot : Bot, EventMentionAware {
     /**
      * QQ频道的 [组件][QQGuildComponent] 对象实例。
      */
@@ -114,16 +123,28 @@ public interface QGBot : Bot {
      */
     public val avatar: String
 
-    //// Impl
-
     /**
-     * QQ频道BOT没有'群'概念，始终得到 `null`。
+     * 如果事件类型为
+     * - [QGGroupAtMessageCreateEvent]
+     * - [QGAtMessageCreateEvent]
+     * 则直接视为bot被at了，不论消息中是否真的有at元素。
      */
-    override val groupRelation: GroupRelation?
-        get() = null
+    override fun isMention(event: Event): Boolean {
+        return when (event) {
+            is QGGroupAtMessageCreateEvent -> true
+            is QGAtMessageCreateEvent -> true
+            else -> false
+        }
+    }
 
     /**
-     * QQ频道BOT不存在'联系人'相关操作，始终得到 `null`。
+     * QQ群相关内容的操作。
+     */
+    override val groupRelation: QGGroupRelation
+
+    /**
+     * QQ好友、单聊相关内容没有能支持获取它们的API，
+     * 始终得到 `null`。
      */
     override val contactRelation: ContactRelation?
         get() = null
@@ -215,4 +236,48 @@ public interface QGBot : Bot {
      */
     @STP
     public suspend fun me(): QGSourceUser = me(false)
+
+    /**
+     * 上传一个资源为用于向QQ群发送的 [QGMedia], 可用于后续的发送。
+     *
+     * 目前上传仅支持使用链接，QQ平台会对此链接进行转存。
+     *
+     * @param target 目标群的ID
+     * @param url 目标链接
+     * @param type 媒体类型。
+     *
+     * > 1 图片，2 视频，3 语音，4 文件（暂不开放） 资源格式要求: 图片：png/ jpg，视频：mp4，语音：silk
+     *
+     * 参考 [UploadGroupFilesApi]。
+     *
+     * @see QGGroup.uploadMedia
+     */
+    @ST
+    public suspend fun uploadGroupMedia(
+        target: ID,
+        url: String,
+        type: Int,
+    ): QGMedia
+
+    /**
+     * 上传一个资源为用于向QQ单聊发送的 [QGMedia], 可用于后续的发送。
+     *
+     * 目前上传仅支持使用链接，QQ平台会对此链接进行转存。
+     *
+     * @param target 目标用户的ID
+     * @param url 目标链接
+     * @param type 媒体类型。
+     *
+     * > 1 图片，2 视频，3 语音，4 文件（暂不开放） 资源格式要求: 图片：png/ jpg，视频：mp4，语音：silk
+     *
+     * 参考 [UploadUserFilesApi]。
+     *
+     * @see QGFriend.uploadMedia
+     */
+    @ST
+    public suspend fun uploadUserMedia(
+        target: ID,
+        url: String,
+        type: Int,
+    ): QGMedia
 }

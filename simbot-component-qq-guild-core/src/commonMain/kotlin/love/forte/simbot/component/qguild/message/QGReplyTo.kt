@@ -24,6 +24,7 @@ import love.forte.simbot.common.id.literal
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.Messages
 import love.forte.simbot.qguild.api.message.MessageSendApi
+import kotlin.jvm.JvmOverloads
 
 /**
  *
@@ -41,7 +42,9 @@ import love.forte.simbot.qguild.api.message.MessageSendApi
 @SerialName("qg.replyTo")
 @Serializable
 @QGSendOnly
-public data class QGReplyTo(val id: ID) : QGMessageElement
+public data class QGReplyTo
+@JvmOverloads constructor(val id: ID, val seq: Int? = null) :
+    QGMessageElement
 
 internal object ReplyToParser : SendingMessageParser {
     override suspend fun invoke(
@@ -57,4 +60,17 @@ internal object ReplyToParser : SendingMessageParser {
         }
     }
 
+    override suspend fun invoke(
+        index: Int,
+        element: Message.Element,
+        messages: Messages?,
+        builderContext: SendingMessageParser.GroupAndC2CBuilderContext
+    ) {
+        if (element is QGReplyTo) {
+            builderContext.builders.forEach {
+                it.msgId = element.id.literal
+                element.seq?.also { seq -> it.msgSeq = seq }
+            }
+        }
+    }
 }

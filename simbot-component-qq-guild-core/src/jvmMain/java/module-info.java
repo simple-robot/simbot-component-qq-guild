@@ -39,6 +39,8 @@ module simbot.component.qqguild.core {
     exports love.forte.simbot.component.qguild.event;
     exports love.forte.simbot.component.qguild.forum;
     exports love.forte.simbot.component.qguild.guild;
+    exports love.forte.simbot.component.qguild.friend;
+    exports love.forte.simbot.component.qguild.group;
     exports love.forte.simbot.component.qguild.message;
     exports love.forte.simbot.component.qguild.role;
     exports love.forte.simbot.component.qguild.utils;

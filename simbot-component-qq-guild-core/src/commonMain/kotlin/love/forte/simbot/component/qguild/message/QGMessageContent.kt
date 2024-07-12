@@ -23,6 +23,7 @@ import love.forte.simbot.common.id.ID
 import love.forte.simbot.component.qguild.QQGuildComponent
 import love.forte.simbot.message.*
 import love.forte.simbot.qguild.message.ContentTextDecoder
+import love.forte.simbot.qguild.model.Message
 import kotlin.jvm.JvmSynthetic
 import love.forte.simbot.qguild.model.Message as QGSourceMessage
 
@@ -31,16 +32,17 @@ import love.forte.simbot.qguild.model.Message as QGSourceMessage
  *
  * @author ForteScarlet
  */
-public abstract class QGMessageContent : MessageContent {
+public abstract class QGBaseMessageContent : MessageContent {
     /**
      * 此消息的ID
      */
     abstract override val id: ID
 
+
     /**
-     * 通过 [sourceMessage] 转化后的消息元素链。
+     * 通过原始消息转化后的消息元素链。
      *
-     * 如果中 [sourceMessage] 的 [content][QGSourceMessage.content] 没有任何可匹配特殊的内嵌格式，
+     * 如果事件中的 `content`没有任何可匹配特殊的内嵌格式，
      * 则 [messages] 的第一个元素会直接根据 [content][QGSourceMessage.content] 拼接为 [QGContentText]，
      * 否则会解析 `content` 并将其中的内容**依次顺序地**根据类型转化为以下可能的类型：
      * - [Text]: 根据解析的 `content` 中非内嵌格式文本的[**解码**][ContentTextDecoder.decode]结果。
@@ -53,7 +55,7 @@ public abstract class QGMessageContent : MessageContent {
      * - [Face]: 当 `content` 中存在系统表情时（例如 `<emoji:5>`）会被转化为 [Face] 类型。
      * 注意并不是转化为 [Emoji]，因为其代表的是**系统表情**。
      *
-     * 上述解析结束后，会再根据 [sourceMessage] 中的其他可转化属性在结果后面继续追加如下可能的类型：
+     * 上述解析结束后，会再根据原始消息中的其他可转化属性在结果后面继续追加如下可能的类型：
      * - [QGArk]: 来自于 [sourceMessage.ark][QGSourceMessage.ark]
      * - [QGAttachmentMessage]: 来自于 [sourceMessage.attachments][QGSourceMessage.attachments]，可能有多个
      * - [QGReference]: 来自于 [sourceMessage.messageReference][QGSourceMessage.messageReference]
@@ -62,12 +64,6 @@ public abstract class QGMessageContent : MessageContent {
     abstract override val messages: Messages
 
     // TODO attachment image 类型解析为 QGImage?
-
-    /**
-     * 事件接收到的原始的消息对象 [Message][QGSourceMessage]
-     */
-    public abstract val sourceMessage: QGSourceMessage
-
 
     /**
      *
@@ -83,7 +79,7 @@ public abstract class QGMessageContent : MessageContent {
      * ```
      * 此时收到的消息中的 `content` 为
      * ```text
-     * <@!123456> 你好
+     * <qqbot-at-user id="123456" /> 你好
      * ```
      * 那么就会根据 `mentions` 进行替换，最终的 [plainText] 的值为：
      * ```text
@@ -96,10 +92,12 @@ public abstract class QGMessageContent : MessageContent {
      *
      * ### `mention everyone` 替换
      *
-     * 对于 `@everyone` 来说，没有可转义的字符，因此可能会被伪造。当 [mentionEveryone][QGSourceMessage.mentionEveryone] 为 `true` 时，
-     * [plainText] 会尝试清理文本中**第一个** `@everyone`。
+     * 当 [mentionEveryone][QGSourceMessage.mentionEveryone] 为 `true` 时，
+     * [plainText] 会尝试清理文本中**第一个** `<qqbot-at-everyone />`。
      *
-     * 被替换的这个首个 `@everyone` 会被解析于 [messages] 中作为 [AtAll]。
+     * 如果是群消息（即没有 [QGSourceMessage] 类型，只有 `content`），则会全部进行转化。
+     *
+     * 被替换的 `<qqbot-at-everyone />` 会被解析于 [messages] 中作为 [AtAll]。
      *
      * ### `mention channel` 替换
      *
@@ -141,7 +139,7 @@ public abstract class QGMessageContent : MessageContent {
      *
      * ### 原始Content
      *
-     * 如果你想要得到本次消息最原始的 `content`，直接使用 [sourceMessage] 获取 [Message.content][QGSourceMessage.content]
+     * 如果你想要得到本次消息最原始的 `content`，直接使用 [sourceContent] 获取
      *
      * ```kotlin
      * val contentText = receiveContent.sourceMessage.content
@@ -153,6 +151,24 @@ public abstract class QGMessageContent : MessageContent {
     abstract override val plainText: String
 
     /**
+     * 事件中原始的 `content` 内容。
+     *
+     */
+    public abstract val sourceContent: String
+}
+
+/**
+ * 文字子频道中接收到的事件消息内容。
+ *
+ * @author ForteScarlet
+ */
+public abstract class QGMessageContent : QGBaseMessageContent() {
+    /**
+     * 事件接收到的原始的消息对象 [Message][QGSourceMessage]
+     */
+    public abstract val sourceMessage: QGSourceMessage
+
+    /**
      * 暂时不支持消息撤回。
      * 如果 [options] 中不包含
      * [StandardDeleteOption.IGNORE_ON_UNSUPPORTED]
@@ -160,9 +176,39 @@ public abstract class QGMessageContent : MessageContent {
      */
     @JvmSynthetic
     override suspend fun delete(vararg options: DeleteOption) {
+        // TODO
         if (options.none { it == StandardDeleteOption.IGNORE_ON_UNSUPPORTED }) {
-            throw UnsupportedOperationException("QGReceiveMessageContent.delete")
+            throw UnsupportedOperationException("QGMessageContent.delete")
         }
     }
+}
 
+/**
+ * 群聊或c2c单聊接收到的事件消息内容。
+ * @author ForteScarlet
+ */
+public abstract class QGGroupAndC2CMessageContent : QGBaseMessageContent() {
+    /**
+     * 原始的消息正文内容。
+     */
+    abstract override val sourceContent: String
+
+    /**
+     * 原始的消息事件内的 attachements
+     */
+    public abstract val attachments: List<Message.Attachment>
+
+    /**
+     * 暂时不支持消息撤回。
+     * 如果 [options] 中不包含
+     * [StandardDeleteOption.IGNORE_ON_UNSUPPORTED]
+     * 则抛出 [UnsupportedOperationException]
+     */
+    @JvmSynthetic
+    override suspend fun delete(vararg options: DeleteOption) {
+        // TODO
+        if (options.none { it == StandardDeleteOption.IGNORE_ON_UNSUPPORTED }) {
+            throw UnsupportedOperationException("QGGroupAndC2CMessageContent.delete")
+        }
+    }
 }

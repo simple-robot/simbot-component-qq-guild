@@ -24,10 +24,7 @@ import io.ktor.websocket.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.SerializationException
-import kotlinx.serialization.json.int
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
-import kotlinx.serialization.json.longOrNull
+import kotlinx.serialization.json.*
 import love.forte.simbot.common.collection.ExperimentalSimbotCollectionApi
 import love.forte.simbot.logger.Logger
 import love.forte.simbot.logger.isDebugEnabled
@@ -381,7 +378,12 @@ internal class ReceiveEvent(
                         val disSeq = runCatching {
                             json.jsonObject["s"]?.jsonPrimitive?.longOrNull ?: seq.value
                         }.getOrElse { seq.value }
-                        Signal.Dispatch.Unknown(disSeq, json, raw).also {
+                        // dispatch.id
+                        val id = kotlin.runCatching {
+                            json.jsonObject["id"]?.jsonPrimitive?.contentOrNull
+                        }.getOrNull()
+
+                        Signal.Dispatch.Unknown(id, disSeq, json, raw).also {
                             val t =
                                 kotlin.runCatching { json.jsonObject[Signal.Dispatch.DISPATCH_CLASS_DISCRIMINATOR]?.jsonPrimitive?.content }
                                     .getOrNull()

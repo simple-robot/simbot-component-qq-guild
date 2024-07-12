@@ -20,6 +20,7 @@ package love.forte.simbot.component.qguild.internal.message
 import love.forte.simbot.common.id.ID
 import love.forte.simbot.common.id.StringID.Companion.ID
 import love.forte.simbot.component.qguild.message.MessageParsers
+import love.forte.simbot.component.qguild.message.QGGroupAndC2CMessageContent
 import love.forte.simbot.component.qguild.message.QGMessageContent
 import love.forte.simbot.message.Messages
 import love.forte.simbot.qguild.model.Message
@@ -40,6 +41,9 @@ internal class QGMessageContentImpl(override val sourceMessage: Message) : QGMes
         parseContext.plainTextBuilder.toString()
     }
 
+    override val sourceContent: String
+        get() = sourceMessage.content
+
     override fun toString(): String {
         return "QGReceiveMessageContentImpl(messageId=${sourceMessage.id}, sourceMessage=$sourceMessage)"
     }
@@ -54,3 +58,21 @@ internal class QGMessageContentImpl(override val sourceMessage: Message) : QGMes
     override fun hashCode(): Int = sourceMessage.id.hashCode()
 }
 
+internal class QGGroupAndC2CMessageContentImpl(
+    override val id: ID,
+    override val sourceContent: String,
+    override val attachments: List<Message.Attachment>,
+) : QGGroupAndC2CMessageContent() {
+    private val parseContext by lazy(LazyThreadSafetyMode.PUBLICATION) { MessageParsers.parse(sourceContent, attachments) }
+
+    override val messages: Messages
+        get() = parseContext.messages
+
+    override val plainText: String by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        parseContext.plainTextBuilder.toString()
+    }
+
+    override fun toString(): String {
+        return "QGGroupAndC2CMessageContentImpl(id=$id, sourceContent=$sourceContent)"
+    }
+}

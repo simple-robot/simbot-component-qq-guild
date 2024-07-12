@@ -581,7 +581,11 @@ public val EventIntentsInstances: Array<EventIntents> = arrayOf(
  */
 @Serializable
 @SerialName(READY_TYPE)
-public data class Ready(override val s: Long, @SerialName("d") override val data: Data) : Signal.Dispatch() {
+public data class Ready(
+    override val id: String? = null,
+    override val s: Long,
+    @SerialName("d") override val data: Data
+) : Signal.Dispatch() {
     /**
      * [Ready] 的事件内容
      */
@@ -602,5 +606,9 @@ public data class Ready(override val s: Long, @SerialName("d") override val data
  */
 @Serializable
 @SerialName(RESUMED_TYPE)
-public data class Resumed(override val s: Long, @SerialName("d") override val data: String) : Signal.Dispatch()
+public data class Resumed(
+    override val id: String? = null,
+    override val s: Long,
+    @SerialName("d") override val data: String
+) : Signal.Dispatch()
 

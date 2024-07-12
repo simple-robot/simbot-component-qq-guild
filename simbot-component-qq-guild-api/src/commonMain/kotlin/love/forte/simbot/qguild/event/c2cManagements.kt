@@ -22,12 +22,13 @@ import kotlinx.serialization.Serializable
 
 
 /**
+ * [C2CManagementDispatch] 的事件数据
  * @property timestamp 添加时间戳
  * @property openid 用户openid
  */
 @Serializable
 public data class C2CManagementData(
-    val timestamp: Int,
+    val timestamp: String,
     val openid: String,
 )
 
@@ -47,6 +48,7 @@ public sealed class C2CManagementDispatch : Signal.Dispatch() {
 @Serializable
 @SerialName(EventIntents.GroupAndC2CEvent.FRIEND_ADD_TYPE)
 public data class FriendAdd(
+    override val id: String? = null,
     override val s: Long,
     @SerialName("d")
     override val data: C2CManagementData
@@ -60,6 +62,7 @@ public data class FriendAdd(
 @Serializable
 @SerialName(EventIntents.GroupAndC2CEvent.FRIEND_DEL_TYPE)
 public data class FriendDel(
+    override val id: String? = null,
     override val s: Long,
     @SerialName("d")
     override val data: C2CManagementData
@@ -73,6 +76,7 @@ public data class FriendDel(
 @Serializable
 @SerialName(EventIntents.GroupAndC2CEvent.C2C_MSG_REJECT_TYPE)
 public data class C2CMsgReject(
+    override val id: String? = null,
     override val s: Long,
     @SerialName("d")
     override val data: C2CManagementData
@@ -86,6 +90,7 @@ public data class C2CMsgReject(
 @Serializable
 @SerialName(EventIntents.GroupAndC2CEvent.C2C_MSG_RECEIVE_TYPE)
 public data class C2CMsgReceive(
+    override val id: String? = null,
     override val s: Long,
     @SerialName("d")
     override val data: C2CManagementData
