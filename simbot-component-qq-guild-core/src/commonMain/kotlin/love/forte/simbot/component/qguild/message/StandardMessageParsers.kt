@@ -113,6 +113,10 @@ internal object FaceParser : SendingMessageParser {
 internal object QGMessageParser : ReceivingMessageParser {
     private const val AT_USER_VALUE = "uv"
     private const val AT_EVERYONE_GROUP = "all"
+    // 2024-07-13 兼容之前的两个写法解析：因为好像内容还没变
+    private const val AT_USER_OLD_VALUE = "uvold"
+    private const val AT_EVERYONE_OLD_GROUP = "allold"
+
     private const val MENTION_CHANNEL_VALUE = "cv"
     private const val EMOJI_VALUE = "ev"
 //
@@ -138,13 +142,18 @@ internal object QGMessageParser : ReceivingMessageParser {
         "<qqbot-at-user +id=\"(?<$AT_USER_VALUE>[.a-zA-Z0-9_-]+)\" */>" +
                 "|(?<$AT_EVERYONE_GROUP><qqbot-at-everyone */>)" +
                 "|<#(?<$MENTION_CHANNEL_VALUE>\\d+)>" +
-                "|<emoji:(?<$EMOJI_VALUE>\\d+)>"
+                "|<emoji:(?<$EMOJI_VALUE>\\d+)>" +
+                // 兼容之前的两个写法解析
+                "|<@!?(?<$AT_USER_OLD_VALUE>\\d+)>" +
+                "|(?<$AT_EVERYONE_OLD_GROUP>@everyone)"
     )
 
     private val replaceWithoutMentionAllRegex = Regex(
         "<qqbot-at-user +id=\"(?<$AT_USER_VALUE>[.a-zA-Z0-9_-]+)\" */>" +
                 "|<#(?<$MENTION_CHANNEL_VALUE>\\d+)>" +
-                "|<emoji:(?<$EMOJI_VALUE>\\d+)>"
+                "|<emoji:(?<$EMOJI_VALUE>\\d+)>" +
+                // 兼容之前的两个写法解析
+                "|<@!?(?<$AT_USER_OLD_VALUE>\\d+)>"
     )
 
     override fun invoke(qgContent: String, context: ReceivingMessageParser.Context): ReceivingMessageParser.Context {
@@ -230,6 +239,12 @@ internal object QGMessageParser : ReceivingMessageParser {
 
                 groups[AT_USER_VALUE]?.also { atUserValue ->
                     flushText()
+                    messageList.add(At(atUserValue.value.ID, originContent = toQQBotAtUser(atUserValue.value)))
+                    return@run
+                }
+                // 兼容旧的
+                groups[AT_USER_OLD_VALUE]?.also { atUserValue ->
+                    flushText()
                     messageList.add(At(atUserValue.value.ID, originContent = "<@${atUserValue.value}>"))
                     return@run
                 }
@@ -248,6 +263,11 @@ internal object QGMessageParser : ReceivingMessageParser {
 
                 if (maybeMentionEveryone) {
                     groups[AT_EVERYONE_GROUP]?.also {
+                        flushText()
+                        messageList.add(AtAll)
+                        return@run
+                    }
+                    groups[AT_EVERYONE_OLD_GROUP]?.also {
                         flushText()
                         messageList.add(AtAll)
                         return@run
