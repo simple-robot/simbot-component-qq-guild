@@ -76,7 +76,7 @@ public abstract interface class love/forte/simbot/component/qguild/bot/QGBot : l
 	public abstract fun getAvatar ()Ljava/lang/String;
 	public abstract fun getComponent ()Llove/forte/simbot/component/qguild/QQGuildComponent;
 	public fun getContactRelation ()Llove/forte/simbot/bot/ContactRelation;
-	public fun getGroupRelation ()Llove/forte/simbot/bot/GroupRelation;
+	public abstract fun getGroupRelation ()Llove/forte/simbot/component/qguild/group/QGGroupRelation;
 	public abstract fun getGuildRelation ()Llove/forte/simbot/component/qguild/guild/QGGuildRelation;
 	public fun getId ()Llove/forte/simbot/common/id/ID;
 	public fun getMe ()Llove/forte/simbot/qguild/model/User;
@@ -105,6 +105,14 @@ public abstract interface class love/forte/simbot/component/qguild/bot/QGBot : l
 	public fun sendToReserve (Llove/forte/simbot/common/id/ID;Llove/forte/simbot/message/Message;)Llove/forte/simbot/suspendrunner/reserve/SuspendReserve;
 	public fun sendToReserve (Llove/forte/simbot/common/id/ID;Llove/forte/simbot/message/MessageContent;)Llove/forte/simbot/suspendrunner/reserve/SuspendReserve;
 	public abstract synthetic fun start (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract synthetic fun uploadGroupMedia (Llove/forte/simbot/common/id/ID;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun uploadGroupMediaAsync (Llove/forte/simbot/common/id/ID;Ljava/lang/String;I)Ljava/util/concurrent/CompletableFuture;
+	public fun uploadGroupMediaBlocking (Llove/forte/simbot/common/id/ID;Ljava/lang/String;I)Llove/forte/simbot/component/qguild/message/QGMedia;
+	public fun uploadGroupMediaReserve (Llove/forte/simbot/common/id/ID;Ljava/lang/String;I)Llove/forte/simbot/suspendrunner/reserve/SuspendReserve;
+	public abstract synthetic fun uploadUserMedia (Llove/forte/simbot/common/id/ID;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun uploadUserMediaAsync (Llove/forte/simbot/common/id/ID;Ljava/lang/String;I)Ljava/util/concurrent/CompletableFuture;
+	public fun uploadUserMediaBlocking (Llove/forte/simbot/common/id/ID;Ljava/lang/String;I)Llove/forte/simbot/component/qguild/message/QGMedia;
+	public fun uploadUserMediaReserve (Llove/forte/simbot/common/id/ID;Ljava/lang/String;I)Llove/forte/simbot/suspendrunner/reserve/SuspendReserve;
 }
 
 public abstract interface annotation class love/forte/simbot/component/qguild/bot/QGBotManagerConfigurationDsl : java/lang/annotation/Annotation {
@@ -715,6 +723,59 @@ public abstract class love/forte/simbot/component/qguild/event/QGBotStartedEvent
 	public fun getTime ()Llove/forte/simbot/common/time/Timestamp;
 }
 
+public abstract class love/forte/simbot/component/qguild/event/QGC2CManagementEvent : love/forte/simbot/component/qguild/event/QGBotEvent, love/forte/simbot/event/ContactEvent {
+	public fun <init> ()V
+	protected final fun computeId (Llove/forte/simbot/qguild/event/C2CManagementData;)Llove/forte/simbot/common/id/ID;
+	public abstract synthetic fun content (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public synthetic fun getContent ()Ljava/lang/Object;
+	public fun getContent ()Llove/forte/simbot/component/qguild/friend/QGFriend;
+	public synthetic fun getContent ()Llove/forte/simbot/definition/Actor;
+	public synthetic fun getContent ()Llove/forte/simbot/definition/Contact;
+	public fun getContentAsync ()Ljava/util/concurrent/CompletableFuture;
+	public fun getContentReserve ()Llove/forte/simbot/suspendrunner/reserve/SuspendReserve;
+	public abstract fun getId ()Llove/forte/simbot/common/id/ID;
+	public fun getTime ()Llove/forte/simbot/common/time/Timestamp;
+}
+
+public abstract class love/forte/simbot/component/qguild/event/QGC2CMessageCreateEvent : love/forte/simbot/component/qguild/event/QGBotEvent, love/forte/simbot/event/ContactMessageEvent {
+	public fun <init> ()V
+	public abstract synthetic fun content (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getAuthorId ()Llove/forte/simbot/common/id/ID;
+	public abstract fun getBot ()Llove/forte/simbot/component/qguild/bot/QGBot;
+	public synthetic fun getContent ()Ljava/lang/Object;
+	public fun getContent ()Llove/forte/simbot/component/qguild/friend/QGFriend;
+	public synthetic fun getContent ()Llove/forte/simbot/definition/Actor;
+	public synthetic fun getContent ()Llove/forte/simbot/definition/Contact;
+	public fun getContentAsync ()Ljava/util/concurrent/CompletableFuture;
+	public fun getContentReserve ()Llove/forte/simbot/suspendrunner/reserve/SuspendReserve;
+	public fun getId ()Llove/forte/simbot/common/id/ID;
+	public abstract fun getMessageContent ()Llove/forte/simbot/component/qguild/message/QGGroupAndC2CMessageContent;
+	public fun getTime ()Llove/forte/simbot/common/time/Timestamp;
+	public abstract synthetic fun reply (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract synthetic fun reply (Llove/forte/simbot/message/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract synthetic fun reply (Llove/forte/simbot/message/MessageContent;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun replyAsync (Ljava/lang/String;)Ljava/util/concurrent/CompletableFuture;
+	public fun replyAsync (Llove/forte/simbot/message/Message;)Ljava/util/concurrent/CompletableFuture;
+	public fun replyAsync (Llove/forte/simbot/message/MessageContent;)Ljava/util/concurrent/CompletableFuture;
+	public fun replyBlocking (Ljava/lang/String;)Llove/forte/simbot/component/qguild/message/QGMessageReceipt;
+	public synthetic fun replyBlocking (Ljava/lang/String;)Llove/forte/simbot/message/MessageReceipt;
+	public fun replyBlocking (Llove/forte/simbot/message/Message;)Llove/forte/simbot/component/qguild/message/QGMessageReceipt;
+	public synthetic fun replyBlocking (Llove/forte/simbot/message/Message;)Llove/forte/simbot/message/MessageReceipt;
+	public fun replyBlocking (Llove/forte/simbot/message/MessageContent;)Llove/forte/simbot/component/qguild/message/QGMessageReceipt;
+	public synthetic fun replyBlocking (Llove/forte/simbot/message/MessageContent;)Llove/forte/simbot/message/MessageReceipt;
+	public fun replyReserve (Ljava/lang/String;)Llove/forte/simbot/suspendrunner/reserve/SuspendReserve;
+	public fun replyReserve (Llove/forte/simbot/message/Message;)Llove/forte/simbot/suspendrunner/reserve/SuspendReserve;
+	public fun replyReserve (Llove/forte/simbot/message/MessageContent;)Llove/forte/simbot/suspendrunner/reserve/SuspendReserve;
+}
+
+public abstract class love/forte/simbot/component/qguild/event/QGC2CMsgReceiveEvent : love/forte/simbot/component/qguild/event/QGC2CManagementEvent {
+	public fun <init> ()V
+}
+
+public abstract class love/forte/simbot/component/qguild/event/QGC2CMsgRejectEvent : love/forte/simbot/component/qguild/event/QGC2CManagementEvent {
+	public fun <init> ()V
+}
+
 public abstract class love/forte/simbot/component/qguild/event/QGChannelCreateEvent : love/forte/simbot/component/qguild/event/QGChannelEvent, love/forte/simbot/event/OrganizationChangeEvent {
 	public fun <init> ()V
 	public abstract synthetic fun channel (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -863,6 +924,87 @@ public abstract class love/forte/simbot/component/qguild/event/QGForumThreadEven
 public abstract class love/forte/simbot/component/qguild/event/QGForumThreadUpdateEvent : love/forte/simbot/component/qguild/event/QGForumThreadEvent {
 	public fun <init> ()V
 	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class love/forte/simbot/component/qguild/event/QGFriendAddEvent : love/forte/simbot/component/qguild/event/QGC2CManagementEvent {
+	public fun <init> ()V
+}
+
+public abstract class love/forte/simbot/component/qguild/event/QGFriendDelEvent : love/forte/simbot/component/qguild/event/QGC2CManagementEvent {
+	public fun <init> ()V
+}
+
+public abstract class love/forte/simbot/component/qguild/event/QGGroupAddRobotEvent : love/forte/simbot/component/qguild/event/QGGroupManagementEvent {
+	public fun <init> ()V
+}
+
+public abstract class love/forte/simbot/component/qguild/event/QGGroupAtMessageCreateEvent : love/forte/simbot/component/qguild/event/QGBotEvent, love/forte/simbot/event/ChatGroupMessageEvent {
+	public fun <init> ()V
+	public abstract synthetic fun author (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract synthetic fun content (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public synthetic fun getAuthor ()Llove/forte/simbot/common/id/IDContainer;
+	public fun getAuthor ()Llove/forte/simbot/component/qguild/group/QGGroupMember;
+	public synthetic fun getAuthor ()Llove/forte/simbot/definition/Actor;
+	public synthetic fun getAuthor ()Llove/forte/simbot/definition/Member;
+	public fun getAuthorAsync ()Ljava/util/concurrent/CompletableFuture;
+	public fun getAuthorId ()Llove/forte/simbot/common/id/ID;
+	public fun getAuthorReserve ()Llove/forte/simbot/suspendrunner/reserve/SuspendReserve;
+	public abstract fun getBot ()Llove/forte/simbot/component/qguild/bot/QGBot;
+	public synthetic fun getContent ()Ljava/lang/Object;
+	public fun getContent ()Llove/forte/simbot/component/qguild/group/QGGroup;
+	public synthetic fun getContent ()Llove/forte/simbot/definition/Actor;
+	public synthetic fun getContent ()Llove/forte/simbot/definition/ChatGroup;
+	public synthetic fun getContent ()Llove/forte/simbot/definition/ChatRoom;
+	public synthetic fun getContent ()Llove/forte/simbot/definition/Organization;
+	public fun getContentAsync ()Ljava/util/concurrent/CompletableFuture;
+	public fun getContentReserve ()Llove/forte/simbot/suspendrunner/reserve/SuspendReserve;
+	public fun getId ()Llove/forte/simbot/common/id/ID;
+	public abstract fun getMessageContent ()Llove/forte/simbot/component/qguild/message/QGGroupAndC2CMessageContent;
+	public fun getTime ()Llove/forte/simbot/common/time/Timestamp;
+	public abstract synthetic fun reply (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract synthetic fun reply (Llove/forte/simbot/message/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract synthetic fun reply (Llove/forte/simbot/message/MessageContent;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun replyAsync (Ljava/lang/String;)Ljava/util/concurrent/CompletableFuture;
+	public fun replyAsync (Llove/forte/simbot/message/Message;)Ljava/util/concurrent/CompletableFuture;
+	public fun replyAsync (Llove/forte/simbot/message/MessageContent;)Ljava/util/concurrent/CompletableFuture;
+	public fun replyBlocking (Ljava/lang/String;)Llove/forte/simbot/message/MessageReceipt;
+	public fun replyBlocking (Llove/forte/simbot/message/Message;)Llove/forte/simbot/message/MessageReceipt;
+	public fun replyBlocking (Llove/forte/simbot/message/MessageContent;)Llove/forte/simbot/message/MessageReceipt;
+	public fun replyReserve (Ljava/lang/String;)Llove/forte/simbot/suspendrunner/reserve/SuspendReserve;
+	public fun replyReserve (Llove/forte/simbot/message/Message;)Llove/forte/simbot/suspendrunner/reserve/SuspendReserve;
+	public fun replyReserve (Llove/forte/simbot/message/MessageContent;)Llove/forte/simbot/suspendrunner/reserve/SuspendReserve;
+}
+
+public abstract class love/forte/simbot/component/qguild/event/QGGroupDelRobotEvent : love/forte/simbot/component/qguild/event/QGGroupManagementEvent {
+	public fun <init> ()V
+}
+
+public abstract class love/forte/simbot/component/qguild/event/QGGroupManagementEvent : love/forte/simbot/component/qguild/event/QGBotEvent, love/forte/simbot/event/ChatGroupEvent {
+	public fun <init> ()V
+	protected final fun computeId (Llove/forte/simbot/qguild/event/GroupRobotManagementData;)Llove/forte/simbot/common/id/ID;
+	public abstract synthetic fun content (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public synthetic fun getContent ()Ljava/lang/Object;
+	public fun getContent ()Llove/forte/simbot/component/qguild/group/QGGroup;
+	public synthetic fun getContent ()Llove/forte/simbot/definition/Actor;
+	public synthetic fun getContent ()Llove/forte/simbot/definition/ChatGroup;
+	public synthetic fun getContent ()Llove/forte/simbot/definition/ChatRoom;
+	public synthetic fun getContent ()Llove/forte/simbot/definition/Organization;
+	public fun getContentAsync ()Ljava/util/concurrent/CompletableFuture;
+	public fun getContentReserve ()Llove/forte/simbot/suspendrunner/reserve/SuspendReserve;
+	public abstract fun getId ()Llove/forte/simbot/common/id/ID;
+	public fun getOperator ()Llove/forte/simbot/component/qguild/group/QGGroupMember;
+	public fun getOperatorAsync ()Ljava/util/concurrent/CompletableFuture;
+	public fun getOperatorReserve ()Llove/forte/simbot/suspendrunner/reserve/SuspendReserve;
+	public fun getTime ()Llove/forte/simbot/common/time/Timestamp;
+	public abstract synthetic fun operator (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract class love/forte/simbot/component/qguild/event/QGGroupMsgReceiveEvent : love/forte/simbot/component/qguild/event/QGGroupManagementEvent {
+	public fun <init> ()V
+}
+
+public abstract class love/forte/simbot/component/qguild/event/QGGroupMsgRejectEvent : love/forte/simbot/component/qguild/event/QGGroupManagementEvent {
+	public fun <init> ()V
 }
 
 public abstract class love/forte/simbot/component/qguild/event/QGGuildCreateEvent : love/forte/simbot/component/qguild/event/QGGuildEvent, love/forte/simbot/event/ChangeEvent, love/forte/simbot/event/GuildEvent {
@@ -1160,6 +1302,76 @@ public abstract interface class love/forte/simbot/component/qguild/forum/QGThrea
 	public fun title (Ljava/lang/String;)Llove/forte/simbot/component/qguild/forum/QGThreadCreator;
 }
 
+public abstract interface class love/forte/simbot/component/qguild/friend/QGFriend : love/forte/simbot/definition/Contact {
+	public fun getAvatar ()Ljava/lang/String;
+	public abstract fun getCoroutineContext ()Lkotlin/coroutines/CoroutineContext;
+	public abstract fun getId ()Llove/forte/simbot/common/id/ID;
+	public fun getName ()Ljava/lang/String;
+	public abstract synthetic fun uploadMedia (Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun uploadMediaAsync (Ljava/lang/String;I)Ljava/util/concurrent/CompletableFuture;
+	public fun uploadMediaBlocking (Ljava/lang/String;I)Llove/forte/simbot/component/qguild/message/QGMedia;
+	public fun uploadMediaReserve (Ljava/lang/String;I)Llove/forte/simbot/suspendrunner/reserve/SuspendReserve;
+}
+
+public abstract interface class love/forte/simbot/component/qguild/group/QGGroup : love/forte/simbot/definition/ChatGroup {
+	public abstract synthetic fun botAsMember (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getBotAsMember ()Llove/forte/simbot/component/qguild/group/QGGroupMember;
+	public synthetic fun getBotAsMember ()Llove/forte/simbot/definition/Member;
+	public fun getBotAsMemberAsync ()Ljava/util/concurrent/CompletableFuture;
+	public fun getBotAsMemberReserve ()Llove/forte/simbot/suspendrunner/reserve/SuspendReserve;
+	public abstract fun getId ()Llove/forte/simbot/common/id/ID;
+	public fun getMember (Llove/forte/simbot/common/id/ID;)Llove/forte/simbot/component/qguild/group/QGGroupMember;
+	public synthetic fun getMember (Llove/forte/simbot/common/id/ID;)Llove/forte/simbot/definition/Member;
+	public fun getMemberAsync (Llove/forte/simbot/common/id/ID;)Ljava/util/concurrent/CompletableFuture;
+	public fun getMemberReserve (Llove/forte/simbot/common/id/ID;)Llove/forte/simbot/suspendrunner/reserve/SuspendReserve;
+	public fun getMembers ()Llove/forte/simbot/common/collectable/Collectable;
+	public fun getName ()Ljava/lang/String;
+	public fun getOwnerId ()Llove/forte/simbot/common/id/ID;
+	public fun getRoles ()Llove/forte/simbot/common/collectable/Collectable;
+	public synthetic fun member (Llove/forte/simbot/common/id/ID;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun member$suspendImpl (Llove/forte/simbot/component/qguild/group/QGGroup;Llove/forte/simbot/common/id/ID;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract synthetic fun uploadMedia (Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun uploadMediaAsync (Ljava/lang/String;I)Ljava/util/concurrent/CompletableFuture;
+	public fun uploadMediaBlocking (Ljava/lang/String;I)Llove/forte/simbot/component/qguild/message/QGMedia;
+	public fun uploadMediaReserve (Ljava/lang/String;I)Llove/forte/simbot/suspendrunner/reserve/SuspendReserve;
+}
+
+public abstract interface class love/forte/simbot/component/qguild/group/QGGroupMember : love/forte/simbot/definition/Member {
+	public fun getAvatar ()Ljava/lang/String;
+	public abstract fun getId ()Llove/forte/simbot/common/id/ID;
+	public fun getName ()Ljava/lang/String;
+	public fun getNick ()Ljava/lang/String;
+	public synthetic fun send (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public synthetic fun send (Llove/forte/simbot/message/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public synthetic fun send (Llove/forte/simbot/message/MessageContent;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun send$suspendImpl (Llove/forte/simbot/component/qguild/group/QGGroupMember;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun send$suspendImpl (Llove/forte/simbot/component/qguild/group/QGGroupMember;Llove/forte/simbot/message/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun send$suspendImpl (Llove/forte/simbot/component/qguild/group/QGGroupMember;Llove/forte/simbot/message/MessageContent;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class love/forte/simbot/component/qguild/group/QGGroupRelation : love/forte/simbot/bot/GroupRelation {
+	public fun getGroup (Llove/forte/simbot/common/id/ID;)Llove/forte/simbot/component/qguild/group/QGGroup;
+	public synthetic fun getGroup (Llove/forte/simbot/common/id/ID;)Llove/forte/simbot/definition/ChatGroup;
+	public fun getGroupAsync (Llove/forte/simbot/common/id/ID;)Ljava/util/concurrent/CompletableFuture;
+	public fun getGroupReserve (Llove/forte/simbot/common/id/ID;)Llove/forte/simbot/suspendrunner/reserve/SuspendReserve;
+	public fun getGroups ()Llove/forte/simbot/common/collectable/Collectable;
+	public abstract synthetic fun group (Llove/forte/simbot/common/id/ID;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public synthetic fun groupCount (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun groupCount$suspendImpl (Llove/forte/simbot/component/qguild/group/QGGroupRelation;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class love/forte/simbot/component/qguild/group/QGGroupRole : java/lang/Enum, love/forte/simbot/definition/Role {
+	public static final field ADMIN Llove/forte/simbot/component/qguild/group/QGGroupRole;
+	public static final field MEMBER Llove/forte/simbot/component/qguild/group/QGGroupRole;
+	public static final field OWNER Llove/forte/simbot/component/qguild/group/QGGroupRole;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public fun getId ()Llove/forte/simbot/common/id/ID;
+	public synthetic fun getName ()Ljava/lang/String;
+	public fun isAdmin ()Z
+	public static fun valueOf (Ljava/lang/String;)Llove/forte/simbot/component/qguild/group/QGGroupRole;
+	public static fun values ()[Llove/forte/simbot/component/qguild/group/QGGroupRole;
+}
+
 public abstract interface class love/forte/simbot/component/qguild/guild/QGGuild : kotlinx/coroutines/CoroutineScope, love/forte/simbot/component/qguild/QGObjectiveContainer, love/forte/simbot/definition/Guild {
 	public abstract fun botAsMember (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract synthetic fun category (Llove/forte/simbot/common/id/ID;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -1271,25 +1483,50 @@ public final class love/forte/simbot/component/qguild/internal/bot/QGBotImpl$inl
 	public final synthetic fun apply (Ljava/lang/Object;)Ljava/lang/Object;
 }
 
-public final class love/forte/simbot/component/qguild/internal/message/QGSingleMessageReceiptImplKt {
+public final class love/forte/simbot/component/qguild/internal/message/QGMessageReceiptImplKt {
+	public static final fun asGroupReceipt (Ljava/lang/Iterable;)Llove/forte/simbot/component/qguild/message/QGAggregatedIdMessageReceipt;
+	public static final fun asReceipt (Llove/forte/simbot/qguild/api/message/group/GroupMessageSendResult;)Llove/forte/simbot/component/qguild/message/QGSingleIdMessageReceipt;
+	public static final fun asReceipt (Llove/forte/simbot/qguild/api/message/user/UserMessageSendResult;)Llove/forte/simbot/component/qguild/message/QGSingleIdMessageReceipt;
 	public static final fun asReceipt (Llove/forte/simbot/qguild/model/Message;)Llove/forte/simbot/component/qguild/message/QGSingleMessageReceipt;
+	public static final fun asUserReceipt (Ljava/lang/Iterable;)Llove/forte/simbot/component/qguild/message/QGAggregatedIdMessageReceipt;
 }
 
 public final class love/forte/simbot/component/qguild/message/ImageParser : love/forte/simbot/component/qguild/message/SendingMessageParser {
 	public static final field INSTANCE Llove/forte/simbot/component/qguild/message/ImageParser;
 	public fun invoke (ILlove/forte/simbot/message/Message$Element;Llove/forte/simbot/message/Messages;Llove/forte/simbot/component/qguild/message/SendingMessageParser$BuilderContext;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public synthetic fun invoke (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun invoke (ILlove/forte/simbot/message/Message$Element;Llove/forte/simbot/message/Messages;Llove/forte/simbot/component/qguild/message/SendingMessageParser$GroupAndC2CBuilderContext;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class love/forte/simbot/component/qguild/message/MessageParsers {
 	public static final field INSTANCE Llove/forte/simbot/component/qguild/message/MessageParsers;
-	public final fun parse (Llove/forte/simbot/message/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun parse (Llove/forte/simbot/message/Message;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun parse (Llove/forte/simbot/message/Message;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun parse (Ljava/lang/String;)Llove/forte/simbot/component/qguild/message/ReceivingMessageParser$Context;
+	public final fun parse (Ljava/lang/String;Ljava/util/List;)Llove/forte/simbot/component/qguild/message/ReceivingMessageParser$Context;
+	public final fun parse (Ljava/lang/String;Ljava/util/List;Llove/forte/simbot/message/Messages;)Llove/forte/simbot/component/qguild/message/ReceivingMessageParser$Context;
+	public final synthetic fun parse (Llove/forte/simbot/message/Message;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun parse (Llove/forte/simbot/qguild/model/Message;)Llove/forte/simbot/component/qguild/message/ReceivingMessageParser$Context;
 	public final fun parse (Llove/forte/simbot/qguild/model/Message;Llove/forte/simbot/message/Messages;)Llove/forte/simbot/component/qguild/message/ReceivingMessageParser$Context;
+	public static synthetic fun parse$default (Llove/forte/simbot/component/qguild/message/MessageParsers;Ljava/lang/String;Ljava/util/List;Llove/forte/simbot/message/Messages;ILjava/lang/Object;)Llove/forte/simbot/component/qguild/message/ReceivingMessageParser$Context;
 	public static synthetic fun parse$default (Llove/forte/simbot/component/qguild/message/MessageParsers;Llove/forte/simbot/message/Message;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static synthetic fun parse$default (Llove/forte/simbot/component/qguild/message/MessageParsers;Llove/forte/simbot/qguild/model/Message;Llove/forte/simbot/message/Messages;ILjava/lang/Object;)Llove/forte/simbot/component/qguild/message/ReceivingMessageParser$Context;
+}
+
+public final class love/forte/simbot/component/qguild/message/MessageSenderKt {
+	public static final fun sendGroupMessage (Llove/forte/simbot/component/qguild/bot/QGBot;Ljava/lang/String;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun sendGroupMessage (Llove/forte/simbot/component/qguild/bot/QGBot;Ljava/lang/String;Llove/forte/simbot/message/Message;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun sendGroupMessage (Llove/forte/simbot/component/qguild/bot/QGBot;Ljava/lang/String;Llove/forte/simbot/qguild/api/message/GroupAndC2CSendBody;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun sendGroupMessage$default (Llove/forte/simbot/component/qguild/bot/QGBot;Ljava/lang/String;Llove/forte/simbot/message/Message;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun sendUserMessage (Llove/forte/simbot/component/qguild/bot/QGBot;Ljava/lang/String;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun sendUserMessage (Llove/forte/simbot/component/qguild/bot/QGBot;Ljava/lang/String;Llove/forte/simbot/message/Message;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun sendUserMessage (Llove/forte/simbot/component/qguild/bot/QGBot;Ljava/lang/String;Llove/forte/simbot/qguild/api/message/GroupAndC2CSendBody;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun sendUserMessage$default (Llove/forte/simbot/component/qguild/bot/QGBot;Ljava/lang/String;Llove/forte/simbot/message/Message;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public abstract class love/forte/simbot/component/qguild/message/QGAggregatedIdMessageReceipt : love/forte/simbot/message/AggregatedMessageReceipt, love/forte/simbot/component/qguild/message/QGMessageReceipt {
+	public fun <init> ()V
+	public fun delete ([Llove/forte/simbot/ability/DeleteOption;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun get (I)Llove/forte/simbot/component/qguild/message/QGSingleIdMessageReceipt;
+	public abstract fun getSize ()I
+	public abstract fun iterator ()Ljava/util/Iterator;
 }
 
 public abstract class love/forte/simbot/component/qguild/message/QGAggregatedMessageReceipt : love/forte/simbot/message/AggregatedMessageReceipt, love/forte/simbot/component/qguild/message/QGMessageReceipt {
@@ -1405,6 +1642,14 @@ public final class love/forte/simbot/component/qguild/message/QGAttachmentMessag
 	public static final fun toAttachment (Llove/forte/simbot/component/qguild/message/QGAttachmentMessage;)Llove/forte/simbot/qguild/model/Message$Attachment;
 }
 
+public abstract class love/forte/simbot/component/qguild/message/QGBaseMessageContent : love/forte/simbot/message/MessageContent {
+	public fun <init> ()V
+	public abstract fun getId ()Llove/forte/simbot/common/id/ID;
+	public abstract fun getMessages ()Llove/forte/simbot/message/Messages;
+	public abstract fun getPlainText ()Ljava/lang/String;
+	public abstract fun getSourceContent ()Ljava/lang/String;
+}
+
 public final class love/forte/simbot/component/qguild/message/QGContentText : love/forte/simbot/component/qguild/message/QGMessageElement, love/forte/simbot/message/PlainText {
 	public static final field Companion Llove/forte/simbot/component/qguild/message/QGContentText$Companion;
 	public fun <init> (Ljava/lang/String;)V
@@ -1467,12 +1712,43 @@ public final class love/forte/simbot/component/qguild/message/QGEmbedKt {
 	public static final fun buildQGEmbed (Lkotlin/jvm/functions/Function1;)Llove/forte/simbot/component/qguild/message/QGEmbed;
 }
 
-public abstract class love/forte/simbot/component/qguild/message/QGMessageContent : love/forte/simbot/message/MessageContent {
+public abstract class love/forte/simbot/component/qguild/message/QGGroupAndC2CMessageContent : love/forte/simbot/component/qguild/message/QGBaseMessageContent {
 	public fun <init> ()V
 	public synthetic fun delete ([Llove/forte/simbot/ability/DeleteOption;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun getId ()Llove/forte/simbot/common/id/ID;
-	public abstract fun getMessages ()Llove/forte/simbot/message/Messages;
-	public abstract fun getPlainText ()Ljava/lang/String;
+	public abstract fun getAttachments ()Ljava/util/List;
+	public abstract fun getSourceContent ()Ljava/lang/String;
+}
+
+public final class love/forte/simbot/component/qguild/message/QGMedia : love/forte/simbot/component/qguild/message/QGMessageElement {
+	public static final field Companion Llove/forte/simbot/component/qguild/message/QGMedia$Companion;
+	public fun <init> (Llove/forte/simbot/qguild/model/MessageMedia;)V
+	public final fun component1 ()Llove/forte/simbot/qguild/model/MessageMedia;
+	public final fun copy (Llove/forte/simbot/qguild/model/MessageMedia;)Llove/forte/simbot/component/qguild/message/QGMedia;
+	public static synthetic fun copy$default (Llove/forte/simbot/component/qguild/message/QGMedia;Llove/forte/simbot/qguild/model/MessageMedia;ILjava/lang/Object;)Llove/forte/simbot/component/qguild/message/QGMedia;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMedia ()Llove/forte/simbot/qguild/model/MessageMedia;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public synthetic class love/forte/simbot/component/qguild/message/QGMedia$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Llove/forte/simbot/component/qguild/message/QGMedia$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Llove/forte/simbot/component/qguild/message/QGMedia;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Llove/forte/simbot/component/qguild/message/QGMedia;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class love/forte/simbot/component/qguild/message/QGMedia$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public abstract class love/forte/simbot/component/qguild/message/QGMessageContent : love/forte/simbot/component/qguild/message/QGBaseMessageContent {
+	public fun <init> ()V
+	public synthetic fun delete ([Llove/forte/simbot/ability/DeleteOption;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun getSourceMessage ()Llove/forte/simbot/qguild/model/Message;
 }
 
@@ -1527,11 +1803,15 @@ public final class love/forte/simbot/component/qguild/message/QGReference$Compan
 public final class love/forte/simbot/component/qguild/message/QGReplyTo : love/forte/simbot/component/qguild/message/QGMessageElement {
 	public static final field Companion Llove/forte/simbot/component/qguild/message/QGReplyTo$Companion;
 	public fun <init> (Llove/forte/simbot/common/id/ID;)V
+	public fun <init> (Llove/forte/simbot/common/id/ID;Ljava/lang/Integer;)V
+	public synthetic fun <init> (Llove/forte/simbot/common/id/ID;Ljava/lang/Integer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Llove/forte/simbot/common/id/ID;
-	public final fun copy (Llove/forte/simbot/common/id/ID;)Llove/forte/simbot/component/qguild/message/QGReplyTo;
-	public static synthetic fun copy$default (Llove/forte/simbot/component/qguild/message/QGReplyTo;Llove/forte/simbot/common/id/ID;ILjava/lang/Object;)Llove/forte/simbot/component/qguild/message/QGReplyTo;
+	public final fun component2 ()Ljava/lang/Integer;
+	public final fun copy (Llove/forte/simbot/common/id/ID;Ljava/lang/Integer;)Llove/forte/simbot/component/qguild/message/QGReplyTo;
+	public static synthetic fun copy$default (Llove/forte/simbot/component/qguild/message/QGReplyTo;Llove/forte/simbot/common/id/ID;Ljava/lang/Integer;ILjava/lang/Object;)Llove/forte/simbot/component/qguild/message/QGReplyTo;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getId ()Llove/forte/simbot/common/id/ID;
+	public final fun getSeq ()Ljava/lang/Integer;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -1554,50 +1834,76 @@ public final class love/forte/simbot/component/qguild/message/QGReplyTo$Companio
 public abstract interface annotation class love/forte/simbot/component/qguild/message/QGSendOnly : java/lang/annotation/Annotation {
 }
 
+public abstract class love/forte/simbot/component/qguild/message/QGSingleIdMessageReceipt : love/forte/simbot/message/SingleMessageReceipt, love/forte/simbot/component/qguild/message/QGMessageReceipt {
+	public fun <init> ()V
+	public abstract fun getId ()Llove/forte/simbot/common/id/ID;
+}
+
 public abstract class love/forte/simbot/component/qguild/message/QGSingleMessageReceipt : love/forte/simbot/message/SingleMessageReceipt, love/forte/simbot/component/qguild/message/QGMessageReceipt {
 	public fun <init> ()V
 	public abstract fun getMessageResult ()Llove/forte/simbot/qguild/model/Message;
 }
 
 public abstract interface class love/forte/simbot/component/qguild/message/ReceivingMessageParser {
+	public abstract fun invoke (Ljava/lang/String;Llove/forte/simbot/component/qguild/message/ReceivingMessageParser$Context;)Llove/forte/simbot/component/qguild/message/ReceivingMessageParser$Context;
 	public abstract fun invoke (Llove/forte/simbot/qguild/model/Message;Llove/forte/simbot/component/qguild/message/ReceivingMessageParser$Context;)Llove/forte/simbot/component/qguild/message/ReceivingMessageParser$Context;
 }
 
 public final class love/forte/simbot/component/qguild/message/ReceivingMessageParser$Context {
-	public fun <init> (Llove/forte/simbot/message/Messages;Ljava/lang/StringBuilder;)V
+	public fun <init> (Llove/forte/simbot/message/Messages;Ljava/lang/StringBuilder;Ljava/util/List;)V
+	public synthetic fun <init> (Llove/forte/simbot/message/Messages;Ljava/lang/StringBuilder;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Llove/forte/simbot/message/Messages;
 	public final fun component2 ()Ljava/lang/StringBuilder;
-	public final fun copy (Llove/forte/simbot/message/Messages;Ljava/lang/StringBuilder;)Llove/forte/simbot/component/qguild/message/ReceivingMessageParser$Context;
-	public static synthetic fun copy$default (Llove/forte/simbot/component/qguild/message/ReceivingMessageParser$Context;Llove/forte/simbot/message/Messages;Ljava/lang/StringBuilder;ILjava/lang/Object;)Llove/forte/simbot/component/qguild/message/ReceivingMessageParser$Context;
+	public final fun component3 ()Ljava/util/List;
+	public final fun copy (Llove/forte/simbot/message/Messages;Ljava/lang/StringBuilder;Ljava/util/List;)Llove/forte/simbot/component/qguild/message/ReceivingMessageParser$Context;
+	public static synthetic fun copy$default (Llove/forte/simbot/component/qguild/message/ReceivingMessageParser$Context;Llove/forte/simbot/message/Messages;Ljava/lang/StringBuilder;Ljava/util/List;ILjava/lang/Object;)Llove/forte/simbot/component/qguild/message/ReceivingMessageParser$Context;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAttachments ()Ljava/util/List;
 	public final fun getMessages ()Llove/forte/simbot/message/Messages;
 	public final fun getPlainTextBuilder ()Ljava/lang/StringBuilder;
 	public fun hashCode ()I
+	public final fun setAttachments (Ljava/util/List;)V
 	public final fun setMessages (Llove/forte/simbot/message/Messages;)V
 	public final fun setPlainTextBuilder (Ljava/lang/StringBuilder;)V
 	public fun toString ()Ljava/lang/String;
 }
 
-public abstract interface class love/forte/simbot/component/qguild/message/SendingMessageParser : kotlin/coroutines/jvm/internal/SuspendFunction, kotlin/jvm/functions/Function5 {
+public abstract interface class love/forte/simbot/component/qguild/message/SendingMessageParser {
 	public abstract fun invoke (ILlove/forte/simbot/message/Message$Element;Llove/forte/simbot/message/Messages;Llove/forte/simbot/component/qguild/message/SendingMessageParser$BuilderContext;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun invoke (ILlove/forte/simbot/message/Message$Element;Llove/forte/simbot/message/Messages;Llove/forte/simbot/component/qguild/message/SendingMessageParser$GroupAndC2CBuilderContext;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun invoke$suspendImpl (Llove/forte/simbot/component/qguild/message/SendingMessageParser;ILlove/forte/simbot/message/Message$Element;Llove/forte/simbot/message/Messages;Llove/forte/simbot/component/qguild/message/SendingMessageParser$GroupAndC2CBuilderContext;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
-public final class love/forte/simbot/component/qguild/message/SendingMessageParser$BuilderContext {
+public abstract class love/forte/simbot/component/qguild/message/SendingMessageParser$AbstractBuilderContext {
 	public fun <init> (Lkotlin/jvm/functions/Function0;)V
-	public final fun builderOrNew (Lkotlin/jvm/functions/Function1;)Llove/forte/simbot/qguild/api/message/MessageSendApi$Body$Builder;
-	public final fun component1 ()Lkotlin/jvm/functions/Function0;
-	public final fun copy (Lkotlin/jvm/functions/Function0;)Llove/forte/simbot/component/qguild/message/SendingMessageParser$BuilderContext;
-	public static synthetic fun copy$default (Llove/forte/simbot/component/qguild/message/SendingMessageParser$BuilderContext;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Llove/forte/simbot/component/qguild/message/SendingMessageParser$BuilderContext;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getBuilder ()Llove/forte/simbot/qguild/api/message/MessageSendApi$Body$Builder;
+	public final fun builderOrNew (Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public fun getBuilder ()Ljava/lang/Object;
 	public final fun getBuilderFactory ()Lkotlin/jvm/functions/Function0;
 	public final fun getBuilders ()Lkotlin/collections/ArrayDeque;
-	public final fun getNextIsNew ()Z
-	public fun hashCode ()I
-	public final fun newBuilder ()Llove/forte/simbot/qguild/api/message/MessageSendApi$Body$Builder;
-	public final fun nextMustBeNew (Z)V
-	public static synthetic fun nextMustBeNew$default (Llove/forte/simbot/component/qguild/message/SendingMessageParser$BuilderContext;ZILjava/lang/Object;)V
-	public fun toString ()Ljava/lang/String;
+	public fun getNextIsNew ()Z
+	public fun newBuilder ()Ljava/lang/Object;
+	public fun nextMustBeNew (Z)V
+	public static synthetic fun nextMustBeNew$default (Llove/forte/simbot/component/qguild/message/SendingMessageParser$AbstractBuilderContext;ZILjava/lang/Object;)V
+	protected fun setNextIsNew (Z)V
+}
+
+public final class love/forte/simbot/component/qguild/message/SendingMessageParser$BuilderContext : love/forte/simbot/component/qguild/message/SendingMessageParser$AbstractBuilderContext {
+	public fun <init> (Lkotlin/jvm/functions/Function0;)V
+}
+
+public final class love/forte/simbot/component/qguild/message/SendingMessageParser$GroupAndC2CBuilderContext : love/forte/simbot/component/qguild/message/SendingMessageParser$AbstractBuilderContext {
+	public fun <init> (Llove/forte/simbot/component/qguild/bot/QGBot;Llove/forte/simbot/component/qguild/message/SendingMessageParser$GroupBuilderType;Ljava/lang/String;Lkotlin/jvm/functions/Function0;)V
+	public final fun getBot ()Llove/forte/simbot/component/qguild/bot/QGBot;
+	public final fun getTargetOpenid ()Ljava/lang/String;
+	public final fun getType ()Llove/forte/simbot/component/qguild/message/SendingMessageParser$GroupBuilderType;
+}
+
+public final class love/forte/simbot/component/qguild/message/SendingMessageParser$GroupBuilderType : java/lang/Enum {
+	public static final field C2C Llove/forte/simbot/component/qguild/message/SendingMessageParser$GroupBuilderType;
+	public static final field GROUP Llove/forte/simbot/component/qguild/message/SendingMessageParser$GroupBuilderType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Llove/forte/simbot/component/qguild/message/SendingMessageParser$GroupBuilderType;
+	public static fun values ()[Llove/forte/simbot/component/qguild/message/SendingMessageParser$GroupBuilderType;
 }
 
 public abstract interface class love/forte/simbot/component/qguild/role/QGRoleUpdater {
