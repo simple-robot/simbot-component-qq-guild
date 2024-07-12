@@ -19,18 +19,22 @@ package love.forte.simbot.component.qguild.bot
 
 import io.ktor.client.*
 import io.ktor.client.request.*
+import love.forte.simbot.ability.EventMentionAware
 import love.forte.simbot.bot.Bot
 import love.forte.simbot.bot.ContactRelation
 import love.forte.simbot.common.id.ID
 import love.forte.simbot.common.id.StringID.Companion.ID
 import love.forte.simbot.component.qguild.QQGuildComponent
 import love.forte.simbot.component.qguild.channel.QGTextChannel
+import love.forte.simbot.component.qguild.event.QGAtMessageCreateEvent
+import love.forte.simbot.component.qguild.event.QGGroupAtMessageCreateEvent
 import love.forte.simbot.component.qguild.friend.QGFriend
 import love.forte.simbot.component.qguild.group.QGGroup
 import love.forte.simbot.component.qguild.group.QGGroupRelation
 import love.forte.simbot.component.qguild.guild.QGGuildRelation
 import love.forte.simbot.component.qguild.message.QGMedia
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
+import love.forte.simbot.event.Event
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.qguild.QQGuildApiException
@@ -56,7 +60,7 @@ import love.forte.simbot.qguild.stdlib.Bot as QGSourceBot
  *
  * @author ForteScarlet
  */
-public interface QGBot : Bot {
+public interface QGBot : Bot, EventMentionAware {
     /**
      * QQ频道的 [组件][QQGuildComponent] 对象实例。
      */
@@ -119,7 +123,19 @@ public interface QGBot : Bot {
      */
     public val avatar: String
 
-    //// Impl
+    /**
+     * 如果事件类型为
+     * - [QGGroupAtMessageCreateEvent]
+     * - [QGAtMessageCreateEvent]
+     * 则直接视为bot被at了，不论消息中是否真的有at元素。
+     */
+    override fun isMention(event: Event): Boolean {
+        return when (event) {
+            is QGGroupAtMessageCreateEvent -> true
+            is QGAtMessageCreateEvent -> true
+            else -> false
+        }
+    }
 
     /**
      * QQ群相关内容的操作。

@@ -72,7 +72,7 @@ public abstract interface class love/forte/simbot/component/qguild/QQGuildUsageB
 	public abstract fun component (Llove/forte/simbot/common/function/ConfigurerFunction;)V
 }
 
-public abstract interface class love/forte/simbot/component/qguild/bot/QGBot : love/forte/simbot/bot/Bot {
+public abstract interface class love/forte/simbot/component/qguild/bot/QGBot : love/forte/simbot/ability/EventMentionAware, love/forte/simbot/bot/Bot {
 	public abstract fun getAvatar ()Ljava/lang/String;
 	public abstract fun getComponent ()Llove/forte/simbot/component/qguild/QQGuildComponent;
 	public fun getContactRelation ()Llove/forte/simbot/bot/ContactRelation;
@@ -89,6 +89,7 @@ public abstract interface class love/forte/simbot/component/qguild/bot/QGBot : l
 	public abstract fun getSource ()Llove/forte/simbot/qguild/stdlib/Bot;
 	public abstract fun getUserId ()Llove/forte/simbot/common/id/ID;
 	public abstract fun isMe (Llove/forte/simbot/common/id/ID;)Z
+	public fun isMention (Llove/forte/simbot/event/Event;)Z
 	public synthetic fun me (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract synthetic fun me (ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun me$suspendImpl (Llove/forte/simbot/component/qguild/bot/QGBot;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
