@@ -17,9 +17,15 @@
 
 package love.forte.simbot.component.qguild.message
 
+import love.forte.simbot.common.id.StringID.Companion.ID
+import love.forte.simbot.component.qguild.message.SendingMessageParser.GroupBuilderType.C2C
+import love.forte.simbot.component.qguild.message.SendingMessageParser.GroupBuilderType.GROUP
 import love.forte.simbot.message.Messages
 import love.forte.simbot.message.OfflineImage
 import love.forte.simbot.message.OfflineResourceImage
+import love.forte.simbot.qguild.api.files.UploadGroupFilesApi
+import love.forte.simbot.qguild.api.files.UploadUserFilesApi
+import love.forte.simbot.qguild.api.message.GroupAndC2CSendBody
 import love.forte.simbot.resource.FileResource
 import love.forte.simbot.resource.PathResource
 import love.forte.simbot.resource.URIResource
@@ -50,4 +56,72 @@ internal actual fun processOfflineImage0(
     }
 
     return false
+}
+
+internal actual suspend fun processOfflineImage0(
+    index: Int,
+    element: OfflineImage,
+    messages: Messages?,
+    builderContext: SendingMessageParser.GroupAndC2CBuilderContext
+): Boolean {
+    // TODO Upload 目前只支持 URL 链接的格式
+
+    fun builder() = builderContext.builderOrNew {
+        isTextOrMedia(it.msgType) && it.media == null
+    }.also {
+        it.msgType = GroupAndC2CSendBody.MSG_TYPE_MEDIA
+    }
+
+    val url = when (element) {
+        is OfflineResourceImage -> {
+            val resource = element.resource
+            if (resource is URIResource) {
+                resource.uri.toASCIIString()
+            } else {
+                ImageParser.logger.warn(
+                    "QQGroup or C2C currently only supports sending **offline** images using URL links, " +
+                            "the type of element {} (index={}, type={}) is not supported. " +
+                            "Please use `URIResource`, `OfflineURIImage` or use `QGMedia` instead.",
+                    element,
+                    index,
+                    element::class,
+                )
+
+                return false
+            }
+        }
+
+        else -> return false
+    }
+
+    val type = builderContext.type
+    ImageParser.logger.debug("Uploading offline image to {} with target {}", type, builderContext.targetOpenid)
+
+    val uploadedMedia = when (type) {
+        GROUP -> {
+            builderContext.bot.uploadGroupMedia(
+                target = builderContext.targetOpenid.ID,
+                url = url,
+                type = UploadGroupFilesApi.FILE_TYPE_IMAGE,
+            )
+        }
+
+        C2C -> {
+            builderContext.bot.uploadUserMedia(
+                target = builderContext.targetOpenid.ID,
+                url = url,
+                type = UploadUserFilesApi.FILE_TYPE_IMAGE,
+            )
+        }
+    }
+
+    ImageParser.logger.debug("Uploaded offline image to media {}", uploadedMedia)
+
+    val builder = builder()
+    builder.media = uploadedMedia.media
+    if (builder.content.isEmpty()) {
+        builder.content = " "
+    }
+
+    return true
 }

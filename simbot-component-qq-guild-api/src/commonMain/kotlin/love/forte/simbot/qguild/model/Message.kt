@@ -26,6 +26,7 @@ import kotlinx.serialization.encoding.Encoder
 import love.forte.simbot.qguild.ApiModel
 import love.forte.simbot.qguild.message.EmbedBuilder
 import love.forte.simbot.qguild.time.ZERO_ISO_INSTANT
+import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 import kotlin.jvm.JvmSynthetic
 
@@ -313,17 +314,17 @@ public data class Message(
         /**
          * markdown 模板 id
          */
-        @SerialName("template_id") val templateId: Int?,
+        @SerialName("template_id") val templateId: Int? = null,
 
         /**
          * markdown 自定义模板 id
          */
-        @SerialName("custom_template_id") val customTemplateId: String?,
+        @SerialName("custom_template_id") val customTemplateId: String? = null,
 
         /**
          * markdown 模板模板参数
          */
-        val params: Params?,
+        val params: Params? = null,
 
         /**
          * 原生 markdown 内容,与上面三个参数互斥,参数都传值将报错。
@@ -350,6 +351,25 @@ public data class Message(
              */
             val values: List<String>
         )
+
+        public companion object {
+            @JvmStatic
+            public fun createByContent(content: String): Markdown {
+                return Markdown(content = content)
+            }
+
+            @JvmStatic
+            @JvmOverloads
+            public fun createByTemplateId(templateId: Int, params: Params? = null): Markdown {
+                return Markdown(templateId = templateId, params = params)
+            }
+
+            @JvmStatic
+            @JvmOverloads
+            public fun createByCustomTemplateId(customTemplateId: String, params: Params? = null): Markdown {
+                return Markdown(customTemplateId = customTemplateId, params = params)
+            }
+        }
     }
 }
 
@@ -382,7 +402,6 @@ public data class MessageMember(
             if (this is MessageMember) this else MessageMember(nick, roles, joinedAt).also { it.user = user }
     }
 }
-
 
 
 internal object MessageAttachmentSerializer : KSerializer<Message.Attachment> {

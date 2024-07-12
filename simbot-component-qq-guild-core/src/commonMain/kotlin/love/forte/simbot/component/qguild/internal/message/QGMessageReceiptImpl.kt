@@ -19,8 +19,12 @@ package love.forte.simbot.component.qguild.internal.message
 
 import love.forte.simbot.common.id.ID
 import love.forte.simbot.common.id.StringID.Companion.ID
+import love.forte.simbot.component.qguild.message.QGAggregatedIdMessageReceipt
 import love.forte.simbot.component.qguild.message.QGAggregatedMessageReceipt
+import love.forte.simbot.component.qguild.message.QGSingleIdMessageReceipt
 import love.forte.simbot.component.qguild.message.QGSingleMessageReceipt
+import love.forte.simbot.qguild.api.message.group.GroupMessageSendResult
+import love.forte.simbot.qguild.api.message.user.UserMessageSendResult
 import love.forte.simbot.qguild.model.Message
 
 
@@ -43,3 +47,31 @@ private class QGAggregatedMessageReceiptImpl(private val messages: List<QGSingle
 
 internal fun Iterable<Message>.asReceipt(): QGAggregatedMessageReceipt =
     QGAggregatedMessageReceiptImpl(this.map { QGSingleMessageReceiptImpl(it) })
+
+private class QGSingleIdMessageReceiptImpl(override val id: ID) : QGSingleIdMessageReceipt()
+
+private class QGAggregatedIdMessageReceiptImpl(private val messages: List<QGSingleIdMessageReceiptImpl>) :
+    QGAggregatedIdMessageReceipt() {
+    override val size: Int get() = messages.size
+    override fun get(index: Int): QGSingleIdMessageReceipt = messages[index]
+    override fun iterator(): Iterator<QGSingleIdMessageReceipt> = messages.iterator()
+}
+
+@PublishedApi
+internal fun GroupMessageSendResult.asReceipt(): QGSingleIdMessageReceipt = QGSingleIdMessageReceiptImpl(id.ID)
+
+@PublishedApi
+internal fun Iterable<GroupMessageSendResult>.asGroupReceipt(): QGAggregatedIdMessageReceipt =
+    QGAggregatedIdMessageReceiptImpl(
+        map { QGSingleIdMessageReceiptImpl(it.id.ID) }
+    )
+
+@PublishedApi
+internal fun UserMessageSendResult.asReceipt(): QGSingleIdMessageReceipt = QGSingleIdMessageReceiptImpl(id.ID)
+
+
+@PublishedApi
+internal fun Iterable<UserMessageSendResult>.asUserReceipt(): QGAggregatedIdMessageReceipt =
+    QGAggregatedIdMessageReceiptImpl(
+        map { QGSingleIdMessageReceiptImpl(it.id.ID) }
+    )

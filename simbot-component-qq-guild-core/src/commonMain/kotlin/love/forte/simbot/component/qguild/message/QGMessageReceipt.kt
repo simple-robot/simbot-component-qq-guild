@@ -19,6 +19,7 @@ package love.forte.simbot.component.qguild.message
 
 import love.forte.simbot.ability.DeleteOption
 import love.forte.simbot.ability.StandardDeleteOption
+import love.forte.simbot.common.id.ID
 import love.forte.simbot.message.AggregatedMessageReceipt
 import love.forte.simbot.message.MessageReceipt
 import love.forte.simbot.message.SingleMessageReceipt
@@ -86,6 +87,28 @@ public abstract class QGAggregatedMessageReceipt : AggregatedMessageReceipt(), Q
      * 得到所有的 [QGSingleMessageReceipt] 的迭代器。
      */
     abstract override fun iterator(): Iterator<QGSingleMessageReceipt>
+
+    override suspend fun delete(vararg options: DeleteOption) {
+        super<AggregatedMessageReceipt>.delete(*options)
+    }
+}
+
+/**
+ * 仅有ID信息的 [QGMessageReceipt]. 通常来自发送群消息或好友消息。
+ */
+public abstract class QGSingleIdMessageReceipt : SingleMessageReceipt(), QGMessageReceipt {
+    abstract override val id: ID
+}
+
+/**
+ * 多个 [QGSingleIdMessageReceipt] 的集合回执。
+ */
+public abstract class QGAggregatedIdMessageReceipt : AggregatedMessageReceipt(), QGMessageReceipt {
+    abstract override val size: Int
+
+    abstract override fun get(index: Int): QGSingleIdMessageReceipt
+
+    abstract override fun iterator(): Iterator<QGSingleIdMessageReceipt>
 
     override suspend fun delete(vararg options: DeleteOption) {
         super<AggregatedMessageReceipt>.delete(*options)

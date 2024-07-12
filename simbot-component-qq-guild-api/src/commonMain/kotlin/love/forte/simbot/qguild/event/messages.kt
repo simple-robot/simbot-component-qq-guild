@@ -44,7 +44,11 @@ public sealed class MessageDispatch : Signal.Dispatch() {
  */
 @Serializable
 @SerialName(EventIntents.PublicGuildMessages.AT_MESSAGE_CREATE_TYPE)
-public data class AtMessageCreate(override val s: Long, @SerialName("d") override val data: Message) : MessageDispatch()
+public data class AtMessageCreate(
+    override val id: String? = null,
+    override val s: Long,
+    @SerialName("d") override val data: Message
+) : MessageDispatch()
 
 /**
  * 消息事件
@@ -54,6 +58,7 @@ public data class AtMessageCreate(override val s: Long, @SerialName("d") overrid
 @Serializable
 @SerialName(EventIntents.PublicGuildMessages.PUBLIC_MESSAGE_DELETE_TYPE)
 public data class PublicMessageDeleteCreate(
+    override val id: String? = null,
     override val s: Long,
     @SerialName("d") override val data: Unit /* TODO 文档没找到描述。 */
 ) :
@@ -69,7 +74,11 @@ public data class PublicMessageDeleteCreate(
  */
 @Serializable
 @SerialName(EventIntents.DirectMessage.DIRECT_MESSAGE_CREATE_TYPE)
-public data class DirectMessageCreate(override val s: Long, @SerialName("d") override val data: Message) :
+public data class DirectMessageCreate(
+    override val id: String? = null,
+    override val s: Long,
+    @SerialName("d") override val data: Message
+) :
     MessageDispatch()
 
 /**
@@ -87,7 +96,11 @@ public sealed class MessageAuditedDispatch : Signal.Dispatch() {
  */
 @Serializable
 @SerialName(EventIntents.GuildMessages.MESSAGE_CREATE_TYPE)
-public data class MessageCreate(override val s: Long, @SerialName("d") override val data: Message) : MessageDispatch()
+public data class MessageCreate(
+    override val id: String? = null,
+    override val s: Long,
+    @SerialName("d") override val data: Message
+) : MessageDispatch()
 
 /**
  * 删除（撤回）消息事件
@@ -95,6 +108,7 @@ public data class MessageCreate(override val s: Long, @SerialName("d") override 
 @Serializable
 @SerialName(EventIntents.GuildMessages.MESSAGE_DELETE_TYPE)
 public data class MessageDelete(
+    override val id: String? = null,
     override val s: Long,
     @SerialName("d") override val data: Unit /* TODO 文档没找到描述。 */
 ) : Signal.Dispatch()
@@ -110,8 +124,11 @@ public data class MessageDelete(
  */
 @Serializable
 @SerialName(EventIntents.MessageAudit.MESSAGE_AUDIT_PASS_TYPE)
-public data class MessageAuditPass(override val s: Long, @SerialName("d") override val data: MessageAudited) :
-    MessageAuditedDispatch()
+public data class MessageAuditPass(
+    override val id: String? = null,
+    override val s: Long,
+    @SerialName("d") override val data: MessageAudited
+) : MessageAuditedDispatch()
 
 /**
  * 消息审核事件
@@ -123,5 +140,8 @@ public data class MessageAuditPass(override val s: Long, @SerialName("d") overri
  */
 @Serializable
 @SerialName(EventIntents.MessageAudit.MESSAGE_AUDIT_REJECT_TYPE)
-public data class MessageAuditReject(override val s: Long, @SerialName("d") override val data: MessageAudited) :
-    MessageAuditedDispatch()
+public data class MessageAuditReject(
+    override val id: String? = null,
+    override val s: Long,
+    @SerialName("d") override val data: MessageAudited
+) : MessageAuditedDispatch()

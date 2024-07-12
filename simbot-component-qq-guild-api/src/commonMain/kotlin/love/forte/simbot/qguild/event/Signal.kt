@@ -165,6 +165,8 @@ public sealed class Signal<D>(@Serializable(Opcode.SerializerByCode::class) publ
          */
         protected abstract val s: Long
 
+        public abstract val id: String?
+
         /**
          * 事件序列
          */
@@ -212,6 +214,7 @@ public sealed class Signal<D>(@Serializable(Opcode.SerializerByCode::class) publ
          *
          */
         public data class Unknown @QGInternalApi constructor(
+            override val id: String? = null,
             override val s: Long,
             override val data: JsonElement,
             val raw: String

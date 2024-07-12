@@ -121,4 +121,17 @@ internal object ReferenceParser : SendingMessageParser {
             }
         }
     }
+
+    override suspend fun invoke(
+        index: Int,
+        element: love.forte.simbot.message.Message.Element,
+        messages: Messages?,
+        builderContext: SendingMessageParser.GroupAndC2CBuilderContext
+    ) {
+        if (element is QGReference) {
+            builderContext.builders.forEach {
+                it.messageReference = element.source
+            }
+        }
+    }
 }

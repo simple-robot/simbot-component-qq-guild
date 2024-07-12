@@ -27,7 +27,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 public data class GroupRobotManagementData(
-    val timestamp: Int,
+    val timestamp: String,
     @SerialName("group_openid")
     val groupOpenid: String,
     @SerialName("op_member_openid")
@@ -50,6 +50,7 @@ public sealed class GroupRobotManagementDispatch : Signal.Dispatch() {
 @Serializable
 @SerialName(EventIntents.GroupAndC2CEvent.GROUP_ADD_ROBOT_TYPE)
 public data class GroupAddRobot(
+    override val id: String? = null,
     override val s: Long,
     @SerialName("d")
     override val data: GroupRobotManagementData
@@ -63,6 +64,7 @@ public data class GroupAddRobot(
 @Serializable
 @SerialName(EventIntents.GroupAndC2CEvent.GROUP_DEL_ROBOT_TYPE)
 public data class GroupDelRobot(
+    override val id: String? = null,
     override val s: Long,
     @SerialName("d")
     override val data: GroupRobotManagementData
@@ -76,6 +78,7 @@ public data class GroupDelRobot(
 @Serializable
 @SerialName(EventIntents.GroupAndC2CEvent.GROUP_MSG_REJECT_TYPE)
 public data class GroupMsgReject(
+    override val id: String? = null,
     override val s: Long,
     @SerialName("d")
     override val data: GroupRobotManagementData
@@ -89,6 +92,7 @@ public data class GroupMsgReject(
 @Serializable
 @SerialName(EventIntents.GroupAndC2CEvent.GROUP_MSG_RECEIVE_TYPE)
 public data class GroupMsgReceive(
+    override val id: String? = null,
     override val s: Long,
     @SerialName("d")
     override val data: GroupRobotManagementData

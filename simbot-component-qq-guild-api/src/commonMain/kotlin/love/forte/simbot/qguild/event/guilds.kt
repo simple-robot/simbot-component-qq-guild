@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -41,7 +41,11 @@ public sealed class EventGuildDispatch : Signal.Dispatch() {
  */
 @Serializable
 @SerialName(EventIntents.Guilds.GUILD_CREATE_TYPE)
-public data class GuildCreate(override val s: Long, @SerialName("d") override val data: EventGuild) : EventGuildDispatch()
+public data class GuildCreate(
+    override val id: String? = null,
+    override val s: Long,
+    @SerialName("d") override val data: EventGuild
+) : EventGuildDispatch()
 
 /**
  *
@@ -53,7 +57,11 @@ public data class GuildCreate(override val s: Long, @SerialName("d") override va
  */
 @Serializable
 @SerialName(EventIntents.Guilds.GUILD_UPDATE_TYPE)
-public data class GuildUpdate(override val s: Long, @SerialName("d") override val data: EventGuild) : EventGuildDispatch()
+public data class GuildUpdate(
+    override val id: String? = null,
+    override val s: Long,
+    @SerialName("d") override val data: EventGuild
+) : EventGuildDispatch()
 
 /**
  *
@@ -66,7 +74,11 @@ public data class GuildUpdate(override val s: Long, @SerialName("d") override va
  */
 @Serializable
 @SerialName(EventIntents.Guilds.GUILD_DELETE_TYPE)
-public data class GuildDelete(override val s: Long, @SerialName("d") override val data: EventGuild) : EventGuildDispatch()
+public data class GuildDelete(
+    override val id: String? = null,
+    override val s: Long,
+    @SerialName("d") override val data: EventGuild
+) : EventGuildDispatch()
 
 
 /**

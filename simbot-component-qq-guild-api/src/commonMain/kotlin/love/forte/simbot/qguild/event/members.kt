@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -31,7 +31,11 @@ import love.forte.simbot.qguild.time.ZERO_ISO_INSTANT
  */
 @Serializable
 @SerialName(EventIntents.GuildMembers.GUILD_MEMBER_ADD_TYPE)
-public data class GuildMemberAdd(override val s: Long, @SerialName("d") override val data: EventMember) : Signal.Dispatch()
+public data class GuildMemberAdd(
+    override val id: String? = null,
+    override val s: Long,
+    @SerialName("d") override val data: EventMember
+) : Signal.Dispatch()
 
 /**
  * [`GUILD_MEMBER_UPDATE`](https://bot.q.qq.com/wiki/develop/api/gateway/guild_member.html#guild-member-update)
@@ -40,7 +44,11 @@ public data class GuildMemberAdd(override val s: Long, @SerialName("d") override
  */
 @Serializable
 @SerialName(EventIntents.GuildMembers.GUILD_MEMBER_UPDATE_TYPE)
-public data class GuildMemberUpdate(override val s: Long, @SerialName("d") override val data: EventMember) : Signal.Dispatch()
+public data class GuildMemberUpdate(
+    override val id: String? = null,
+    override val s: Long,
+    @SerialName("d") override val data: EventMember
+) : Signal.Dispatch()
 
 /**
  * [`GUILD_MEMBER_REMOVE`](https://bot.q.qq.com/wiki/develop/api/gateway/guild_member.html#guild-member-remove)
@@ -49,7 +57,11 @@ public data class GuildMemberUpdate(override val s: Long, @SerialName("d") overr
  */
 @Serializable
 @SerialName(EventIntents.GuildMembers.GUILD_MEMBER_REMOVE_TYPE)
-public data class GuildMemberRemove(override val s: Long, @SerialName("d") override val data: EventMember) : Signal.Dispatch()
+public data class GuildMemberRemove(
+    override val id: String? = null,
+    override val s: Long,
+    @SerialName("d") override val data: EventMember
+) : Signal.Dispatch()
 
 
 /**
@@ -67,7 +79,7 @@ public data class EventMember(
     /**
      * 用户的频道基础信息
      */
-    override val user: User, 
+    override val user: User,
     /**
      * 用户的昵称
      */

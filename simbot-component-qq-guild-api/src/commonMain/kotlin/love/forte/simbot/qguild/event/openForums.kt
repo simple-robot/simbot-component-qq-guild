@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -118,7 +118,11 @@ public sealed class OpenForumThreadDispatch : OpenForumDispatch() {
  */
 @Serializable
 @SerialName(EventIntents.OpenForumsEvent.OPEN_FORUM_THREAD_CREATE_TYPE)
-public data class OpenForumThreadCreate(override val s: Long, @SerialName("d") override val data: OpenForumThreadData) : OpenForumThreadDispatch()
+public data class OpenForumThreadCreate(
+    override val id: String? = null,
+    override val s: Long,
+    @SerialName("d") override val data: OpenForumThreadData
+) : OpenForumThreadDispatch()
 
 
 /**
@@ -128,7 +132,11 @@ public data class OpenForumThreadCreate(override val s: Long, @SerialName("d") o
  */
 @Serializable
 @SerialName(EventIntents.OpenForumsEvent.OPEN_FORUM_THREAD_UPDATE_TYPE)
-public data class OpenForumThreadUpdate(override val s: Long, @SerialName("d") override val data: OpenForumThreadData) : OpenForumThreadDispatch()
+public data class OpenForumThreadUpdate(
+    override val id: String? = null,
+    override val s: Long,
+    @SerialName("d") override val data: OpenForumThreadData
+) : OpenForumThreadDispatch()
 
 
 /**
@@ -138,7 +146,11 @@ public data class OpenForumThreadUpdate(override val s: Long, @SerialName("d") o
  */
 @Serializable
 @SerialName(EventIntents.OpenForumsEvent.OPEN_FORUM_THREAD_DELETE_TYPE)
-public data class OpenForumThreadDelete(override val s: Long, @SerialName("d") override val data: OpenForumThreadData) : OpenForumThreadDispatch()
+public data class OpenForumThreadDelete(
+    override val id: String? = null,
+    override val s: Long,
+    @SerialName("d") override val data: OpenForumThreadData
+) : OpenForumThreadDispatch()
 
 
 /**
@@ -174,7 +186,11 @@ public sealed class OpenForumPostDispatch : OpenForumDispatch() {
  */
 @Serializable
 @SerialName(EventIntents.OpenForumsEvent.OPEN_FORUM_POST_CREATE_TYPE)
-public data class OpenForumPostCreate(override val s: Long, @SerialName("d") override val data: OpenForumPostData) : OpenForumPostDispatch()
+public data class OpenForumPostCreate(
+    override val id: String? = null,
+    override val s: Long,
+    @SerialName("d") override val data: OpenForumPostData
+) : OpenForumPostDispatch()
 
 
 /**
@@ -184,7 +200,11 @@ public data class OpenForumPostCreate(override val s: Long, @SerialName("d") ove
  */
 @Serializable
 @SerialName(EventIntents.OpenForumsEvent.OPEN_FORUM_POST_DELETE_TYPE)
-public data class OpenForumPostDelete(override val s: Long, @SerialName("d") override val data: OpenForumPostData) : OpenForumPostDispatch()
+public data class OpenForumPostDelete(
+    override val id: String? = null,
+    override val s: Long,
+    @SerialName("d") override val data: OpenForumPostData
+) : OpenForumPostDispatch()
 
 
 /**
@@ -219,7 +239,11 @@ public sealed class OpenForumReplyDispatch : OpenForumDispatch() {
  */
 @Serializable
 @SerialName(EventIntents.OpenForumsEvent.OPEN_FORUM_REPLY_CREATE_TYPE)
-public data class OpenForumReplyCreate(override val s: Long, @SerialName("d") override val data: OpenForumReplyData) : OpenForumReplyDispatch()
+public data class OpenForumReplyCreate(
+    override val id: String? = null,
+    override val s: Long,
+    @SerialName("d") override val data: OpenForumReplyData
+) : OpenForumReplyDispatch()
 
 
 /**
@@ -229,7 +253,11 @@ public data class OpenForumReplyCreate(override val s: Long, @SerialName("d") ov
  */
 @Serializable
 @SerialName(EventIntents.OpenForumsEvent.OPEN_FORUM_REPLY_DELETE_TYPE)
-public data class OpenForumReplyDelete(override val s: Long, @SerialName("d") override val data: OpenForumReplyData) : OpenForumReplyDispatch()
+public data class OpenForumReplyDelete(
+    override val id: String? = null,
+    override val s: Long,
+    @SerialName("d") override val data: OpenForumReplyData
+) : OpenForumReplyDispatch()
 
 
 /**

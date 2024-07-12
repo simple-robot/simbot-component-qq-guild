@@ -24,6 +24,7 @@ import love.forte.simbot.common.id.StringID.Companion.ID
 import love.forte.simbot.common.id.literal
 import love.forte.simbot.component.qguild.message.QGArk.Companion.byArk
 import love.forte.simbot.message.Messages
+import love.forte.simbot.qguild.api.message.GroupAndC2CSendBody
 import love.forte.simbot.qguild.message.buildArk
 import love.forte.simbot.qguild.model.Message
 import kotlin.jvm.JvmStatic
@@ -79,6 +80,33 @@ internal object ArkParser : SendingMessageParser {
         if (element is QGArk) {
             val realArk = element.toRealArk()
             builderContext.builderOrNew { it.ark == null }.ark = buildArk(realArk.templateId) { from(realArk) }
+        }
+    }
+
+    /**
+     * 文本消息应当能够与其他类型相融合，因此也接受 TEXT 类型
+     */
+    private fun isTextOrArk(type: Int) = when (type) {
+        GroupAndC2CSendBody.MSG_TYPE_ARK,
+        GroupAndC2CSendBody.MSG_TYPE_TEXT -> true
+        else -> false
+    }
+
+    override suspend fun invoke(
+        index: Int,
+        element: love.forte.simbot.message.Message.Element,
+        messages: Messages?,
+        builderContext: SendingMessageParser.GroupAndC2CBuilderContext
+    ) {
+        if (element is QGArk) {
+            val builder = builderContext.builderOrNew {
+                isTextOrArk(it.msgType) && it.ark == null
+            }.apply {
+                msgType = GroupAndC2CSendBody.MSG_TYPE_ARK
+            }
+
+            val realArk = element.toRealArk()
+            builder.ark = buildArk(realArk.templateId) { from(realArk) }
         }
     }
 }

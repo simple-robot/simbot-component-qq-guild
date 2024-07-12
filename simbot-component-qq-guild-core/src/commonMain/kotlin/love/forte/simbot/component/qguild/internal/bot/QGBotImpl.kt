@@ -33,10 +33,13 @@ import love.forte.simbot.component.qguild.QQGuildComponent
 import love.forte.simbot.component.qguild.bot.QGBot
 import love.forte.simbot.component.qguild.bot.config.QGBotComponentConfiguration
 import love.forte.simbot.component.qguild.channel.*
+import love.forte.simbot.component.qguild.group.QGGroup
+import love.forte.simbot.component.qguild.group.QGGroupRelation
 import love.forte.simbot.component.qguild.guild.QGGuild
 import love.forte.simbot.component.qguild.guild.QGGuildRelation
 import love.forte.simbot.component.qguild.internal.channel.*
 import love.forte.simbot.component.qguild.internal.event.QGBotStartedEventImpl
+import love.forte.simbot.component.qguild.internal.group.idGroup
 import love.forte.simbot.component.qguild.internal.guild.QGGuildImpl
 import love.forte.simbot.component.qguild.internal.guild.QGGuildImpl.Companion.qgGuild
 import love.forte.simbot.component.qguild.internal.guild.QGMemberImpl
@@ -44,6 +47,7 @@ import love.forte.simbot.component.qguild.internal.role.QGGuildRoleImpl
 import love.forte.simbot.component.qguild.internal.role.QGMemberRoleImpl
 import love.forte.simbot.component.qguild.internal.role.toGuildRole
 import love.forte.simbot.component.qguild.internal.role.toMemberRole
+import love.forte.simbot.component.qguild.message.QGMedia
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
 import love.forte.simbot.component.qguild.message.sendMessage
 import love.forte.simbot.event.EventDispatcher
@@ -55,6 +59,8 @@ import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.addStackTrace
 import love.forte.simbot.qguild.api.channel.GetChannelApi
 import love.forte.simbot.qguild.api.channel.GetGuildChannelListApi
+import love.forte.simbot.qguild.api.files.UploadGroupFilesApi
+import love.forte.simbot.qguild.api.files.UploadUserFilesApi
 import love.forte.simbot.qguild.api.guild.GetGuildApi
 import love.forte.simbot.qguild.api.member.GetMemberApi
 import love.forte.simbot.qguild.api.role.GetGuildRoleListApi
@@ -128,6 +134,13 @@ internal class QGBotImpl(
     override fun isMe(id: ID): Boolean {
         if (id == this.id) return true
         return ::botSelf.isInitialized && botSelf.id == id.literal
+    }
+
+    override val groupRelation: QGGroupRelation = GroupRelationImpl()
+
+    private inner class GroupRelationImpl : QGGroupRelation {
+        override suspend fun group(id: ID): QGGroup =
+            idGroup(this@QGBotImpl, id)
     }
 
     override val guildRelation: QGGuildRelation = GuildRelationImpl()
@@ -396,6 +409,25 @@ internal class QGBotImpl(
         }
     }
 
+    override suspend fun uploadGroupMedia(target: ID, url: String, type: Int): QGMedia {
+        val media = UploadGroupFilesApi.create(
+            openid = target.literal,
+            fileType = type,
+            url = url
+        ).requestDataBy(source)
+
+        return QGMedia(media)
+    }
+
+    override suspend fun uploadUserMedia(target: ID, url: String, type: Int): QGMedia {
+        val media = UploadUserFilesApi.create(
+            openid = target.literal,
+            fileType = type,
+            url = url
+        ).requestDataBy(source)
+
+        return QGMedia(media)
+    }
 
     private val isTransmitCacheable = cacheable && cacheConfig?.transmitCacheConfig?.enable == true
 

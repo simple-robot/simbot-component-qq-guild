@@ -116,6 +116,7 @@ public class QQGuildComponent : Component {
                 subclass(QGContentText.serializer())
                 subclass(QGReference.serializer())
                 subclass(QGEmbed.serializer())
+                subclass(QGMedia.serializer())
 
                 @Suppress("DEPRECATION")
                 subclass(QGAtChannel.serializer())
