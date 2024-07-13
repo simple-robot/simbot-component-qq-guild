@@ -1720,6 +1720,46 @@ public abstract class love/forte/simbot/component/qguild/message/QGGroupAndC2CMe
 	public abstract fun getSourceContent ()Ljava/lang/String;
 }
 
+public final class love/forte/simbot/component/qguild/message/QGMarkdown : love/forte/simbot/component/qguild/message/QGMessageElement {
+	public static final field Companion Llove/forte/simbot/component/qguild/message/QGMarkdown$Companion;
+	public static final fun byMarkdown (Llove/forte/simbot/qguild/model/Message$Markdown;)Llove/forte/simbot/component/qguild/message/QGMarkdown;
+	public final fun component1 ()Llove/forte/simbot/qguild/model/Message$Markdown;
+	public final fun copy (Llove/forte/simbot/qguild/model/Message$Markdown;)Llove/forte/simbot/component/qguild/message/QGMarkdown;
+	public static synthetic fun copy$default (Llove/forte/simbot/component/qguild/message/QGMarkdown;Llove/forte/simbot/qguild/model/Message$Markdown;ILjava/lang/Object;)Llove/forte/simbot/component/qguild/message/QGMarkdown;
+	public static final fun create (Ljava/lang/String;)Llove/forte/simbot/component/qguild/message/QGMarkdown;
+	public static final fun createByCustomTemplateId (Ljava/lang/String;)Llove/forte/simbot/component/qguild/message/QGMarkdown;
+	public static final fun createByCustomTemplateId (Ljava/lang/String;Llove/forte/simbot/qguild/model/Message$Markdown$Params;)Llove/forte/simbot/component/qguild/message/QGMarkdown;
+	public static final fun createByTemplateId (I)Llove/forte/simbot/component/qguild/message/QGMarkdown;
+	public static final fun createByTemplateId (ILlove/forte/simbot/qguild/model/Message$Markdown$Params;)Llove/forte/simbot/component/qguild/message/QGMarkdown;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMarkdown ()Llove/forte/simbot/qguild/model/Message$Markdown;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public synthetic class love/forte/simbot/component/qguild/message/QGMarkdown$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Llove/forte/simbot/component/qguild/message/QGMarkdown$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Llove/forte/simbot/component/qguild/message/QGMarkdown;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Llove/forte/simbot/component/qguild/message/QGMarkdown;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class love/forte/simbot/component/qguild/message/QGMarkdown$Companion {
+	public final fun byMarkdown (Llove/forte/simbot/qguild/model/Message$Markdown;)Llove/forte/simbot/component/qguild/message/QGMarkdown;
+	public final fun create (Ljava/lang/String;)Llove/forte/simbot/component/qguild/message/QGMarkdown;
+	public final fun createByCustomTemplateId (Ljava/lang/String;)Llove/forte/simbot/component/qguild/message/QGMarkdown;
+	public final fun createByCustomTemplateId (Ljava/lang/String;Llove/forte/simbot/qguild/model/Message$Markdown$Params;)Llove/forte/simbot/component/qguild/message/QGMarkdown;
+	public static synthetic fun createByCustomTemplateId$default (Llove/forte/simbot/component/qguild/message/QGMarkdown$Companion;Ljava/lang/String;Llove/forte/simbot/qguild/model/Message$Markdown$Params;ILjava/lang/Object;)Llove/forte/simbot/component/qguild/message/QGMarkdown;
+	public final fun createByTemplateId (I)Llove/forte/simbot/component/qguild/message/QGMarkdown;
+	public final fun createByTemplateId (ILlove/forte/simbot/qguild/model/Message$Markdown$Params;)Llove/forte/simbot/component/qguild/message/QGMarkdown;
+	public static synthetic fun createByTemplateId$default (Llove/forte/simbot/component/qguild/message/QGMarkdown$Companion;ILlove/forte/simbot/qguild/model/Message$Markdown$Params;ILjava/lang/Object;)Llove/forte/simbot/component/qguild/message/QGMarkdown;
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class love/forte/simbot/component/qguild/message/QGMedia : love/forte/simbot/component/qguild/message/QGMessageElement {
 	public static final field Companion Llove/forte/simbot/component/qguild/message/QGMedia$Companion;
 	public fun <init> (Llove/forte/simbot/qguild/model/MessageMedia;)V
