@@ -71,7 +71,9 @@ internal object MentionParser : SendingMessageParser {
                     // builderContext.builder.appendContent("<@${element.target}>")
                     // 嵌入文本使用格式：<qqbot-at-user id="" /> 协议：<@userid>即将弃用，请使用上述最新格式。
                     // see https://bot.q.qq.com/wiki/develop/api-v2/server-inter/message/trans/text-chain.html
-                    builderContext.builder.appendContent(toQQBotAtUser(element.target.literal))
+                    // TODO 2024-07-13 经测试，新格式尚无法使用
+//                    builderContext.builder.appendContent(toQQBotAtUser(element.target.literal))
+                    builderContext.builder.appendContent(toOldQQBotAtUser(element.target.literal))
                 }
             }
 
@@ -80,7 +82,9 @@ internal object MentionParser : SendingMessageParser {
                 // builderContext.builder.appendContent("@everyone")
                 // 嵌入文本使用格式：<qqbot-at-everyone /> 协议：@everyone即将弃用，请使用上述最新格式。
                 // see https://bot.q.qq.com/wiki/develop/api-v2/server-inter/message/trans/text-chain.html
-                builderContext.builder.appendContent(QQ_BOT_AT_EVERYONE)
+                // TODO 2024-07-13 经测试，新格式尚无法使用
+//                builderContext.builder.appendContent(QQ_BOT_AT_EVERYONE)
+                builderContext.builder.appendContent(OLD_QQ_BOT_AT_EVERYONE)
             }
 
             is QGAtChannel -> {
@@ -101,6 +105,7 @@ internal object MentionParser : SendingMessageParser {
                 // builderContext.builder.appendContent("<@${element.target}>")
                 // 嵌入文本使用格式：<qqbot-at-user id="" /> 协议：<@userid>即将弃用，请使用上述最新格式。
                 // see https://bot.q.qq.com/wiki/develop/api-v2/server-inter/message/trans/text-chain.html
+                // TODO 2024-07-13 群聊似乎不能解析at
                 builderContext.builder.content += toQQBotAtUser(element.target.literal)
             }
 
@@ -109,6 +114,7 @@ internal object MentionParser : SendingMessageParser {
                 // builderContext.builder.appendContent("@everyone")
                 // 嵌入文本使用格式：<qqbot-at-everyone /> 协议：@everyone即将弃用，请使用上述最新格式。
                 // see https://bot.q.qq.com/wiki/develop/api-v2/server-inter/message/trans/text-chain.html
+                // TODO 2024-07-13 群聊似乎不能解析at
                 builderContext.builder.content += QQ_BOT_AT_EVERYONE
             }
         }
