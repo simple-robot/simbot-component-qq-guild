@@ -321,3 +321,10 @@ internal const val QQ_BOT_AT_EVERYONE = "<qqbot-at-everyone />"
 
 internal fun toQQBotAtUser(id: String): String =
     "$QQ_BOT_AT_USER_PREFIX$id$QQ_BOT_AT_USER_SUFFIX"
+
+internal const val OLD_QQ_BOT_AT_USER_PREFIX = "<@"
+internal const val OLD_QQ_BOT_AT_USER_SUFFIX = ">"
+internal const val OLD_QQ_BOT_AT_EVERYONE = "@everyone"
+
+internal fun toOldQQBotAtUser(id: String): String =
+    "$OLD_QQ_BOT_AT_USER_PREFIX$id$OLD_QQ_BOT_AT_USER_SUFFIX"
