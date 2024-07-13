@@ -47,7 +47,7 @@ switcher-label: Java API 风格
 <tab title="Gradle(Kotlin DSL)" group-key="kts">
 
 ```Kotlin
-implementation("love.forte.simbot.component:simbot-component-qq-guild-stdlib:%version%")
+implementation("love.forte.simbot.component:simbot-component-qq-guild-stdlib:%qg-version%")
 ```
 
 <tip>
@@ -56,7 +56,7 @@ implementation("love.forte.simbot.component:simbot-component-qq-guild-stdlib:%ve
 那么你需要指定依赖的后缀为 `-jvm`。
 
 ```Kotlin
-implementation("love.forte.simbot.component:simbot-component-qq-guild-stdlib-jvm:%version%")
+implementation("love.forte.simbot.component:simbot-component-qq-guild-stdlib-jvm:%qg-version%")
 ```
 
 </tip>
@@ -65,7 +65,7 @@ implementation("love.forte.simbot.component:simbot-component-qq-guild-stdlib-jvm
 <tab title="Gradle(Groovy)" group-key="groovy">
 
 ```Groovy
-implementation 'love.forte.simbot.component:simbot-component-qq-guild-stdlib:%version%'
+implementation 'love.forte.simbot.component:simbot-component-qq-guild-stdlib:%qg-version%'
 ```
 
 <tip>
@@ -74,7 +74,7 @@ implementation 'love.forte.simbot.component:simbot-component-qq-guild-stdlib:%ve
 那么你需要指定依赖的后缀为 `-jvm`。
 
 ```Groovy
-implementation 'love.forte.simbot.component:simbot-component-qq-guild-stdlib-jvm:%version%'
+implementation 'love.forte.simbot.component:simbot-component-qq-guild-stdlib-jvm:%qg-version%'
 ```
 
 </tip>
@@ -87,7 +87,7 @@ implementation 'love.forte.simbot.component:simbot-component-qq-guild-stdlib-jvm
     <groupId>love.forte.simbot.component</groupId>
     <!-- Maven 需要添加 `-jvm` 后缀来选择使用 JVM 平台 -->
     <artifactId>simbot-component-qq-guild-stdlib-jvm</artifactId>
-    <version>%version%</version>
+    <version>%qg-version%</version>
 </dependency>
 ```
 

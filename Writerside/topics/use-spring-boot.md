@@ -50,7 +50,7 @@ simbot 核心库的版本尽量不要低于 `v%minimum-core-version%`，可前�
 // simbot4核心库
 implementation("love.forte.simbot:simbot-core-spring-boot-starter:%minimum-core-version%")
 // QQ频道组件库
-implementation("love.forte.simbot.component:simbot-component-qq-guild-core:%version%")
+implementation("love.forte.simbot.component:simbot-component-qq-guild-core:%qg-version%")
 ```
 
 <tip>
@@ -62,7 +62,7 @@ implementation("love.forte.simbot.component:simbot-component-qq-guild-core:%vers
 // simbot4核心库
 implementation("love.forte.simbot:simbot-core-spring-boot-starter:%minimum-core-version%")
 // QQ频道组件库
-implementation("love.forte.simbot.component:simbot-component-qq-guild-core-jvm:%version%")
+implementation("love.forte.simbot.component:simbot-component-qq-guild-core-jvm:%qg-version%")
 ```
 
 </tip>
@@ -74,7 +74,7 @@ implementation("love.forte.simbot.component:simbot-component-qq-guild-core-jvm:%
 // simbot4核心库
 implementation 'love.forte.simbot:simbot-core-spring-boot-starter:%minimum-core-version%'
 // QQ频道组件库
-implementation 'love.forte.simbot.component:simbot-component-qq-guild-core:%version%'
+implementation 'love.forte.simbot.component:simbot-component-qq-guild-core:%qg-version%'
 ```
 
 <tip>
@@ -86,7 +86,7 @@ implementation 'love.forte.simbot.component:simbot-component-qq-guild-core:%vers
 // simbot4核心库
 implementation 'love.forte.simbot:simbot-core-spring-boot-starter:%minimum-core-version%'
 // QQ频道组件库
-implementation 'love.forte.simbot.component:simbot-component-qq-guild-core-jvm:%version%'
+implementation 'love.forte.simbot.component:simbot-component-qq-guild-core-jvm:%qg-version%'
 ```
 
 </tip>
@@ -105,7 +105,7 @@ implementation 'love.forte.simbot.component:simbot-component-qq-guild-core-jvm:%
 <dependency>
     <groupId>love.forte.simbot.component</groupId>
     <artifactId>simbot-component-qq-guild-core-jvm</artifactId>
-    <version>%version%</version>
+    <version>%qg-version%</version>
 </dependency>
 ```
 

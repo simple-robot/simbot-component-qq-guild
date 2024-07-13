@@ -211,7 +211,7 @@ implementation 'io.ktor:ktor-client-darwin:$ktor_version'
 <tab title="Gradle(Kotlin DSL)" group-key="kts">
 
 ```Kotlin
-implementation("love.forte.simbot.component:%module%:%version%")
+implementation("love.forte.simbot.component:%module%:%qg-version%")
 ```
 
 <tip>
@@ -220,7 +220,7 @@ implementation("love.forte.simbot.component:%module%:%version%")
 那么你需要指定依赖的后缀为 `-jvm`。
 
 ```Kotlin
-implementation("love.forte.simbot.component:%module-jvm%:%version%")
+implementation("love.forte.simbot.component:%module-jvm%:%qg-version%")
 ```
 
 </tip>
@@ -229,7 +229,7 @@ implementation("love.forte.simbot.component:%module-jvm%:%version%")
 <tab title="Gradle(Groovy)" group-key="groovy">
 
 ```Groovy
-implementation 'love.forte.simbot.component:%module%:%version%'
+implementation 'love.forte.simbot.component:%module%:%qg-version%'
 ```
 
 <tip>
@@ -238,7 +238,7 @@ implementation 'love.forte.simbot.component:%module%:%version%'
 那么你需要指定依赖的后缀为 `-jvm`。
 
 ```Groovy
-implementation 'love.forte.simbot.component:%module-jvm%:%version%'
+implementation 'love.forte.simbot.component:%module-jvm%:%qg-version%'
 ```
 
 </tip>
@@ -250,7 +250,7 @@ implementation 'love.forte.simbot.component:%module-jvm%:%version%'
 <dependency>
     <groupId>love.forte.simbot.component</groupId>
     <artifactId>%module-jvm%</artifactId>
-    <version>%version%</version>
+    <version>%qg-version%</version>
 </dependency>
 ```
 
