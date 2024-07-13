@@ -182,6 +182,7 @@ public object MessageParsers {
         add(ImageParser)
         add(ReferenceParser)
         add(MediaParser)
+        add(MarkdownParser)
     }
 
     @ExperimentalQGApi
