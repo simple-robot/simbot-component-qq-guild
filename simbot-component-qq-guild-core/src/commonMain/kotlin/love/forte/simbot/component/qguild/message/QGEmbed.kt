@@ -83,4 +83,7 @@ internal object EmbedParser : SendingMessageParser {
             builderContext.nextMustBeNew()
         }
     }
+
+    // TODO Embed暂不不支持 GroupAndC2C
+
 }

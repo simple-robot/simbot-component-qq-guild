@@ -6,6 +6,8 @@ switcher-label: Java API 风格
 
 # 使用 Spring Boot
 
+<include from="snippets.md" element-id="to-main-doc" />
+
 
 <tldr>
 <p>使用 <control>核心库(core 模块)</control> 配合 simbot4 Spring Boot starter 来将QQ频道组件作为 simbot4 的组件之一应用在 <code>Spring Boot 3</code> 中。</p>
@@ -50,7 +52,7 @@ simbot 核心库的版本尽量不要低于 `v%minimum-core-version%`，可前�
 // simbot4核心库
 implementation("love.forte.simbot:simbot-core-spring-boot-starter:%minimum-core-version%")
 // QQ频道组件库
-implementation("love.forte.simbot.component:simbot-component-qq-guild-core:%version%")
+implementation("love.forte.simbot.component:simbot-component-qq-guild-core:%qg-version%")
 ```
 
 <tip>
@@ -62,7 +64,7 @@ implementation("love.forte.simbot.component:simbot-component-qq-guild-core:%vers
 // simbot4核心库
 implementation("love.forte.simbot:simbot-core-spring-boot-starter:%minimum-core-version%")
 // QQ频道组件库
-implementation("love.forte.simbot.component:simbot-component-qq-guild-core-jvm:%version%")
+implementation("love.forte.simbot.component:simbot-component-qq-guild-core-jvm:%qg-version%")
 ```
 
 </tip>
@@ -74,7 +76,7 @@ implementation("love.forte.simbot.component:simbot-component-qq-guild-core-jvm:%
 // simbot4核心库
 implementation 'love.forte.simbot:simbot-core-spring-boot-starter:%minimum-core-version%'
 // QQ频道组件库
-implementation 'love.forte.simbot.component:simbot-component-qq-guild-core:%version%'
+implementation 'love.forte.simbot.component:simbot-component-qq-guild-core:%qg-version%'
 ```
 
 <tip>
@@ -86,7 +88,7 @@ implementation 'love.forte.simbot.component:simbot-component-qq-guild-core:%vers
 // simbot4核心库
 implementation 'love.forte.simbot:simbot-core-spring-boot-starter:%minimum-core-version%'
 // QQ频道组件库
-implementation 'love.forte.simbot.component:simbot-component-qq-guild-core-jvm:%version%'
+implementation 'love.forte.simbot.component:simbot-component-qq-guild-core-jvm:%qg-version%'
 ```
 
 </tip>
@@ -105,7 +107,7 @@ implementation 'love.forte.simbot.component:simbot-component-qq-guild-core-jvm:%
 <dependency>
     <groupId>love.forte.simbot.component</groupId>
     <artifactId>simbot-component-qq-guild-core-jvm</artifactId>
-    <version>%version%</version>
+    <version>%qg-version%</version>
 </dependency>
 ```
 

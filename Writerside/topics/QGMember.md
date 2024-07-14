@@ -6,6 +6,8 @@ switcher-label: Java API 风格
 
 # 频道成员 QGMember
 
+<include from="snippets.md" element-id="to-main-doc" />
+
 频道成员，即 `Member`，存在于频道服务器(`Guild`)中。
 
 

@@ -47,6 +47,26 @@ internal object ContentParser : SendingMessageParser {
             }
         }
     }
+
+    override suspend fun invoke(
+        index: Int,
+        element: love.forte.simbot.message.Message.Element,
+        messages: Messages?,
+        builderContext: SendingMessageParser.GroupAndC2CBuilderContext
+    ) {
+        fun builder() = builderContext.builder
+
+        when (element) {
+            is Text -> {
+                // 转义为无内嵌格式的文本
+                builder().content += ContentTextEncoder.encode(element.text)
+            }
+
+            is QGContentText -> {
+                builder().content += element.content
+            }
+        }
+    }
 }
 
 /**
@@ -73,39 +93,105 @@ internal object FaceParser : SendingMessageParser {
             builderContext.builder.appendContent("$EMOJI_PREFIX$id$EMOJI_SUFFIX")
         }
     }
+
+    override suspend fun invoke(
+        index: Int,
+        element: love.forte.simbot.message.Message.Element,
+        messages: Messages?,
+        builderContext: SendingMessageParser.GroupAndC2CBuilderContext
+    ) {
+        if (element is Face) {
+            val builder = builderContext.builder
+
+            val id = element.id.literal
+            builder.content += "$EMOJI_PREFIX$id$EMOJI_SUFFIX"
+        }
+    }
 }
 
 
 internal object QGMessageParser : ReceivingMessageParser {
     private const val AT_USER_VALUE = "uv"
     private const val AT_EVERYONE_GROUP = "all"
+    // 2024-07-13 兼容之前的两个写法解析：因为好像内容还没变
+    private const val AT_USER_OLD_VALUE = "uvold"
+    private const val AT_EVERYONE_OLD_GROUP = "allold"
+
     private const val MENTION_CHANNEL_VALUE = "cv"
     private const val EMOJI_VALUE = "ev"
+//
+//    private val replaceRegex = Regex(
+//        "<@!?(?<$AT_USER_VALUE>\\d+)>" +
+//                "|(?<$AT_EVERYONE_GROUP>@everyone)" +
+//                "|<#(?<$MENTION_CHANNEL_VALUE>\\d+)>" +
+//                "|<emoji:(?<$EMOJI_VALUE>\\d+)>"
+//    )
+//
+//    private val replaceWithoutMentionAllRegex = Regex(
+//        "<@!?(?<$AT_USER_VALUE>\\d+)>" +
+//                "|<#(?<$MENTION_CHANNEL_VALUE>\\d+)>" +
+//                "|<emoji:(?<$EMOJI_VALUE>\\d+)>"
+//    )
+
+    /*
+     * 嵌入文本使用格式：<qqbot-at-user id="" /> 协议：<@userid>即将弃用，请使用上述最新格式。
+     * 嵌入文本使用格式：<qqbot-at-everyone /> 协议：@everyone即将弃用，请使用上述最新格式。
+     */
 
     private val replaceRegex = Regex(
-        "<@!?(?<$AT_USER_VALUE>\\d+)>" +
-                "|(?<$AT_EVERYONE_GROUP>@everyone)" +
+        "<qqbot-at-user +id=\"(?<$AT_USER_VALUE>[.a-zA-Z0-9_-]+)\" */>" +
+                "|(?<$AT_EVERYONE_GROUP><qqbot-at-everyone */>)" +
                 "|<#(?<$MENTION_CHANNEL_VALUE>\\d+)>" +
-                "|<emoji:(?<$EMOJI_VALUE>\\d+)>"
+                "|<emoji:(?<$EMOJI_VALUE>\\d+)>" +
+                // 兼容之前的两个写法解析
+                "|<@!?(?<$AT_USER_OLD_VALUE>\\d+)>" +
+                "|(?<$AT_EVERYONE_OLD_GROUP>@everyone)"
     )
 
     private val replaceWithoutMentionAllRegex = Regex(
-        "<@!?(?<$AT_USER_VALUE>\\d+)>" +
+        "<qqbot-at-user +id=\"(?<$AT_USER_VALUE>[.a-zA-Z0-9_-]+)\" */>" +
                 "|<#(?<$MENTION_CHANNEL_VALUE>\\d+)>" +
-                "|<emoji:(?<$EMOJI_VALUE>\\d+)>"
+                "|<emoji:(?<$EMOJI_VALUE>\\d+)>" +
+                // 兼容之前的两个写法解析
+                "|<@!?(?<$AT_USER_OLD_VALUE>\\d+)>"
     )
 
+    override fun invoke(qgContent: String, context: ReceivingMessageParser.Context): ReceivingMessageParser.Context {
+        return invoke0(qgContent, null, context)
+    }
 
     override fun invoke(qgMessage: Message, context: ReceivingMessageParser.Context): ReceivingMessageParser.Context {
-        val contentText = qgMessage.content
-        val isMentionEveryone = qgMessage.mentionEveryone
+        return invoke0(qgMessage.content, qgMessage, context)
+    }
+
+
+    private inline fun resolveAttachments(attachments: List<Message.Attachment>, block: (QGAttachmentMessage) -> Unit) {
+        attachments.forEach {
+            block(it.toMessage())
+        }
+    }
+
+    private fun invoke0(
+        content: String,
+        qgMessage: Message?,
+        context: ReceivingMessageParser.Context
+    ): ReceivingMessageParser.Context {
+        val isMentionEveryone = qgMessage?.mentionEveryone
+        val maybeMentionEveryone = isMentionEveryone != false
 
         var match: MatchResult? =
-            (if (isMentionEveryone) replaceRegex else replaceWithoutMentionAllRegex).find(contentText)
+            // null or true
+            (if (maybeMentionEveryone) replaceRegex else replaceWithoutMentionAllRegex).find(content)
+
 
         if (match == null) {
-            context.plainTextBuilder.append(ContentTextDecoder.decode(contentText))
-            context.messages += QGContentText(contentText)
+            context.plainTextBuilder.append(ContentTextDecoder.decode(content))
+            context.messages += QGContentText(content)
+            context.attachments?.also {
+                resolveAttachments(it) { attachment ->
+                    context.messages += attachment
+                }
+            }
             return context
         }
 
@@ -142,16 +228,22 @@ internal object QGMessageParser : ReceivingMessageParser {
         }
 
         var lastStart = 0
-        val length = contentText.length
+        val length = content.length
         do {
             val foundMatch = match!!
 
-            appendText(contentText, lastStart, foundMatch.range.first)
+            appendText(content, lastStart, foundMatch.range.first)
             //region match transform
             kotlin.run {
                 val groups = foundMatch.groups
 
                 groups[AT_USER_VALUE]?.also { atUserValue ->
+                    flushText()
+                    messageList.add(At(atUserValue.value.ID, originContent = toQQBotAtUser(atUserValue.value)))
+                    return@run
+                }
+                // 兼容旧的
+                groups[AT_USER_OLD_VALUE]?.also { atUserValue ->
                     flushText()
                     messageList.add(At(atUserValue.value.ID, originContent = "<@${atUserValue.value}>"))
                     return@run
@@ -169,8 +261,13 @@ internal object QGMessageParser : ReceivingMessageParser {
                     return@run
                 }
 
-                if (isMentionEveryone) {
+                if (maybeMentionEveryone) {
                     groups[AT_EVERYONE_GROUP]?.also {
+                        flushText()
+                        messageList.add(AtAll)
+                        return@run
+                    }
+                    groups[AT_EVERYONE_OLD_GROUP]?.also {
                         flushText()
                         messageList.add(AtAll)
                         return@run
@@ -192,24 +289,42 @@ internal object QGMessageParser : ReceivingMessageParser {
         } while (lastStart < length && match != null)
 
         if (lastStart < length) {
-            appendText(contentText, lastStart, contentText.length)
+            appendText(content, lastStart, content.length)
         }
 
         // end flush
         flushText()
 
         // ark
-        qgMessage.ark?.toMessage()?.also { messageList.add(it) }
+        qgMessage?.ark?.toMessage()?.also { messageList.add(it) }
 
         // attachments
-        qgMessage.attachments.mapTo(messageList) { it.toMessage() }
+        context.attachments?.mapTo(messageList) { it.toMessage() }
 
         // TODO embeds?
-
         // reference
-        qgMessage.messageReference?.also { messageList.add(it.toMessage()) }
+        qgMessage?.messageReference?.also { messageList.add(it.toMessage()) }
 
         context.messages += messageList
         return context
     }
 }
+
+/*
+ * 嵌入文本使用格式：<qqbot-at-user id="" /> 协议：<@userid>即将弃用，请使用上述最新格式。
+ * 嵌入文本使用格式：<qqbot-at-everyone /> 协议：@everyone即将弃用，请使用上述最新格式。
+ */
+
+internal const val QQ_BOT_AT_USER_PREFIX = "<qqbot-at-user id=\""
+internal const val QQ_BOT_AT_USER_SUFFIX = "\" />"
+internal const val QQ_BOT_AT_EVERYONE = "<qqbot-at-everyone />"
+
+internal fun toQQBotAtUser(id: String): String =
+    "$QQ_BOT_AT_USER_PREFIX$id$QQ_BOT_AT_USER_SUFFIX"
+
+internal const val OLD_QQ_BOT_AT_USER_PREFIX = "<@"
+internal const val OLD_QQ_BOT_AT_USER_SUFFIX = ">"
+internal const val OLD_QQ_BOT_AT_EVERYONE = "@everyone"
+
+internal fun toOldQQBotAtUser(id: String): String =
+    "$OLD_QQ_BOT_AT_USER_PREFIX$id$OLD_QQ_BOT_AT_USER_SUFFIX"

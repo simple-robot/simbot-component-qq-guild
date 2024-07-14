@@ -6,6 +6,8 @@ switcher-label: Java API 风格
 
 # 频道 QGGuild
 
+<include from="snippets.md" element-id="to-main-doc" />
+
 ## API模块中的Guild {id='guild-in-api'}
 
 API模块中部分用于获取频道信息的API中会返回一些与 `Guild` 相关的数据类型。

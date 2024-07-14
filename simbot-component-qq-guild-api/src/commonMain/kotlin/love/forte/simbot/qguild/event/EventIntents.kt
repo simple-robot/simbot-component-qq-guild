@@ -313,6 +313,81 @@ public sealed class EventIntents {
 
     /**
      * ```
+     * GROUP_AND_C2C_EVENT (1 << 25)
+     *   - C2C_MESSAGE_CREATE      // 用户单聊发消息给机器人时候
+     *   - FRIEND_ADD              // 用户添加使用机器人
+     *   - FRIEND_DEL              // 用户删除机器人
+     *   - C2C_MSG_REJECT          // 用户在机器人资料卡手动关闭"主动消息"推送
+     *   - C2C_MSG_RECEIVE         // 用户在机器人资料卡手动开启"主动消息"推送开关
+     *   - GROUP_AT_MESSAGE_CREATE // 用户在群里@机器人时收到的消息
+     *   - GROUP_ADD_ROBOT         // 机器人被添加到群聊
+     *   - GROUP_DEL_ROBOT         // 机器人被移出群聊
+     *   - GROUP_MSG_REJECT        // 群管理员主动在机器人资料页操作关闭通知
+     *   - GROUP_MSG_RECEIVE       // 群管理员主动在机器人资料页操作开启通知
+     * ```
+     */
+    public data object GroupAndC2CEvent : EventIntents() {
+        /** C2C群聊相关事件 `intents` */
+        @get:JvmStatic
+        @get:JvmName("getIntents")
+        public val intents: Intents = Intents(1 shl 25)
+
+        override val intentsValue: Int
+            get() = intents.value
+
+        /**
+         * 用户单聊发消息给机器人时候
+         */
+        public const val C2C_MESSAGE_CREATE_TYPE: String = "C2C_MESSAGE_CREATE"
+
+        /**
+         * 用户添加使用机器人
+         */
+        public const val FRIEND_ADD_TYPE: String = "FRIEND_ADD"
+
+        /**
+         * 用户删除机器人
+         */
+        public const val FRIEND_DEL_TYPE: String = "FRIEND_DEL"
+
+        /**
+         * 用户在机器人资料卡手动关闭"主动消息"推送
+         */
+        public const val C2C_MSG_REJECT_TYPE: String = "C2C_MSG_REJECT"
+
+        /**
+         * 用户在机器人资料卡手动开启"主动消息"推送开关
+         */
+        public const val C2C_MSG_RECEIVE_TYPE: String = "C2C_MSG_RECEIVE"
+
+        /**
+         * 用户在群里@机器人时收到的消息
+         */
+        public const val GROUP_AT_MESSAGE_CREATE_TYPE: String = "GROUP_AT_MESSAGE_CREATE"
+
+        /**
+         * 机器人被添加到群聊
+         */
+        public const val GROUP_ADD_ROBOT_TYPE: String = "GROUP_ADD_ROBOT"
+
+        /**
+         * 机器人被移出群聊
+         */
+        public const val GROUP_DEL_ROBOT_TYPE: String = "GROUP_DEL_ROBOT"
+
+        /**
+         * 群管理员主动在机器人资料页操作关闭通知
+         */
+        public const val GROUP_MSG_REJECT_TYPE: String = "GROUP_MSG_REJECT"
+
+        /**
+         * 群管理员主动在机器人资料页操作开启通知
+         */
+        public const val GROUP_MSG_RECEIVE_TYPE: String = "GROUP_MSG_RECEIVE"
+    }
+
+    /**
+     * ```
      * INTERACTION (1 << 26)
      *   - INTERACTION_CREATE     // 互动事件创建时
      * ```
@@ -493,6 +568,7 @@ public val EventIntentsInstances: Array<EventIntents> = arrayOf(
     DirectMessage,
     OpenForumsEvent,
     AudioOrLiveChannelMember,
+    GroupAndC2CEvent,
     Interaction,
     MessageAudit,
     ForumsEvent,
@@ -505,7 +581,11 @@ public val EventIntentsInstances: Array<EventIntents> = arrayOf(
  */
 @Serializable
 @SerialName(READY_TYPE)
-public data class Ready(override val s: Long, @SerialName("d") override val data: Data) : Signal.Dispatch() {
+public data class Ready(
+    override val id: String? = null,
+    override val s: Long,
+    @SerialName("d") override val data: Data
+) : Signal.Dispatch() {
     /**
      * [Ready] 的事件内容
      */
@@ -526,5 +606,9 @@ public data class Ready(override val s: Long, @SerialName("d") override val data
  */
 @Serializable
 @SerialName(RESUMED_TYPE)
-public data class Resumed(override val s: Long, @SerialName("d") override val data: String) : Signal.Dispatch()
+public data class Resumed(
+    override val id: String? = null,
+    override val s: Long,
+    @SerialName("d") override val data: String
+) : Signal.Dispatch()
 

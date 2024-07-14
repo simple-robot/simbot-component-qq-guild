@@ -1,5 +1,7 @@
 # Ark消息
 
+<include from="snippets.md" element-id="to-main-doc" />
+
 QQ频道中有一些针对 `Ark消息` 的API。
 
 

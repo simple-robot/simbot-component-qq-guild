@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -92,7 +92,11 @@ public sealed class ForumThreadDispatch : ForumDispatch() {
  */
 @Serializable
 @SerialName(EventIntents.ForumsEvent.FORUM_THREAD_CREATE_TYPE)
-public data class ForumThreadCreate(override val s: Long, @SerialName("d") override val data: Thread) : ForumThreadDispatch()
+public data class ForumThreadCreate(
+    override val id: String? = null,
+    override val s: Long,
+    @SerialName("d") override val data: Thread
+) : ForumThreadDispatch()
 
 /**
  * 主题更新事件。
@@ -102,7 +106,11 @@ public data class ForumThreadCreate(override val s: Long, @SerialName("d") overr
  */
 @Serializable
 @SerialName(EventIntents.ForumsEvent.FORUM_THREAD_UPDATE_TYPE)
-public data class ForumThreadUpdate(override val s: Long, @SerialName("d") override val data: Thread) : ForumThreadDispatch()
+public data class ForumThreadUpdate(
+    override val id: String? = null,
+    override val s: Long,
+    @SerialName("d") override val data: Thread
+) : ForumThreadDispatch()
 
 /**
  * 主题删除事件。
@@ -112,7 +120,11 @@ public data class ForumThreadUpdate(override val s: Long, @SerialName("d") overr
  */
 @Serializable
 @SerialName(EventIntents.ForumsEvent.FORUM_THREAD_DELETE_TYPE)
-public data class ForumThreadDelete(override val s: Long, @SerialName("d") override val data: Thread) : ForumThreadDispatch()
+public data class ForumThreadDelete(
+    override val id: String? = null,
+    override val s: Long,
+    @SerialName("d") override val data: Thread
+) : ForumThreadDispatch()
 
 
 /**
@@ -135,7 +147,11 @@ public sealed class ForumPostDispatch : ForumDispatch() {
  */
 @Serializable
 @SerialName(EventIntents.ForumsEvent.FORUM_POST_CREATE_TYPE)
-public data class ForumPostCreate(override val s: Long, @SerialName("d") override val data: Post) : ForumPostDispatch()
+public data class ForumPostCreate(
+    override val id: String? = null,
+    override val s: Long,
+    @SerialName("d") override val data: Post
+) : ForumPostDispatch()
 
 /**
  * 帖子删除事件
@@ -145,7 +161,11 @@ public data class ForumPostCreate(override val s: Long, @SerialName("d") overrid
  */
 @Serializable
 @SerialName(EventIntents.ForumsEvent.FORUM_POST_DELETE_TYPE)
-public data class ForumPostDelete(override val s: Long, @SerialName("d") override val data: Post) : ForumPostDispatch()
+public data class ForumPostDelete(
+    override val id: String? = null,
+    override val s: Long,
+    @SerialName("d") override val data: Post
+) : ForumPostDispatch()
 
 
 /**
@@ -168,7 +188,11 @@ public sealed class ForumReplyDispatch : ForumDispatch() {
  */
 @Serializable
 @SerialName(EventIntents.ForumsEvent.FORUM_REPLY_CREATE_TYPE)
-public data class ForumReplyCreate(override val s: Long, @SerialName("d") override val data: Reply) : ForumReplyDispatch()
+public data class ForumReplyCreate(
+    override val id: String? = null,
+    override val s: Long,
+    @SerialName("d") override val data: Reply
+) : ForumReplyDispatch()
 
 /**
  * 回复删除事件
@@ -178,7 +202,11 @@ public data class ForumReplyCreate(override val s: Long, @SerialName("d") overri
  */
 @Serializable
 @SerialName(EventIntents.ForumsEvent.FORUM_REPLY_DELETE_TYPE)
-public data class ForumReplyDelete(override val s: Long, @SerialName("d") override val data: Reply) : ForumReplyDispatch()
+public data class ForumReplyDelete(
+    override val id: String? = null,
+    override val s: Long,
+    @SerialName("d") override val data: Reply
+) : ForumReplyDispatch()
 
 /**
  * 帖子审核事件
@@ -187,4 +215,8 @@ public data class ForumReplyDelete(override val s: Long, @SerialName("d") overri
  */
 @Serializable
 @SerialName(EventIntents.ForumsEvent.FORUM_PUBLISH_AUDIT_RESULT_TYPE)
-public data class ForumPublishAuditResult(override val s: Long, @SerialName("d") override val data: AuditResult) : ForumDispatch()
+public data class ForumPublishAuditResult(
+    override val id: String? = null,
+    override val s: Long,
+    @SerialName("d") override val data: AuditResult
+) : ForumDispatch()

@@ -17,6 +17,7 @@
 
 package love.forte.simbot.component.qguild.internal.bot
 
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import love.forte.simbot.common.id.StringID.Companion.ID
@@ -143,8 +144,44 @@ internal fun QGBotImpl.registerEventProcessor(): DisposableHandle {
 
 
             // 消息
+            /// 频道
             is AtMessageCreate -> {
                 pushEvent { QGAtMessageCreateEventImpl(bot, raw, event.data) }
+            }
+            /// 群&单聊
+            is GroupAtMessageCreate -> {
+                pushEvent { QGGroupAtMessageCreateEventImpl(bot, raw, event) }
+            }
+
+            is C2CMessageCreate -> {
+                pushEvent { QGC2CMessageCreateEventImpl(bot, raw, event) }
+            }
+
+            // 群聊：managements
+            is GroupAddRobot -> {
+                pushEvent { QGGroupAddRobotEventImpl(event.id, bot, raw, event.data) }
+            }
+            is GroupDelRobot -> {
+                pushEvent { QGGroupDelRobotEventImpl(event.id, bot, raw, event.data) }
+            }
+            is GroupMsgReject -> {
+                pushEvent { QGGroupMsgRejectEventImpl(event.id, bot, raw, event.data) }
+            }
+            is GroupMsgReceive -> {
+                pushEvent { QGGroupMsgReceiveEventImpl(event.id, bot, raw, event.data) }
+            }
+            // C2C: managements
+            is FriendAdd -> {
+                pushEvent { QGFriendAddEventImpl(event.id, bot, raw, event.data) }
+            }
+            is FriendDel -> {
+                pushEvent { QGFriendDelEventImpl(event.id, bot, raw, event.data) }
+            }
+            is C2CMsgReject -> {
+                pushEvent { QGC2CMsgRejectEventImpl(event.id, bot, raw, event.data) }
+            }
+            is C2CMsgReceive -> {
+                pushEvent { QGC2CMsgReceiveEventImpl(event.id, bot, raw, event.data) }
             }
 
             // OpenForum
@@ -182,11 +219,14 @@ internal fun QGBotImpl.registerEventProcessor(): DisposableHandle {
 }
 
 
-private inline fun QGBotImpl.pushEvent(crossinline block: () -> Event) {
-    launch {
+private inline fun QGBotImpl.pushEvent(crossinline block: () -> Event): Job {
+    return launch {
         val event = block()
-        eventDispatcher.push(event)
-            .onEachError { e -> logger.error("Event {} process failed: {}", event, e, e.content) }
+        eventDispatcher
+            .push(event)
+            .onEachError { e ->
+                logger.error("Event {} process failed: {}", event, e, e.content)
+            }
             .collect()
     }
 }

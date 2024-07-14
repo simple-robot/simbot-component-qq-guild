@@ -4,6 +4,8 @@ switcher-label: Java API 风格
 
 # 论坛 QGForum
 
+<include from="snippets.md" element-id="to-main-doc" />
+
 QQ频道中有一些针对 `论坛子频道` 的API。([参考文档](https://bot.q.qq.com/wiki/develop/api/openapi/forum/model.html#thread))
 
 

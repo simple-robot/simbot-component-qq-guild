@@ -2,6 +2,7 @@ public abstract interface class love/forte/simbot/qguild/stdlib/Bot : kotlinx/co
 	public fun asFuture ()Ljava/util/concurrent/CompletableFuture;
 	public fun cancel ()V
 	public abstract fun cancel (Ljava/lang/Throwable;)V
+	public abstract fun getAccessToken ()Ljava/lang/String;
 	public abstract fun getApiClient ()Lio/ktor/client/HttpClient;
 	public abstract fun getApiDecoder ()Lkotlinx/serialization/json/Json;
 	public abstract fun getApiServer ()Lio/ktor/http/Url;
@@ -90,6 +91,7 @@ public final class love/forte/simbot/qguild/stdlib/BotFactory {
 
 public final class love/forte/simbot/qguild/stdlib/BotRequests {
 	public static final fun botToken (Llove/forte/simbot/qguild/stdlib/Bot;)Ljava/lang/String;
+	public static final fun qqBotToken (Llove/forte/simbot/qguild/stdlib/Bot;)Ljava/lang/String;
 	public static final synthetic fun request (Llove/forte/simbot/qguild/stdlib/Bot;Llove/forte/simbot/qguild/api/QQGuildApi;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun requestAsync (Llove/forte/simbot/qguild/stdlib/Bot;Llove/forte/simbot/qguild/api/QQGuildApi;)Ljava/util/concurrent/CompletableFuture;
 	public static final fun requestAsync (Llove/forte/simbot/qguild/stdlib/Bot;Llove/forte/simbot/qguild/api/QQGuildApi;Lkotlinx/coroutines/CoroutineScope;)Ljava/util/concurrent/CompletableFuture;

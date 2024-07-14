@@ -189,7 +189,7 @@ public class MessageSendApi private constructor(
          * 选填，引用消息
          */
         @SerialName("message_reference")
-        @IgnoreWhenUseImageFormData // TODO 疑似不支持使用form转json发送，暂时忽略
+        @IgnoreWhenUseFormData // TODO 疑似不支持使用form转json发送，暂时忽略
         public val messageReference: Message.Reference?,
         /**
          * 选填，图片url地址，平台会转存该图片，用于下发图片消息
@@ -482,14 +482,14 @@ public expect fun FormBuilder.resolveOther(fileImage: Any?)
 
 
 @OptIn(ExperimentalSerializationApi::class)
-private class FormDataDecoder(
+internal class FormDataDecoder(
     override val serializersModule: SerializersModule,
     private val json: Json,
     private val formBuilder: FormBuilder,
 ) : Encoder, CompositeEncoder {
 
     private inline fun check(descriptor: SerialDescriptor, index: Int, block: () -> Unit) {
-        if (descriptor.getElementAnnotations(index).any { it is IgnoreWhenUseImageFormData }) {
+        if (descriptor.getElementAnnotations(index).any { it is IgnoreWhenUseFormData }) {
             return
         }
 
@@ -644,4 +644,4 @@ private class FormDataDecoder(
 @OptIn(ExperimentalSerializationApi::class)
 @MetaSerializable
 @Target(AnnotationTarget.PROPERTY)
-private annotation class IgnoreWhenUseImageFormData
+internal annotation class IgnoreWhenUseFormData

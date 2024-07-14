@@ -4,6 +4,8 @@ switcher-label: Java API 风格
 
 <var name="jr" value="Reactor"/>
 
+<include from="snippets.md" element-id="to-main-doc" />
+
 # API
 
 ## API模块 {id='api-module'}

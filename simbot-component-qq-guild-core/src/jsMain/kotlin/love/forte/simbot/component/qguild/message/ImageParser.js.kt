@@ -26,3 +26,10 @@ internal actual fun processOfflineImage0(
     messages: Messages?,
     builderContext: SendingMessageParser.BuilderContext
 ): Boolean = false
+
+internal actual suspend fun processOfflineImage0(
+    index: Int,
+    element: OfflineImage,
+    messages: Messages?,
+    builderContext: SendingMessageParser.GroupAndC2CBuilderContext
+): Boolean = false

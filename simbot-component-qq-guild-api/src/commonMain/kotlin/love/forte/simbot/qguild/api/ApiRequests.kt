@@ -43,20 +43,30 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.jvm.JvmMultifileClass
 import kotlin.jvm.JvmName
+import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmSynthetic
 
 /**
+ * 格式值："BOT_APPID", 机器人 AppID
+ */
+public const val X_UNION_APPID_HEADER: String = "X-Union-Appid"
+
+/**
  * 使用 [client] 向当前目标 API [QQGuildApi] 发起请求。
+ *
+ * see [鉴权方式](https://bot.q.qq.com/wiki/develop/api-v2/dev-prepare/interface-framework/api-use.html#鉴权方式)
  *
  * @param server 如果不为 null 则会取 [server] 中的 [Url.protocol]、[Url.hostWithPort]
  * 替换 [QQGuildApi.url] 中提供的值。
  *
  */
 @JvmSynthetic
+@JvmOverloads // 二进制兼容
 public suspend fun <R : Any> QQGuildApi<R>.request(
     client: HttpClient,
-    token: String,
-    server: Url? = null
+    token: String? = null,
+    server: Url? = null,
+    appId: String? = null,
 ): HttpResponse {
     val api = this
 
@@ -64,7 +74,9 @@ public suspend fun <R : Any> QQGuildApi<R>.request(
         method = api.method
 
         headers {
-            this[HttpHeaders.Authorization] = token
+            token?.also { this[HttpHeaders.Authorization] = it }
+            appId?.also { this[X_UNION_APPID_HEADER] = it }
+
             with(api.headers) {
                 if (!isEmpty()) {
                     appendAll(api.headers)
@@ -127,15 +139,21 @@ public suspend fun <R : Any> QQGuildApi<R>.request(
 @OptIn(ExperimentalContracts::class)
 public suspend inline fun <R : Any> QQGuildApi<R>.requestText(
     client: HttpClient,
-    token: String,
-    server: Url = QQGuild.URL,
+    token: String?,
+    server: Url? = QQGuild.URL,
+    appId: String? = null,
     useResp: (HttpResponse) -> Unit = {}
 ): String {
     contract {
         callsInPlace(useResp, InvocationKind.EXACTLY_ONCE)
     }
 
-    val resp = request(client, token, server)
+    val resp = request(
+        client = client,
+        token = token,
+        server = server,
+        appId = appId
+    )
     useResp(resp)
 
     val text = resp.bodyAsText()
@@ -175,14 +193,16 @@ public suspend inline fun <R : Any> QQGuildApi<R>.requestText(
  * @see ErrInfo
  */
 @JvmSynthetic
+@JvmOverloads
 public suspend fun <R : Any> QQGuildApi<R>.requestData(
     client: HttpClient,
-    token: String,
-    server: Url = QQGuild.URL,
+    token: String?,
+    server: Url? = QQGuild.URL,
     decoder: Json = QQGuild.DefaultJson,
+    appId: String? = null,
 ): R {
     val resp: HttpResponse
-    val text = requestText(client, token, server) { resp = it }
+    val text = requestText(client, token, server, appId) { resp = it }
 
     checkStatus(text, QQGuild.DefaultJson, resp.status, resp)
 

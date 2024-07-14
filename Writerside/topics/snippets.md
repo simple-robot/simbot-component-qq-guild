@@ -211,7 +211,7 @@ implementation 'io.ktor:ktor-client-darwin:$ktor_version'
 <tab title="Gradle(Kotlin DSL)" group-key="kts">
 
 ```Kotlin
-implementation("love.forte.simbot.component:%module%:%version%")
+implementation("love.forte.simbot.component:%module%:%qg-version%")
 ```
 
 <tip>
@@ -220,7 +220,7 @@ implementation("love.forte.simbot.component:%module%:%version%")
 那么你需要指定依赖的后缀为 `-jvm`。
 
 ```Kotlin
-implementation("love.forte.simbot.component:%module-jvm%:%version%")
+implementation("love.forte.simbot.component:%module-jvm%:%qg-version%")
 ```
 
 </tip>
@@ -229,7 +229,7 @@ implementation("love.forte.simbot.component:%module-jvm%:%version%")
 <tab title="Gradle(Groovy)" group-key="groovy">
 
 ```Groovy
-implementation 'love.forte.simbot.component:%module%:%version%'
+implementation 'love.forte.simbot.component:%module%:%qg-version%'
 ```
 
 <tip>
@@ -238,7 +238,7 @@ implementation 'love.forte.simbot.component:%module%:%version%'
 那么你需要指定依赖的后缀为 `-jvm`。
 
 ```Groovy
-implementation 'love.forte.simbot.component:%module-jvm%:%version%'
+implementation 'love.forte.simbot.component:%module-jvm%:%qg-version%'
 ```
 
 </tip>
@@ -250,7 +250,7 @@ implementation 'love.forte.simbot.component:%module-jvm%:%version%'
 <dependency>
     <groupId>love.forte.simbot.component</groupId>
     <artifactId>%module-jvm%</artifactId>
-    <version>%version%</version>
+    <version>%qg-version%</version>
 </dependency>
 ```
 
@@ -258,3 +258,27 @@ implementation 'love.forte.simbot.component:%module-jvm%:%version%'
 </tabs>
 
 </snippet>
+
+<procedure title="公告" id="to-main-doc">
+
+<h2>站点迁移啦~！</h2>
+
+<warning>
+
+QQ机器人组件的内容已经迁移合并到了[**核心库手册**](https://simbot.forte.love/component-qq-guild.html)中(除了 [_历史版本_](old-versions.md) 的内容以外)！
+本站点将不再更新，直接前往核心库手册的[**QQ机器人组件**](https://simbot.forte.love/component-qq-guild.html)部分吧~！
+
+</warning>
+
+<procedure title="为什么迁移?" id="Why" collapsible="true">
+
+作为由我们官方维护的组件库，分散在各自的文档站点中的确有好处：它们可以各自维护自己所需的东西、互不干扰。
+
+但是缺点也很明显：**太过分散。**
+
+组件库与核心库之间的关系是比较**紧密**的，
+我们希望你能够在一个站点内就可以查阅或搜索到所有你想要得知的信息。
+
+</procedure>
+
+</procedure>

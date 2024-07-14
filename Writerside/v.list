@@ -5,6 +5,6 @@
     <var name="api-doc" value="https://docs.simbot.forte.love"/>
     <var name="jb" value="阻塞"/>
     <var name="ja" value="异步"/>
-    <var name="version" value="4.0.0-beta5"/>
+    <var name="qg-version" value="4.0.0-beta5"/>
     <var name="minimum-core-version" value="4.1.0"/>
 </vars>

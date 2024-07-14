@@ -111,11 +111,13 @@ public class QQGuildComponent : Component {
         public val messageSerializersModule: SerializersModule = SerializersModule {
             fun PolymorphicModuleBuilder<QGMessageElement>.subclass0() {
                 subclass(QGArk.serializer())
+                subclass(QGMarkdown.serializer())
                 subclass(QGAttachmentMessage.serializer())
                 subclass(QGReplyTo.serializer())
                 subclass(QGContentText.serializer())
                 subclass(QGReference.serializer())
                 subclass(QGEmbed.serializer())
+                subclass(QGMedia.serializer())
 
                 @Suppress("DEPRECATION")
                 subclass(QGAtChannel.serializer())

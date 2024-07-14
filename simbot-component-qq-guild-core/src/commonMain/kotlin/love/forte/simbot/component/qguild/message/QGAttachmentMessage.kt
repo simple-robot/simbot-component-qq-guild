@@ -92,9 +92,21 @@ internal object AttachmentParser : SendingMessageParser {
         messages: Messages?,
         builderContext: SendingMessageParser.BuilderContext
     ) {
+        // TODO Attachment 暂不支持 Channel
         if (element is QGAttachmentMessage) {
             logger.warn("Attachment message is not yet supported for sending")
         }
     }
 
+    override suspend fun invoke(
+        index: Int,
+        element: love.forte.simbot.message.Message.Element,
+        messages: Messages?,
+        builderContext: SendingMessageParser.GroupAndC2CBuilderContext
+    ) {
+        // TODO Attachment 暂不支持 GroupAndC2C
+        if (element is QGAttachmentMessage) {
+            logger.warn("Attachment message is not yet supported for sending")
+        }
+    }
 }

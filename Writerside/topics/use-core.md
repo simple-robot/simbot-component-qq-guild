@@ -5,6 +5,8 @@ switcher-label: Java API 风格
 # 使用核心库模块
 
 
+<include from="snippets.md" element-id="to-main-doc" />
+
 <tldr>
 <p>使用 <control>核心库模块(core 模块)</control> 配合 simbot4 核心库来将QQ频道作为 simbot4 的组件之一应用在 <code>Application</code> 中。</p>
 </tldr>
@@ -35,7 +37,7 @@ simbot 核心库的版本尽量不要低于 `v%minimum-core-version%`，可前�
 // simbot4核心库
 implementation("love.forte.simbot:simbot-core:%minimum-core-version%")
 // QQ频道组件库
-implementation("love.forte.simbot.component:simbot-component-qq-guild-core:%version%")
+implementation("love.forte.simbot.component:simbot-component-qq-guild-core:%qg-version%")
 ```
 
 <tip>
@@ -47,7 +49,7 @@ implementation("love.forte.simbot.component:simbot-component-qq-guild-core:%vers
 // simbot4核心库
 implementation("love.forte.simbot:simbot-core-jvm:%minimum-core-version%")
 // QQ频道组件库
-implementation("love.forte.simbot.component:simbot-component-qq-guild-core-jvm:%version%")
+implementation("love.forte.simbot.component:simbot-component-qq-guild-core-jvm:%qg-version%")
 ```
 
 </tip>
@@ -59,7 +61,7 @@ implementation("love.forte.simbot.component:simbot-component-qq-guild-core-jvm:%
 // simbot4核心库
 implementation 'love.forte.simbot:simbot-core:%minimum-core-version%'
 // QQ频道组件库
-implementation 'love.forte.simbot.component:simbot-component-qq-guild-core:%version%'
+implementation 'love.forte.simbot.component:simbot-component-qq-guild-core:%qg-version%'
 ```
 
 <tip>
@@ -71,7 +73,7 @@ implementation 'love.forte.simbot.component:simbot-component-qq-guild-core:%vers
 // simbot4核心库
 implementation 'love.forte.simbot:simbot-core-jvm:%minimum-core-version%'
 // QQ频道组件库
-implementation 'love.forte.simbot.component:simbot-component-qq-guild-core-jvm:%version%'
+implementation 'love.forte.simbot.component:simbot-component-qq-guild-core-jvm:%qg-version%'
 ```
 
 </tip>
@@ -90,7 +92,7 @@ implementation 'love.forte.simbot.component:simbot-component-qq-guild-core-jvm:%
 <dependency>
     <groupId>love.forte.simbot.component</groupId>
     <artifactId>simbot-component-qq-guild-core-jvm</artifactId>
-    <version>%version%</version>
+    <version>%qg-version%</version>
 </dependency>
 ```
 

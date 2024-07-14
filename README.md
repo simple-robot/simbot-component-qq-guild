@@ -25,24 +25,21 @@
 
 </div>
 
-这是一个基于 [Kotlin coroutines](https://github.com/Kotlin/kotlinx.coroutines)
-对 [**QQ频道机器人**][qg bot doc] 进行实现的 API/SDK
-[Kotlin 多平台][KMP]库，异步高效、Java友好。
+这是一个 [Kotlin 多平台][KMP] 
+的 [**QQ机器人官方API**][qg bot doc]
+SDK 实现库，
+也是 [Simple Robot][simbot4 gh] 标准API下实现的组件库，
+异步高效、Java友好！
 
-它同样是一个 [Simple Robot v4][simbot4 gh] (下文简称 simbot)
-的组件库，是 simbot 的子项目之一。
-借助 simbot 核心库提供的能力，它可以支持更多高级功能和封装，比如组件协同、Spring支持等。
+借助 simbot 核心库提供的能力，它可以支持很多高级功能和封装，比如组件协同、Spring支持等，
+助你快速开发机器人应用！
 
-它可以作为一个低级别的 API/SDK 辅助依赖库，
-也可在 simbot 核心库的支持下用作为一个轻量级的快速开发框架！
-
-序列化和网络请求相关分别基于 [Kotlin serialization](https://github.com/Kotlin/kotlinx.serialization)
+> 序列化和网络请求相关分别基于 [Kotlin serialization](https://github.com/Kotlin/kotlinx.serialization)
 和 [Ktor](https://ktor.io/).
 
 ## 文档与引导
 
-- QQ频道组件手册: [应用手册](https://component-qqguild.simbot.forte.love/) (即当前仓库的 GitHub Pages)
-- 了解simbot: [Simple Robot 应用手册](https://simbot.forte.love)
+- 手册: [Simple Robot 应用手册](https://simbot.forte.love) 及其中 [**QQ机器人组件**](https://simbot.forte.love/component-qq-guild.html) 部分
 - [文档引导站&API文档](https://docs.simbot.forte.love)
 - [**社群**](https://simbot.forte.love/communities.html) 文档中也有提供社群信息喔
 - 前往 [组织首页](https://github.com/simple-robot/) 了解更多有关组件、文档、以及社群等相关信息！
@@ -76,10 +73,9 @@
 
 👉 [前往模块](simbot-component-qq-guild-stdlib) 了解更多。
 
-### 核心组件模块
+### 核心组件模块 ⭐
 
-基于 
-[标准库模块](simbot-component-qq-guild-stdlib) 
+基于 [标准库模块](simbot-component-qq-guild-stdlib) 
 对 [simbot4核心库](https://github.com/simple-robot/simpler-robot) 
 的组件实现，
 是一个相对高度封装的模块，并提供simbot4大部分能力，包括事件监听、多组件协同、Spring Boot Starter 等。

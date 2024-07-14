@@ -5,6 +5,8 @@ switcher-label: Java API 风格
 
 # 消息
 
+<include from="snippets.md" element-id="to-main-doc" />
+
 <tldr>
 
 - 对那些 **核心库** 中、实现了 simbot4 标准库的 `Message.Element` 消息元素类型的说明，

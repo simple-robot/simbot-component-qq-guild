@@ -18,54 +18,72 @@
 package love.forte.simbot.component.qguild.message
 
 import love.forte.simbot.component.qguild.ExperimentalQGApi
+import love.forte.simbot.component.qguild.bot.QGBot
 import love.forte.simbot.message.Messages
 import love.forte.simbot.message.emptyMessages
+import love.forte.simbot.qguild.api.message.GroupAndC2CSendBody
 import love.forte.simbot.qguild.api.message.MessageSendApi
+import love.forte.simbot.qguild.api.message.isEmpty
 import love.forte.simbot.qguild.model.Message
-import kotlin.jvm.JvmName
 import kotlin.jvm.JvmOverloads
+import kotlin.jvm.JvmSynthetic
 import love.forte.simbot.message.Message as SimbotMessage
 
 
 /**
  * 通过消息体和message builder, 以责任链的形式构建消息体。
  */
-public fun interface SendingMessageParser :
-    suspend (Int, SimbotMessage.Element, Messages?, SendingMessageParser.BuilderContext) -> Unit {
+public fun interface SendingMessageParser {
     /**
      * 将 [SimbotMessage.Element] 拼接到 [MessageSendApi.Body.Builder] 中。
      *
      * @param index 当前消息链中的数据.
      */
-    override suspend fun invoke(
+    public suspend fun invoke(
         index: Int,
         element: SimbotMessage.Element,
         messages: Messages?,
         builderContext: BuilderContext,
     )
 
-    public data class BuilderContext(
-        val builderFactory: () -> MessageSendApi.Body.Builder
+    /**
+     * 将 [SimbotMessage.Element] 拼接到 [GroupAndC2CSendBody] 中。
+     *
+     * @param index 当前消息链中的数据.
+     */
+    public suspend fun invoke(
+        index: Int,
+        element: SimbotMessage.Element,
+        messages: Messages?,
+        builderContext: GroupAndC2CBuilderContext,
     ) {
-        public val builders: ArrayDeque<MessageSendApi.Body.Builder>
+    }
+
+    public enum class GroupBuilderType {
+        GROUP, C2C
+    }
+
+    public abstract class AbstractBuilderContext<B>(
+        public val builderFactory: () -> B
+    ) {
+        public val builders: ArrayDeque<B>
 
         /**
          * 标记下一次再获取 builder 时必须新建。
          */
-        public var nextIsNew: Boolean = false
-            private set
+        public open var nextIsNew: Boolean = false
+            protected set
 
         @PublishedApi
-        internal fun nextMustBeNew(value: Boolean = true) {
+        internal open fun nextMustBeNew(value: Boolean = true) {
             nextIsNew = value
         }
 
         init {
             builders = ArrayDeque()
-            builders.add(builderFactory())
         }
 
-        val builder: MessageSendApi.Body.Builder
+        public open val builder: B
             get() {
                 if (nextIsNew) {
                     return newBuilder().also {
@@ -73,35 +91,58 @@ public fun interface SendingMessageParser :
                     }
                 }
 
+                if (builders.isEmpty()) {
+                    return newBuilder()
+                }
+
                 return builders.last()
             }
 
-        public fun newBuilder(): MessageSendApi.Body.Builder {
+        public open fun newBuilder(): B {
             return builderFactory().also { builders.addLast(it) }
         }
+
 
         /**
          * 如果符合 [check] 的条件，得到 [builder], 否则使用 [newBuilder] 构建一个新的builder。
          *
+         * 如果尚未初始化，直接返回一个新的值，不做检测。
+         *
          * 如果 [nextIsNew] 被标记为 `true`, 则本次不会调用 [check] 且必然得到新的 builder.
          *
          */
-        public inline fun builderOrNew(check: (MessageSendApi.Body.Builder) -> Boolean): MessageSendApi.Body.Builder {
+        public inline fun builderOrNew(check: (B) -> Boolean): B {
             if (nextIsNew) {
                 return newBuilder().also {
                     nextMustBeNew(false)
                 }
             }
+
+            if (builders.isEmpty()) {
+                return newBuilder()
+            }
+
             return builder.takeIf(check) ?: newBuilder()
         }
 
     }
+
+    public class BuilderContext(
+        builderFactory: () -> MessageSendApi.Body.Builder
+    ) : AbstractBuilderContext<MessageSendApi.Body.Builder>(builderFactory)
+
+    public class GroupAndC2CBuilderContext(
+        public val bot: QGBot,
+        public val type: GroupBuilderType,
+        public val targetOpenid: String,
+        builderFactory: () -> GroupAndC2CSendBody
+    ) : AbstractBuilderContext<GroupAndC2CSendBody>(builderFactory)
 }
 
 /**
- * 将一个 [Message] 转化为 [Message].
+ * 将一个 [Message] 转化为 [Messages].
  */
-public fun interface ReceivingMessageParser {
+public interface ReceivingMessageParser {
 
     /**
      * 解析一个 [Message], 并将其内部信息并入 [Context] 中。
@@ -109,10 +150,19 @@ public fun interface ReceivingMessageParser {
     public operator fun invoke(qgMessage: Message, context: Context): Context
 
     /**
+     * 解析一个 `content`, 并将其内部信息并入 [Context] 中。
+     */
+    public operator fun invoke(qgContent: String, context: Context): Context
+
+    /**
      * 消息链和正文文本内容的容器，用于 [ReceivingMessageParser.invoke] 中进行传递解析。
      *
      */
-    public data class Context(public var messages: Messages, public var plainTextBuilder: StringBuilder)
+    public data class Context(
+        public var messages: Messages,
+        public var plainTextBuilder: StringBuilder,
+        public var attachments: List<Message.Attachment>? = null,
+    )
 }
 
 
@@ -131,22 +181,14 @@ public object MessageParsers {
         add(ReplyToParser)
         add(ImageParser)
         add(ReferenceParser)
+        add(MediaParser)
+        add(MarkdownParser)
     }
 
     @ExperimentalQGApi
     public val receivingParsers: List<ReceivingMessageParser> = buildList {
         add(QGMessageParser)
     }
-
-//    @ExperimentalSimbotAPI
-//    public fun addParser(parser: SendingMessageParser) {
-//        sendingParsers.add(parser)
-//    }
-//
-//    @ExperimentalSimbotAPI
-//    public fun addParser(parser: ReceivingMessageParser) {
-//        receivingParsers.add(parser)
-//    }
 
     /**
      * 将 [message] 解析为一个或多个 [MessageSendApi.Body.Builder]。
@@ -181,26 +223,27 @@ public object MessageParsers {
      * @return 解析结果的 [MessageSendApi.Body.Builder] 序列。
      */
     @OptIn(ExperimentalQGApi::class)
-    @JvmOverloads
-    @JvmName("parse")
+    @JvmSynthetic
     public suspend inline fun parse(
         message: SimbotMessage,
         crossinline onEachPre: MessageSendApi.Body.Builder.() -> Unit = {},
         onEachPost: MessageSendApi.Body.Builder.() -> Unit = {},
     ): List<MessageSendApi.Body.Builder> {
-        val context = SendingMessageParser.BuilderContext { MessageSendApi.Body.Builder().also(onEachPre) }
+        val context = SendingMessageParser.BuilderContext {
+            MessageSendApi.Body.Builder().also(onEachPre)
+        }
 
         when (message) {
             is SimbotMessage.Element -> {
                 for (parser in sendingParsers) {
-                    parser(0, message, null, context)
+                    parser.invoke(0, message, null, context)
                 }
             }
 
             is Messages -> {
                 message.forEachIndexed { index, element ->
                     for (parser in sendingParsers) {
-                        parser(index, element, message, context)
+                        parser.invoke(index, element, message, context)
                     }
                 }
             }
@@ -215,6 +258,52 @@ public object MessageParsers {
     }
 
 
+    @ExperimentalQGApi
+    @JvmSynthetic
+    public suspend inline fun parseToGroupAndC2C(
+        bot: QGBot,
+        message: SimbotMessage,
+        builderType: SendingMessageParser.GroupBuilderType,
+        targetOpenid: String,
+        crossinline factory: () -> GroupAndC2CSendBody,
+        crossinline onEachPre: GroupAndC2CSendBody.() -> Unit = {},
+        onEachPost: GroupAndC2CSendBody.() -> Unit = {},
+    ): List<GroupAndC2CSendBody> {
+        val context = SendingMessageParser.GroupAndC2CBuilderContext(
+            bot,
+            builderType,
+            targetOpenid
+        ) {
+            factory().also(onEachPre)
+        }
+
+        when (message) {
+            is SimbotMessage.Element -> {
+                for (parser in sendingParsers) {
+                    parser.invoke(0, message, null, context)
+                }
+            }
+
+            is Messages -> {
+                message.forEachIndexed { index, element ->
+                    for (parser in sendingParsers) {
+                        parser.invoke(index, element, message, context)
+                    }
+                }
+            }
+        }
+
+        val builders = context.builders
+        if (builders.size <= 1) {
+            return listOf(builders.first().also(onEachPost))
+        }
+
+        return builders.mapNotNullTo(ArrayList(builders.size)) {
+            it.also(onEachPost).takeUnless { b -> b.isEmpty() }
+        }
+    }
+
+
     @OptIn(ExperimentalQGApi::class)
     @JvmOverloads
     public fun parse(
@@ -224,10 +313,30 @@ public object MessageParsers {
         return receivingParsers.fold(
             ReceivingMessageParser.Context(
                 messagesInit,
-                StringBuilder(message.content.length)
+                StringBuilder(message.content.length),
+                message.attachments,
             )
         ) { context, parser ->
-            parser(message, context)
+            parser.invoke(message, context)
+        }
+    }
+
+
+    @OptIn(ExperimentalQGApi::class)
+    @JvmOverloads
+    public fun parse(
+        content: String,
+        attachments: List<Message.Attachment>? = null,
+        messagesInit: Messages = emptyMessages(),
+    ): ReceivingMessageParser.Context {
+        return receivingParsers.fold(
+            ReceivingMessageParser.Context(
+                messagesInit,
+                StringBuilder(content.length),
+                attachments
+            )
+        ) { context, parser ->
+            parser.invoke(content, context)
         }
     }
 
