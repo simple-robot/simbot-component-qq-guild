@@ -140,3 +140,5 @@ guildList.forEach { guild ->
 - [x] 帖子 API
 - [x] API接口权限 API
 - [x] WebSocket API
+- [x] QQ群聊
+- [x] C2C单聊
