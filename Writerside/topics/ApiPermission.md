@@ -2,6 +2,8 @@
 
 # API权限信息
 
+<include from="snippets.md" element-id="to-main-doc" />
+
 ## ApiPermission
 
 在API模块中，有一个类型 `ApiPermission`，它代表了一个频道服务器中、

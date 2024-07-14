@@ -6,6 +6,8 @@ switcher-label: Java API 风格
 
 # 使用 Spring Boot
 
+<include from="snippets.md" element-id="to-main-doc" />
+
 
 <tldr>
 <p>使用 <control>核心库(core 模块)</control> 配合 simbot4 Spring Boot starter 来将QQ频道组件作为 simbot4 的组件之一应用在 <code>Spring Boot 3</code> 中。</p>

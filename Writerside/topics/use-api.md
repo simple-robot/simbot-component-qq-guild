@@ -6,6 +6,8 @@ switcher-label: Java API 风格
 
 # 使用 API 模块
 
+<include from="snippets.md" element-id="to-main-doc" />
+
 <tldr>
 <p>本章节介绍如何使用 <control>API 模块</control> 来构建、请求一个QQ频道的API。</p>
 </tldr>

@@ -3,7 +3,10 @@ switcher-label: Java API 风格
 ---
 <show-structure for="chapter,procedure" depth="3"/>
 
+
 # QGBot
+
+<include from="snippets.md" element-id="to-main-doc" />
 
 作为一个QQ频道的 Bot 库，有一个用于描述机器人的 `Bot` 想必肯定是很正常的。
 

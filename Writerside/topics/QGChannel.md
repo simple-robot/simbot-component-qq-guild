@@ -6,6 +6,8 @@ switcher-label: Java API 风格
 
 # 子频道 QGChannel
 
+<include from="snippets.md" element-id="to-main-doc" />
+
 子频道，即 `Channel`，存在于频道服务器(`Guild`)中，
 有多种类型，例如文字子频道、论坛子频道等。
 

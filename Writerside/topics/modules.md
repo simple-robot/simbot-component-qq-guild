@@ -1,5 +1,7 @@
 # 模块概述
 
+<include from="snippets.md" element-id="to-main-doc" />
+
 本章节对整个 [Simple Robot QQ频道组件库](https://github.com/simple-robot/simbot-component-qq-guild)
 中出现的各模块进行一个简单的介绍。
 

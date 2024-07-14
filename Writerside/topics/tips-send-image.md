@@ -1,5 +1,7 @@
 # 用例: 发送图片
 
+<include from="snippets.md" element-id="to-main-doc" />
+
 发送图片是一个经常使用、且经常被问及“怎么发图片”的内容。
 
 本章节介绍在QQ频道组件中，如何发送一个图片。

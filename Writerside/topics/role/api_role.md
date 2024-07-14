@@ -6,6 +6,8 @@ switcher-label: Java API 风格
 
 # 角色 QGRole
 
+<include from="snippets.md" element-id="to-main-doc" />
+
 QQ频道中有一些针对 `角色` 的API。
 
 ## API中的角色 {id="api-roles"}
