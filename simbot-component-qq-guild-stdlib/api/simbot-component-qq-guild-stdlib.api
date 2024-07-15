@@ -125,6 +125,7 @@ public final class love/forte/simbot/qguild/stdlib/BotRequests {
 public final class love/forte/simbot/qguild/stdlib/ConfigurableBotConfiguration : love/forte/simbot/qguild/stdlib/BotConfiguration {
 	public static final field Companion Llove/forte/simbot/qguild/stdlib/ConfigurableBotConfiguration$Companion;
 	public fun <init> ()V
+	public final fun addIntents (I)Llove/forte/simbot/qguild/stdlib/ConfigurableBotConfiguration;
 	public fun getApiClientEngine ()Lio/ktor/client/engine/HttpClientEngine;
 	public fun getApiClientEngineFactory ()Lio/ktor/client/engine/HttpClientEngineFactory;
 	public fun getApiDecoder ()Lkotlinx/serialization/json/Json;

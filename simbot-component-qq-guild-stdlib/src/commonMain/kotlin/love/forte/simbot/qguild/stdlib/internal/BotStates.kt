@@ -85,8 +85,18 @@ internal class Connect(
         val intents = bot.configuration.intents
         val properties = bot.configuration.clientProperties
 
-        logger.debug("Connect intents   : {}", intents)
-        logger.debug("Connect properties: {}", properties)
+        if (logger.isDebugEnabled) {
+            var bitString = intents.value.toString(2)
+            if (bitString.startsWith("-")) {
+                bitString = bitString.substring(1)
+            }
+            if (bitString.length < 32) {
+                bitString = "0".repeat(32 - bitString.length) + bitString
+            }
+
+            logger.debug("Connect intents   : {} (0x{})", intents, bitString)
+            logger.debug("Connect properties: {}", properties)
+        }
 
         val identify = Signal.Identify(
             Signal.Identify.Data(

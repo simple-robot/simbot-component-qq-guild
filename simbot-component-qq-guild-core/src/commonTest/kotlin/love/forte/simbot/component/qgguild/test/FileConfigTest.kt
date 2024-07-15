@@ -41,6 +41,27 @@ class FileConfigTest {
     }
 
     @Test
+    fun intentsConfigBitTest() {
+        assertEquals(
+            IntentsConfig.Bits(
+                setOf(
+                    EventIntents.PublicGuildMessages.INTENTS_INDEX
+                )
+            ).intents,
+            EventIntents.PublicGuildMessages.intents
+        )
+        assertEquals(
+            IntentsConfig.Bits(
+                setOf(
+                    EventIntents.Guilds.INTENTS_INDEX,
+                    EventIntents.PublicGuildMessages.INTENTS_INDEX
+                )
+            ).intents,
+            EventIntents.Guilds.intents + EventIntents.PublicGuildMessages.intents
+        )
+    }
+
+    @Test
     fun botFileConfigurationTest() {
         val json = Json {
             isLenient = true
