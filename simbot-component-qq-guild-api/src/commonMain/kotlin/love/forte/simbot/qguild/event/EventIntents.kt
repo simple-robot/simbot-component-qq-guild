@@ -95,8 +95,11 @@ public value class Intents(public val value: Int) {
  *
  * 更多参考[文档](https://bot.q.qq.com/wiki/develop/api/gateway/intents.html)
  *
+ * @see EventIntentsAggregation
  */
 public sealed class EventIntents {
+    // 实现时，必须要有一个 internal 的名为 INTENTS 的 Int 类型的常量来表示 intents 值，
+    // 此常量会被 ksp 处理并用于生成 EventIntentsAggregation
 
     /**
      * 获取事件类型对应的标记为值。
@@ -116,13 +119,15 @@ public sealed class EventIntents {
      *
      */
     public data object Guilds : EventIntents() {
+        internal const val INTENTS: Int = 1 shl 0
+
         /** 频道事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
-        public val intents: Intents = Intents(1 shl 0)
+        public val intents: Intents = Intents(INTENTS)
 
         override val intentsValue: Int
-            get() = intents.value
+            get() = INTENTS
 
         /** 当机器人加入新guild时 */
         public const val GUILD_CREATE_TYPE: String = "GUILD_CREATE"
@@ -152,13 +157,15 @@ public sealed class EventIntents {
      * ```
      */
     public data object GuildMembers : EventIntents() {
+        internal const val INTENTS = 1 shl 1
+
         /** 频道成员事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
-        public val intents: Intents = Intents(1 shl 1)
+        public val intents: Intents = Intents(INTENTS)
 
         override val intentsValue: Int
-            get() = intents.value
+            get() = INTENTS
 
         /** 当成员加入时 */
         public const val GUILD_MEMBER_ADD_TYPE: String = "GUILD_MEMBER_ADD"
@@ -180,13 +187,15 @@ public sealed class EventIntents {
      */
     @PrivateDomainOnly
     public data object GuildMessages : EventIntents() {
+        internal const val INTENTS = 1 shl 9
+
         /** 频道消息事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
-        public val intents: Intents = Intents(1 shl 9)
+        public val intents: Intents = Intents(INTENTS)
 
         override val intentsValue: Int
-            get() = intents.value
+            get() = INTENTS
 
         /** 发送消息事件，代表频道内的全部消息，而不只是 at 机器人的消息。内容与 AT_MESSAGE_CREATE 相同 */
         public const val MESSAGE_CREATE_TYPE: String = "MESSAGE_CREATE"
@@ -203,13 +212,15 @@ public sealed class EventIntents {
      * ```
      */
     public data object GuildMessageReactions : EventIntents() {
+        internal const val INTENTS: Int = 1 shl 10
+
         /** 表情表态事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
-        public val intents: Intents = Intents(1 shl 10)
+        public val intents: Intents = Intents(INTENTS)
 
         override val intentsValue: Int
-            get() = intents.value
+            get() = INTENTS
 
         /** 为消息添加表情表态 */
         public const val MESSAGE_REACTION_ADD_TYPE: String = "MESSAGE_REACTION_ADD"
@@ -227,13 +238,15 @@ public sealed class EventIntents {
      * ```
      */
     public data object DirectMessage : EventIntents() {
+        internal const val INTENTS: Int = 1 shl 12
+
         /** 表情表态事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
-        public val intents: Intents = Intents(1 shl 12)
+        public val intents: Intents = Intents(INTENTS)
 
         override val intentsValue: Int
-            get() = intents.value
+            get() = INTENTS
 
         /** 当收到用户发给机器人的私信消息时 */
         public const val DIRECT_MESSAGE_CREATE_TYPE: String = "DIRECT_MESSAGE_CREATE"
@@ -256,13 +269,15 @@ public sealed class EventIntents {
      * ```
      */
     public data object OpenForumsEvent : EventIntents() {
+        internal const val INTENTS: Int = 1 shl 18
+
         /** 论坛事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
-        public val intents: Intents = Intents(1 shl 18)
+        public val intents: Intents = Intents(INTENTS)
 
         override val intentsValue: Int
-            get() = intents.value
+            get() = INTENTS
 
         /** 当用户创建主题时 */
         public const val OPEN_FORUM_THREAD_CREATE_TYPE: String = "OPEN_FORUM_THREAD_CREATE"
@@ -295,13 +310,15 @@ public sealed class EventIntents {
      * ```
      */
     public data object AudioOrLiveChannelMember : EventIntents() {
+        internal const val INTENTS: Int = 1 shl 19
+
         /** 音视频/直播子频道成员进出事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
-        public val intents: Intents = Intents(1 shl 19)
+        public val intents: Intents = Intents(INTENTS)
 
         override val intentsValue: Int
-            get() = intents.value
+            get() = INTENTS
 
         /** 当用户进入音视频/直播子频道 */
         public const val AUDIO_OR_LIVE_CHANNEL_MEMBER_ENTER_TYPE: String = "AUDIO_OR_LIVE_CHANNEL_MEMBER_ENTER"
@@ -327,13 +344,15 @@ public sealed class EventIntents {
      * ```
      */
     public data object GroupAndC2CEvent : EventIntents() {
+        internal const val INTENTS: Int = 1 shl 25
+
         /** C2C群聊相关事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
-        public val intents: Intents = Intents(1 shl 25)
+        public val intents: Intents = Intents(INTENTS)
 
         override val intentsValue: Int
-            get() = intents.value
+            get() = INTENTS
 
         /**
          * 用户单聊发消息给机器人时候
@@ -393,13 +412,15 @@ public sealed class EventIntents {
      * ```
      */
     public data object Interaction : EventIntents() {
+        internal const val INTENTS: Int = 1 shl 26
+
         /** 互动事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
-        public val intents: Intents = Intents(1 shl 26)
+        public val intents: Intents = Intents(INTENTS)
 
         override val intentsValue: Int
-            get() = intents.value
+            get() = INTENTS
 
         /** 互动事件创建时 */
         public const val INTERACTION_CREATE_TYPE: String = "INTERACTION_CREATE"
@@ -414,13 +435,15 @@ public sealed class EventIntents {
      * ```
      */
     public data object MessageAudit : EventIntents() {
+        internal const val INTENTS: Int = 1 shl 27
+
         /** 互动事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
-        public val intents: Intents = Intents(1 shl 27)
+        public val intents: Intents = Intents(INTENTS)
 
         override val intentsValue: Int
-            get() = intents.value
+            get() = INTENTS
 
         /** 消息审核通过 */
         public const val MESSAGE_AUDIT_PASS_TYPE: String = "MESSAGE_AUDIT_PASS"
@@ -445,13 +468,15 @@ public sealed class EventIntents {
      */
     @PrivateDomainOnly
     public data object ForumsEvent : EventIntents() {
+        internal const val INTENTS: Int = 1 shl 28
+
         /** 论坛事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
-        public val intents: Intents = Intents(1 shl 28)
+        public val intents: Intents = Intents(INTENTS)
 
         override val intentsValue: Int
-            get() = intents.value
+            get() = INTENTS
 
         /** 当用户创建主题时 */
         public const val FORUM_THREAD_CREATE_TYPE: String = "FORUM_THREAD_CREATE"
@@ -490,13 +515,15 @@ public sealed class EventIntents {
      */
     @PrivateDomainOnly
     public data object AudioAction : EventIntents() {
+        internal const val INTENTS: Int = 1 shl 29
+
         /** 论坛事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
-        public val intents: Intents = Intents(1 shl 29)
+        public val intents: Intents = Intents(INTENTS)
 
         override val intentsValue: Int
-            get() = intents.value
+            get() = INTENTS
 
         /** 音频开始播放时 */
         public const val AUDIO_START_TYPE: String = "AUDIO_START"
@@ -521,13 +548,15 @@ public sealed class EventIntents {
      */
     @PrivateDomainOnly
     public data object PublicGuildMessages : EventIntents() {
+        internal const val INTENTS = 1 shl 30
+
         /** 论坛事件 `intents` */
         @get:JvmStatic
         @get:JvmName("getIntents")
-        public val intents: Intents = Intents(1 shl 30)
+        public val intents: Intents = Intents(INTENTS)
 
         override val intentsValue: Int
-            get() = intents.value
+            get() = INTENTS
 
         /** 当收到@机器人的消息时 */
         public const val AT_MESSAGE_CREATE_TYPE: String = "AT_MESSAGE_CREATE"
@@ -558,23 +587,16 @@ public sealed class EventIntents {
 
 /**
  * [EventIntents] 的所有实现类型的数组。
- * **注意：获取时不会拷贝，也因此不要修改其中任何元素的值。**
+ *
+ * Deprecated: 使用更可靠的 [EventIntentsAggregation]
+ *
+ * @see EventIntentsAggregation.allEventIntents
  */
-public val EventIntentsInstances: Array<EventIntents> = arrayOf(
-    Guilds,
-    GuildMembers,
-    GuildMessages,
-    GuildMessageReactions,
-    DirectMessage,
-    OpenForumsEvent,
-    AudioOrLiveChannelMember,
-    GroupAndC2CEvent,
-    Interaction,
-    MessageAudit,
-    ForumsEvent,
-    AudioAction,
-    PublicGuildMessages,
+@Deprecated("Use EventIntentsAggregation.allEventIntents",
+    ReplaceWith("EventIntentsAggregation.allEventIntents()")
 )
+public val EventIntentsInstances: Array<EventIntents>
+    get() = EventIntentsAggregation.allEventIntents().toTypedArray()
 
 /**
  * 鉴权成功之后，后台会下发的 Ready Event.

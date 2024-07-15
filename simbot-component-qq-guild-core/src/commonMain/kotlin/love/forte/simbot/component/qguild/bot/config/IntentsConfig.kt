@@ -20,7 +20,7 @@ package love.forte.simbot.component.qguild.bot.config
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.event.EventIntents
-import love.forte.simbot.qguild.event.EventIntentsInstances
+import love.forte.simbot.qguild.event.EventIntentsAggregation
 import love.forte.simbot.qguild.event.Intents
 
 /**
@@ -76,40 +76,9 @@ public sealed class IntentsConfig {
                     return Intents.ZERO
                 }
 
-                val intentsMap = mutableMapOf<String, Int>()
-                EventIntentsInstances
-                    .asSequence()
-                    .forEach { instance ->
-                        val simpleName = instance::class.simpleName ?: return@forEach
-                        val intentsValue = instance.intentsValue
-
-                        intentsMap[simpleName.toSnakeCase()] = intentsValue
-                        intentsMap[simpleName] = intentsValue
-                    }
-
-                return names
-                    .map {
-                        val snakeCase = it.toSnakeCase()
-                        intentsMap[snakeCase]?.let { v -> Intents(v) }
-                            ?: throw NoSuchElementException("intents name '$it' ('$snakeCase') not found. in ${intentsMap.keys}")
-                    }.reduce { i1, i2 -> i1 + i2 }
+                return names.map(EventIntentsAggregation::getByName)
+                    .fold(Intents.ZERO, Intents::plus)
             }
-
-        private fun String.toSnakeCase(): String {
-            val text = this
-            return buildString {
-                text.forEach { c ->
-                    if (c.isUpperCase()) {
-                        if (isNotEmpty()) {
-                            append('_')
-                        }
-                        append(c.lowercase())
-                    } else {
-                        append(c)
-                    }
-                }
-            }
-        }
     }
 
 }
