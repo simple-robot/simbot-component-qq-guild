@@ -15,9 +15,9 @@
         <locale-code>zh-CN</locale-code>
         <noindex-content>false</noindex-content>
         <analytics-head-script-file>head-script.html</analytics-head-script-file>
-        <algolia-id>VLLZ4JZE8Z</algolia-id>
-        <algolia-index>qg-doc</algolia-index>
-        <algolia-api-key>e60d9ee16618a0ad3a338ecc73cb840e</algolia-api-key>
+<!--        <algolia-id>VLLZ4JZE8Z</algolia-id>-->
+<!--        <algolia-index>qg-doc</algolia-index>-->
+<!--        <algolia-api-key>e60d9ee16618a0ad3a338ecc73cb840e</algolia-api-key>-->
         <web-root>http://component-qqguild.simbot.forte.love</web-root>
     </variables>
 
