@@ -68,7 +68,10 @@ apiValidation {
     ignoredPackages.add("*.internal.*")
 
     this.ignoredProjects.addAll(
-        listOf("api-reader")
+        listOf(
+            "api-reader",
+            "intents-processor"
+        ),
     )
 
     // 实验性和内部API可能无法保证二进制兼容

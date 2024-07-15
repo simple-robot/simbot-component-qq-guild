@@ -2702,6 +2702,14 @@ public final class love/forte/simbot/qguild/event/EventIntents$PublicGuildMessag
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class love/forte/simbot/qguild/event/EventIntentsAggregation {
+	public static final field ALL I
+	public static final field INSTANCE Llove/forte/simbot/qguild/event/EventIntentsAggregation;
+	public static final fun allEventIntents ()Ljava/util/List;
+	public static final fun allIntents ()I
+	public static final fun getByName (Ljava/lang/String;)I
+}
+
 public final class love/forte/simbot/qguild/event/EventIntentsKt {
 	public static final fun getEventIntentsInstances ()[Llove/forte/simbot/qguild/event/EventIntents;
 }

@@ -15,10 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+import com.google.devtools.ksp.gradle.KspTaskMetadata
 import love.forte.gradle.common.core.project.setup
 import love.forte.gradle.common.kotlin.multiplatform.applyTier1
 import love.forte.gradle.common.kotlin.multiplatform.applyTier2
 import love.forte.gradle.common.kotlin.multiplatform.applyTier3
+import org.jetbrains.dokka.gradle.DokkaTaskPartial
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import util.isCi
 
@@ -119,10 +121,25 @@ kotlin {
 
 dependencies {
     add("kspJvm", project(":internal-processors:api-reader"))
+    add("kspCommonMainMetadata", project(":internal-processors:intents-processor"))
 }
 
 ksp {
     arg("qg.api.reader.enable", (!isCi).toString())
     arg("qg.api.finder.api.output", rootDir.resolve("generated-docs/api-list.md").absolutePath)
     arg("qg.api.finder.event.output", rootDir.resolve("generated-docs/event-list.md").absolutePath)
+}
+
+kotlin.sourceSets.commonMain {
+    // solves all implicit dependency trouble and IDEs source code detection
+    // see https://github.com/google/ksp/issues/963#issuecomment-1894144639
+    tasks.withType<KspTaskMetadata> {
+        kotlin.srcDir(destinationDirectory.file("kotlin"))
+    }
+}
+
+tasks.withType<DokkaTaskPartial>().configureEach {
+    dokkaSourceSets.configureEach {
+        suppressGeneratedFiles.set(false)
+    }
 }
