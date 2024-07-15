@@ -119,7 +119,8 @@ public sealed class EventIntents {
      *
      */
     public data object Guilds : EventIntents() {
-        internal const val INTENTS: Int = 1 shl 0
+        public const val INTENTS_INDEX: Int = 0
+        internal const val INTENTS: Int = 1 shl INTENTS_INDEX
 
         /** 频道事件 `intents` */
         @get:JvmStatic
@@ -157,7 +158,8 @@ public sealed class EventIntents {
      * ```
      */
     public data object GuildMembers : EventIntents() {
-        internal const val INTENTS = 1 shl 1
+        public const val INTENTS_INDEX: Int = 1
+        internal const val INTENTS = 1 shl INTENTS_INDEX
 
         /** 频道成员事件 `intents` */
         @get:JvmStatic
@@ -187,7 +189,8 @@ public sealed class EventIntents {
      */
     @PrivateDomainOnly
     public data object GuildMessages : EventIntents() {
-        internal const val INTENTS = 1 shl 9
+        public const val INTENTS_INDEX: Int = 9
+        internal const val INTENTS = 1 shl INTENTS_INDEX
 
         /** 频道消息事件 `intents` */
         @get:JvmStatic
@@ -212,7 +215,8 @@ public sealed class EventIntents {
      * ```
      */
     public data object GuildMessageReactions : EventIntents() {
-        internal const val INTENTS: Int = 1 shl 10
+        public const val INTENTS_INDEX: Int = 10
+        internal const val INTENTS: Int = 1 shl INTENTS_INDEX
 
         /** 表情表态事件 `intents` */
         @get:JvmStatic
@@ -238,7 +242,8 @@ public sealed class EventIntents {
      * ```
      */
     public data object DirectMessage : EventIntents() {
-        internal const val INTENTS: Int = 1 shl 12
+        public const val INTENTS_INDEX: Int = 12
+        internal const val INTENTS: Int = 1 shl INTENTS_INDEX
 
         /** 表情表态事件 `intents` */
         @get:JvmStatic
@@ -269,7 +274,8 @@ public sealed class EventIntents {
      * ```
      */
     public data object OpenForumsEvent : EventIntents() {
-        internal const val INTENTS: Int = 1 shl 18
+        public const val INTENTS_INDEX: Int = 18
+        internal const val INTENTS: Int = 1 shl INTENTS_INDEX
 
         /** 论坛事件 `intents` */
         @get:JvmStatic
@@ -310,7 +316,8 @@ public sealed class EventIntents {
      * ```
      */
     public data object AudioOrLiveChannelMember : EventIntents() {
-        internal const val INTENTS: Int = 1 shl 19
+        public const val INTENTS_INDEX: Int = 19
+        internal const val INTENTS: Int = 1 shl INTENTS_INDEX
 
         /** 音视频/直播子频道成员进出事件 `intents` */
         @get:JvmStatic
@@ -344,7 +351,8 @@ public sealed class EventIntents {
      * ```
      */
     public data object GroupAndC2CEvent : EventIntents() {
-        internal const val INTENTS: Int = 1 shl 25
+        public const val INTENTS_INDEX: Int = 25
+        internal const val INTENTS: Int = 1 shl INTENTS_INDEX
 
         /** C2C群聊相关事件 `intents` */
         @get:JvmStatic
@@ -412,7 +420,8 @@ public sealed class EventIntents {
      * ```
      */
     public data object Interaction : EventIntents() {
-        internal const val INTENTS: Int = 1 shl 26
+        public const val INTENTS_INDEX: Int = 26
+        internal const val INTENTS: Int = 1 shl INTENTS_INDEX
 
         /** 互动事件 `intents` */
         @get:JvmStatic
@@ -435,7 +444,8 @@ public sealed class EventIntents {
      * ```
      */
     public data object MessageAudit : EventIntents() {
-        internal const val INTENTS: Int = 1 shl 27
+        public const val INTENTS_INDEX: Int = 27
+        internal const val INTENTS: Int = 1 shl INTENTS_INDEX
 
         /** 互动事件 `intents` */
         @get:JvmStatic
@@ -468,7 +478,8 @@ public sealed class EventIntents {
      */
     @PrivateDomainOnly
     public data object ForumsEvent : EventIntents() {
-        internal const val INTENTS: Int = 1 shl 28
+        public const val INTENTS_INDEX: Int = 28
+        internal const val INTENTS: Int = 1 shl INTENTS_INDEX
 
         /** 论坛事件 `intents` */
         @get:JvmStatic
@@ -515,7 +526,8 @@ public sealed class EventIntents {
      */
     @PrivateDomainOnly
     public data object AudioAction : EventIntents() {
-        internal const val INTENTS: Int = 1 shl 29
+        public const val INTENTS_INDEX: Int = 29
+        internal const val INTENTS: Int = 1 shl INTENTS_INDEX
 
         /** 论坛事件 `intents` */
         @get:JvmStatic
@@ -548,7 +560,8 @@ public sealed class EventIntents {
      */
     @PrivateDomainOnly
     public data object PublicGuildMessages : EventIntents() {
-        internal const val INTENTS = 1 shl 30
+        public const val INTENTS_INDEX: Int = 30
+        internal const val INTENTS: Int = 1 shl INTENTS_INDEX
 
         /** 论坛事件 `intents` */
         @get:JvmStatic
@@ -592,7 +605,8 @@ public sealed class EventIntents {
  *
  * @see EventIntentsAggregation.allEventIntents
  */
-@Deprecated("Use EventIntentsAggregation.allEventIntents",
+@Deprecated(
+    "Use EventIntentsAggregation.allEventIntents",
     ReplaceWith("EventIntentsAggregation.allEventIntents()")
 )
 public val EventIntentsInstances: Array<EventIntents>

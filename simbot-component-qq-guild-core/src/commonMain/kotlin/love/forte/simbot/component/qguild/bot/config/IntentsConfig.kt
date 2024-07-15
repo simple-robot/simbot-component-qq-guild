@@ -62,14 +62,14 @@ public sealed class IntentsConfig {
      *   "names": ["Guilds", "PublicGuildMessages"]
      * }
      * ```
-     * @property names 继承了 [EventIntents] 的 `object` 的简单类名，例如 `Guilds`.
+     * @property names 继承了 [EventIntents] 的 `object` 的简单名称，例如 `Guilds`，
+     * 可参考 [EventIntentsAggregation.getByName] 参考所有可用名称列表。
      * @throws NoSuchElementException 如果名称没有找到
      */
     @Serializable
     @UsedOnlyForConfigSerialization
     @SerialName("nameBased")
     public data class Names(val names: Set<String>) : IntentsConfig() {
-
         override val intents: Intents
             get() {
                 if (names.isEmpty()) {
@@ -78,6 +78,28 @@ public sealed class IntentsConfig {
 
                 return names.map(EventIntentsAggregation::getByName)
                     .fold(Intents.ZERO, Intents::plus)
+            }
+    }
+
+    /**
+     * 通过 [Intents] 的位索引值来配置 [Intents] 的结果。
+     * ```json
+     * {
+     *   "type": "bitBased",
+     *   "bits": [0, 1, 30]
+     * }
+     * ```
+     * 上面的 `0, 1, 30` 即代表订阅 `1<<0 | 1<<1 | 1<<30`
+     *
+     * @property bits 需要订阅的bit的位索引，值应当在 0 ~ 31 之内，
+     * 但是代码内不做校验。
+     */
+    @SerialName("bitBased")
+    public data class Bits(val bits: Set<Int>) : IntentsConfig() {
+        override val intents: Intents
+            get() {
+                val intentsValue = bits.fold(0) { acc, index -> acc or (1 shl index) }
+                return Intents(intentsValue)
             }
     }
 

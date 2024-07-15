@@ -29,6 +29,7 @@ import love.forte.simbot.qguild.event.Shard
 import love.forte.simbot.qguild.event.Signal
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
+import kotlin.jvm.JvmName
 import kotlin.jvm.JvmSynthetic
 
 
@@ -78,9 +79,17 @@ public class ConfigurableBotConfiguration : BotConfiguration {
         }
 
     /**
-     * 异常处理器。
-     * TODO
+     * 向 [intents] 中添加一个 [Intents] 值。
      */
+    @JvmName("addIntents")
+    public fun addIntents(intents: Intents): ConfigurableBotConfiguration = apply {
+        this.intents += intents
+    }
+
+    /**
+     * @suppress 未实现
+     */
+    @Deprecated("Not implemented")
     override var exceptionHandler: ExceptionProcessor? = null
 
     /**
@@ -170,6 +179,7 @@ public class ConfigurableBotConfiguration : BotConfiguration {
      */
     override var apiDecoder: Json = QQGuild.DefaultJson
 
+    @Suppress("DEPRECATION")
     internal fun release(): BotConfiguration = BotConfigurationImpl(
         coroutineContext = coroutineContext,
         shard = shard,
