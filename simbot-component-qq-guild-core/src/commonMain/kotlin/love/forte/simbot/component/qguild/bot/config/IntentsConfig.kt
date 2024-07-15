@@ -20,7 +20,7 @@ package love.forte.simbot.component.qguild.bot.config
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.event.EventIntents
-import love.forte.simbot.qguild.event.EventIntentsInstances
+import love.forte.simbot.qguild.event.EventIntentsAggregation
 import love.forte.simbot.qguild.event.Intents
 
 /**
@@ -62,54 +62,45 @@ public sealed class IntentsConfig {
      *   "names": ["Guilds", "PublicGuildMessages"]
      * }
      * ```
-     * @property names 继承了 [EventIntents] 的 `object` 的简单类名，例如 `Guilds`.
+     * @property names 继承了 [EventIntents] 的 `object` 的简单名称，例如 `Guilds`，
+     * 可参考 [EventIntentsAggregation.getByName] 参考所有可用名称列表。
      * @throws NoSuchElementException 如果名称没有找到
      */
     @Serializable
     @UsedOnlyForConfigSerialization
     @SerialName("nameBased")
     public data class Names(val names: Set<String>) : IntentsConfig() {
-
         override val intents: Intents
             get() {
                 if (names.isEmpty()) {
                     return Intents.ZERO
                 }
 
-                val intentsMap = mutableMapOf<String, Int>()
-                EventIntentsInstances
-                    .asSequence()
-                    .forEach { instance ->
-                        val simpleName = instance::class.simpleName ?: return@forEach
-                        val intentsValue = instance.intentsValue
-
-                        intentsMap[simpleName.toSnakeCase()] = intentsValue
-                        intentsMap[simpleName] = intentsValue
-                    }
-
-                return names
-                    .map {
-                        val snakeCase = it.toSnakeCase()
-                        intentsMap[snakeCase]?.let { v -> Intents(v) }
-                            ?: throw NoSuchElementException("intents name '$it' ('$snakeCase') not found. in ${intentsMap.keys}")
-                    }.reduce { i1, i2 -> i1 + i2 }
+                return names.map(EventIntentsAggregation::getByName)
+                    .fold(Intents.ZERO, Intents::plus)
             }
+    }
 
-        private fun String.toSnakeCase(): String {
-            val text = this
-            return buildString {
-                text.forEach { c ->
-                    if (c.isUpperCase()) {
-                        if (isNotEmpty()) {
-                            append('_')
-                        }
-                        append(c.lowercase())
-                    } else {
-                        append(c)
-                    }
-                }
+    /**
+     * 通过 [Intents] 的位索引值来配置 [Intents] 的结果。
+     * ```json
+     * {
+     *   "type": "bitBased",
+     *   "bits": [0, 1, 30]
+     * }
+     * ```
+     * 上面的 `0, 1, 30` 即代表订阅 `1<<0 | 1<<1 | 1<<30`
+     *
+     * @property bits 需要订阅的bit的位索引，值应当在 0 ~ 31 之内，
+     * 但是代码内不做校验。
+     */
+    @SerialName("bitBased")
+    public data class Bits(val bits: Set<Int>) : IntentsConfig() {
+        override val intents: Intents
+            get() {
+                val intentsValue = bits.fold(0) { acc, index -> acc or (1 shl index) }
+                return Intents(intentsValue)
             }
-        }
     }
 
 }

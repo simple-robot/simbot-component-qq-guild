@@ -2537,6 +2537,7 @@ public final class love/forte/simbot/qguild/event/EventIntents$AudioAction : lov
 	public static final field AUDIO_ON_MIC_TYPE Ljava/lang/String;
 	public static final field AUDIO_START_TYPE Ljava/lang/String;
 	public static final field INSTANCE Llove/forte/simbot/qguild/event/EventIntents$AudioAction;
+	public static final field INTENTS_INDEX I
 	public fun equals (Ljava/lang/Object;)Z
 	public static final fun getIntents ()I
 	public fun getIntentsValue ()I
@@ -2548,6 +2549,7 @@ public final class love/forte/simbot/qguild/event/EventIntents$AudioOrLiveChanne
 	public static final field AUDIO_OR_LIVE_CHANNEL_MEMBER_ENTER_TYPE Ljava/lang/String;
 	public static final field AUDIO_OR_LIVE_CHANNEL_MEMBER_EXIT_TYPE Ljava/lang/String;
 	public static final field INSTANCE Llove/forte/simbot/qguild/event/EventIntents$AudioOrLiveChannelMember;
+	public static final field INTENTS_INDEX I
 	public fun equals (Ljava/lang/Object;)Z
 	public static final fun getIntents ()I
 	public fun getIntentsValue ()I
@@ -2562,6 +2564,7 @@ public final class love/forte/simbot/qguild/event/EventIntents$DirectMessage : l
 	public static final field DIRECT_MESSAGE_CREATE_TYPE Ljava/lang/String;
 	public static final field DIRECT_MESSAGE_DELETE_TYPE Ljava/lang/String;
 	public static final field INSTANCE Llove/forte/simbot/qguild/event/EventIntents$DirectMessage;
+	public static final field INTENTS_INDEX I
 	public fun equals (Ljava/lang/Object;)Z
 	public static final fun getIntents ()I
 	public fun getIntentsValue ()I
@@ -2579,6 +2582,7 @@ public final class love/forte/simbot/qguild/event/EventIntents$ForumsEvent : lov
 	public static final field FORUM_THREAD_DELETE_TYPE Ljava/lang/String;
 	public static final field FORUM_THREAD_UPDATE_TYPE Ljava/lang/String;
 	public static final field INSTANCE Llove/forte/simbot/qguild/event/EventIntents$ForumsEvent;
+	public static final field INTENTS_INDEX I
 	public fun equals (Ljava/lang/Object;)Z
 	public static final fun getIntents ()I
 	public fun getIntentsValue ()I
@@ -2598,6 +2602,7 @@ public final class love/forte/simbot/qguild/event/EventIntents$GroupAndC2CEvent 
 	public static final field GROUP_MSG_RECEIVE_TYPE Ljava/lang/String;
 	public static final field GROUP_MSG_REJECT_TYPE Ljava/lang/String;
 	public static final field INSTANCE Llove/forte/simbot/qguild/event/EventIntents$GroupAndC2CEvent;
+	public static final field INTENTS_INDEX I
 	public fun equals (Ljava/lang/Object;)Z
 	public static final fun getIntents ()I
 	public fun getIntentsValue ()I
@@ -2610,6 +2615,7 @@ public final class love/forte/simbot/qguild/event/EventIntents$GuildMembers : lo
 	public static final field GUILD_MEMBER_REMOVE_TYPE Ljava/lang/String;
 	public static final field GUILD_MEMBER_UPDATE_TYPE Ljava/lang/String;
 	public static final field INSTANCE Llove/forte/simbot/qguild/event/EventIntents$GuildMembers;
+	public static final field INTENTS_INDEX I
 	public fun equals (Ljava/lang/Object;)Z
 	public static final fun getIntents ()I
 	public fun getIntentsValue ()I
@@ -2619,6 +2625,7 @@ public final class love/forte/simbot/qguild/event/EventIntents$GuildMembers : lo
 
 public final class love/forte/simbot/qguild/event/EventIntents$GuildMessageReactions : love/forte/simbot/qguild/event/EventIntents {
 	public static final field INSTANCE Llove/forte/simbot/qguild/event/EventIntents$GuildMessageReactions;
+	public static final field INTENTS_INDEX I
 	public static final field MESSAGE_REACTION_ADD_TYPE Ljava/lang/String;
 	public static final field MESSAGE_REACTION_REMOVE_TYPE Ljava/lang/String;
 	public fun equals (Ljava/lang/Object;)Z
@@ -2630,6 +2637,7 @@ public final class love/forte/simbot/qguild/event/EventIntents$GuildMessageReact
 
 public final class love/forte/simbot/qguild/event/EventIntents$GuildMessages : love/forte/simbot/qguild/event/EventIntents {
 	public static final field INSTANCE Llove/forte/simbot/qguild/event/EventIntents$GuildMessages;
+	public static final field INTENTS_INDEX I
 	public static final field MESSAGE_CREATE_TYPE Ljava/lang/String;
 	public static final field MESSAGE_DELETE_TYPE Ljava/lang/String;
 	public fun equals (Ljava/lang/Object;)Z
@@ -2647,6 +2655,7 @@ public final class love/forte/simbot/qguild/event/EventIntents$Guilds : love/for
 	public static final field GUILD_DELETE_TYPE Ljava/lang/String;
 	public static final field GUILD_UPDATE_TYPE Ljava/lang/String;
 	public static final field INSTANCE Llove/forte/simbot/qguild/event/EventIntents$Guilds;
+	public static final field INTENTS_INDEX I
 	public fun equals (Ljava/lang/Object;)Z
 	public static final fun getIntents ()I
 	public fun getIntentsValue ()I
@@ -2656,6 +2665,7 @@ public final class love/forte/simbot/qguild/event/EventIntents$Guilds : love/for
 
 public final class love/forte/simbot/qguild/event/EventIntents$Interaction : love/forte/simbot/qguild/event/EventIntents {
 	public static final field INSTANCE Llove/forte/simbot/qguild/event/EventIntents$Interaction;
+	public static final field INTENTS_INDEX I
 	public static final field INTERACTION_CREATE_TYPE Ljava/lang/String;
 	public fun equals (Ljava/lang/Object;)Z
 	public static final fun getIntents ()I
@@ -2666,6 +2676,7 @@ public final class love/forte/simbot/qguild/event/EventIntents$Interaction : lov
 
 public final class love/forte/simbot/qguild/event/EventIntents$MessageAudit : love/forte/simbot/qguild/event/EventIntents {
 	public static final field INSTANCE Llove/forte/simbot/qguild/event/EventIntents$MessageAudit;
+	public static final field INTENTS_INDEX I
 	public static final field MESSAGE_AUDIT_PASS_TYPE Ljava/lang/String;
 	public static final field MESSAGE_AUDIT_REJECT_TYPE Ljava/lang/String;
 	public fun equals (Ljava/lang/Object;)Z
@@ -2677,6 +2688,7 @@ public final class love/forte/simbot/qguild/event/EventIntents$MessageAudit : lo
 
 public final class love/forte/simbot/qguild/event/EventIntents$OpenForumsEvent : love/forte/simbot/qguild/event/EventIntents {
 	public static final field INSTANCE Llove/forte/simbot/qguild/event/EventIntents$OpenForumsEvent;
+	public static final field INTENTS_INDEX I
 	public static final field OPEN_FORUM_POST_CREATE_TYPE Ljava/lang/String;
 	public static final field OPEN_FORUM_POST_DELETE_TYPE Ljava/lang/String;
 	public static final field OPEN_FORUM_REPLY_CREATE_TYPE Ljava/lang/String;
@@ -2694,12 +2706,21 @@ public final class love/forte/simbot/qguild/event/EventIntents$OpenForumsEvent :
 public final class love/forte/simbot/qguild/event/EventIntents$PublicGuildMessages : love/forte/simbot/qguild/event/EventIntents {
 	public static final field AT_MESSAGE_CREATE_TYPE Ljava/lang/String;
 	public static final field INSTANCE Llove/forte/simbot/qguild/event/EventIntents$PublicGuildMessages;
+	public static final field INTENTS_INDEX I
 	public static final field PUBLIC_MESSAGE_DELETE_TYPE Ljava/lang/String;
 	public fun equals (Ljava/lang/Object;)Z
 	public static final fun getIntents ()I
 	public fun getIntentsValue ()I
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class love/forte/simbot/qguild/event/EventIntentsAggregation {
+	public static final field ALL I
+	public static final field INSTANCE Llove/forte/simbot/qguild/event/EventIntentsAggregation;
+	public static final fun allEventIntents ()Ljava/util/List;
+	public static final fun allIntents ()I
+	public static final fun getByName (Ljava/lang/String;)I
 }
 
 public final class love/forte/simbot/qguild/event/EventIntentsKt {

@@ -250,6 +250,18 @@ public abstract class love/forte/simbot/component/qguild/bot/config/IntentsConfi
 	public static final synthetic fun write$Self (Llove/forte/simbot/component/qguild/bot/config/IntentsConfig;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
+public final class love/forte/simbot/component/qguild/bot/config/IntentsConfig$Bits : love/forte/simbot/component/qguild/bot/config/IntentsConfig {
+	public fun <init> (Ljava/util/Set;)V
+	public final fun component1 ()Ljava/util/Set;
+	public final fun copy (Ljava/util/Set;)Llove/forte/simbot/component/qguild/bot/config/IntentsConfig$Bits;
+	public static synthetic fun copy$default (Llove/forte/simbot/component/qguild/bot/config/IntentsConfig$Bits;Ljava/util/Set;ILjava/lang/Object;)Llove/forte/simbot/component/qguild/bot/config/IntentsConfig$Bits;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBits ()Ljava/util/Set;
+	public fun getIntents-DNrqdk0 ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class love/forte/simbot/component/qguild/bot/config/IntentsConfig$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }

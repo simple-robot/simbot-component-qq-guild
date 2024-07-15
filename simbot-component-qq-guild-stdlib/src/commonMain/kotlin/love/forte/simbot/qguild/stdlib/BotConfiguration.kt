@@ -57,7 +57,6 @@ public interface BotConfiguration {
     @get:JvmSynthetic
     public val intents: Intents
 
-
     /**
      * @see intents
      */
