@@ -21,13 +21,16 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.common.id.ID
 import love.forte.simbot.common.id.StringID.Companion.ID
+import love.forte.simbot.component.qguild.bot.QGBot
 import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.logger.logger
+import love.forte.simbot.message.BinaryDataAwareMessage
 import love.forte.simbot.message.Messages
 import love.forte.simbot.qguild.model.Message
 import kotlin.jvm.JvmName
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
+import kotlin.jvm.JvmSynthetic
 import love.forte.simbot.message.Message as SimbotMessage
 
 
@@ -43,8 +46,12 @@ import love.forte.simbot.message.Message as SimbotMessage
 @SerialName("qg.attachment")
 @Serializable
 public data class QGAttachmentMessage
-@JvmOverloads constructor(public val url: String, public val properties: Map<String, String> = emptyMap()) :
-    QGMessageElement {
+@JvmOverloads constructor(
+    public val url: String,
+    public val properties: Map<String, String> = emptyMap()
+) : QGMessageElement, BinaryDataAwareMessage {
+
+    internal var bot: QGBot? = null
 
     private lateinit var _source: Message.Attachment
 
@@ -59,6 +66,16 @@ public data class QGAttachmentMessage
 
     @Deprecated("Just get url", ReplaceWith("url.ID", "love.forte.simbot.ID"))
     public val id: ID get() = url.ID
+
+    /**
+     * 尝试通过 [url] 读取二进制资源。
+     *
+     * @throws IllegalStateException 如果无法读取（例如因序列化而丢失了 HttpClient）
+     * @throws Exception 请求过程中产生的任何异常
+     */
+    @JvmSynthetic
+    override suspend fun binaryData(): ByteArray =
+        readBinaryData(bot, url)
 
     public companion object {
 
@@ -76,6 +93,11 @@ public data class QGAttachmentMessage
         }
     }
 }
+
+internal expect suspend fun readBinaryData(
+    bot: QGBot?,
+    url: String
+): ByteArray
 
 /**
  * @suppress

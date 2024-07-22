@@ -1616,11 +1616,12 @@ public final class love/forte/simbot/component/qguild/message/QGAtChannel$Compan
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
-public final class love/forte/simbot/component/qguild/message/QGAttachmentMessage : love/forte/simbot/component/qguild/message/QGMessageElement {
+public final class love/forte/simbot/component/qguild/message/QGAttachmentMessage : love/forte/simbot/component/qguild/message/QGMessageElement, love/forte/simbot/message/BinaryDataAwareMessage {
 	public static final field Companion Llove/forte/simbot/component/qguild/message/QGAttachmentMessage$Companion;
 	public fun <init> (Ljava/lang/String;)V
 	public fun <init> (Ljava/lang/String;Ljava/util/Map;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun binaryData (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/util/Map;
 	public final fun copy (Ljava/lang/String;Ljava/util/Map;)Llove/forte/simbot/component/qguild/message/QGAttachmentMessage;

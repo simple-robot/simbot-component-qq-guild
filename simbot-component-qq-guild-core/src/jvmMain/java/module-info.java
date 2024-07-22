@@ -29,6 +29,8 @@ module simbot.component.qqguild.core {
     requires transitive simbot.component.qqguild.api;
 
     requires kotlinx.datetime;
+    requires io.ktor.client.core;
+    requires io.ktor.utils;
 
     // exports
 
