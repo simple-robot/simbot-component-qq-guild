@@ -40,10 +40,18 @@ tasks.named<org.jetbrains.dokka.gradle.DokkaMultiModuleTask>("dokkaHtmlMultiModu
     }
 
     pluginConfiguration<DokkaBase, DokkaBaseConfiguration> {
-        customAssets = listOf(rootProject.file(".simbot/dokka-assets/logo-icon.svg"))
+        customAssets = listOf(
+            rootProject.file(".simbot/dokka-assets/logo-icon.svg"),
+            rootProject.file(".simbot/dokka-assets/logo-icon-light.svg"),
+        )
         customStyleSheets = listOf(rootProject.file(".simbot/dokka-assets/css/kdoc-style.css"))
-        footerMessage = "© 2021-${Year.now().value} <a href='https://github.com/simple-robot'>Simple Robot</a>, <a href='https://github.com/ForteScarlet'>ForteScarlet</a>. All rights reserved."
+        if (!isSimbotLocal()) {
+            templatesDir = rootProject.file(".simbot/dokka-templates")
+        }
+        footerMessage = "© 2022-${Year.now().value} <a href='https://github.com/simple-robot'>Simple Robot</a>. All rights reserved."
         separateInheritedMembers = true
+        mergeImplicitExpectActualDeclarations = true
+        homepageLink = P.ComponentQQGuild.HOMEPAGE
     }
 }
 
