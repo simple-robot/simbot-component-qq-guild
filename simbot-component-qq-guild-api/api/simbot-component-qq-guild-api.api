@@ -5715,6 +5715,10 @@ public final class love/forte/simbot/qguild/model/Role {
 	public static final field DEFAULT_ID_ALL_MEMBER Ljava/lang/String;
 	public static final field DEFAULT_ID_CHANNEL_ADMIN Ljava/lang/String;
 	public static final field DEFAULT_ID_OWNER Ljava/lang/String;
+	public static final field DefaultAdmin Llove/forte/simbot/qguild/model/Role;
+	public static final field DefaultAllMember Llove/forte/simbot/qguild/model/Role;
+	public static final field DefaultChannelAdmin Llove/forte/simbot/qguild/model/Role;
+	public static final field DefaultOwner Llove/forte/simbot/qguild/model/Role;
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;IIII)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/String;
@@ -5750,6 +5754,7 @@ public synthetic class love/forte/simbot/qguild/model/Role$$serializer : kotlinx
 }
 
 public final class love/forte/simbot/qguild/model/Role$Companion {
+	public final fun defaultRole (Ljava/lang/String;)Llove/forte/simbot/qguild/model/Role;
 	public final fun isDefault (Ljava/lang/String;)Z
 	public final fun isDefault (Llove/forte/simbot/qguild/model/Role;)Z
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;

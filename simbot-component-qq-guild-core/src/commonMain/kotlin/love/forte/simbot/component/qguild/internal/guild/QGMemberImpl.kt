@@ -30,6 +30,8 @@ import love.forte.simbot.component.qguild.guild.QGMember
 import love.forte.simbot.component.qguild.internal.bot.QGBotImpl
 import love.forte.simbot.component.qguild.internal.bot.newSupervisorCoroutineContext
 import love.forte.simbot.component.qguild.internal.message.asReceipt
+import love.forte.simbot.component.qguild.internal.role.toGuildRole
+import love.forte.simbot.component.qguild.internal.role.toMemberRole
 import love.forte.simbot.component.qguild.message.MessageParsers
 import love.forte.simbot.component.qguild.message.QGMessageContent
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
@@ -44,6 +46,7 @@ import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.qguild.api.message.direct.CreateDmsApi
 import love.forte.simbot.qguild.api.message.direct.DmsSendApi
 import love.forte.simbot.qguild.model.DirectMessageSession
+import love.forte.simbot.qguild.model.Role
 import love.forte.simbot.qguild.stdlib.requestDataBy
 import kotlin.concurrent.Volatile
 import kotlin.coroutines.CoroutineContext
@@ -95,6 +98,19 @@ internal class QGMemberImpl(
                 sourceGuild = sourceGuild
             ).asCollectable()
 
+    @ExperimentalQGApi
+    override val defaultRoles: List<QGMemberRole>
+        get() = source.roles.mapNotNull { rid ->
+            if (!Role.isDefault(rid)) return@mapNotNull null
+            Role.defaultRole(rid).toGuildRole(
+                bot,
+                guildId,
+                sourceGuild
+            ).toMemberRole(
+                bot,
+                source.user.id.ID
+            )
+        }
 
     @JvmSynthetic
     override suspend fun send(message: Message): QGMessageReceipt {

@@ -69,22 +69,26 @@ public interface QGRole : Role, CoroutineScope, QGObjectiveContainer<QGSourceRol
     public val guildId: ID
 
     /**
-     * ARGB的HEX十六进制颜色值转换后的十进制数值
+     * ARGB的HEX十六进制颜色值转换后的十进制数值。
+     * 当不支持获取时（例如当前身份组信息是离线构造出来的默认类型）则可能会得到一个默认值 `0`。
      */
     public val color: Int get() = source.color
 
     /**
      * 是否在成员列表中单独展示。
+     * 当不支持获取时（例如当前身份组信息是离线构造出来的默认类型）则可能会得到一个默认值 `false`。
      */
     public val isHoist: Boolean get() = source.isHoistBool
 
     /**
-     * 人数
+     * 人数。
+     * 当不支持获取时（例如当前身份组信息是离线构造出来的默认类型）则可能会得到一个默认值 `-1`。
      */
     public val number: Int get() = source.number
 
     /**
-     * 成员上限
+     * 成员上限。
+     * 当不支持获取时（例如当前身份组信息是离线构造出来的默认类型）则可能会得到一个默认值 `-1`。
      */
     public val memberLimit: Int get() = source.memberLimit
 
