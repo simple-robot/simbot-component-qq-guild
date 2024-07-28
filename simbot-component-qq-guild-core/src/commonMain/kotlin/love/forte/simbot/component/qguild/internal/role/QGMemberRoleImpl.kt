@@ -100,3 +100,4 @@ internal fun QGGuildRoleImpl.toMemberRole(
     guildRole = this,
     memberId = memberId
 )
+

@@ -1465,6 +1465,7 @@ public abstract interface class love/forte/simbot/component/qguild/guild/QGMembe
 	public fun getJoinTime ()Llove/forte/simbot/common/time/Timestamp;
 	public fun getName ()Ljava/lang/String;
 	public fun getNick ()Ljava/lang/String;
+	public fun getRoleIds ()Ljava/util/List;
 	public abstract fun mute (JLjava/util/concurrent/TimeUnit;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract synthetic fun mute-VtjQ1oo (JLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun muteAsync (JLjava/util/concurrent/TimeUnit;)Ljava/util/concurrent/CompletableFuture;
