@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -25,6 +25,7 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import love.forte.simbot.qguild.ApiModel
+import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 
 /**
@@ -117,6 +118,103 @@ public data class Role(
         @get:JvmStatic
         public val Role.isDefault: Boolean get() = isDefault(id)
 
+        /**
+         * [DefaultRoleIDs(系统默认生成下列身份组ID)](https://bot.q.qq.com/wiki/develop/api/openapi/guild/role_model.html)
+         *
+         * 此为一个默认构造的离线类型，其中的部分属性使用默认值填充。
+         *
+         * 1: 全体成员
+         *
+         * @see DEFAULT_ID_ALL_MEMBER
+         */
+        @JvmField
+        public val DefaultAllMember: Role =
+            Role(
+                id = DEFAULT_ID_ALL_MEMBER,
+                name = "全体成员",
+                color = 0,
+                hoist = 0,
+                number = -1,
+                memberLimit = -1
+            )
+
+        /**
+         * [DefaultRoleIDs(系统默认生成下列身份组ID)](https://bot.q.qq.com/wiki/develop/api/openapi/guild/role_model.html)
+         *
+         * 此为一个默认构造的离线类型，其中的部分属性使用默认值填充。
+         *
+         * 2: 管理员
+         *
+         * @see DEFAULT_ID_ADMIN
+         */
+        @JvmField
+        public val DefaultAdmin: Role =
+            Role(
+                id = DEFAULT_ID_ADMIN,
+                name = "管理员",
+                color = 0,
+                hoist = 0,
+                number = -1,
+                memberLimit = -1
+            )
+
+        /**
+         * [DefaultRoleIDs(系统默认生成下列身份组ID)](https://bot.q.qq.com/wiki/develop/api/openapi/guild/role_model.html)
+         *
+         * 此为一个默认构造的离线类型，其中的部分属性使用默认值填充。
+         *
+         * 4: 群主/创建者
+         *
+         * @see DEFAULT_ID_OWNER
+         */
+        @JvmField
+        public val DefaultOwner: Role =
+            Role(
+                id = DEFAULT_ID_OWNER,
+                name = "群主/创建者",
+                color = 0,
+                hoist = 0,
+                number = -1,
+                memberLimit = -1
+            )
+
+        /**
+         * [DefaultRoleIDs(系统默认生成下列身份组ID)](https://bot.q.qq.com/wiki/develop/api/openapi/guild/role_model.html)
+         *
+         * 此为一个默认构造的离线类型，其中的部分属性使用默认值填充。
+         *
+         * 5: 子频道管理员
+         *
+         * @see DEFAULT_ID_CHANNEL_ADMIN
+         */
+        @JvmField
+        public val DefaultChannelAdmin: Role =
+            Role(
+                id = DEFAULT_ID_CHANNEL_ADMIN,
+                name = "子频道管理员",
+                color = 0,
+                hoist = 0,
+                number = -1,
+                memberLimit = -1
+            )
+
+        /**
+         * 得到一个 [id] 对应的默认角色实例。
+         *
+         * - [DefaultAllMember]
+         * - [DefaultAdmin]
+         * - [DefaultOwner]
+         * - [DefaultChannelAdmin]
+         *
+         * @throws IllegalArgumentException 如果 `id` 不在 [isDefault] 范围内。
+         */
+        public fun defaultRole(id: String): Role = when (id) {
+            DEFAULT_ID_ALL_MEMBER -> DefaultAllMember
+            DEFAULT_ID_ADMIN -> DefaultAdmin
+            DEFAULT_ID_OWNER -> DefaultOwner
+            DEFAULT_ID_CHANNEL_ADMIN -> DefaultChannelAdmin
+            else -> throw IllegalArgumentException("Id $id is not a default role id.")
+        }
     }
 }
 

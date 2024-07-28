@@ -19,11 +19,13 @@ package love.forte.simbot.component.qguild.bot
 
 import io.ktor.client.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import love.forte.simbot.ability.EventMentionAware
 import love.forte.simbot.bot.Bot
 import love.forte.simbot.bot.ContactRelation
 import love.forte.simbot.common.id.ID
 import love.forte.simbot.common.id.StringID.Companion.ID
+import love.forte.simbot.component.qguild.ExperimentalQGApi
 import love.forte.simbot.component.qguild.QQGuildComponent
 import love.forte.simbot.component.qguild.channel.QGTextChannel
 import love.forte.simbot.component.qguild.event.QGAtMessageCreateEvent
@@ -39,8 +41,12 @@ import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.api.MessageAuditedException
+import love.forte.simbot.qguild.api.QQGuildApi
 import love.forte.simbot.qguild.api.files.UploadGroupFilesApi
 import love.forte.simbot.qguild.api.files.UploadUserFilesApi
+import love.forte.simbot.qguild.stdlib.requestBy
+import love.forte.simbot.qguild.stdlib.requestDataBy
+import love.forte.simbot.qguild.stdlib.requestTextBy
 import love.forte.simbot.suspendrunner.ST
 import love.forte.simbot.suspendrunner.STP
 import kotlin.jvm.JvmSynthetic
@@ -280,4 +286,32 @@ public interface QGBot : Bot, EventMentionAware {
         url: String,
         type: Int,
     ): QGMedia
+
+    /**
+     * 执行(请求) [api] 并得到原始的响应 [HttpResponse].
+     */
+    @ST
+    @ExperimentalQGApi
+    public suspend fun execute(api: QQGuildApi<*>): HttpResponse =
+        api.requestBy(source)
+
+    /**
+     * 执行(请求) [api] 并得到响应体字符串.
+     *
+     * @throws RuntimeException 通过 [HttpResponse] 获取响应体时可能出现的异常
+     */
+    @ST
+    @ExperimentalQGApi
+    public suspend fun executeText(api: QQGuildApi<*>): String =
+        api.requestTextBy(source)
+
+    /**
+     * 执行(请求) [api] 并得到响应体 [R].
+     *
+     * @throws RuntimeException 通过 [HttpResponse] 获取响应体时可能出现的异常或解析响应体时可能产生的异常。
+     */
+    @ST
+    @ExperimentalQGApi
+    public suspend fun <R : Any> executeData(api: QQGuildApi<R>): R =
+        api.requestDataBy(source)
 }

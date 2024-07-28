@@ -38,6 +38,9 @@ import love.forte.simbot.message.Text
 import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.api.MessageAuditedException
 import love.forte.simbot.qguild.api.guild.mute.MuteMemberApi
+import love.forte.simbot.qguild.api.role.GetGuildRoleListApi
+import love.forte.simbot.qguild.model.Role
+import love.forte.simbot.qguild.model.Role.Companion.isDefault
 import love.forte.simbot.suspendrunner.ST
 import kotlin.jvm.JvmSynthetic
 import kotlin.time.Duration
@@ -81,10 +84,30 @@ public interface QGMember : Member, CoroutineScope, QGObjectiveContainer<QGSourc
         get() = source.joinedAt.toTimestamp()
 
     /**
-     * 成员拥有的角色
+     * 成员 [source] 拥有的身分组ID集合。
+     *
+     * @see QGSourceMember.roles
+     */
+    public val roleIds: List<String>
+        get() = source.roles
+
+    /**
+     * 成员拥有的角色，会通过 [GetGuildRoleListApi] 进行查询。
+     * 如果不希望请求API以避免出现无访问权限的情况，可考虑使用离线的 [defaultRoles]。
      */
     @ExperimentalQGApi
     public val roles: Collectable<QGMemberRole>
+
+    /**
+     * 从 [source.roles][QGSourceMember.roles] 中直接构建的离线的默认 [QGMemberRole] 列表。
+     * 这个过程不会发起API请求，但是得到的 [QGMemberRole] 中可能存在部分属性缺失 (例如 `color`)，
+     * 这些缺失的属性会使用一个默认值填充。
+     *
+     * @see Role.isDefault
+     * @see Role.defaultRole
+     */
+    @ExperimentalQGApi
+    public val defaultRoles: List<QGMemberRole>
 
     /**
      * 向目标成员发送私聊消息。
