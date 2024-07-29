@@ -78,8 +78,7 @@ public data class DirectMessageCreate(
     override val id: String? = null,
     override val s: Long,
     @SerialName("d") override val data: Message
-) :
-    MessageDispatch()
+) : MessageDispatch()
 
 /**
  * 与 [MessageAudited] 相关的事件类型。[data] 类型为 [MessageAudited]。
