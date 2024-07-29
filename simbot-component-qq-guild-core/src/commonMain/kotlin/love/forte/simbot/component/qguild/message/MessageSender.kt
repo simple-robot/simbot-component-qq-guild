@@ -168,11 +168,71 @@ internal suspend fun QGBot.sendMessage(
     MessageSendApi.create(channelId, it.build()).requestDataBy(source)
 }.asReceipt()
 
+internal suspend inline fun QGBot.sendDmsMessage(
+    guildId: String,
+    message: Message,
+    crossinline onEachPre: MessageSendApi.Body.Builder.() -> Unit = {},
+    onEachPost: MessageSendApi.Body.Builder.() -> Unit = {},
+): QGMessageReceipt {
+    val parsed = MessageParsers.parse(message = message, onEachPre = onEachPre, onEachPost = onEachPost)
+
+    if (parsed.size == 1) {
+        val body = parsed[0].build()
+        return sendDmsMessage(guildId, body)
+    }
+
+    return sendDmsMessage(guildId, parsed)
+}
+
+internal suspend inline fun QGBot.sendDmsMessage(
+    guildId: String,
+    messageContent: MessageContent,
+    crossinline onEachPre: MessageSendApi.Body.Builder.() -> Unit = {},
+    onEachPost: MessageSendApi.Body.Builder.() -> Unit = {},
+): QGMessageReceipt {
+    if (messageContent is QGMessageContent) {
+        val body = MessageSendApi.Body {
+            onEachPre()
+            fromMessage(messageContent.sourceMessage)
+            onEachPost()
+        }
+
+        return sendDmsMessage(guildId, body)
+    }
+
+    return sendDmsMessage(guildId, messageContent.messages, onEachPre, onEachPost)
+}
+
+internal suspend inline fun QGBot.sendDmsMessage(
+    guildId: String,
+    text: String,
+    onEachPre: MessageSendApi.Body.Builder.() -> Unit = {},
+    onEachPost: MessageSendApi.Body.Builder.() -> Unit = {},
+): QGMessageReceipt {
+    val body = MessageSendApi.Body {
+        onEachPre()
+        // 转义后的纯文本字符串
+        content = ContentTextEncoder.encode(text)
+        onEachPost()
+    }
+
+    return sendDmsMessage(guildId, body)
+}
 
 @PublishedApi
 @QGInternalApi
 internal suspend fun QGBot.sendDmsMessage(guildId: String, body: MessageSendApi.Body): QGMessageReceipt =
     DmsSendApi.create(guildId, body).requestDataBy(source).asReceipt()
+
+@PublishedApi
+@QGInternalApi
+internal suspend fun QGBot.sendDmsMessage(
+    guildId: String, bodyBuilderList: List<MessageSendApi.Body.Builder>
+): QGMessageReceipt = bodyBuilderList.mapTo(ArrayList(bodyBuilderList.size)) {
+    DmsSendApi.create(guildId, it.build()).requestDataBy(source)
+}.asReceipt()
+
+
 
 @PublishedApi
 internal suspend fun QGBot.sendGroupMessage(

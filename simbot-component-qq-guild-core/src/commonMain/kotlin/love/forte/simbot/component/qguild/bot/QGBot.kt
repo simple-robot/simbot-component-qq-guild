@@ -28,6 +28,7 @@ import love.forte.simbot.common.id.StringID.Companion.ID
 import love.forte.simbot.component.qguild.ExperimentalQGApi
 import love.forte.simbot.component.qguild.QQGuildComponent
 import love.forte.simbot.component.qguild.channel.QGTextChannel
+import love.forte.simbot.component.qguild.dms.QGDmsContact
 import love.forte.simbot.component.qguild.event.QGAtMessageCreateEvent
 import love.forte.simbot.component.qguild.event.QGGroupAtMessageCreateEvent
 import love.forte.simbot.component.qguild.friend.QGFriend
@@ -36,6 +37,7 @@ import love.forte.simbot.component.qguild.group.QGGroupRelation
 import love.forte.simbot.component.qguild.guild.QGGuildRelation
 import love.forte.simbot.component.qguild.message.QGMedia
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
+import love.forte.simbot.component.qguild.message.QGReplyTo
 import love.forte.simbot.event.Event
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
@@ -171,6 +173,8 @@ public interface QGBot : Bot, EventMentionAware {
      * —— 因为它跳过了对频道服务器和对子频道类型的校验，失去了在消息中自动填充 `msgId` 等透明行为，并且直接使用ID也会存在一些细微的隐患。
      * 但是这可以有效规避当没有获取频道服务器或子频道信息权限时候可能导致的问题。
      *
+     * 如有必要，请不要忘记添加 [QGReplyTo] 来指定一个用于回复标记的 `msgId`。
+     *
      * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
      * @throws QQGuildApiException 请求异常，例如无权限
      * @throws MessageAuditedException 当响应状态为表示消息审核的 `304023`、`304024` 时
@@ -189,6 +193,8 @@ public interface QGBot : Bot, EventMentionAware {
      * [sendTo] 相对于 [QGTextChannel.send] 而言更加“不可靠”
      * —— 因为它跳过了对频道服务器和对子频道类型的校验，失去了在消息中自动填充 `msgId` 等透明行为，并且直接使用ID也会存在一些细微的隐患。
      * 但是这可以有效规避当没有获取频道服务器或子频道信息权限时候可能导致的问题。
+     *
+     * 如有必要，请不要忘记添加 [QGReplyTo] 来指定一个用于回复标记的 `msgId`。
      *
      * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
      * @throws QQGuildApiException 请求异常，例如无权限
@@ -210,6 +216,8 @@ public interface QGBot : Bot, EventMentionAware {
      * 并且直接使用ID也会存在一些细微的隐患。
      * 但是这可以有效规避当没有获取频道服务器或子频道信息权限时候可能导致的问题。
      *
+     * 如有必要，请不要忘记添加 [QGReplyTo] 来指定一个用于回复标记的 `msgId`。
+     *
      * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
      * @throws QQGuildApiException 请求异常，例如无权限
      * @throws MessageAuditedException 当响应状态为表示消息审核的 `304023`、`304024` 时
@@ -218,6 +226,60 @@ public interface QGBot : Bot, EventMentionAware {
      */
     @ST
     public suspend fun sendTo(channelId: ID, message: MessageContent): QGMessageReceipt
+
+    /**
+     * 直接向目标DMS(频道私聊会话)发送消息。
+     *
+     * [sendDmsTo] 相对于 [QGDmsContact.send] 而言更加“不可靠”
+     * —— 因为它失去了在消息中自动填充 `msgId` 等透明行为，
+     * 且直接使用ID也会存在一些细微的隐患。
+     *
+     * 如有必要，请不要忘记添加 [QGReplyTo] 来指定一个用于回复标记的 `msgId`。
+     *
+     * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
+     * @throws QQGuildApiException 请求异常，例如无权限
+     * @throws MessageAuditedException 当响应状态为表示消息审核的 `304023`、`304024` 时
+     *
+     * @return 消息发送回执
+     */
+    @ST
+    public suspend fun sendDmsTo(id: ID, text: String): QGMessageReceipt
+
+    /**
+     * 直接向目标DMS(频道私聊会话)发送消息。
+     *
+     * [sendDmsTo] 相对于 [QGDmsContact.send] 而言更加“不可靠”
+     * —— 因为它失去了在消息中自动填充 `msgId` 等透明行为，
+     * 且直接使用ID也会存在一些细微的隐患。
+     *
+     * 如有必要，请不要忘记添加 [QGReplyTo] 来指定一个用于回复标记的 `msgId`。
+     *
+     * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
+     * @throws QQGuildApiException 请求异常，例如无权限
+     * @throws MessageAuditedException 当响应状态为表示消息审核的 `304023`、`304024` 时
+     *
+     * @return 消息发送回执
+     */
+    @ST
+    public suspend fun sendDmsTo(id: ID, message: Message): QGMessageReceipt
+
+    /**
+     * 直接向目标DMS(频道私聊会话)发送消息。
+     *
+     * [sendDmsTo] 相对于 [QGDmsContact.send] 而言更加“不可靠”
+     * —— 因为它失去了在消息中自动填充 `msgId` 等透明行为，
+     * 且直接使用ID也会存在一些细微的隐患。
+     *
+     * 如有必要，请不要忘记添加 [QGReplyTo] 来指定一个用于回复标记的 `msgId`。
+     *
+     * @throws Exception see [HttpClient.request], 可能会抛出任何ktor请求过程中的异常。
+     * @throws QQGuildApiException 请求异常，例如无权限
+     * @throws MessageAuditedException 当响应状态为表示消息审核的 `304023`、`304024` 时
+     *
+     * @return 消息发送回执
+     */
+    @ST
+    public suspend fun sendDmsTo(id: ID, message: MessageContent): QGMessageReceipt
 
 
     /**

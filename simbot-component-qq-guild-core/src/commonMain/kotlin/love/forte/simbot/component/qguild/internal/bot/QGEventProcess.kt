@@ -146,15 +146,19 @@ internal fun QGBotImpl.registerEventProcessor(): DisposableHandle {
             // 消息
             /// 频道
             is AtMessageCreate -> {
-                pushEvent { QGAtMessageCreateEventImpl(bot, raw, event.data) }
+                pushEvent { QGAtMessageCreateEventImpl(bot, raw, event.data, event.id) }
+            }
+            /// 频道单聊
+            is DirectMessageCreate -> {
+                pushEvent { QGDirectMessageCreateEventImpl(bot, raw, event.data, event.id) }
             }
             /// 群&单聊
             is GroupAtMessageCreate -> {
-                pushEvent { QGGroupAtMessageCreateEventImpl(bot, raw, event) }
+                pushEvent { QGGroupAtMessageCreateEventImpl(bot, raw, event, event.id) }
             }
 
             is C2CMessageCreate -> {
-                pushEvent { QGC2CMessageCreateEventImpl(bot, raw, event) }
+                pushEvent { QGC2CMessageCreateEventImpl(bot, raw, event, event.id) }
             }
 
             // 群聊：managements
