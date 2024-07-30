@@ -19,6 +19,7 @@ package love.forte.simbot.component.qguild.internal.event
 
 import love.forte.simbot.common.atomic.AtomicInt
 import love.forte.simbot.common.atomic.atomic
+import love.forte.simbot.common.id.ID
 import love.forte.simbot.common.id.StringID.Companion.ID
 import love.forte.simbot.component.qguild.event.QGGroupAtMessageCreateEvent
 import love.forte.simbot.component.qguild.group.QGGroup
@@ -45,8 +46,12 @@ internal class QGGroupAtMessageCreateEventImpl(
     override val bot: QGBotImpl,
     override val sourceEventRaw: String,
     override val sourceEventEntity: GroupAtMessageCreate,
-    private val msgSeq: AtomicInt = atomic(1)
+    private val eventId: String?,
+    private val msgSeq: AtomicInt = atomic(1),
 ) : QGGroupAtMessageCreateEvent() {
+    override val id: ID
+        get() = eventId?.ID ?: sourceEventEntity.data.id.ID
+
     override suspend fun author(): QGGroupMember {
         return QGGroupMemberImpl(
             bot,

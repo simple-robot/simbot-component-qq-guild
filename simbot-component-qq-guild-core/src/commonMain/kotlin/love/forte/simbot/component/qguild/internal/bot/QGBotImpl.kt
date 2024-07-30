@@ -49,6 +49,7 @@ import love.forte.simbot.component.qguild.internal.role.toGuildRole
 import love.forte.simbot.component.qguild.internal.role.toMemberRole
 import love.forte.simbot.component.qguild.message.QGMedia
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
+import love.forte.simbot.component.qguild.message.sendDmsMessage
 import love.forte.simbot.component.qguild.message.sendMessage
 import love.forte.simbot.event.EventDispatcher
 import love.forte.simbot.event.onEachError
@@ -318,6 +319,30 @@ internal class QGBotImpl(
             sendMessage(channelId.literal, message)
         } catch (e: QQGuildApiException) {
             throw e.addStackTrace { "Bot.sendTo" }
+        }
+    }
+
+    override suspend fun sendDmsTo(id: ID, text: String): QGMessageReceipt {
+        return try {
+            sendDmsMessage(id.literal, text)
+        } catch (e: QQGuildApiException) {
+            throw e.addStackTrace { "Bot.sendDmsTo" }
+        }
+    }
+
+    override suspend fun sendDmsTo(id: ID, message: Message): QGMessageReceipt {
+        return try {
+            sendDmsMessage(id.literal, message)
+        } catch (e: QQGuildApiException) {
+            throw e.addStackTrace { "Bot.sendDmsTo" }
+        }
+    }
+
+    override suspend fun sendDmsTo(id: ID, message: MessageContent): QGMessageReceipt {
+        return try {
+            sendDmsMessage(id.literal, message)
+        } catch (e: QQGuildApiException) {
+            throw e.addStackTrace { "Bot.sendDmsTo" }
         }
     }
 

@@ -19,6 +19,7 @@ package love.forte.simbot.component.qguild.internal.event
 
 import love.forte.simbot.common.atomic.AtomicInt
 import love.forte.simbot.common.atomic.atomic
+import love.forte.simbot.common.id.ID
 import love.forte.simbot.common.id.StringID.Companion.ID
 import love.forte.simbot.component.qguild.event.QGC2CMessageCreateEvent
 import love.forte.simbot.component.qguild.friend.QGFriend
@@ -43,8 +44,12 @@ internal class QGC2CMessageCreateEventImpl(
     override val bot: QGBotImpl,
     override val sourceEventRaw: String,
     override val sourceEventEntity: C2CMessageCreate,
+    private val eventId: String?,
     private val msgSeq: AtomicInt = atomic(1)
 ) : QGC2CMessageCreateEvent() {
+    override val id: ID
+        get() = eventId?.ID ?: sourceEventEntity.data.id.ID
+
     override val messageContent: QGGroupAndC2CMessageContent =
         QGGroupAndC2CMessageContentImpl(
             sourceEventEntity.data.id.ID,
