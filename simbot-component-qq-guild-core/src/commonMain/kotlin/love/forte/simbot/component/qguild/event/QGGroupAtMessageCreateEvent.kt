@@ -48,8 +48,7 @@ public abstract class QGGroupAtMessageCreateEvent : QGBotEvent<GroupAtMessageCre
     /**
      * 事件ID
      */
-    override val id: ID
-        get() = sourceEventEntity.data.id.ID
+    abstract override val id: ID
 
     /**
      * 事件时间

@@ -44,8 +44,7 @@ import love.forte.simbot.suspendrunner.STP
 public abstract class QGC2CMessageCreateEvent : QGBotEvent<C2CMessageCreate>(), ContactMessageEvent {
     abstract override val bot: QGBot
 
-    override val id: ID
-        get() = sourceEventEntity.data.id.ID
+    abstract override val id: ID
 
     @OptIn(ExperimentalQGApi::class)
     override val time: Timestamp
