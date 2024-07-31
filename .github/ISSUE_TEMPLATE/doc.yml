@@ -9,7 +9,7 @@ body:
       value: |
         ## 须知
         在进行问题反馈前，请**确认**以下内容：
-        1. 我确认目前的 [Issues](https://github.com/simple-robot/simbot-component-qq-guild/issues?q=is%3Aissue+label%3Abug%3F) 中没有类似内容。
+        1. 我确认目前的 [Issues](https://github.com/simple-robot/simbot-component-qq-guild/issues?q=is%3Aissue+label%3A%E6%96%87%E6%A1%A3) 中没有类似内容。
         2. 我已确认所述内容不涉及任何个人隐私或其他敏感信息，遵守相关地区法律法规。
         
         <hr />
