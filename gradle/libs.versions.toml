@@ -56,7 +56,6 @@ kotlinx-serialization-hocon = { group = "org.jetbrains.kotlinx", name = "kotlinx
 kotlinx-serialization-protobuf = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-protobuf", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-cbor = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-cbor", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-properties = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-properties", version.ref = "kotlinx-serialization" }
-charleskorn-kaml = "com.charleskorn.kaml:kaml:0.61.0"
 
 # kotlinx-datetime
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinx-datetime" }
@@ -84,9 +83,6 @@ ktor-client-winhttp = { group = "io.ktor", name = "ktor-client-winhttp", version
 # Darwin-based operating systems (such as macOS, iOS, tvOS, and so on)
 # see https://ktor.io/docs/http-client-engines.html#darwin
 ktor-client-darwin = { group = "io.ktor", name = "ktor-client-darwin", version.ref = "ktor" }
-
-# nodejsn
-##kotlinx-odejs = ""
 
 # log4j
 log4j-api = { group = "org.apache.logging.log4j", name = "log4j-api", version.ref = "log4j" }
