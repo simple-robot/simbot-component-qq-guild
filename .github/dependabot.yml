@@ -7,3 +7,6 @@ updates:
       interval: daily
     labels:
       - dependencies
+    assignees:
+      - ForteScarlet
+    open-pull-requests-limit: 10
