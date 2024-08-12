@@ -53,7 +53,7 @@ internal class QGAtMessageCreateEventImpl(
             }
         }.ID
 
-    override val messageContent: QGMessageContentImpl = QGMessageContentImpl(sourceEventEntity)
+    override val messageContent: QGMessageContentImpl = QGMessageContentImpl(bot, sourceEventEntity)
 
     override suspend fun reply(message: love.forte.simbot.message.Message): QGMessageReceipt {
         var ref: Message.Reference? = null

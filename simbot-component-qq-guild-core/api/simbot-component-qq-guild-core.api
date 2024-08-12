@@ -1841,7 +1841,7 @@ public final class love/forte/simbot/component/qguild/message/QGMedia$Companion 
 
 public abstract class love/forte/simbot/component/qguild/message/QGMessageContent : love/forte/simbot/component/qguild/message/QGBaseMessageContent {
 	public fun <init> ()V
-	public synthetic fun delete ([Llove/forte/simbot/ability/DeleteOption;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract synthetic fun delete ([Llove/forte/simbot/ability/DeleteOption;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun getSourceMessage ()Llove/forte/simbot/qguild/model/Message;
 }
 

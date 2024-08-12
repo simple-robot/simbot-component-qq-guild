@@ -178,18 +178,13 @@ public abstract class QGMessageContent : QGBaseMessageContent() {
     public abstract val sourceMessage: QGSourceMessage
 
     /**
-     * 暂时不支持消息撤回。
-     * 如果 [options] 中不包含
-     * [StandardDeleteOption.IGNORE_ON_UNSUPPORTED]
-     * 则抛出 [UnsupportedOperationException]
+     * 撤回此文字子频道的消息。
+     *
+     * @throws RuntimeException 撤回过程中可能产生的异常，例如无权限、没有对应的消息等。
+     * 可以被 [StandardDeleteOption.IGNORE_ON_FAILURE] 选项忽略。
      */
     @JvmSynthetic
-    override suspend fun delete(vararg options: DeleteOption) {
-        // TODO
-        if (options.none { it == StandardDeleteOption.IGNORE_ON_UNSUPPORTED }) {
-            throw UnsupportedOperationException("QGMessageContent.delete")
-        }
-    }
+    abstract override suspend fun delete(vararg options: DeleteOption)
 }
 
 /**
