@@ -45,7 +45,7 @@ internal class QGDirectMessageCreateEventImpl(
     override val id: ID
         get() = eventId?.ID ?: sourceEventEntity.id.ID
 
-    override val messageContent: QGMessageContent = QGMessageContentImpl(sourceEventEntity)
+    override val messageContent: QGMessageContent = QGMessageContentImpl(bot, sourceEventEntity)
 
     private val _content = sourceEventEntity.author.toDmsContact(
         bot = bot,

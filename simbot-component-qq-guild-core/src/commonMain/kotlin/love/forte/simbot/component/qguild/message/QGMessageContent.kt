@@ -24,6 +24,7 @@ import love.forte.simbot.component.qguild.QQGuildComponent
 import love.forte.simbot.message.*
 import love.forte.simbot.qguild.message.ContentTextDecoder
 import love.forte.simbot.qguild.model.Message
+import love.forte.simbot.suspendrunner.STP
 import kotlin.jvm.JvmSynthetic
 import love.forte.simbot.qguild.model.Message as QGSourceMessage
 
@@ -155,6 +156,14 @@ public abstract class QGBaseMessageContent : MessageContent {
      *
      */
     public abstract val sourceContent: String
+
+    /**
+     * 从 [messages] 中寻找并获取第一个 [QGReference] 类型的元素。
+     * 不会发生挂起行为。
+     */
+    @STP
+    override suspend fun reference(): QGReference? =
+        messages.firstNotNullOfOrNull { it as? QGReference }
 }
 
 /**
@@ -169,18 +178,13 @@ public abstract class QGMessageContent : QGBaseMessageContent() {
     public abstract val sourceMessage: QGSourceMessage
 
     /**
-     * 暂时不支持消息撤回。
-     * 如果 [options] 中不包含
-     * [StandardDeleteOption.IGNORE_ON_UNSUPPORTED]
-     * 则抛出 [UnsupportedOperationException]
+     * 撤回此文字子频道的消息。
+     *
+     * @throws RuntimeException 撤回过程中可能产生的异常，例如无权限、没有对应的消息等。
+     * 可以被 [StandardDeleteOption.IGNORE_ON_FAILURE] 选项忽略。
      */
     @JvmSynthetic
-    override suspend fun delete(vararg options: DeleteOption) {
-        // TODO
-        if (options.none { it == StandardDeleteOption.IGNORE_ON_UNSUPPORTED }) {
-            throw UnsupportedOperationException("QGMessageContent.delete")
-        }
-    }
+    abstract override suspend fun delete(vararg options: DeleteOption)
 }
 
 /**
