@@ -1695,7 +1695,12 @@ public abstract class love/forte/simbot/component/qguild/message/QGBaseMessageCo
 	public abstract fun getId ()Llove/forte/simbot/common/id/ID;
 	public abstract fun getMessages ()Llove/forte/simbot/message/Messages;
 	public abstract fun getPlainText ()Ljava/lang/String;
+	public fun getReference ()Llove/forte/simbot/component/qguild/message/QGReference;
+	public synthetic fun getReference ()Llove/forte/simbot/message/MessageReference;
+	public fun getReferenceAsync ()Ljava/util/concurrent/CompletableFuture;
+	public fun getReferenceReserve ()Llove/forte/simbot/suspendrunner/reserve/SuspendReserve;
 	public abstract fun getSourceContent ()Ljava/lang/String;
+	public synthetic fun reference (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class love/forte/simbot/component/qguild/message/QGContentText : love/forte/simbot/component/qguild/message/QGMessageElement, love/forte/simbot/message/PlainText {
@@ -1855,12 +1860,13 @@ public abstract interface class love/forte/simbot/component/qguild/message/QGMes
 	public static synthetic fun delete$suspendImpl (Llove/forte/simbot/component/qguild/message/QGMessageReceipt;[Llove/forte/simbot/ability/DeleteOption;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
-public final class love/forte/simbot/component/qguild/message/QGReference : love/forte/simbot/component/qguild/message/QGMessageElement {
+public final class love/forte/simbot/component/qguild/message/QGReference : love/forte/simbot/component/qguild/message/QGMessageElement, love/forte/simbot/message/MessageReference {
 	public static final field Companion Llove/forte/simbot/component/qguild/message/QGReference$Companion;
 	public synthetic fun <init> (Llove/forte/simbot/common/id/ID;ZLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public static final fun create (Llove/forte/simbot/common/id/ID;)Llove/forte/simbot/component/qguild/message/QGReference;
 	public static final fun create (Llove/forte/simbot/common/id/ID;Z)Llove/forte/simbot/component/qguild/message/QGReference;
 	public fun equals (Ljava/lang/Object;)Z
+	public fun getId ()Llove/forte/simbot/common/id/ID;
 	public final fun getIgnoreGetMessageError ()Z
 	public final fun getMessageId ()Llove/forte/simbot/common/id/ID;
 	public final fun getSource ()Llove/forte/simbot/qguild/model/Message$Reference;

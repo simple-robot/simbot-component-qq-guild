@@ -24,6 +24,7 @@ import love.forte.simbot.component.qguild.QQGuildComponent
 import love.forte.simbot.message.*
 import love.forte.simbot.qguild.message.ContentTextDecoder
 import love.forte.simbot.qguild.model.Message
+import love.forte.simbot.suspendrunner.STP
 import kotlin.jvm.JvmSynthetic
 import love.forte.simbot.qguild.model.Message as QGSourceMessage
 
@@ -155,6 +156,14 @@ public abstract class QGBaseMessageContent : MessageContent {
      *
      */
     public abstract val sourceContent: String
+
+    /**
+     * 从 [messages] 中寻找并获取第一个 [QGReference] 类型的元素。
+     * 不会发生挂起行为。
+     */
+    @STP
+    override suspend fun reference(): QGReference? =
+        messages.firstNotNullOfOrNull { it as? QGReference }
 }
 
 /**

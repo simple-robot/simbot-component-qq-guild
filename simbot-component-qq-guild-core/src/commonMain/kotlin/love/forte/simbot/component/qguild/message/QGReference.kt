@@ -22,6 +22,7 @@ import kotlinx.serialization.Serializable
 import love.forte.simbot.common.id.ID
 import love.forte.simbot.common.id.StringID.Companion.ID
 import love.forte.simbot.common.id.literal
+import love.forte.simbot.message.MessageReference
 import love.forte.simbot.message.Messages
 import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.qguild.model.Message
@@ -45,7 +46,9 @@ import kotlin.jvm.JvmStatic
 public class QGReference private constructor(
     public val messageId: ID,
     public val ignoreGetMessageError: Boolean
-) : QGMessageElement {
+) : QGMessageElement, MessageReference {
+    override val id: ID
+        get() = messageId
 
     private lateinit var _source: Message.Reference
 
@@ -119,6 +122,10 @@ internal object ReferenceParser : SendingMessageParser {
             builderContext.builders.forEach {
                 it.messageReference = element.source
             }
+        } else if (element is MessageReference) {
+            builderContext.builders.forEach {
+                it.messageReference = Message.Reference(messageId = element.id.literal)
+            }
         }
     }
 
@@ -131,6 +138,10 @@ internal object ReferenceParser : SendingMessageParser {
         if (element is QGReference) {
             builderContext.builders.forEach {
                 it.messageReference = element.source
+            }
+        } else if (element is MessageReference) {
+            builderContext.builders.forEach {
+                it.messageReference = Message.Reference(messageId = element.id.literal)
             }
         }
     }
