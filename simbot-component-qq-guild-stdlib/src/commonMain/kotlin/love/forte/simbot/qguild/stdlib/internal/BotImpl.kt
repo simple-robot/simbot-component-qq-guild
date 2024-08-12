@@ -151,10 +151,6 @@ internal class BotImpl(
                 apiHttpSocketTimeoutMillis?.also { socketTimeoutMillis = it }
             }
         }
-
-        install(HttpRequestRetry) {
-            maxRetries = 3
-        }
     }
 
     /**

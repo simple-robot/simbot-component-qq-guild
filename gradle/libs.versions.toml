@@ -1,20 +1,20 @@
 [versions]
 kotlin = "2.0.0"
 kotlinx-coroutines = "1.8.1"
-kotlinx-serialization = "1.6.3"
+kotlinx-serialization = "1.7.1"
 kotlinx-datetime = "0.6.0"
 dokka = "1.9.20"
-ktor = "2.3.11"
+ktor = "2.3.12"
 openjdk-jmh = "1.37"
 log4j = "2.23.1"
 # simbot
-simbot = "4.3.0"
+simbot = "4.5.0"
 suspendTransform = "0.9.0"
 gradleCommon = "0.6.0"
 # ksp
-ksp = "2.0.0-1.0.22"
+ksp = "2.0.0-1.0.24"
 # https://square.github.io/kotlinpoet/
-kotlinPoet = "1.17.0"
+kotlinPoet = "1.18.1"
 # https://detekt.dev/docs/intro
 # TODO apply detekt
 detekt = "1.23.6"
@@ -56,7 +56,6 @@ kotlinx-serialization-hocon = { group = "org.jetbrains.kotlinx", name = "kotlinx
 kotlinx-serialization-protobuf = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-protobuf", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-cbor = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-cbor", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-properties = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-properties", version.ref = "kotlinx-serialization" }
-charleskorn-kaml = "com.charleskorn.kaml:kaml:0.59.0"
 
 # kotlinx-datetime
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinx-datetime" }
@@ -85,9 +84,6 @@ ktor-client-winhttp = { group = "io.ktor", name = "ktor-client-winhttp", version
 # see https://ktor.io/docs/http-client-engines.html#darwin
 ktor-client-darwin = { group = "io.ktor", name = "ktor-client-darwin", version.ref = "ktor" }
 
-# nodejsn
-##kotlinx-odejs = ""
-
 # log4j
 log4j-api = { group = "org.apache.logging.log4j", name = "log4j-api", version.ref = "log4j" }
 log4j-core = { group = "org.apache.logging.log4j", name = "log4j-core", version.ref = "log4j" }
@@ -114,7 +110,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 # binary-compatibility-validator
 # https://github.com/Kotlin/binary-compatibility-validator
-kotlinxBinaryCompatibilityValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version = "0.15.0-Beta.2" }
+kotlinxBinaryCompatibilityValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version = "0.16.3" }
 
 [bundles]
 gradle-common = ["gradle-common-core", "gradle-common-multiplatform", "gradle-common-publication"]

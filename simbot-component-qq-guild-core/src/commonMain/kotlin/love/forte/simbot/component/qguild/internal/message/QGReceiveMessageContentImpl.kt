@@ -17,19 +17,27 @@
 
 package love.forte.simbot.component.qguild.internal.message
 
+import love.forte.simbot.ability.DeleteOption
+import love.forte.simbot.ability.StandardDeleteOption
 import love.forte.simbot.common.id.ID
 import love.forte.simbot.common.id.StringID.Companion.ID
+import love.forte.simbot.component.qguild.ExperimentalQGApi
+import love.forte.simbot.component.qguild.bot.QGBot
 import love.forte.simbot.component.qguild.message.MessageParsers
 import love.forte.simbot.component.qguild.message.QGGroupAndC2CMessageContent
 import love.forte.simbot.component.qguild.message.QGMessageContent
 import love.forte.simbot.message.Messages
+import love.forte.simbot.qguild.api.message.DeleteMessageApi
 import love.forte.simbot.qguild.model.Message
 
 /**
  *
  * @author ForteScarlet
  */
-internal class QGMessageContentImpl(override val sourceMessage: Message) : QGMessageContent() {
+internal class QGMessageContentImpl(
+    private val bot: QGBot,
+    override val sourceMessage: Message
+) : QGMessageContent() {
 
     override val id: ID get() = sourceMessage.id.ID
 
@@ -43,6 +51,20 @@ internal class QGMessageContentImpl(override val sourceMessage: Message) : QGMes
 
     override val sourceContent: String
         get() = sourceMessage.content
+
+    @OptIn(ExperimentalQGApi::class)
+    override suspend fun delete(vararg options: DeleteOption) {
+        // TODO DeleteMessageApi.hidetip
+        val api = DeleteMessageApi.create(sourceMessage.channelId, sourceMessage.id)
+
+        kotlin.runCatching {
+            bot.executeData(api)
+        }.onFailure { e ->
+            if (StandardDeleteOption.IGNORE_ON_FAILURE !in options) {
+                throw e
+            }
+        }
+    }
 
     override fun toString(): String {
         return "QGReceiveMessageContentImpl(messageId=${sourceMessage.id}, sourceMessage=$sourceMessage)"
@@ -63,7 +85,12 @@ internal class QGGroupAndC2CMessageContentImpl(
     override val sourceContent: String,
     override val attachments: List<Message.Attachment>,
 ) : QGGroupAndC2CMessageContent() {
-    private val parseContext by lazy(LazyThreadSafetyMode.PUBLICATION) { MessageParsers.parse(sourceContent, attachments) }
+    private val parseContext by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        MessageParsers.parse(
+            sourceContent,
+            attachments
+        )
+    }
 
     override val messages: Messages
         get() = parseContext.messages
