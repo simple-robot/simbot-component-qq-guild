@@ -19,7 +19,7 @@
 tasks.create("createChangelog") {
     group = "documentation"
     doFirst {
-        val realVersion = P.ComponentQQGuild.version.toString()
+        val realVersion = P.ComponentQQGuild.version
         val version = "v$realVersion"
         logger.info("Generate change log for {} ...", version)
         // configurations.runtimeClasspath
@@ -36,7 +36,7 @@ tasks.create("createChangelog") {
 
             val coreVersion = simbotVersion
             val autoGenerateText = buildString {
-                appendLine("> 对应核心版本: [**v$coreVersion**](https://github.com/simple-robot/simpler-robot/releases/tag/v$coreVersion)\n\n")
+                appendLine("> [!note]\n> 对应核心版本: [**v$coreVersion**](https://github.com/simple-robot/simpler-robot/releases/tag/v$coreVersion)\n\n")
 
                 if ("dev" in version) {
                     appendLine(
