@@ -45,7 +45,8 @@ import kotlin.jvm.JvmStatic
 @Serializable
 public class QGReference private constructor(
     public val messageId: ID,
-    public val ignoreGetMessageError: Boolean
+    public val ignoreGetMessageError: Boolean,
+    public val channelId: ID?
 ) : QGMessageElement, MessageReference {
     override val id: ID
         get() = messageId
@@ -69,8 +70,9 @@ public class QGReference private constructor(
          */
         @JvmStatic
         @JvmName("of")
-        public fun Message.Reference.toMessage(): QGReference =
-            QGReference(messageId.ID, ignoreGetMessageError).also {
+        @JvmOverloads
+        public fun Message.Reference.toMessage(channelId: ID? = null): QGReference =
+            QGReference(messageId.ID, ignoreGetMessageError, channelId).also {
                 it._source = this
             }
 
@@ -83,8 +85,8 @@ public class QGReference private constructor(
          */
         @JvmStatic
         @JvmOverloads
-        public fun create(messageId: ID, ignoreGetMessageError: Boolean = false): QGReference =
-            QGReference(messageId, ignoreGetMessageError)
+        public fun create(messageId: ID, ignoreGetMessageError: Boolean = false, channelId: ID? = null): QGReference =
+            QGReference(messageId, ignoreGetMessageError, channelId)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -104,7 +106,7 @@ public class QGReference private constructor(
     }
 
     override fun toString(): String {
-        return "QGReference(messageId=$messageId, ignoreGetMessageError=$ignoreGetMessageError)"
+        return "QGReference(messageId=$messageId, ignoreGetMessageError=$ignoreGetMessageError, channelId=$channelId)"
     }
 
 
