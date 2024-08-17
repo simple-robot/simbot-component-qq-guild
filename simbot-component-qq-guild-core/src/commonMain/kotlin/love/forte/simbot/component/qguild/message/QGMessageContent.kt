@@ -164,6 +164,17 @@ public abstract class QGBaseMessageContent : MessageContent {
     @STP
     override suspend fun reference(): QGReference? =
         messages.firstNotNullOfOrNull { it as? QGReference }
+
+    /**
+     * 根据 [消息引用][reference] 获取或查询对应的消息正文内容。
+     *
+     * 文字子频道的消息会通过API查询，C2C或群聊的消息则始终得到 `null`, 无法获取。
+     */
+    @STP
+    override suspend fun referenceMessage(): QGBaseMessageContent? =
+        queryReferenceMessage()
+
+    protected abstract suspend fun queryReferenceMessage(): QGBaseMessageContent?
 }
 
 /**
@@ -185,6 +196,9 @@ public abstract class QGMessageContent : QGBaseMessageContent() {
      */
     @JvmSynthetic
     abstract override suspend fun delete(vararg options: DeleteOption)
+
+
+    abstract override suspend fun queryReferenceMessage(): QGBaseMessageContent?
 }
 
 /**
@@ -210,9 +224,13 @@ public abstract class QGGroupAndC2CMessageContent : QGBaseMessageContent() {
      */
     @JvmSynthetic
     override suspend fun delete(vararg options: DeleteOption) {
-        // TODO
         if (options.none { it == StandardDeleteOption.IGNORE_ON_UNSUPPORTED }) {
             throw UnsupportedOperationException("QGGroupAndC2CMessageContent.delete")
         }
     }
+
+    /**
+     * C2C单聊消息暂不支持查询消息详情。
+     */
+    override suspend fun queryReferenceMessage(): QGBaseMessageContent? = null
 }
