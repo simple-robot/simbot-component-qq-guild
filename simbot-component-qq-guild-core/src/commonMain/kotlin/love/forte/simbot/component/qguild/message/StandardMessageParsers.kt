@@ -303,7 +303,7 @@ internal object QGMessageParser : ReceivingMessageParser {
 
         // TODO embeds?
         // reference
-        qgMessage?.messageReference?.also { messageList.add(it.toMessage()) }
+        qgMessage?.messageReference?.also { messageList.add(it.toMessage(qgMessage.channelId.ID)) }
 
         context.messages += messageList
         return context

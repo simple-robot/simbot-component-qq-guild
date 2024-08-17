@@ -24,10 +24,12 @@ import love.forte.simbot.common.id.StringID.Companion.ID
 import love.forte.simbot.component.qguild.ExperimentalQGApi
 import love.forte.simbot.component.qguild.bot.QGBot
 import love.forte.simbot.component.qguild.message.MessageParsers
+import love.forte.simbot.component.qguild.message.QGBaseMessageContent
 import love.forte.simbot.component.qguild.message.QGGroupAndC2CMessageContent
 import love.forte.simbot.component.qguild.message.QGMessageContent
 import love.forte.simbot.message.Messages
 import love.forte.simbot.qguild.api.message.DeleteMessageApi
+import love.forte.simbot.qguild.api.message.GetMessageApi
 import love.forte.simbot.qguild.model.Message
 
 /**
@@ -64,6 +66,16 @@ internal class QGMessageContentImpl(
                 throw e
             }
         }
+    }
+
+    @OptIn(ExperimentalQGApi::class)
+    override suspend fun queryReferenceMessage(): QGBaseMessageContent? {
+        val ref = reference() ?: return null
+        val api = GetMessageApi.create(sourceMessage.channelId, ref.source.messageId)
+
+        val msg = bot.executeData(api)
+
+        return QGMessageContentImpl(bot, msg)
     }
 
     override fun toString(): String {

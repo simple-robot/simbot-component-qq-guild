@@ -25,6 +25,7 @@ import love.forte.simbot.bot.Bot
 import love.forte.simbot.bot.ContactRelation
 import love.forte.simbot.common.id.ID
 import love.forte.simbot.common.id.StringID.Companion.ID
+import love.forte.simbot.common.id.literal
 import love.forte.simbot.component.qguild.ExperimentalQGApi
 import love.forte.simbot.component.qguild.QQGuildComponent
 import love.forte.simbot.component.qguild.channel.QGTextChannel
@@ -35,17 +36,18 @@ import love.forte.simbot.component.qguild.friend.QGFriend
 import love.forte.simbot.component.qguild.group.QGGroup
 import love.forte.simbot.component.qguild.group.QGGroupRelation
 import love.forte.simbot.component.qguild.guild.QGGuildRelation
-import love.forte.simbot.component.qguild.message.QGMedia
-import love.forte.simbot.component.qguild.message.QGMessageReceipt
-import love.forte.simbot.component.qguild.message.QGReplyTo
+import love.forte.simbot.component.qguild.internal.message.QGMessageContentImpl
+import love.forte.simbot.component.qguild.message.*
 import love.forte.simbot.event.Event
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
+import love.forte.simbot.message.MessageReference
 import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.api.MessageAuditedException
 import love.forte.simbot.qguild.api.QQGuildApi
 import love.forte.simbot.qguild.api.files.UploadGroupFilesApi
 import love.forte.simbot.qguild.api.files.UploadUserFilesApi
+import love.forte.simbot.qguild.api.message.GetMessageApi
 import love.forte.simbot.qguild.stdlib.requestBy
 import love.forte.simbot.qguild.stdlib.requestDataBy
 import love.forte.simbot.qguild.stdlib.requestTextBy
@@ -376,4 +378,48 @@ public interface QGBot : Bot, EventMentionAware {
     @ExperimentalQGApi
     public suspend fun <R : Any> executeData(api: QQGuildApi<R>): R =
         api.requestDataBy(source)
+
+    /**
+     * 无法仅根据消息id查询引用，将始终抛出 [UnsupportedOperationException]。
+     * 考虑使用 [messageFromReference] 或可提供 `channelId` 信息的 [messageFromId]。
+     */
+    @ST
+    override suspend fun messageFromId(id: ID): QGMessageContent {
+        throw UnsupportedOperationException("Cannot query message from `messageId` only. " +
+                "Use the QGBot.messageFromId(channelId, messageId) or QGBot.messageFromReference(QGReference) plz.")
+    }
+
+    /**
+     * 根据引用信息 [reference] 查询指定的**文字子频道**消息正文。
+     * [reference] 必须是 [QGReference] 类型，并且不能缺失 [QGReference.channelId]，
+     * 因为查询消息内容除了 `messageId` 以外还需要 `channelId` 信息。
+     *
+     * @throws UnsupportedOperationException 如果 [reference] 类型不是 [QGReference]
+     * @throws IllegalArgumentException 如果 [reference] 的 [channelId][QGReference.channelId] 为 `null`
+     */
+    @ST
+    @ExperimentalQGApi
+    override suspend fun messageFromReference(reference: MessageReference): QGMessageContent {
+        if (reference !is QGReference) {
+            throw UnsupportedOperationException("Cannot query message use a reference that type is not QGReference. " +
+                    "Use `reference` type of QGReference or use messageFromId(channelId, messageId) plz.")
+        }
+
+        val cid = reference.channelId ?: throw IllegalArgumentException("`reference.channelId` must not be null")
+
+        return messageFromId(cid, reference.messageId)
+    }
+
+    /**
+     * 根据子频道ID和消息ID查询指定的**文字子频道**消息内容。
+     *
+     * @throws RuntimeException 任何可能在 [请求API][executeData] 过程中产生的异常
+     */
+    @ST
+    @ExperimentalQGApi
+    public suspend fun messageFromId(channelId: ID, messageId: ID): QGMessageContent {
+        val api = GetMessageApi.create(channelId.literal, messageId.literal)
+        val data = executeData(api)
+        return QGMessageContentImpl(this, data)
+    }
 }
