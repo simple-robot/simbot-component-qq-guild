@@ -26,6 +26,7 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import love.forte.simbot.common.atomic.AtomicLong
 import love.forte.simbot.common.atomic.atomic
@@ -37,6 +38,7 @@ import love.forte.simbot.common.weak.WeakRef
 import love.forte.simbot.common.weak.weakRef
 import love.forte.simbot.logger.Logger
 import love.forte.simbot.logger.LoggerFactory
+import love.forte.simbot.qguild.QQGuildResultSerializationException
 import love.forte.simbot.qguild.api.GatewayApis
 import love.forte.simbot.qguild.api.GatewayInfo
 import love.forte.simbot.qguild.api.app.AppAccessToken
@@ -82,7 +84,20 @@ internal class BotImpl(
 
     private fun configCheck() {
         if (configuration.intents.value == 0) {
-            logger.warn("Bot(appId=${ticket.appId}) intents value is ZERO")
+            logger.warn("Bot(appId={}) intents value is ZERO", ticket.appId)
+        }
+
+        checkTicketSecret()
+    }
+
+    private fun checkTicketSecret() {
+        if (ticket.secret.isEmpty()) {
+            logger.error("The `ticket.secret` is empty. " +
+                    "Since v4.0.0-beta6, the authentication logic within component " +
+                    "has been migrated to new logic that requires the use of `secret`. " +
+                    "If you do not configure the `ticket.secret`, " +
+                    "it will most likely fail to start and throw an exception. " +
+                    "See also: https://github.com/simple-robot/simbot-component-qq-guild/pull/163")
         }
     }
 
@@ -161,7 +176,8 @@ internal class BotImpl(
 
     /**
      * `access_token`。
-     * 在使用了 [start] 后会定期刷新，周期为上一个 access_token 有效期的 90%。
+     * 在使用了 [start] 后会定期刷新，
+     * 周期为上一个 [accessToken] 有效期的 90%。
      * 比如如果有效期是 7200，那么下次刷新会在 7200*0.9=6480 秒后刷新。
      *
      * 刷新此值的应当只有一个 Job，一般不会产生竞争的情况。
@@ -350,12 +366,26 @@ internal class BotImpl(
     }
 
     private suspend fun getNewAccessToken(api: GetAppAccessTokenApi): AppAccessToken =
-        api.requestData(
-            client = apiClient,
-            token = null,
-            server = null,
-            appId = null
-        )
+        runCatching {
+            api.requestData(
+                client = apiClient,
+                token = null,
+                server = null,
+                appId = null
+            )
+        }.getOrElse { err ->
+            when (err) {
+                is SerializationException, is QQGuildResultSerializationException -> {
+                    var message = "Deserialize the result of GetAppAccessToken API failed."
+                    if (ticket.secret.isEmpty()) {
+                        message += " Did you forget to configure `ticket.secret`? It's required!"
+                    }
+                    throw IllegalStateException(message, err)
+                }
+
+                else -> throw err
+            }
+        }
 
     override fun cancel(reason: Throwable?) {
         if (!job.isActive) return
