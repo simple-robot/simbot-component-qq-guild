@@ -95,6 +95,8 @@ public sealed class IntentsConfig {
      * 但是代码内不做校验。
      */
     @SerialName("bitBased")
+    @Serializable
+    @UsedOnlyForConfigSerialization
     public data class Bits(val bits: Set<Int>) : IntentsConfig() {
         override val intents: Intents
             get() {
