@@ -270,6 +270,7 @@ public abstract class love/forte/simbot/component/qguild/bot/config/IntentsConfi
 }
 
 public final class love/forte/simbot/component/qguild/bot/config/IntentsConfig$Bits : love/forte/simbot/component/qguild/bot/config/IntentsConfig {
+	public static final field Companion Llove/forte/simbot/component/qguild/bot/config/IntentsConfig$Bits$Companion;
 	public fun <init> (Ljava/util/Set;)V
 	public final fun component1 ()Ljava/util/Set;
 	public final fun copy (Ljava/util/Set;)Llove/forte/simbot/component/qguild/bot/config/IntentsConfig$Bits;
@@ -279,6 +280,21 @@ public final class love/forte/simbot/component/qguild/bot/config/IntentsConfig$B
 	public fun getIntents-DNrqdk0 ()I
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public synthetic class love/forte/simbot/component/qguild/bot/config/IntentsConfig$Bits$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Llove/forte/simbot/component/qguild/bot/config/IntentsConfig$Bits$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Llove/forte/simbot/component/qguild/bot/config/IntentsConfig$Bits;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Llove/forte/simbot/component/qguild/bot/config/IntentsConfig$Bits;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class love/forte/simbot/component/qguild/bot/config/IntentsConfig$Bits$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
 public final class love/forte/simbot/component/qguild/bot/config/IntentsConfig$Companion {
