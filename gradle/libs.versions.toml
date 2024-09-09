@@ -17,7 +17,7 @@ ksp = "2.0.10-1.0.24"
 kotlinPoet = "1.18.1"
 # https://detekt.dev/docs/intro
 # TODO apply detekt
-detekt = "1.23.6"
+detekt = "1.23.7"
 
 
 [libraries]
