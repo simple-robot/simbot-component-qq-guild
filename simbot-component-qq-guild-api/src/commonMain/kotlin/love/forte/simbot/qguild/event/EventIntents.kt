@@ -23,6 +23,7 @@ import love.forte.simbot.qguild.PrivateDomainOnly
 import love.forte.simbot.qguild.event.EventIntents.*
 import love.forte.simbot.qguild.event.EventIntents.Companion.READY_TYPE
 import love.forte.simbot.qguild.event.EventIntents.Companion.RESUMED_TYPE
+import love.forte.simbot.qguild.internal.EventNameBasedMarker
 import love.forte.simbot.qguild.model.User
 import kotlin.jvm.JvmInline
 import kotlin.jvm.JvmName
@@ -350,6 +351,10 @@ public sealed class EventIntents {
      *   - GROUP_MSG_RECEIVE       // 群管理员主动在机器人资料页操作开启通知
      * ```
      */
+    @EventNameBasedMarker(
+        snackLower = "group_and_c2c_event",
+        snackUpper = "GROUP_AND_C2C_EVENT"
+    )
     public data object GroupAndC2CEvent : EventIntents() {
         public const val INTENTS_INDEX: Int = 25
         internal const val INTENTS: Int = 1 shl INTENTS_INDEX

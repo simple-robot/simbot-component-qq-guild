@@ -52,6 +52,9 @@ private val IntentsClassName = ClassName(INTENTS_PACKAGE, INTENTS_CLASS_NAME)
 
 private const val NO_WARP = "·"
 
+private const val EVENT_NAME_BASED_MARKER_NAME = "EventNameBasedMarker"
+private const val EVENT_NAME_BASED_MARKER_PKG = "love.forte.simbot.qguild.internal"
+
 /**
  * 寻找所有 `love.forte.simbot.qguild.event.EventIntents` 的子 `object` 类型，
  * 并生成它们 intents 的各种聚合到 `EventIntentsAggregation` 中。
@@ -99,7 +102,10 @@ internal class EventIntentsAggregationProcessor(
 
         val fileBuilder = FileSpec.builder(OUTPUT_PACKAGE, AGGREGATION_FILE_NAME)
         fileBuilder.addType(aggregationBuilder.build())
-        fileBuilder.addFileComment("本文件内容为自动生成，生成于 %L", OffsetDateTime.now(ZoneOffset.ofHours(8)).toString())
+        fileBuilder.addFileComment(
+            "本文件内容为自动生成，生成于 %L",
+            OffsetDateTime.now(ZoneOffset.ofHours(8)).toString()
+        )
 
         val targetFile = fileBuilder.build()
 
@@ -198,14 +204,40 @@ internal class EventIntentsAggregationProcessor(
         data class NamesToType(val names: Set<String>, val declaration: KSClassDeclaration)
 
         val nameToTypes = list.map { declaration ->
-            val baseName = declaration.simpleName.asString()
+            val nameBasedAnnotation = declaration.annotations
+                .firstOrNull {
+                    (it.annotationType.resolve().declaration as? KSClassDeclaration)?.let { annoDecl ->
+                        annoDecl.simpleName.asString() == EVENT_NAME_BASED_MARKER_NAME
+                                && annoDecl.packageName.asString() == EVENT_NAME_BASED_MARKER_PKG
+                    } ?: false
+                }
+
+            fun baseName(): String = declaration.simpleName.asString()
+
+            fun findFromAnnotation(name: String): String? =
+                nameBasedAnnotation?.arguments?.firstOrNull {
+                    it.name?.asString() == name
+                }?.value as? String?
+
+            val firstUpper = findFromAnnotation("firstUpper")
+                ?.takeUnless { it.isBlank() }
+                ?: baseName()
+            val firstLower = findFromAnnotation("firstLower")
+                ?.takeUnless { it.isBlank() }
+                ?: baseName().replaceFirstChar(Char::lowercaseChar)
+            val snackUpper = findFromAnnotation("snackUpper")
+                ?.takeUnless { it.isBlank() }
+                ?: baseName().toSnack(true)
+            val snackLower = findFromAnnotation("snackLower")
+                ?.takeUnless { it.isBlank() }
+                ?: baseName().toSnack(false)
+
+
             val set = setOf(
-                baseName,
-                // 开头小写
-                baseName.replaceFirstChar(Char::lowercaseChar),
-                // 下划线的全大写与全小写
-                baseName.toSnack(false),
-                baseName.toSnack(true)
+                firstUpper,
+                firstLower,
+                snackUpper,
+                snackLower,
             )
 
             NamesToType(set, declaration)
