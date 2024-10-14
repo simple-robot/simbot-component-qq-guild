@@ -21,30 +21,14 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 
 inline fun KotlinJsTargetDsl.configJs(
     nodeJs: Boolean = true,
-    browser: Boolean = true,
     block: () -> Unit = {}
 ) {
     if (nodeJs) {
-        nodejs()
-//        {
-////            testTask {
-////                useMocha {
-////                    timeout = "10000"
-////                }
-////            }
-//        }
-    }
-
-    if (browser) {
-        browser()
-//        {
-//            testTask{
-//                useKarma {
-//                    useChromeHeadless()
-//                    // useConfigDirectory(File(project.rootProject.projectDir, "karma"))
-//                }
-//            }
-//        }
+        nodejs {
+            testTask {
+                useMocha()
+            }
+        }
     }
 
     binaries.library()
@@ -55,10 +39,10 @@ inline fun KotlinJsTargetDsl.configJs(
 fun Project.configJsTestTasks() {
     // val shouldRunJsBrowserTest = !hasProperty("teamcity") || hasProperty("enable-js-tests")
     // if (shouldRunJsBrowserTest) return
-    tasks.findByName("cleanJsBrowserTest")?.apply {
-        onlyIf { false }
-    }
-    tasks.findByName("jsBrowserTest")?.apply {
-        onlyIf { false }
-    }
+//    tasks.findByName("cleanJsBrowserTest")?.apply {
+//        onlyIf { false }
+//    }
+//    tasks.findByName("jsBrowserTest")?.apply {
+//        onlyIf { false }
+//    }
 }
