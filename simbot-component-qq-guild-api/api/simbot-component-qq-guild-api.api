@@ -1592,8 +1592,6 @@ public final class love/forte/simbot/qguild/api/message/MessageSendApi$Body {
 	public final fun component6 ()Ljava/lang/String;
 	public final fun component7 ()Ljava/lang/String;
 	public final fun component8 ()Llove/forte/simbot/qguild/model/Message$Markdown;
-	public final fun copy (Ljava/lang/String;Llove/forte/simbot/qguild/model/Message$Embed;Llove/forte/simbot/qguild/model/Message$Ark;Llove/forte/simbot/qguild/model/Message$Reference;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Llove/forte/simbot/qguild/model/Message$Markdown;)Llove/forte/simbot/qguild/api/message/MessageSendApi$Body;
-	public static synthetic fun copy$default (Llove/forte/simbot/qguild/api/message/MessageSendApi$Body;Ljava/lang/String;Llove/forte/simbot/qguild/model/Message$Embed;Llove/forte/simbot/qguild/model/Message$Ark;Llove/forte/simbot/qguild/model/Message$Reference;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Llove/forte/simbot/qguild/model/Message$Markdown;ILjava/lang/Object;)Llove/forte/simbot/qguild/api/message/MessageSendApi$Body;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getArk ()Llove/forte/simbot/qguild/model/Message$Ark;
 	public final fun getContent ()Ljava/lang/String;
