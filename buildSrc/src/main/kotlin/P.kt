@@ -57,7 +57,7 @@ object P {
 
 
         const val VERSION = "4.0.2"
-        const val NEXT_VERSION = "4.0.3"
+        const val NEXT_VERSION = "4.1.0"
 
         override val snapshotVersion = "$NEXT_VERSION-SNAPSHOT"
         override val version = if (isSnapshot()) snapshotVersion else VERSION
