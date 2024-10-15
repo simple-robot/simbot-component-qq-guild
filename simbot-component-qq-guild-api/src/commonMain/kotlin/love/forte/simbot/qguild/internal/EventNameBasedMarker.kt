@@ -15,34 +15,14 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
+package love.forte.simbot.qguild.internal
 
-
-inline fun KotlinJsTargetDsl.configJs(
-    nodeJs: Boolean = true,
-    block: () -> Unit = {}
-) {
-    if (nodeJs) {
-        nodejs {
-            testTask {
-                useMocha()
-            }
-        }
-    }
-
-    binaries.library()
-    block()
-}
-
-
-fun Project.configJsTestTasks() {
-    // val shouldRunJsBrowserTest = !hasProperty("teamcity") || hasProperty("enable-js-tests")
-    // if (shouldRunJsBrowserTest) return
-//    tasks.findByName("cleanJsBrowserTest")?.apply {
-//        onlyIf { false }
-//    }
-//    tasks.findByName("jsBrowserTest")?.apply {
-//        onlyIf { false }
-//    }
-}
+@Suppress("unused")
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.SOURCE)
+internal annotation class EventNameBasedMarker(
+    val firstUpper: String = "",
+    val firstLower: String = "",
+    val snackUpper: String = "",
+    val snackLower: String = "",
+)
