@@ -617,7 +617,7 @@ internal suspend fun BotImpl.emitEvent(dispatch: Signal.Dispatch, raw: String) {
 /**
  * Repeat to `length` == 32
  */
-private fun String.paddingEd25519Seed(): String {
+internal fun String.paddingEd25519Seed(): String {
     return when {
         length == 32 -> this
         length > 32 -> substring(32)

@@ -1,6 +1,6 @@
 import io.github.andreypfau.curve25519.ed25519.Ed25519
 import io.ktor.utils.io.core.*
-import love.forte.simbot.qguild.stdlib.paddingEd25519Seed
+import love.forte.simbot.qguild.stdlib.internal.paddingEd25519Seed
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
@@ -83,7 +83,7 @@ class Ed25519TestsCommon {
         val seed   = secret.paddingEd25519Seed()
         val plainToken = "Arq0D5A61EgUu4OxUvOp"
         val ts = "1725442341"
-        val body = """{"d":{"plain_token":"Arq0D5A61EgUu4OxUvOp","event_ts":"1725442341"},"op":13}"""
+        // val body = """{"d":{"plain_token":"Arq0D5A61EgUu4OxUvOp","event_ts":"1725442341"},"op":13}"""
 
         val pk = Ed25519.keyFromSeed(seed.toByteArray())
         val msg = "$ts$plainToken"
