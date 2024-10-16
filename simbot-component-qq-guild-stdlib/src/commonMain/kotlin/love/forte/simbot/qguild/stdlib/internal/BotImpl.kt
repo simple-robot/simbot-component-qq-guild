@@ -107,10 +107,13 @@ internal class BotImpl(
         }
     }
 
-    private val ed25519PrivateKey =
+    private val ed25519PrivateKey by lazy {
         Ed25519.keyFromSeed(ticket.secret.paddingEd25519Seed().toByteArray())
+    }
 
-    private val ed25519PublicKey = ed25519PrivateKey.publicKey()
+    private val ed25519PublicKey by lazy {
+        ed25519PrivateKey.publicKey()
+    }
 
     internal val eventDecoder = Signal.Dispatch.dispatchJson {
         isLenient = true
@@ -619,7 +622,7 @@ internal suspend fun BotImpl.emitEvent(dispatch: Signal.Dispatch, raw: String) {
  */
 internal fun String.paddingEd25519Seed(): String {
     return when {
-        length == 32 -> this
+        length == 32 || isEmpty() -> this
         length > 32 -> substring(32)
         else -> {
             buildString(32) {
