@@ -407,10 +407,10 @@ internal class BotImpl(
         logger.debug("Emit raw event with payload: {}", payload)
         val json = eventDecoder.parseToJsonElement(payload)
 
-        fun verifyIfNecessary() {
-            val signatureValue = options?.signatureValue ?: return
+        fun signatureVerifyIfNecessary() {
+            val signatureValidator = options?.signatureVerifier ?: return
 
-            verifyEventEd25519(signatureValue.ed25519, signatureValue.timestamp, payload)
+            signatureValidator.verify(payload, ticket.secret)
         }
 
 
@@ -422,7 +422,7 @@ internal class BotImpl(
             }
 
             Opcodes.Dispatch -> {
-                verifyIfNecessary()
+                signatureVerifyIfNecessary()
 
                 val dispatch = try {
                     eventDecoder.decodeFromJsonElement(Signal.Dispatch.serializer(), json)
@@ -446,7 +446,7 @@ internal class BotImpl(
             }
 
             Opcodes.CallbackVerify -> {
-                verifyIfNecessary()
+                signatureVerifyIfNecessary()
 
                 // TODO return sign
 
@@ -567,15 +567,4 @@ internal suspend fun BotImpl.emitEvent(dispatch: Signal.Dispatch, raw: String) {
             }
         }
     }
-}
-
-/**
- * see https://bot.q.qq.com/wiki/develop/api-v2/dev-prepare/interface-framework/sign.html
- */
-private fun verifyEventEd25519(
-    xSignatureEd25519: String,
-    xSignatureTimestamp: String,
-    body: String,
-) {
-    TODO("verifyEvent via ed25519")
 }

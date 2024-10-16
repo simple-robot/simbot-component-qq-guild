@@ -72,6 +72,8 @@ kotlin {
             implementation(kotlin("test"))
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.ktor.client.mock)
+            // https://github.com/andreypfau/curve25519-kotlin
+            // implementation("com.diglol.crypto:pkc:0.2.0")
         }
 
         jvmTest.dependencies {
@@ -79,6 +81,13 @@ kotlin {
             implementation(libs.log4j.api)
             implementation(libs.log4j.core)
             implementation(libs.log4j.slf4j2)
+
+//            implementation("dev.whyoleg.cryptography:cryptography-core:0.4.0")
+//            implementation(kotlincrypto.core.digest)
+//            implementation(kotlincrypto.core.mac)
+//            implementation(kotlincrypto.core.xof)
+//            implementation(kotlincrypto.macs.hmac.sha1)
+//            implementation(kotlincrypto.macs.kmac)
         }
 
         jsMain.dependencies {

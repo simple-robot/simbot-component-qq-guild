@@ -26,10 +26,10 @@ repositories {
 }
 
 kotlin {
-    jvmToolchain(11)
+    jvmToolchain(JVMConstants.KT_JVM_TARGET_VALUE)
     compilerOptions {
         javaParameters = true
-        jvmTarget.set(JvmTarget.JVM_11)
+        jvmTarget.set(JvmTarget.fromTarget(JVMConstants.KT_JVM_TARGET_VALUE.toString()))
     }
 }
 

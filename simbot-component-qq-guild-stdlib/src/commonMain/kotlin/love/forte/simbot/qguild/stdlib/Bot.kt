@@ -30,7 +30,6 @@ import love.forte.simbot.qguild.model.User
 import love.forte.simbot.suspendrunner.ST
 import love.forte.simbot.suspendrunner.STP
 import kotlin.coroutines.CoroutineContext
-import kotlin.jvm.JvmStatic
 
 /**
  * 一个 QQ频道Bot。
@@ -305,31 +304,36 @@ public class EmitEventOptions {
     public var ignoreMissingOpcode: Boolean = false
 
     /**
-     * 如果需要对此回调事件进行签名校验，则通过 [signatureValue] 配置校验所需的、来自请求头透传的值。
+     * 如果需要对此回调事件进行签名校验，
+     * 则通过 [signatureVerifier] 配置校验器。
      *
-     * - `X-Signature-Ed25519`
-     * - `X-Signature-Timestamp`
+     * 校验器提供一个基于 [Bot.Ticket.secret] 进行校验的函数，
+     * 如果出现任何不匹配的错误结果，直接抛出一个运行时异常即可。
+     *
+     * 如果你想要以自己的逻辑提前校验则可设为 `null`，
+     * 如果为 `null` 则不会进行校验。
+     *
+     * 默认为 `null`。
      *
      * 更多参考 [官方文档](https://bot.q.qq.com/wiki/develop/api-v2/dev-prepare/interface-framework/sign.html)
-     *
-     * [signatureValue] 默认为 `null`, 即不进行校验。
      */
-    public var signatureValue: SignatureValue? = null
+    public var signatureVerifier: SignatureVerifier? = null
 }
 
 /**
- * 回调校验用的参数
- * 更多参考 [官方文档](https://bot.q.qq.com/wiki/develop/api-v2/dev-prepare/interface-framework/sign.html)
+ * 一个使用 [Bot.Ticket.secret] 进行校验的签名校验器。
+ *
+ * secret 是敏感信息，请只使用可信任的实现以确保机密信息不被泄露。
  *
  * @since 4.1.0
  */
-public class SignatureValue private constructor(
-    public val ed25519: String,
-    public val timestamp: String
-) {
-    public companion object {
-        @JvmStatic
-        public fun create(ed25519: String, timestamp: String): SignatureValue =
-            SignatureValue(ed25519 = ed25519, timestamp = timestamp)
-    }
+public interface SignatureVerifier {
+    /**
+     * 根据 bot 的 [secret] 进行校验。
+     * 如果校验不通过，则直接抛出所需的异常，未出现异常即视为校验成功。
+     *
+     * @param payload 推送事件的JSON体正文
+     * @param secret bot 配置的 [Bot.Ticket.secret]
+     */
+    public fun verify(payload: String, secret: String)
 }
