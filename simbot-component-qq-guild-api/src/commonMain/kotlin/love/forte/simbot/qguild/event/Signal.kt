@@ -180,6 +180,9 @@ public sealed class Signal<D>(@Serializable(Opcode.SerializerByCode::class) publ
 
 
         public companion object {
+            
+            internal const val DEFAULT_SEQ: Long = -1L
+
             /**
              * [Dispatch] 使用 [Json] 进行多态解析时的类鉴别器属性名。
              *
@@ -215,11 +218,55 @@ public sealed class Signal<D>(@Serializable(Opcode.SerializerByCode::class) publ
          */
         public data class Unknown @QGInternalApi constructor(
             override val id: String? = null,
-            override val s: Long,
+            override val s: Long = DEFAULT_SEQ,
             override val data: JsonElement,
             val raw: String
         ) : Dispatch()
 
+    }
+
+    /**
+     * 回调地址验证。开放平台对机器人服务端进行验证
+     *
+     * @see Opcode.CallbackVerify
+     */
+    @Serializable
+    public data class CallbackVerify(
+        @SerialName("d") override val data: Data
+    ) : Signal<CallbackVerify.Data>(Opcode.CallbackVerify) {
+
+
+        /**
+         * 请求结构(`Payload.d`)
+         *
+         * | 字段 | 描述 |
+         * | --- | --- |
+         * | plain_token | 需要计算签名的字符串 |
+         * | event_ts | 计算签名使用时间戳 |
+         */
+        @Serializable
+        public data class Data(
+            @SerialName("plain_token")
+            val plainToken: String,
+            @SerialName("event_ts")
+            val eventTs: String
+        )
+
+        /**
+         * 回调地址验证返回结果
+         *
+         *  | 字段 | 描述 |
+         *  | --- | --- |
+         *  | plain_token | 需要计算签名的字符串 |
+         *  | signature | 签名 |
+         *
+         */
+        @Serializable
+        public data class Verified(
+            @SerialName("plain_token")
+            val plainToken: String,
+            val signature: String,
+        )
     }
 }
 
@@ -229,6 +276,11 @@ public sealed class Signal<D>(@Serializable(Opcode.SerializerByCode::class) publ
  *
  */
 public fun JsonElement.getOpcode(): Int? = jsonObject["op"]?.jsonPrimitive?.int
+
+@QGInternalApi
+public fun JsonElement.tryGetId(): String? = kotlin.runCatching {
+    jsonObject["id"]?.jsonPrimitive?.contentOrNull
+}.getOrNull()
 
 /**
  * [Shared](https://bot.q.qq.com/wiki/develop/api/gateway/shard.html)

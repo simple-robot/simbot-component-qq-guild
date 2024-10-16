@@ -23,6 +23,7 @@ import io.ktor.client.statement.*
 import love.forte.simbot.ability.EventMentionAware
 import love.forte.simbot.bot.Bot
 import love.forte.simbot.bot.ContactRelation
+import love.forte.simbot.common.function.Action
 import love.forte.simbot.common.id.ID
 import love.forte.simbot.common.id.StringID.Companion.ID
 import love.forte.simbot.common.id.literal
@@ -48,9 +49,9 @@ import love.forte.simbot.qguild.api.QQGuildApi
 import love.forte.simbot.qguild.api.files.UploadGroupFilesApi
 import love.forte.simbot.qguild.api.files.UploadUserFilesApi
 import love.forte.simbot.qguild.api.message.GetMessageApi
-import love.forte.simbot.qguild.stdlib.requestBy
-import love.forte.simbot.qguild.stdlib.requestDataBy
-import love.forte.simbot.qguild.stdlib.requestTextBy
+import love.forte.simbot.qguild.event.Opcode
+import love.forte.simbot.qguild.event.Signal
+import love.forte.simbot.qguild.stdlib.*
 import love.forte.simbot.suspendrunner.ST
 import love.forte.simbot.suspendrunner.STP
 import kotlin.jvm.JvmSynthetic
@@ -422,4 +423,59 @@ public interface QGBot : Bot, EventMentionAware {
         val data = executeData(api)
         return QGMessageContentImpl(this, data)
     }
+
+
+    /**
+     * 主动推送一个事件原文。
+     * 可用于在 webhook 模式下推送事件。
+     *
+     * @param payload 接收到的事件推送的JSON格式正文字符串。
+     * @param options 额外提供的属性或配置。默认为 `null`。
+     * @param onVerified 如果事件是验证事件
+     * ([Opcode.CallbackVerify]),
+     * 且验证成功后，则通过 [onVerified] 回调结果。
+     *
+     * @throws IllegalArgumentException 参考:
+     * - [EmitEventOptions.ignoreUnknownOpcode]
+     * - [EmitEventOptions.ignoreMissingOpcode]
+     *
+     * @see QGSourceBot.emitEvent
+     *
+     * @since 4.1.0
+     */
+    @ST
+    public suspend fun emitEvent(
+        payload: String,
+        options: EmitEventOptions? = null,
+        onVerified: Action<Signal.CallbackVerify.Verified>? = null
+    ) {
+        source.emitEvent(payload, options, onVerified)
+    }
+
+    /**
+     * 主动推送一个事件原文。
+     * 可用于在 webhook 模式下推送事件。
+     *
+     * @param payload 接收到的事件推送的JSON格式正文字符串。
+     *
+     * @see QGSourceBot.emitEvent
+     * @since 4.1.0
+     */
+    @ST
+    public suspend fun emitEvent(payload: String) {
+        source.emitEvent(payload)
+    }
+}
+
+/**
+ * 使用 [QGBot.emitEvent] 推送一个外部事件，并且在 [block] 中配置 [EmitEventOptions]。
+ * @see QGBot.emitEvent
+ * @since 4.1.0
+ */
+public suspend inline fun QGBot.emitEvent(
+    payload: String,
+    onVerified: Action<Signal.CallbackVerify.Verified>? = null,
+    block: EmitEventOptions.() -> Unit
+) {
+    source.emitEvent(payload, onVerified, block)
 }

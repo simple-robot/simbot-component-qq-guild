@@ -3712,6 +3712,10 @@ public abstract class love/forte/simbot/qguild/event/Opcode {
 	public final fun isSend ()Z
 }
 
+public final class love/forte/simbot/qguild/event/Opcode$CallbackVerify : love/forte/simbot/qguild/event/Opcode, love/forte/simbot/qguild/event/ReceiveAble {
+	public static final field INSTANCE Llove/forte/simbot/qguild/event/Opcode$CallbackVerify;
+}
+
 public final class love/forte/simbot/qguild/event/Opcode$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
@@ -3758,6 +3762,7 @@ public final class love/forte/simbot/qguild/event/Opcode$SerializerByCode : kotl
 }
 
 public final class love/forte/simbot/qguild/event/Opcodes {
+	public static final field CallbackVerify I
 	public static final field Dispatch I
 	public static final field Heartbeat I
 	public static final field HeartbeatACK I
@@ -4273,6 +4278,92 @@ public abstract class love/forte/simbot/qguild/event/Signal {
 	public abstract fun getData ()Ljava/lang/Object;
 	public final fun getOp ()Llove/forte/simbot/qguild/event/Opcode;
 	public static final synthetic fun write$Self (Llove/forte/simbot/qguild/event/Signal;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;Lkotlinx/serialization/KSerializer;)V
+}
+
+public final class love/forte/simbot/qguild/event/Signal$CallbackVerify : love/forte/simbot/qguild/event/Signal {
+	public static final field Companion Llove/forte/simbot/qguild/event/Signal$CallbackVerify$Companion;
+	public fun <init> (Llove/forte/simbot/qguild/event/Signal$CallbackVerify$Data;)V
+	public final fun component1 ()Llove/forte/simbot/qguild/event/Signal$CallbackVerify$Data;
+	public final fun copy (Llove/forte/simbot/qguild/event/Signal$CallbackVerify$Data;)Llove/forte/simbot/qguild/event/Signal$CallbackVerify;
+	public static synthetic fun copy$default (Llove/forte/simbot/qguild/event/Signal$CallbackVerify;Llove/forte/simbot/qguild/event/Signal$CallbackVerify$Data;ILjava/lang/Object;)Llove/forte/simbot/qguild/event/Signal$CallbackVerify;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getData ()Ljava/lang/Object;
+	public fun getData ()Llove/forte/simbot/qguild/event/Signal$CallbackVerify$Data;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public synthetic class love/forte/simbot/qguild/event/Signal$CallbackVerify$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Llove/forte/simbot/qguild/event/Signal$CallbackVerify$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Llove/forte/simbot/qguild/event/Signal$CallbackVerify;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Llove/forte/simbot/qguild/event/Signal$CallbackVerify;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class love/forte/simbot/qguild/event/Signal$CallbackVerify$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class love/forte/simbot/qguild/event/Signal$CallbackVerify$Data {
+	public static final field Companion Llove/forte/simbot/qguild/event/Signal$CallbackVerify$Data$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Llove/forte/simbot/qguild/event/Signal$CallbackVerify$Data;
+	public static synthetic fun copy$default (Llove/forte/simbot/qguild/event/Signal$CallbackVerify$Data;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Llove/forte/simbot/qguild/event/Signal$CallbackVerify$Data;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEventTs ()Ljava/lang/String;
+	public final fun getPlainToken ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public synthetic class love/forte/simbot/qguild/event/Signal$CallbackVerify$Data$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Llove/forte/simbot/qguild/event/Signal$CallbackVerify$Data$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Llove/forte/simbot/qguild/event/Signal$CallbackVerify$Data;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Llove/forte/simbot/qguild/event/Signal$CallbackVerify$Data;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class love/forte/simbot/qguild/event/Signal$CallbackVerify$Data$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class love/forte/simbot/qguild/event/Signal$CallbackVerify$Verified {
+	public static final field Companion Llove/forte/simbot/qguild/event/Signal$CallbackVerify$Verified$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Llove/forte/simbot/qguild/event/Signal$CallbackVerify$Verified;
+	public static synthetic fun copy$default (Llove/forte/simbot/qguild/event/Signal$CallbackVerify$Verified;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Llove/forte/simbot/qguild/event/Signal$CallbackVerify$Verified;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getPlainToken ()Ljava/lang/String;
+	public final fun getSignature ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public synthetic class love/forte/simbot/qguild/event/Signal$CallbackVerify$Verified$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Llove/forte/simbot/qguild/event/Signal$CallbackVerify$Verified$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Llove/forte/simbot/qguild/event/Signal$CallbackVerify$Verified;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Llove/forte/simbot/qguild/event/Signal$CallbackVerify$Verified;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class love/forte/simbot/qguild/event/Signal$CallbackVerify$Verified$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
 public final class love/forte/simbot/qguild/event/Signal$Companion {

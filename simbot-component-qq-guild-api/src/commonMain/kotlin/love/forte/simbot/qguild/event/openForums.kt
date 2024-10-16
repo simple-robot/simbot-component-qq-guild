@@ -120,7 +120,7 @@ public sealed class OpenForumThreadDispatch : OpenForumDispatch() {
 @SerialName(EventIntents.OpenForumsEvent.OPEN_FORUM_THREAD_CREATE_TYPE)
 public data class OpenForumThreadCreate(
     override val id: String? = null,
-    override val s: Long,
+    override val s: Long = DEFAULT_SEQ,
     @SerialName("d") override val data: OpenForumThreadData
 ) : OpenForumThreadDispatch()
 
@@ -134,7 +134,7 @@ public data class OpenForumThreadCreate(
 @SerialName(EventIntents.OpenForumsEvent.OPEN_FORUM_THREAD_UPDATE_TYPE)
 public data class OpenForumThreadUpdate(
     override val id: String? = null,
-    override val s: Long,
+    override val s: Long = DEFAULT_SEQ,
     @SerialName("d") override val data: OpenForumThreadData
 ) : OpenForumThreadDispatch()
 
@@ -148,7 +148,7 @@ public data class OpenForumThreadUpdate(
 @SerialName(EventIntents.OpenForumsEvent.OPEN_FORUM_THREAD_DELETE_TYPE)
 public data class OpenForumThreadDelete(
     override val id: String? = null,
-    override val s: Long,
+    override val s: Long = DEFAULT_SEQ,
     @SerialName("d") override val data: OpenForumThreadData
 ) : OpenForumThreadDispatch()
 
@@ -188,7 +188,7 @@ public sealed class OpenForumPostDispatch : OpenForumDispatch() {
 @SerialName(EventIntents.OpenForumsEvent.OPEN_FORUM_POST_CREATE_TYPE)
 public data class OpenForumPostCreate(
     override val id: String? = null,
-    override val s: Long,
+    override val s: Long = DEFAULT_SEQ,
     @SerialName("d") override val data: OpenForumPostData
 ) : OpenForumPostDispatch()
 
@@ -202,7 +202,7 @@ public data class OpenForumPostCreate(
 @SerialName(EventIntents.OpenForumsEvent.OPEN_FORUM_POST_DELETE_TYPE)
 public data class OpenForumPostDelete(
     override val id: String? = null,
-    override val s: Long,
+    override val s: Long = DEFAULT_SEQ,
     @SerialName("d") override val data: OpenForumPostData
 ) : OpenForumPostDispatch()
 
@@ -241,7 +241,7 @@ public sealed class OpenForumReplyDispatch : OpenForumDispatch() {
 @SerialName(EventIntents.OpenForumsEvent.OPEN_FORUM_REPLY_CREATE_TYPE)
 public data class OpenForumReplyCreate(
     override val id: String? = null,
-    override val s: Long,
+    override val s: Long = DEFAULT_SEQ,
     @SerialName("d") override val data: OpenForumReplyData
 ) : OpenForumReplyDispatch()
 
@@ -255,7 +255,7 @@ public data class OpenForumReplyCreate(
 @SerialName(EventIntents.OpenForumsEvent.OPEN_FORUM_REPLY_DELETE_TYPE)
 public data class OpenForumReplyDelete(
     override val id: String? = null,
-    override val s: Long,
+    override val s: Long = DEFAULT_SEQ,
     @SerialName("d") override val data: OpenForumReplyData
 ) : OpenForumReplyDispatch()
 

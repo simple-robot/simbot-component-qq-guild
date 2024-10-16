@@ -18,7 +18,6 @@
 package love.forte.simbot.component.qguild.bot.config
 
 import io.ktor.http.*
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.bot.SerializableBotConfiguration
@@ -107,7 +106,6 @@ public data class QGBotFileConfiguration(
      * ```
      *
      */
-    @OptIn(ExperimentalSerializationApi::class)
     @Serializable
     @UsedOnlyForConfigSerialization
     public data class Config(
@@ -241,7 +239,14 @@ public data class QGBotFileConfiguration(
          * @see DispatcherConfiguration
          */
         @SerialName("dispatcher") public val dispatcherConfiguration: DispatcherConfiguration? = null,
+
     ) {
+        /**
+         * 是否禁用 ws
+         * @since 4.1.0
+         */
+        public var disableWs: Boolean? = null
+
         public companion object {
             internal const val SERVER_URL_SANDBOX_VALUE: String = "SANDBOX"
             private val DEFAULT = QGBotComponentConfiguration()
@@ -302,6 +307,7 @@ public data class QGBotFileConfiguration(
                     configuration.coroutineContext += dispatcher
                 }
 
+                disableWs?.also { disableWs -> configuration.disableWs = disableWs }
             }
         }
     }

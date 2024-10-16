@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. ForteScarlet.
+ * Copyright (c) 2022-2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,9 +17,13 @@
 
 package love.forte.simbot.qguild.event
 
-import kotlinx.serialization.*
-import kotlinx.serialization.descriptors.*
-import kotlinx.serialization.encoding.*
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 
 
 /**
@@ -40,6 +44,7 @@ public sealed interface SendAble
  * [`opcode`](https://bot.q.qq.com/wiki/develop/api/gateway/opcode.html) 常量类。
  *
  */
+@Suppress("ConstPropertyName")
 public object Opcodes {
     /** 服务端进行消息推送 */
     public const val Dispatch: Int = 0
@@ -63,6 +68,13 @@ public object Opcodes {
 
     /** 当发送心跳成功之后，就会收到该消息 */
     public const val HeartbeatACK: Int = 11
+
+    /**
+     * 回调地址验证。开放平台对机器人服务端进行验证
+     *
+     * 参考 [官方webhook文档](https://bot.q.qq.com/wiki/develop/api-v2/dev-prepare/interface-framework/event-emit.html)
+     */
+    public const val CallbackVerify: Int = 13
 }
 
 /**
@@ -101,6 +113,14 @@ public sealed class Opcode(public val code: Int) {
     // 11
     public object HeartbeatACK : Opcode(Opcodes.HeartbeatACK), ReceiveAble
 
+    /**
+     * Callback地址验证
+     *
+     * 参考 [官方webhook文档](https://bot.q.qq.com/wiki/develop/api-v2/dev-prepare/interface-framework/event-emit.html)
+     *
+     * CODE: 13
+     */
+    public object CallbackVerify : Opcode(Opcodes.CallbackVerify), ReceiveAble
 
     public object SerializerByCode : KSerializer<Opcode> {
         override fun deserialize(decoder: Decoder): Opcode {
@@ -113,6 +133,7 @@ public sealed class Opcode(public val code: Int) {
                 Opcodes.InvalidSession -> InvalidSession
                 Opcodes.Hello -> Hello
                 Opcodes.HeartbeatACK -> HeartbeatACK
+                Opcodes.CallbackVerify -> CallbackVerify
                 else -> throw NoSuchElementException("opcode: $code")
             }
         }
