@@ -45,7 +45,7 @@ public sealed class ChannelDispatch : Signal.Dispatch() {
 @SerialName(EventIntents.Guilds.CHANNEL_CREATE_TYPE)
 public data class ChannelCreate(
     override val id: String? = null,
-    override val s: Long? = null,
+    override val s: Long = DEFAULT_SEQ,
     @SerialName("d") override val data: EventChannel
 ) : ChannelDispatch()
 
@@ -59,7 +59,7 @@ public data class ChannelCreate(
 @SerialName(EventIntents.Guilds.CHANNEL_UPDATE_TYPE)
 public data class ChannelUpdate(
     override val id: String? = null,
-    override val s: Long? = null,
+    override val s: Long = DEFAULT_SEQ,
     @SerialName("d") override val data: EventChannel
 ) : ChannelDispatch()
 
@@ -73,7 +73,7 @@ public data class ChannelUpdate(
 @SerialName(EventIntents.Guilds.CHANNEL_DELETE_TYPE)
 public data class ChannelDelete(
     override val id: String? = null,
-    override val s: Long? = null,
+    override val s: Long = DEFAULT_SEQ,
     @SerialName("d") override val data: EventChannel
 ) : ChannelDispatch()
 

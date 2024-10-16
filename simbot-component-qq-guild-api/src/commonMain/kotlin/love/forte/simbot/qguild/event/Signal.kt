@@ -163,14 +163,14 @@ public sealed class Signal<D>(@Serializable(Opcode.SerializerByCode::class) publ
         /**
          * 事件序列
          */
-        protected abstract val s: Long?
+        protected abstract val s: Long
 
         public abstract val id: String?
 
         /**
          * 事件序列
          */
-        public val seq: Long get() = s ?: -1
+        public val seq: Long get() = s
 
         /**
          * 此事件的实际本体
@@ -180,6 +180,9 @@ public sealed class Signal<D>(@Serializable(Opcode.SerializerByCode::class) publ
 
 
         public companion object {
+            
+            internal const val DEFAULT_SEQ: Long = -1L
+
             /**
              * [Dispatch] 使用 [Json] 进行多态解析时的类鉴别器属性名。
              *
@@ -215,7 +218,7 @@ public sealed class Signal<D>(@Serializable(Opcode.SerializerByCode::class) publ
          */
         public data class Unknown @QGInternalApi constructor(
             override val id: String? = null,
-            override val s: Long? = null,
+            override val s: Long = DEFAULT_SEQ,
             override val data: JsonElement,
             val raw: String
         ) : Dispatch()

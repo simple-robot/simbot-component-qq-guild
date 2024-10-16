@@ -51,7 +51,7 @@ public sealed class GroupRobotManagementDispatch : Signal.Dispatch() {
 @SerialName(EventIntents.GroupAndC2CEvent.GROUP_ADD_ROBOT_TYPE)
 public data class GroupAddRobot(
     override val id: String? = null,
-    override val s: Long? = null,
+    override val s: Long = DEFAULT_SEQ,
     @SerialName("d")
     override val data: GroupRobotManagementData
 ) : GroupRobotManagementDispatch()
@@ -65,7 +65,7 @@ public data class GroupAddRobot(
 @SerialName(EventIntents.GroupAndC2CEvent.GROUP_DEL_ROBOT_TYPE)
 public data class GroupDelRobot(
     override val id: String? = null,
-    override val s: Long? = null,
+    override val s: Long = DEFAULT_SEQ,
     @SerialName("d")
     override val data: GroupRobotManagementData
 ) : GroupRobotManagementDispatch()
@@ -79,7 +79,7 @@ public data class GroupDelRobot(
 @SerialName(EventIntents.GroupAndC2CEvent.GROUP_MSG_REJECT_TYPE)
 public data class GroupMsgReject(
     override val id: String? = null,
-    override val s: Long? = null,
+    override val s: Long = DEFAULT_SEQ,
     @SerialName("d")
     override val data: GroupRobotManagementData
 ) : GroupRobotManagementDispatch()
@@ -93,7 +93,7 @@ public data class GroupMsgReject(
 @SerialName(EventIntents.GroupAndC2CEvent.GROUP_MSG_RECEIVE_TYPE)
 public data class GroupMsgReceive(
     override val id: String? = null,
-    override val s: Long? = null,
+    override val s: Long = DEFAULT_SEQ,
     @SerialName("d")
     override val data: GroupRobotManagementData
 ) : GroupRobotManagementDispatch()

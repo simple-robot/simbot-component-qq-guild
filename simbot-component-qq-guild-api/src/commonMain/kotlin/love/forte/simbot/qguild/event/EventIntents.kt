@@ -624,7 +624,7 @@ public val EventIntentsInstances: Array<EventIntents>
 @SerialName(READY_TYPE)
 public data class Ready(
     override val id: String? = null,
-    override val s: Long? = null,
+    override val s: Long = DEFAULT_SEQ,
     @SerialName("d") override val data: Data
 ) : Signal.Dispatch() {
     /**
@@ -649,7 +649,7 @@ public data class Ready(
 @SerialName(RESUMED_TYPE)
 public data class Resumed(
     override val id: String? = null,
-    override val s: Long? = null,
+    override val s: Long = DEFAULT_SEQ,
     @SerialName("d") override val data: String
 ) : Signal.Dispatch()
 
