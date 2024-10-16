@@ -171,6 +171,8 @@ public class ConfigurableBotConfiguration : BotConfiguration {
      */
     override var wsClientEngineFactory: HttpClientEngineFactory<*>? = null
 
+    override val disableWs: Boolean = false
+
     /**
      * 用于API请求结果反序列化的 [Json].
      *
@@ -194,6 +196,7 @@ public class ConfigurableBotConfiguration : BotConfiguration {
         apiHttpSocketTimeoutMillis = apiHttpSocketTimeoutMillis,
         wsClientEngine = wsClientEngine,
         wsClientEngineFactory = wsClientEngineFactory,
+        disableWs = disableWs,
         apiDecoder = apiDecoder,
     )
 
@@ -214,5 +217,6 @@ private class BotConfigurationImpl(
     override val apiHttpSocketTimeoutMillis: Long?,
     override val wsClientEngine: HttpClientEngine?,
     override val wsClientEngineFactory: HttpClientEngineFactory<*>?,
+    override val disableWs: Boolean,
     override val apiDecoder: Json,
 ) : BotConfiguration

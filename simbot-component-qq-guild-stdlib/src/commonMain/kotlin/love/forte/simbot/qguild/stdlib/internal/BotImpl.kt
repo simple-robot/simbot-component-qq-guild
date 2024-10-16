@@ -28,6 +28,8 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import love.forte.simbot.common.atomic.AtomicLong
 import love.forte.simbot.common.atomic.atomic
 import love.forte.simbot.common.collection.ConcurrentQueue
@@ -38,6 +40,7 @@ import love.forte.simbot.common.weak.WeakRef
 import love.forte.simbot.common.weak.weakRef
 import love.forte.simbot.logger.Logger
 import love.forte.simbot.logger.LoggerFactory
+import love.forte.simbot.logger.isDebugEnabled
 import love.forte.simbot.qguild.QQGuildResultSerializationException
 import love.forte.simbot.qguild.api.GatewayApis
 import love.forte.simbot.qguild.api.GatewayInfo
@@ -45,9 +48,7 @@ import love.forte.simbot.qguild.api.app.AppAccessToken
 import love.forte.simbot.qguild.api.app.GetAppAccessTokenApi
 import love.forte.simbot.qguild.api.requestData
 import love.forte.simbot.qguild.api.user.GetBotInfoApi
-import love.forte.simbot.qguild.event.Ready
-import love.forte.simbot.qguild.event.Shard
-import love.forte.simbot.qguild.event.Signal
+import love.forte.simbot.qguild.event.*
 import love.forte.simbot.qguild.model.User
 import love.forte.simbot.qguild.stdlib.*
 import love.forte.simbot.qguild.stdlib.DisposableHandle
@@ -87,7 +88,9 @@ internal class BotImpl(
             logger.warn("Bot(appId={}) intents value is ZERO", ticket.appId)
         }
 
-        checkTicketSecret()
+        if (!configuration.disableWs) {
+            checkTicketSecret()
+        }
     }
 
     private fun checkTicketSecret() {
@@ -101,12 +104,14 @@ internal class BotImpl(
         }
     }
 
-    internal val wsDecoder = Signal.Dispatch.dispatchJson {
+    internal val eventDecoder = Signal.Dispatch.dispatchJson {
         isLenient = true
         ignoreUnknownKeys = true
     }
 
-    internal val wsClient: HttpClient = configuration.let {
+    private val wsClient: HttpClient? = configuration.let {
+        if (it.disableWs) return@let null
+
         val wsClientEngine = it.wsClientEngine
         val wsClientEngineFactory = it.wsClientEngineFactory
 
@@ -124,7 +129,6 @@ internal class BotImpl(
             }
         }
     }
-
 
     private fun HttpClientConfig<*>.configWsHttpClient() {
         WebSockets {
@@ -296,37 +300,44 @@ internal class BotImpl(
                 flushAccessTokenJob = initFlushAccessTokenJob()
             }
 
-            val gateway = gatewayFactory()
+            if (!configuration.disableWs) {
+                val gateway = gatewayFactory()
 
-            logger.debug("Request gateway {} by shard {}", gateway, shard)
+                logger.debug("Request gateway {} by shard {}", gateway, shard)
 
-            val state = Connect(this, shard, gateway)
-
-            logger.debug("Create state loop {}", state)
-
-            var st: State? = state
-            do {
-                logger.debug("Current state: {}", st)
-                st = st?.invoke()
-            } while (st != null && st !is ReceiveEvent)
-
-            if (st == null) {
-                // 当前状态为空且尚未进入事件接收状态
-                throw IllegalStateException("The current state is null and not yet in the event receiving state")
+                this.stageLoopJob = launchWsLoop(gateway)
             }
 
-            val stageLoopJob: Job = launch {
-                st.loop()
-            }
-
-            stageLoopJob.invokeOnCompletion { reason ->
-                reason?.also {
-                    logger.debug("StageLoopJob is on completion: {}", it.message, it)
-                }
-            }
-
-            this.stageLoopJob = stageLoopJob
         }
+    }
+
+    private suspend fun launchWsLoop(gateway: GatewayInfo): Job {
+        val state = Connect(this, shard, gateway, wsClient!!)
+
+        logger.debug("Create state loop {}", state)
+
+        var st: State? = state
+        do {
+            logger.debug("Current state: {}", st)
+            st = st?.invoke()
+        } while (st != null && st !is ReceiveEvent)
+
+        if (st == null) {
+            // 当前状态为空且尚未进入事件接收状态
+            throw IllegalStateException("The current state is null and not yet in the event receiving state")
+        }
+
+        val stageLoopJob: Job = launch {
+            st.loop()
+        }
+
+        stageLoopJob.invokeOnCompletion { reason ->
+            reason?.also {
+                logger.debug("StageLoopJob is on completion: {}", it.message, it)
+            }
+        }
+
+        return stageLoopJob
     }
 
     private suspend fun initFlushAccessTokenJob(): Job {
@@ -386,6 +397,68 @@ internal class BotImpl(
                 else -> throw err
             }
         }
+
+    override suspend fun emitEvent(payload: String, options: EmitEventOptions?) {
+        // CODE	名称	客户端行为	描述
+        //  0	Dispatch	Receive	服务端进行消息推送
+        //  13	回调地址验证	Receive	开放平台对机器人服务端进行验证
+        logger.debug("Emit raw event with payload: {}", payload)
+        val json = eventDecoder.parseToJsonElement(payload)
+
+        fun verifyIfNecessary() {
+            val signatureValue = options?.signatureValue ?: return
+
+            verifyEventEd25519(signatureValue.ed25519, signatureValue.timestamp, payload)
+        }
+
+
+        when (val opcode = json.getOpcode()) {
+            null -> {
+                if (options?.ignoreMissingOpcode == true) return
+
+                throw IllegalArgumentException("Required attribute `$.op` is missing")
+            }
+            Opcodes.Dispatch -> {
+                verifyIfNecessary()
+
+                val dispatch = try {
+                    eventDecoder.decodeFromJsonElement(Signal.Dispatch.serializer(), json)
+                } catch (serEx: SerializationException) {
+                    val disSeq = -1L
+                    val id = json.tryGetId()
+
+                    Signal.Dispatch.Unknown(id, disSeq, json, payload).also {
+                        val t =
+                            kotlin.runCatching { json.jsonObject[Signal.Dispatch.DISPATCH_CLASS_DISCRIMINATOR]?.jsonPrimitive?.content }
+                                .getOrNull()
+                        if (tryCheckIsPolymorphicException(serEx)) {
+                            logger.warn("Unknown event type {}, decode it as Unknown event: {}", t, it)
+                        } else {
+                            logger.warn("Unknown event type {}, decode it as Unknown event: {}", t, it, serEx)
+                        }
+                    }
+                }
+
+                emitEvent(dispatch, payload)
+            }
+            Opcodes.CallbackVerify -> {
+                verifyIfNecessary()
+
+                TODO("CallbackVerify")
+            }
+            else -> {
+                if (options?.ignoreUnknownOpcode == true) return
+
+                throw IllegalArgumentException("Unknown opcode: $opcode, emitEvent can only support opcode in [0, 13]")
+            }
+        }
+
+
+
+
+        TODO("Not yet implemented")
+
+    }
 
     override fun cancel(reason: Throwable?) {
         if (!job.isActive) return
@@ -460,3 +533,48 @@ internal data class SessionInfo(
     val readyData: Ready.Data,
 )
 
+@OptIn(ExperimentalSimbotCollectionApi::class)
+internal suspend fun BotImpl.emitEvent(dispatch: Signal.Dispatch, raw: String) {
+    // 先顺序地使用 preProcessor 处理
+    preProcessorQueue.forEach { processor ->
+        runCatching {
+            processor.doInvoke(dispatch, raw)
+        }.onFailure { e ->
+            if (logger.isDebugEnabled) {
+                logger.debug(
+                    "Event pre-precess failure. raw: {}, event: {}", raw, dispatch
+                )
+            }
+            logger.error("Event pre-precess failure.", e)
+        }
+    }
+
+    // 然后异步地正常处理
+    // TODO 同步异步 configurable?
+    // bot launch or session launch?
+    launch {
+        processorQueue.forEach { processor ->
+            runCatching {
+                processor.doInvoke(dispatch, raw)
+            }.onFailure { e ->
+                if (logger.isDebugEnabled) {
+                    logger.debug(
+                        "Event precess failure. raw: {}, event: {}", raw, dispatch
+                    )
+                }
+                logger.error("Event precess failure.", e)
+            }
+        }
+    }
+}
+
+/**
+ * see https://bot.q.qq.com/wiki/develop/api-v2/dev-prepare/interface-framework/sign.html
+ */
+private fun verifyEventEd25519(
+    xSignatureEd25519: String,
+    xSignatureTimestamp: String,
+    body: String,
+) {
+    TODO("verifyEvent via ed25519")
+}

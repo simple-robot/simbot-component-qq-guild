@@ -30,6 +30,7 @@ import love.forte.simbot.qguild.model.User
 import love.forte.simbot.suspendrunner.ST
 import love.forte.simbot.suspendrunner.STP
 import kotlin.coroutines.CoroutineContext
+import kotlin.jvm.JvmStatic
 
 /**
  * 一个 QQ频道Bot。
@@ -166,6 +167,35 @@ public interface Bot : CoroutineScope {
     public suspend fun start(gateway: GatewayInfo)
 
     /**
+     * 主动推送一个事件原文。
+     * 可用于在 webhook 模式下推送事件。
+     *
+     * @param payload 接收到的事件推送的JSON格式正文字符串。
+     * @param options 额外提供的属性或配置。默认为 `null`。
+     *
+     * @throws IllegalArgumentException 参考:
+     * - [EmitEventOptions.ignoreUnknownOpcode]
+     * - [EmitEventOptions.ignoreMissingOpcode]
+     *
+     * @since 4.1.0
+     */
+    @ST
+    public suspend fun emitEvent(payload: String, options: EmitEventOptions? = null)
+
+    /**
+     * 主动推送一个事件原文。
+     * 可用于在 webhook 模式下推送事件。
+     *
+     * @param payload 接收到的事件推送的JSON格式正文字符串。
+     *
+     * @since 4.1.0
+     */
+    @ST
+    public suspend fun emitEvent(payload: String) {
+        emitEvent(payload, null)
+    }
+
+    /**
      * 终止当前BOT。
      */
     public fun cancel(reason: Throwable?)
@@ -195,7 +225,8 @@ public interface Bot : CoroutineScope {
      * 如果当前处于重连、重启的状态，得到的 [client] 中 [client.isActive][Client.isActive] 可能为 `false`，
      * [client] 本身也可能不存在。
      *
-     * @return 当前bot持有的连接。如果当前正处于连接中、重连中或尚未启动，则可能得到null
+     * @return 当前bot持有的连接。如果当前正处于连接中、重连中、尚未启动或未启用ws连接，
+     * 则可能得到null
      */
     public val client: Client?
 
@@ -243,4 +274,62 @@ public enum class SubscribeSequence {
      * 且会作为一个整体在异步中处理。
      */
     NORMAL;
+}
+
+/**
+ * 使用 [Bot.emitEvent] 推送一个外部事件，并且在 [block] 中配置 [EmitEventOptions]。
+ * @see Bot.emitEvent
+ * @since 4.1.0
+ */
+public suspend inline fun Bot.emitEvent(payload: String, block: EmitEventOptions.() -> Unit) {
+    emitEvent(payload, EmitEventOptions().apply(block))
+}
+
+/**
+ * 在使用 [Bot.emitEvent] 时可选的一些额外属性或选项信息。
+ * @since 4.1.0
+ */
+public class EmitEventOptions {
+    /**
+     * 如果为 `true`,
+     * 则 payload 中解析出 [0, 13] 以外的 `op` 值不会抛出异常。
+     * 默认为 `false`
+     */
+    public var ignoreUnknownOpcode: Boolean = false
+
+    /**
+     * 如果为 `true`,
+     * 则 payload 中不存在 `op` 值时不会抛出异常。
+     * 默认为 `false`
+     */
+    public var ignoreMissingOpcode: Boolean = false
+
+    /**
+     * 如果需要对此回调事件进行签名校验，则通过 [signatureValue] 配置校验所需的、来自请求头透传的值。
+     *
+     * - `X-Signature-Ed25519`
+     * - `X-Signature-Timestamp`
+     *
+     * 更多参考 [官方文档](https://bot.q.qq.com/wiki/develop/api-v2/dev-prepare/interface-framework/sign.html)
+     *
+     * [signatureValue] 默认为 `null`, 即不进行校验。
+     */
+    public var signatureValue: SignatureValue? = null
+}
+
+/**
+ * 回调校验用的参数
+ * 更多参考 [官方文档](https://bot.q.qq.com/wiki/develop/api-v2/dev-prepare/interface-framework/sign.html)
+ *
+ * @since 4.1.0
+ */
+public class SignatureValue private constructor(
+    public val ed25519: String,
+    public val timestamp: String
+) {
+    public companion object {
+        @JvmStatic
+        public fun create(ed25519: String, timestamp: String): SignatureValue =
+            SignatureValue(ed25519 = ed25519, timestamp = timestamp)
+    }
 }
