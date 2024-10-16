@@ -95,12 +95,14 @@ internal class BotImpl(
 
     private fun checkTicketSecret() {
         if (ticket.secret.isEmpty()) {
-            logger.error("The `ticket.secret` is empty. " +
-                    "Since v4.0.0-beta6, the authentication logic within component " +
-                    "has been migrated to new logic that requires the use of `secret`. " +
-                    "If you do not configure the `ticket.secret`, " +
-                    "it will most likely fail to start and throw an exception. " +
-                    "See also: https://github.com/simple-robot/simbot-component-qq-guild/pull/163")
+            logger.error(
+                "The `ticket.secret` is empty. " +
+                        "Since v4.0.0-beta6, the authentication logic within component " +
+                        "has been migrated to new logic that requires the use of `secret`. " +
+                        "If you do not configure the `ticket.secret`, " +
+                        "it will most likely fail to start and throw an exception. " +
+                        "See also: https://github.com/simple-robot/simbot-component-qq-guild/pull/163"
+            )
         }
     }
 
@@ -418,6 +420,7 @@ internal class BotImpl(
 
                 throw IllegalArgumentException("Required attribute `$.op` is missing")
             }
+
             Opcodes.Dispatch -> {
                 verifyIfNecessary()
 
@@ -441,23 +444,19 @@ internal class BotImpl(
 
                 emitEvent(dispatch, payload)
             }
+
             Opcodes.CallbackVerify -> {
                 verifyIfNecessary()
 
                 TODO("CallbackVerify")
             }
+
             else -> {
                 if (options?.ignoreUnknownOpcode == true) return
 
                 throw IllegalArgumentException("Unknown opcode: $opcode, emitEvent can only support opcode in [0, 13]")
             }
         }
-
-
-
-
-        TODO("Not yet implemented")
-
     }
 
     override fun cancel(reason: Throwable?) {
