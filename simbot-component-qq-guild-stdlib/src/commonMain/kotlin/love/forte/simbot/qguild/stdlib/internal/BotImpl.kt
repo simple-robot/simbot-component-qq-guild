@@ -448,6 +448,8 @@ internal class BotImpl(
             Opcodes.CallbackVerify -> {
                 verifyIfNecessary()
 
+                // TODO return sign
+
                 TODO("CallbackVerify")
             }
 
