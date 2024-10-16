@@ -23,9 +23,12 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.serialization.json.Json
+import love.forte.simbot.common.function.Action
 import love.forte.simbot.qguild.api.GatewayInfo
 import love.forte.simbot.qguild.api.user.GetBotInfoApi
+import love.forte.simbot.qguild.event.Opcode
 import love.forte.simbot.qguild.event.Shard
+import love.forte.simbot.qguild.event.Signal
 import love.forte.simbot.qguild.model.User
 import love.forte.simbot.suspendrunner.ST
 import love.forte.simbot.suspendrunner.STP
@@ -171,6 +174,9 @@ public interface Bot : CoroutineScope {
      *
      * @param payload 接收到的事件推送的JSON格式正文字符串。
      * @param options 额外提供的属性或配置。默认为 `null`。
+     * @param onVerified 如果事件是验证事件
+     * ([Opcode.CallbackVerify]),
+     * 且验证成功后，则通过 [onVerified] 回调结果。
      *
      * @throws IllegalArgumentException 参考:
      * - [EmitEventOptions.ignoreUnknownOpcode]
@@ -179,7 +185,11 @@ public interface Bot : CoroutineScope {
      * @since 4.1.0
      */
     @ST
-    public suspend fun emitEvent(payload: String, options: EmitEventOptions? = null)
+    public suspend fun emitEvent(
+        payload: String,
+        options: EmitEventOptions? = null,
+        onVerified: Action<Signal.CallbackVerify.Verified>? = null
+    )
 
     /**
      * 主动推送一个事件原文。
@@ -191,7 +201,7 @@ public interface Bot : CoroutineScope {
      */
     @ST
     public suspend fun emitEvent(payload: String) {
-        emitEvent(payload, null)
+        emitEvent(payload, null, null)
     }
 
     /**
@@ -280,8 +290,12 @@ public enum class SubscribeSequence {
  * @see Bot.emitEvent
  * @since 4.1.0
  */
-public suspend inline fun Bot.emitEvent(payload: String, block: EmitEventOptions.() -> Unit) {
-    emitEvent(payload, EmitEventOptions().apply(block))
+public suspend inline fun Bot.emitEvent(
+    payload: String,
+    onVerified: Action<Signal.CallbackVerify.Verified>? = null,
+    block: EmitEventOptions.() -> Unit
+) {
+    emitEvent(payload, EmitEventOptions().apply(block), onVerified)
 }
 
 /**
@@ -304,11 +318,8 @@ public class EmitEventOptions {
     public var ignoreMissingOpcode: Boolean = false
 
     /**
-     * 如果需要对此回调事件进行签名校验，
-     * 则通过 [signatureVerifier] 配置校验器。
-     *
-     * 校验器提供一个基于 [Bot.Ticket.secret] 进行校验的函数，
-     * 如果出现任何不匹配的错误结果，直接抛出一个运行时异常即可。
+     * 如果需要对此回调事件进行 ed25519 签名校验，
+     * 则配置它所需的请求头透传参数。
      *
      * 如果你想要以自己的逻辑提前校验则可设为 `null`，
      * 如果为 `null` 则不会进行校验。
@@ -317,23 +328,23 @@ public class EmitEventOptions {
      *
      * 更多参考 [官方文档](https://bot.q.qq.com/wiki/develop/api-v2/dev-prepare/interface-framework/sign.html)
      */
-    public var signatureVerifier: SignatureVerifier? = null
+    public var ed25519SignatureVerification: Ed25519SignatureVerification? = null
 }
 
 /**
- * 一个使用 [Bot.Ticket.secret] 进行校验的签名校验器。
+ * 进行 Ed25519 签名校验所需的参数。
  *
- * secret 是敏感信息，请只使用可信任的实现以确保机密信息不被泄露。
+ * 更多参考 [官方文档](https://bot.q.qq.com/wiki/develop/api-v2/dev-prepare/interface-framework/sign.html)
  *
  * @since 4.1.0
  */
-public interface SignatureVerifier {
+public data class Ed25519SignatureVerification(
     /**
-     * 根据 bot 的 [secret] 进行校验。
-     * 如果校验不通过，则直接抛出所需的异常，未出现异常即视为校验成功。
-     *
-     * @param payload 推送事件的JSON体正文
-     * @param secret bot 配置的 [Bot.Ticket.secret]
+     * 来自请求头中的 `X-Signature-Ed25519`.
      */
-    public fun verify(payload: String, secret: String)
-}
+    val signatureEd25519: String,
+    /**
+     * 来自请求头中的 `X-Signature-Timestamp`.
+     */
+    val signatureTimestamp: String,
+)

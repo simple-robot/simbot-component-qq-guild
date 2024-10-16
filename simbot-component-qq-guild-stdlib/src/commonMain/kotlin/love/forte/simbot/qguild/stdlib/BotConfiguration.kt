@@ -142,6 +142,8 @@ public interface BotConfiguration {
     /**
      * 是否禁用 ws 连接。如果你打算使用 webhook，则设置为 `true`,
      * 届时在启动 bot 时不会再连接 ws 服务。
+     *
+     * @since 4.1.0
      */
     public val disableWs: Boolean
 

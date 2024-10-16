@@ -94,7 +94,7 @@ public sealed class ForumThreadDispatch : ForumDispatch() {
 @SerialName(EventIntents.ForumsEvent.FORUM_THREAD_CREATE_TYPE)
 public data class ForumThreadCreate(
     override val id: String? = null,
-    override val s: Long,
+    override val s: Long? = null,
     @SerialName("d") override val data: Thread
 ) : ForumThreadDispatch()
 
@@ -108,7 +108,7 @@ public data class ForumThreadCreate(
 @SerialName(EventIntents.ForumsEvent.FORUM_THREAD_UPDATE_TYPE)
 public data class ForumThreadUpdate(
     override val id: String? = null,
-    override val s: Long,
+    override val s: Long? = null,
     @SerialName("d") override val data: Thread
 ) : ForumThreadDispatch()
 
@@ -122,7 +122,7 @@ public data class ForumThreadUpdate(
 @SerialName(EventIntents.ForumsEvent.FORUM_THREAD_DELETE_TYPE)
 public data class ForumThreadDelete(
     override val id: String? = null,
-    override val s: Long,
+    override val s: Long? = null,
     @SerialName("d") override val data: Thread
 ) : ForumThreadDispatch()
 
@@ -149,7 +149,7 @@ public sealed class ForumPostDispatch : ForumDispatch() {
 @SerialName(EventIntents.ForumsEvent.FORUM_POST_CREATE_TYPE)
 public data class ForumPostCreate(
     override val id: String? = null,
-    override val s: Long,
+    override val s: Long? = null,
     @SerialName("d") override val data: Post
 ) : ForumPostDispatch()
 
@@ -163,7 +163,7 @@ public data class ForumPostCreate(
 @SerialName(EventIntents.ForumsEvent.FORUM_POST_DELETE_TYPE)
 public data class ForumPostDelete(
     override val id: String? = null,
-    override val s: Long,
+    override val s: Long? = null,
     @SerialName("d") override val data: Post
 ) : ForumPostDispatch()
 
@@ -190,7 +190,7 @@ public sealed class ForumReplyDispatch : ForumDispatch() {
 @SerialName(EventIntents.ForumsEvent.FORUM_REPLY_CREATE_TYPE)
 public data class ForumReplyCreate(
     override val id: String? = null,
-    override val s: Long,
+    override val s: Long? = null,
     @SerialName("d") override val data: Reply
 ) : ForumReplyDispatch()
 
@@ -204,7 +204,7 @@ public data class ForumReplyCreate(
 @SerialName(EventIntents.ForumsEvent.FORUM_REPLY_DELETE_TYPE)
 public data class ForumReplyDelete(
     override val id: String? = null,
-    override val s: Long,
+    override val s: Long? = null,
     @SerialName("d") override val data: Reply
 ) : ForumReplyDispatch()
 
@@ -217,6 +217,6 @@ public data class ForumReplyDelete(
 @SerialName(EventIntents.ForumsEvent.FORUM_PUBLISH_AUDIT_RESULT_TYPE)
 public data class ForumPublishAuditResult(
     override val id: String? = null,
-    override val s: Long,
+    override val s: Long? = null,
     @SerialName("d") override val data: AuditResult
 ) : ForumDispatch()

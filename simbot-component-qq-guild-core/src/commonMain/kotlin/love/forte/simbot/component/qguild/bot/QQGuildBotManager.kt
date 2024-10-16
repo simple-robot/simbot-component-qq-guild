@@ -26,6 +26,7 @@ import love.forte.simbot.bot.UnsupportedBotConfigurationException
 import love.forte.simbot.common.coroutines.linkTo
 import love.forte.simbot.common.function.ConfigurerFunction
 import love.forte.simbot.common.function.invokeBy
+import love.forte.simbot.common.id.ID
 import love.forte.simbot.component.NoSuchComponentException
 import love.forte.simbot.component.find
 import love.forte.simbot.component.qguild.QQGuildComponent
@@ -57,6 +58,12 @@ import kotlin.coroutines.EmptyCoroutineContext
 public interface QQGuildBotManager : BotManager {
     public val eventDispatcher: EventDispatcher
     public val configuration: QQGuildBotManagerConfiguration
+
+    override fun get(id: ID): QGBot
+
+    override fun all(): Sequence<QGBot>
+
+    override fun all(id: ID): Sequence<QGBot>
 
     @OptIn(ExperimentalContracts::class)
     private fun checkConfig(configuration: SerializableBotConfiguration): Boolean {

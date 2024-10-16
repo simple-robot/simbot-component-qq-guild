@@ -171,7 +171,7 @@ public class ConfigurableBotConfiguration : BotConfiguration {
      */
     override var wsClientEngineFactory: HttpClientEngineFactory<*>? = null
 
-    override val disableWs: Boolean = false
+    override var disableWs: Boolean = false
 
     /**
      * 用于API请求结果反序列化的 [Json].

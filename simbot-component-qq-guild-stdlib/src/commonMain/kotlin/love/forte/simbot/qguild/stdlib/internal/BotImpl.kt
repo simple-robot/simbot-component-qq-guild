@@ -17,12 +17,14 @@
 
 package love.forte.simbot.qguild.stdlib.internal
 
+import io.github.andreypfau.curve25519.ed25519.Ed25519
 import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
+import io.ktor.utils.io.core.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -35,6 +37,7 @@ import love.forte.simbot.common.atomic.atomic
 import love.forte.simbot.common.collection.ConcurrentQueue
 import love.forte.simbot.common.collection.ExperimentalSimbotCollectionApi
 import love.forte.simbot.common.collection.createConcurrentQueue
+import love.forte.simbot.common.function.Action
 import love.forte.simbot.common.stageloop.loop
 import love.forte.simbot.common.weak.WeakRef
 import love.forte.simbot.common.weak.weakRef
@@ -88,9 +91,7 @@ internal class BotImpl(
             logger.warn("Bot(appId={}) intents value is ZERO", ticket.appId)
         }
 
-        if (!configuration.disableWs) {
-            checkTicketSecret()
-        }
+        checkTicketSecret()
     }
 
     private fun checkTicketSecret() {
@@ -105,6 +106,11 @@ internal class BotImpl(
             )
         }
     }
+
+    private val ed25519PrivateKey =
+        Ed25519.keyFromSeed(ticket.secret.paddingEd25519Seed().toByteArray())
+
+    private val ed25519PublicKey = ed25519PrivateKey.publicKey()
 
     internal val eventDecoder = Signal.Dispatch.dispatchJson {
         isLenient = true
@@ -302,19 +308,20 @@ internal class BotImpl(
                 flushAccessTokenJob = initFlushAccessTokenJob()
             }
 
-            if (!configuration.disableWs) {
+            if (wsClient != null) {
                 val gateway = gatewayFactory()
 
                 logger.debug("Request gateway {} by shard {}", gateway, shard)
 
-                this.stageLoopJob = launchWsLoop(gateway)
+                this.stageLoopJob = launchWsLoop(wsClient, gateway)
+            } else {
+                logger.debug("WsClient is null, will not connect to ws server.")
             }
-
         }
     }
 
-    private suspend fun launchWsLoop(gateway: GatewayInfo): Job {
-        val state = Connect(this, shard, gateway, wsClient!!)
+    private suspend fun launchWsLoop(wsClient: HttpClient, gateway: GatewayInfo): Job {
+        val state = Connect(this, shard, gateway, wsClient)
 
         logger.debug("Create state loop {}", state)
 
@@ -400,17 +407,55 @@ internal class BotImpl(
             }
         }
 
-    override suspend fun emitEvent(payload: String, options: EmitEventOptions?) {
+    @OptIn(ExperimentalStdlibApi::class)
+    override suspend fun emitEvent(
+        payload: String,
+        options: EmitEventOptions?,
+        onVerified: Action<Signal.CallbackVerify.Verified>?
+    ) {
         // CODE	名称	客户端行为	描述
         //  0	Dispatch	Receive	服务端进行消息推送
         //  13	回调地址验证	Receive	开放平台对机器人服务端进行验证
         logger.debug("Emit raw event with payload: {}", payload)
         val json = eventDecoder.parseToJsonElement(payload)
 
-        fun signatureVerifyIfNecessary() {
-            val signatureValidator = options?.signatureVerifier ?: return
+        fun verifyIfNecessary() {
+            val (signature, signatureTimestamp) = options?.ed25519SignatureVerification ?: return
+            logger.debug("`ed25519SignatureVerification` exists, verity the payload")
 
-            signatureValidator.verify(payload, ticket.secret)
+            val signatureBytes = signature.hexToByteArray()
+
+            check(Ed25519.SIGNATURE_SIZE_BYTES == signatureBytes.size) {
+                "Invalid signature hex size, " +
+                        "expect ${Ed25519.SIGNATURE_SIZE_BYTES}, " +
+                        "actual ${signatureBytes.size}"
+            }
+
+            val and: UByte = signatureBytes[63].toUByte().and(224u)
+
+            check(and == 0u.toUByte()) {
+                "Invalid signature hex, " +
+                        "expect signatureBytes[63] && 224 == 0, " +
+                        "actual $and (0x${and.toHexString()})"
+            }
+
+            val msg = "$signatureTimestamp$payload"
+
+            check(ed25519PublicKey.verify(msg.toByteArray(), signatureBytes)) {
+                "Ed25519 verify failed"
+            }
+        }
+
+        fun signatureIfNecessary(verify: Signal.CallbackVerify) {
+            verifyIfNecessary() // verify itself first.
+            val callback = onVerified ?: return
+
+            val (plainToken, eventTs) = verify.data
+            val msg = "$eventTs$plainToken"
+
+            val signature = ed25519PrivateKey.sign(msg.toByteArray())
+
+            callback.invoke(Signal.CallbackVerify.Verified(plainToken, signature.toHexString()))
         }
 
 
@@ -422,7 +467,7 @@ internal class BotImpl(
             }
 
             Opcodes.Dispatch -> {
-                signatureVerifyIfNecessary()
+                verifyIfNecessary()
 
                 val dispatch = try {
                     eventDecoder.decodeFromJsonElement(Signal.Dispatch.serializer(), json)
@@ -435,7 +480,7 @@ internal class BotImpl(
                             kotlin.runCatching { json.jsonObject[Signal.Dispatch.DISPATCH_CLASS_DISCRIMINATOR]?.jsonPrimitive?.content }
                                 .getOrNull()
                         if (tryCheckIsPolymorphicException(serEx)) {
-                            logger.warn("Unknown event type {}, decode it as Unknown event: {}", t, it)
+                            logger.warn("Unknown event type {} in polymorphic, decode it as Unknown event: {}", t, it)
                         } else {
                             logger.warn("Unknown event type {}, decode it as Unknown event: {}", t, it, serEx)
                         }
@@ -446,11 +491,9 @@ internal class BotImpl(
             }
 
             Opcodes.CallbackVerify -> {
-                signatureVerifyIfNecessary()
-
-                // TODO return sign
-
-                TODO("CallbackVerify")
+                val verify = eventDecoder.decodeFromJsonElement(Signal.CallbackVerify.serializer(), json)
+                logger.debug("On Signal.CallbackVerify: {}", verify)
+                signatureIfNecessary(verify)
             }
 
             else -> {
@@ -536,6 +579,7 @@ internal data class SessionInfo(
 
 @OptIn(ExperimentalSimbotCollectionApi::class)
 internal suspend fun BotImpl.emitEvent(dispatch: Signal.Dispatch, raw: String) {
+    logger.debug("Emit event {} from raw {}", dispatch, raw)
     // 先顺序地使用 preProcessor 处理
     preProcessorQueue.forEach { processor ->
         runCatching {
@@ -565,6 +609,30 @@ internal suspend fun BotImpl.emitEvent(dispatch: Signal.Dispatch, raw: String) {
                 }
                 logger.error("Event precess failure.", e)
             }
+        }
+    }
+}
+
+
+/**
+ * Repeat to `length` == 32
+ */
+private fun String.paddingEd25519Seed(): String {
+    return when {
+        length == 32 -> this
+        length > 32 -> substring(32)
+        else -> {
+            buildString(32) {
+                append(this@paddingEd25519Seed)
+                while (length < 32) {
+                    append(
+                        this@paddingEd25519Seed,
+                        0,
+                        kotlin.math.min(32 - length, this@paddingEd25519Seed.length)
+                    )
+                }
+            }
+
         }
     }
 }

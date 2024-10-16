@@ -49,7 +49,7 @@ public sealed class C2CManagementDispatch : Signal.Dispatch() {
 @SerialName(EventIntents.GroupAndC2CEvent.FRIEND_ADD_TYPE)
 public data class FriendAdd(
     override val id: String? = null,
-    override val s: Long,
+    override val s: Long? = null,
     @SerialName("d")
     override val data: C2CManagementData
 ) : C2CManagementDispatch()
@@ -63,7 +63,7 @@ public data class FriendAdd(
 @SerialName(EventIntents.GroupAndC2CEvent.FRIEND_DEL_TYPE)
 public data class FriendDel(
     override val id: String? = null,
-    override val s: Long,
+    override val s: Long? = null,
     @SerialName("d")
     override val data: C2CManagementData
 ) : C2CManagementDispatch()
@@ -77,7 +77,7 @@ public data class FriendDel(
 @SerialName(EventIntents.GroupAndC2CEvent.C2C_MSG_REJECT_TYPE)
 public data class C2CMsgReject(
     override val id: String? = null,
-    override val s: Long,
+    override val s: Long? = null,
     @SerialName("d")
     override val data: C2CManagementData
 ) : C2CManagementDispatch()
@@ -91,7 +91,7 @@ public data class C2CMsgReject(
 @SerialName(EventIntents.GroupAndC2CEvent.C2C_MSG_RECEIVE_TYPE)
 public data class C2CMsgReceive(
     override val id: String? = null,
-    override val s: Long,
+    override val s: Long? = null,
     @SerialName("d")
     override val data: C2CManagementData
 ) : C2CManagementDispatch()

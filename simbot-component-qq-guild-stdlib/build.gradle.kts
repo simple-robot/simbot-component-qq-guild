@@ -66,14 +66,17 @@ kotlin {
             api(libs.ktor.client.contentNegotiation)
             api(libs.ktor.serialization.kotlinxJson)
             api(libs.ktor.client.ws)
+
+            // https://github.com/andreypfau/curve25519-kotlin
+            implementation("io.github.andreypfau:curve25519-kotlin:0.0.8")
         }
 
         commonTest.dependencies {
             implementation(kotlin("test"))
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.ktor.client.mock)
-            // https://github.com/andreypfau/curve25519-kotlin
-            // implementation("com.diglol.crypto:pkc:0.2.0")
+            // https://github.com/diglol/crypto
+//            implementation("com.diglol.crypto:pkc:0.2.0")
         }
 
         jvmTest.dependencies {
