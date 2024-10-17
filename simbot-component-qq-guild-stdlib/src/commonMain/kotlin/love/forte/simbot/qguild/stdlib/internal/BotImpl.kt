@@ -469,21 +469,27 @@ internal class BotImpl(
             }
 
             Opcodes.Dispatch -> {
-                val dispatch = try {
-                    eventDecoder.decodeFromJsonElement(Signal.Dispatch.serializer(), json)
-                } catch (serEx: SerializationException) {
+                val serializer = resolveDispatchSerializer(
+                    json = json.jsonObject,
+                    allowNameMissing = true
+                )
+
+                val dispatch = if (serializer != null) {
+                    eventDecoder.decodeFromJsonElement(serializer, json)
+                } else {
+                    // Unknown
                     val disSeq = -1L
                     val id = json.tryGetId()
 
                     Signal.Dispatch.Unknown(id, disSeq, json, payload).also {
                         val t =
-                            kotlin.runCatching { json.jsonObject[Signal.Dispatch.DISPATCH_CLASS_DISCRIMINATOR]?.jsonPrimitive?.content }
-                                .getOrNull()
-                        if (tryCheckIsPolymorphicException(serEx)) {
-                            logger.warn("Unknown event type {} in polymorphic, decode it as Unknown event: {}", t, it)
-                        } else {
-                            logger.warn("Unknown event type {}, decode it as Unknown event: {}", t, it, serEx)
-                        }
+                            kotlin.runCatching {
+                                json.jsonObject[Signal.Dispatch.DISPATCH_CLASS_DISCRIMINATOR]
+                                    ?.jsonPrimitive
+                                    ?.content
+                            }.getOrNull()
+
+                        logger.warn("Unknown event type {}, decode it as Unknown event: {}", t, it)
                     }
                 }
 

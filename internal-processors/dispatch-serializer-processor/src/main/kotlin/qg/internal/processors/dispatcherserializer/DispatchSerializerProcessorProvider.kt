@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -15,24 +15,17 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = "qq-guild"
+package qg.internal.processors.dispatcherserializer
 
-// internals
-include(":internal-processors:api-reader")
-include(":internal-processors:dispatch-serializer-processor")
-include(":internal-processors:intents-processor")
+import com.google.devtools.ksp.processing.SymbolProcessor
+import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
+import com.google.devtools.ksp.processing.SymbolProcessorProvider
 
-//include(":builder-generator")
-include(":simbot-component-qq-guild-api")
-include(":simbot-component-qq-guild-stdlib")
-include(":simbot-component-qq-guild-core")
-//include(":simbot-component-qq-guild-core")
-//include(":simbot-component-qq-guild-benchmark")
-
-// tests
-//if (!System.getenv("IS_CI").toBoolean()) {
-//    include(":tests:application-test")
-//    include(":tests:spring-boot-test")
-//    include(":tests:plugin-test")
-//}
-
+/**
+ *
+ * @author ForteScarlet
+ */
+class DispatchSerializerProcessorProvider : SymbolProcessorProvider {
+    override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor =
+        DispatchSerializerProcessor(environment)
+}

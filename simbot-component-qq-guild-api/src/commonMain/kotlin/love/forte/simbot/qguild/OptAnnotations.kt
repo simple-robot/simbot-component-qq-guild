@@ -43,3 +43,10 @@ public annotation class QGApi4JS
 @MustBeDocumented
 @RequiresOptIn("Internal API", level = RequiresOptIn.Level.WARNING)
 public annotation class QGInternalApi
+
+/**
+ * A auto-generated API.
+ */
+@Retention(AnnotationRetention.SOURCE)
+@MustBeDocumented
+public annotation class Generated

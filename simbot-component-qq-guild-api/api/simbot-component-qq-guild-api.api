@@ -33,6 +33,9 @@ public final class love/forte/simbot/qguild/ErrInfo$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
+public abstract interface annotation class love/forte/simbot/qguild/Generated : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class love/forte/simbot/qguild/PrivateDomainOnly : java/lang/annotation/Annotation {
 }
 
@@ -2434,6 +2437,10 @@ public final class love/forte/simbot/qguild/event/DirectMessageCreate$Companion 
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
+public abstract interface annotation class love/forte/simbot/qguild/event/DispatchTypeName : java/lang/annotation/Annotation {
+	public abstract fun value ()Ljava/lang/String;
+}
+
 public final class love/forte/simbot/qguild/event/EventChannel {
 	public static final field Companion Llove/forte/simbot/qguild/event/EventChannel$Companion;
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Llove/forte/simbot/qguild/model/ChannelType;Llove/forte/simbot/qguild/model/ChannelSubType;Ljava/lang/String;Ljava/lang/String;)V
@@ -4373,6 +4380,7 @@ public final class love/forte/simbot/qguild/event/Signal$Companion {
 public abstract class love/forte/simbot/qguild/event/Signal$Dispatch : love/forte/simbot/qguild/event/Signal {
 	public static final field Companion Llove/forte/simbot/qguild/event/Signal$Dispatch$Companion;
 	public static final field DISPATCH_CLASS_DISCRIMINATOR Ljava/lang/String;
+	public fun <init> ()V
 	public synthetic fun <init> (ILlove/forte/simbot/qguild/event/Opcode;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V
 	public abstract fun getData ()Ljava/lang/Object;
 	public abstract fun getId ()Ljava/lang/String;
@@ -4615,8 +4623,14 @@ public final class love/forte/simbot/qguild/event/Signal$Resume$Data$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
+public final class love/forte/simbot/qguild/event/SignalDispatchResolvers_generatedKt {
+	public static final fun resolveDispatchSerializer (Ljava/lang/String;)Lkotlinx/serialization/KSerializer;
+}
+
 public final class love/forte/simbot/qguild/event/SignalKt {
 	public static final fun getOpcode (Lkotlinx/serialization/json/JsonElement;)Ljava/lang/Integer;
+	public static final fun resolveDispatchSerializer (Lkotlinx/serialization/json/JsonObject;Z)Lkotlinx/serialization/KSerializer;
+	public static synthetic fun resolveDispatchSerializer$default (Lkotlinx/serialization/json/JsonObject;ZILjava/lang/Object;)Lkotlinx/serialization/KSerializer;
 }
 
 public final class love/forte/simbot/qguild/message/ArkBuilder {

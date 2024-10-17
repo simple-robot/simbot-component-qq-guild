@@ -24,7 +24,9 @@ import io.ktor.websocket.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.SerializationException
-import kotlinx.serialization.json.*
+import kotlinx.serialization.json.int
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import love.forte.simbot.logger.Logger
 import love.forte.simbot.logger.isDebugEnabled
 import love.forte.simbot.logger.isTraceEnabled
@@ -181,8 +183,12 @@ internal class WaitingReadyEvent(
             val text = frame.readText()
             logger.debug("Waiting ready event : received frame {}", text)
             val json = bot.eventDecoder.parseToJsonElement(text)
-            if (json.jsonObject["op"]?.jsonPrimitive?.int == Opcodes.Dispatch) {
-                val dispatch = bot.eventDecoder.decodeFromJsonElement(Signal.Dispatch.serializer(), json)
+            if (json.getOpcode() == Opcodes.Dispatch) {
+                val dispatchSerializer = resolveDispatchSerializer(json.jsonObject)
+                    ?: continue
+
+                val dispatch = bot.eventDecoder.decodeFromJsonElement(dispatchSerializer, json)
+
                 if (dispatch is Ready) {
                     ready = dispatch
                     break
@@ -372,30 +378,30 @@ internal class ReceiveEvent(
             when (val opcode = json.getOpcode()) {
                 Opcodes.Dispatch -> {
                     // event
-                    val dispatch = try {
-                        bot.eventDecoder.decodeFromJsonElement(Signal.Dispatch.serializer(), json)
-                    } catch (serEx: SerializationException) {
-//                        if (tryCheckIsPolymorphicException(serEx)) {
+                    val serializer = resolveDispatchSerializer(
+                        json = json.jsonObject,
+                        allowNameMissing = true
+                    )
+
+                    val dispatch = if (serializer != null) {
+                        bot.eventDecoder.decodeFromJsonElement(serializer, json)
+                    } else {
                         // 未知的事件类型
-                        val disSeq = runCatching {
-                            json.jsonObject["s"]?.jsonPrimitive?.longOrNull ?: seq.value
-                        }.getOrElse { seq.value }
-                        // dispatch.id
-                        val id = kotlin.runCatching {
-                            json.jsonObject["id"]?.jsonPrimitive?.contentOrNull
-                        }.getOrNull()
+                        val disSeq = json.tryGetSeq() ?: seq.value
+                        val id = json.tryGetId()
 
                         Signal.Dispatch.Unknown(id, disSeq, json, raw).also {
                             val t =
-                                kotlin.runCatching { json.jsonObject[Signal.Dispatch.DISPATCH_CLASS_DISCRIMINATOR]?.jsonPrimitive?.content }
-                                    .getOrNull()
-                            if (tryCheckIsPolymorphicException(serEx)) {
-                                logger.warn("Unknown event type {}, decode it as Unknown event: {}", t, it)
-                            } else {
-                                logger.warn("Unknown event type {}, decode it as Unknown event: {}", t, it, serEx)
-                            }
+                                kotlin.runCatching { 
+                                    json.jsonObject[Signal.Dispatch.DISPATCH_CLASS_DISCRIMINATOR]
+                                        ?.jsonPrimitive
+                                        ?.content 
+                                }.getOrNull()
+                            
+                            logger.warn("Unknown event type {}, decode it as Unknown event: {}", t, it)
                         }
                     }
+
                     logger.debug("Received dispatch: {}", dispatch)
                     val dispatchSeq = dispatch.seq
 
@@ -428,6 +434,7 @@ internal class ReceiveEvent(
     }
 }
 
+@Deprecated("Deprecated")
 internal fun tryCheckIsPolymorphicException(exception: SerializationException): Boolean {
     // 似乎是某个版本的错误提示，但是至少在 JSON v1.6.3 已经不适用了
     if (exception.message?.startsWith("Polymorphic serializer was not found for") == true) {
@@ -441,7 +448,6 @@ internal fun tryCheckIsPolymorphicException(exception: SerializationException): 
 
     return false
 }
-
 
 
 /**

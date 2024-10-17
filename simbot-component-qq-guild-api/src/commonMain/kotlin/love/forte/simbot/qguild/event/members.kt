@@ -31,6 +31,7 @@ import love.forte.simbot.qguild.time.ZERO_ISO_INSTANT
  */
 @Serializable
 @SerialName(EventIntents.GuildMembers.GUILD_MEMBER_ADD_TYPE)
+@DispatchTypeName(EventIntents.GuildMembers.GUILD_MEMBER_ADD_TYPE)
 public data class GuildMemberAdd(
     override val id: String? = null,
     override val s: Long = DEFAULT_SEQ,
@@ -44,6 +45,7 @@ public data class GuildMemberAdd(
  */
 @Serializable
 @SerialName(EventIntents.GuildMembers.GUILD_MEMBER_UPDATE_TYPE)
+@DispatchTypeName(EventIntents.GuildMembers.GUILD_MEMBER_UPDATE_TYPE)
 public data class GuildMemberUpdate(
     override val id: String? = null,
     override val s: Long = DEFAULT_SEQ,
@@ -57,6 +59,7 @@ public data class GuildMemberUpdate(
  */
 @Serializable
 @SerialName(EventIntents.GuildMembers.GUILD_MEMBER_REMOVE_TYPE)
+@DispatchTypeName(EventIntents.GuildMembers.GUILD_MEMBER_REMOVE_TYPE)
 public data class GuildMemberRemove(
     override val id: String? = null,
     override val s: Long = DEFAULT_SEQ,

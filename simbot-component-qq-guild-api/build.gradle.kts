@@ -111,6 +111,7 @@ kotlin {
 dependencies {
     add("kspJvm", project(":internal-processors:api-reader"))
     add("kspCommonMainMetadata", project(":internal-processors:intents-processor"))
+    add("kspCommonMainMetadata", project(":internal-processors:dispatch-serializer-processor"))
 }
 
 ksp {
