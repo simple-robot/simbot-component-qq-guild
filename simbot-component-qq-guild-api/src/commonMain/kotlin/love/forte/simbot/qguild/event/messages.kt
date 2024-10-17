@@ -44,6 +44,7 @@ public sealed class MessageDispatch : Signal.Dispatch() {
  */
 @Serializable
 @SerialName(EventIntents.PublicGuildMessages.AT_MESSAGE_CREATE_TYPE)
+@DispatchTypeName(EventIntents.PublicGuildMessages.AT_MESSAGE_CREATE_TYPE)
 public data class AtMessageCreate(
     override val id: String? = null,
     override val s: Long = DEFAULT_SEQ,
@@ -57,6 +58,7 @@ public data class AtMessageCreate(
  */
 @Serializable
 @SerialName(EventIntents.PublicGuildMessages.PUBLIC_MESSAGE_DELETE_TYPE)
+@DispatchTypeName(EventIntents.PublicGuildMessages.PUBLIC_MESSAGE_DELETE_TYPE)
 public data class PublicMessageDeleteCreate(
     override val id: String? = null,
     override val s: Long = DEFAULT_SEQ,
@@ -74,6 +76,7 @@ public data class PublicMessageDeleteCreate(
  */
 @Serializable
 @SerialName(EventIntents.DirectMessage.DIRECT_MESSAGE_CREATE_TYPE)
+@DispatchTypeName(EventIntents.DirectMessage.DIRECT_MESSAGE_CREATE_TYPE)
 public data class DirectMessageCreate(
     override val id: String? = null,
     override val s: Long = DEFAULT_SEQ,
@@ -95,6 +98,7 @@ public sealed class MessageAuditedDispatch : Signal.Dispatch() {
  */
 @Serializable
 @SerialName(EventIntents.GuildMessages.MESSAGE_CREATE_TYPE)
+@DispatchTypeName(EventIntents.GuildMessages.MESSAGE_CREATE_TYPE)
 public data class MessageCreate(
     override val id: String? = null,
     override val s: Long = DEFAULT_SEQ,
@@ -106,6 +110,7 @@ public data class MessageCreate(
  */
 @Serializable
 @SerialName(EventIntents.GuildMessages.MESSAGE_DELETE_TYPE)
+@DispatchTypeName(EventIntents.GuildMessages.MESSAGE_DELETE_TYPE)
 public data class MessageDelete(
     override val id: String? = null,
     override val s: Long = DEFAULT_SEQ,
@@ -123,6 +128,7 @@ public data class MessageDelete(
  */
 @Serializable
 @SerialName(EventIntents.MessageAudit.MESSAGE_AUDIT_PASS_TYPE)
+@DispatchTypeName(EventIntents.MessageAudit.MESSAGE_AUDIT_PASS_TYPE)
 public data class MessageAuditPass(
     override val id: String? = null,
     override val s: Long = DEFAULT_SEQ,
@@ -139,6 +145,7 @@ public data class MessageAuditPass(
  */
 @Serializable
 @SerialName(EventIntents.MessageAudit.MESSAGE_AUDIT_REJECT_TYPE)
+@DispatchTypeName(EventIntents.MessageAudit.MESSAGE_AUDIT_REJECT_TYPE)
 public data class MessageAuditReject(
     override val id: String? = null,
     override val s: Long = DEFAULT_SEQ,

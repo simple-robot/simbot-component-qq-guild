@@ -152,13 +152,20 @@ public sealed class Signal<D>(@Serializable(Opcode.SerializerByCode::class) publ
      *
      * 当一个事件的解析出现异常或存在未知的 `type` 时，可被解析为 [Unknown] 并仅携带原始信息。
      *
+     * ## 序列化器
+     * 建议使用 [resolveDispatchSerializer] 通过 JSON 中
+     * [Dispatch.DISPATCH_CLASS_DISCRIMINATOR] 的值来获取对应的序列化器，
+     * 而不是使用多态。
+     *
+     * [Dispatch] 从 `v4.1.0` 开始不再是 `sealed` ，不能直接使用多态序列化。
+     *
      * @see love.forte.simbot.qguild.event
      *
      */
     @OptIn(ExperimentalSerializationApi::class)
     @Serializable
     @JsonClassDiscriminator(Dispatch.DISPATCH_CLASS_DISCRIMINATOR)
-    public sealed class Dispatch : Signal<@Contextual Any>(Opcode.Dispatch) {
+    public abstract class Dispatch : Signal<@Contextual Any>(Opcode.Dispatch) {
 
         /**
          * 事件序列
@@ -180,7 +187,7 @@ public sealed class Signal<D>(@Serializable(Opcode.SerializerByCode::class) publ
 
 
         public companion object {
-            
+
             internal const val DEFAULT_SEQ: Long = -1L
 
             /**
@@ -282,6 +289,11 @@ public fun JsonElement.tryGetId(): String? = kotlin.runCatching {
     jsonObject["id"]?.jsonPrimitive?.contentOrNull
 }.getOrNull()
 
+@QGInternalApi
+public fun JsonElement.tryGetSeq(): Long? = kotlin.runCatching {
+    jsonObject["s"]?.jsonPrimitive?.longOrNull
+}.getOrNull()
+
 /**
  * [Shared](https://bot.q.qq.com/wiki/develop/api/gateway/shard.html)
  *
@@ -330,4 +342,31 @@ internal object SharedSerializer : KSerializer<Shard> {
     override fun serialize(encoder: Encoder, value: Shard) {
         arraySerializer.serialize(encoder, intArrayOf(value.value, value.total))
     }
+}
+
+/**
+ * @suppress Used by symbol processor.
+ */
+@Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.CLASS)
+public annotation class DispatchTypeName(val value: String)
+
+/**
+ * 解析 [json] 并寻找匹配的 [KSerializer]<out [Signal.Dispatch]>,
+ * 如果找不到则得到 `null`。
+ *
+ * @see resolveDispatchSerializer
+ */
+public fun resolveDispatchSerializer(
+    json: JsonObject,
+    allowNameMissing: Boolean = false,
+): KSerializer<out Signal.Dispatch>? {
+    val eventName = json[Signal.Dispatch.DISPATCH_CLASS_DISCRIMINATOR]?.jsonPrimitive?.contentOrNull
+    require(allowNameMissing || eventName != null) {
+        "Required json attribute $.${Signal.Dispatch.DISPATCH_CLASS_DISCRIMINATOR} is missing"
+    }
+
+    eventName ?: return null
+
+    return resolveDispatchSerializer(eventName)
 }

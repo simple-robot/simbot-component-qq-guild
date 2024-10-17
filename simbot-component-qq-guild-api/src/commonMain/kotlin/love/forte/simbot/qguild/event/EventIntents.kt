@@ -622,6 +622,7 @@ public val EventIntentsInstances: Array<EventIntents>
  */
 @Serializable
 @SerialName(READY_TYPE)
+@DispatchTypeName(READY_TYPE)
 public data class Ready(
     override val id: String? = null,
     override val s: Long = DEFAULT_SEQ,
@@ -647,6 +648,7 @@ public data class Ready(
  */
 @Serializable
 @SerialName(RESUMED_TYPE)
+@DispatchTypeName(RESUMED_TYPE)
 public data class Resumed(
     override val id: String? = null,
     override val s: Long = DEFAULT_SEQ,

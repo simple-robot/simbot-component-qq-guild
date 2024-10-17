@@ -92,6 +92,7 @@ public sealed class ForumThreadDispatch : ForumDispatch() {
  */
 @Serializable
 @SerialName(EventIntents.ForumsEvent.FORUM_THREAD_CREATE_TYPE)
+@DispatchTypeName(EventIntents.ForumsEvent.FORUM_THREAD_CREATE_TYPE)
 public data class ForumThreadCreate(
     override val id: String? = null,
     override val s: Long = DEFAULT_SEQ,
@@ -106,6 +107,7 @@ public data class ForumThreadCreate(
  */
 @Serializable
 @SerialName(EventIntents.ForumsEvent.FORUM_THREAD_UPDATE_TYPE)
+@DispatchTypeName(EventIntents.ForumsEvent.FORUM_THREAD_UPDATE_TYPE)
 public data class ForumThreadUpdate(
     override val id: String? = null,
     override val s: Long = DEFAULT_SEQ,
@@ -120,6 +122,7 @@ public data class ForumThreadUpdate(
  */
 @Serializable
 @SerialName(EventIntents.ForumsEvent.FORUM_THREAD_DELETE_TYPE)
+@DispatchTypeName(EventIntents.ForumsEvent.FORUM_THREAD_DELETE_TYPE)
 public data class ForumThreadDelete(
     override val id: String? = null,
     override val s: Long = DEFAULT_SEQ,
@@ -147,6 +150,7 @@ public sealed class ForumPostDispatch : ForumDispatch() {
  */
 @Serializable
 @SerialName(EventIntents.ForumsEvent.FORUM_POST_CREATE_TYPE)
+@DispatchTypeName(EventIntents.ForumsEvent.FORUM_POST_CREATE_TYPE)
 public data class ForumPostCreate(
     override val id: String? = null,
     override val s: Long = DEFAULT_SEQ,
@@ -161,6 +165,7 @@ public data class ForumPostCreate(
  */
 @Serializable
 @SerialName(EventIntents.ForumsEvent.FORUM_POST_DELETE_TYPE)
+@DispatchTypeName(EventIntents.ForumsEvent.FORUM_POST_DELETE_TYPE)
 public data class ForumPostDelete(
     override val id: String? = null,
     override val s: Long = DEFAULT_SEQ,
@@ -188,6 +193,7 @@ public sealed class ForumReplyDispatch : ForumDispatch() {
  */
 @Serializable
 @SerialName(EventIntents.ForumsEvent.FORUM_REPLY_CREATE_TYPE)
+@DispatchTypeName(EventIntents.ForumsEvent.FORUM_REPLY_CREATE_TYPE)
 public data class ForumReplyCreate(
     override val id: String? = null,
     override val s: Long = DEFAULT_SEQ,
@@ -202,6 +208,7 @@ public data class ForumReplyCreate(
  */
 @Serializable
 @SerialName(EventIntents.ForumsEvent.FORUM_REPLY_DELETE_TYPE)
+@DispatchTypeName(EventIntents.ForumsEvent.FORUM_REPLY_DELETE_TYPE)
 public data class ForumReplyDelete(
     override val id: String? = null,
     override val s: Long = DEFAULT_SEQ,
@@ -215,6 +222,7 @@ public data class ForumReplyDelete(
  */
 @Serializable
 @SerialName(EventIntents.ForumsEvent.FORUM_PUBLISH_AUDIT_RESULT_TYPE)
+@DispatchTypeName(EventIntents.ForumsEvent.FORUM_PUBLISH_AUDIT_RESULT_TYPE)
 public data class ForumPublishAuditResult(
     override val id: String? = null,
     override val s: Long = DEFAULT_SEQ,
