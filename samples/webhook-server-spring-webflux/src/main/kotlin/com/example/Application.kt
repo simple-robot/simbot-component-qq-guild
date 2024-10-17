@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2024. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -15,20 +15,16 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = "qq-guild"
+package com.example
 
-// internals
-include(":internal-processors:api-reader")
-include(":internal-processors:dispatch-serializer-processor")
-include(":internal-processors:intents-processor")
+import love.forte.simbot.spring.EnableSimbot
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.runApplication
 
-include(":simbot-component-qq-guild-api")
-include(":simbot-component-qq-guild-stdlib")
-include(":simbot-component-qq-guild-core")
+@EnableSimbot
+@SpringBootApplication
+class Application
 
-// samples
-include(":samples:webhook-server-ktor")
-include(":samples:webhook-server-spring")
-include(":samples:webhook-server-spring-webflux")
-
-
+fun main(args: Array<String>) {
+    runApplication<Application>(*args)
+}

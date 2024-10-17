@@ -30,6 +30,8 @@ val kotlinVersion: String = libs.versions.kotlin.get()
 dependencies {
     implementation(kotlin("gradle-plugin", kotlinVersion))
     implementation(kotlin("serialization", kotlinVersion))
+    // for plugin.spring
+    implementation(kotlin("allopen", kotlinVersion))
     implementation(libs.bundles.dokka)
 
     // see https://github.com/gradle-nexus/publish-plugin
