@@ -63,7 +63,6 @@ idea {
     }
 }
 
-
 apiValidation {
     ignoredPackages.add("*.internal.*")
 
@@ -72,6 +71,9 @@ apiValidation {
             "api-reader",
             "intents-processor",
             "dispatch-serializer-processor",
+            "webhook-server-ktor",
+            "webhook-server-spring",
+            "webhook-server-spring-webflux",
         ),
     )
 
