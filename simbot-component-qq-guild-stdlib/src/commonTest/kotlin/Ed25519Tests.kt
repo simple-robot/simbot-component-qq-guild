@@ -1,6 +1,7 @@
 import com.ionspin.kotlin.crypto.LibsodiumInitializer
 import com.ionspin.kotlin.crypto.signature.Signature
 import com.ionspin.kotlin.crypto.signature.crypto_sign_BYTES
+import io.ktor.client.engine.mock.*
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.test.runTest
 import love.forte.simbot.qguild.stdlib.BotFactory
@@ -147,6 +148,9 @@ class Ed25519TestsCommon {
     fun opcode13ProcessTest() = runTest {
         val bot = BotFactory.create("11111111", "DG5g3B4j9X2KOErG", "") {
             disableWs = true
+            apiClientEngine = MockEngine {
+                respondOk()
+            }
         }
 
 
