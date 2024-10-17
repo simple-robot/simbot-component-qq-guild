@@ -24,8 +24,9 @@ import io.ktor.websocket.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.SerializationException
-import kotlinx.serialization.json.*
-import love.forte.simbot.common.collection.ExperimentalSimbotCollectionApi
+import kotlinx.serialization.json.int
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import love.forte.simbot.logger.Logger
 import love.forte.simbot.logger.isDebugEnabled
 import love.forte.simbot.logger.isTraceEnabled
@@ -33,7 +34,6 @@ import love.forte.simbot.qguild.api.GatewayApis
 import love.forte.simbot.qguild.api.GatewayInfo
 import love.forte.simbot.qguild.err
 import love.forte.simbot.qguild.event.*
-import love.forte.simbot.qguild.stdlib.doInvoke
 import love.forte.simbot.qguild.stdlib.internal.BotImpl.ClientImpl
 import love.forte.simbot.qguild.stdlib.requestDataBy
 import kotlin.math.max
@@ -80,6 +80,7 @@ internal class Connect(
     override val bot: BotImpl,
     private val shard: Shard,
     private val gateway: GatewayInfo,
+    private val wsClient: HttpClient,
 ) : State() {
     override suspend fun invoke(): State {
         val intents = bot.configuration.intents
@@ -108,11 +109,11 @@ internal class Connect(
         )
 
         bot.logger.debug("Connect to ws with gateway {}", gateway)
-        val session = bot.wsClient.ws { gateway }
+        val session = wsClient.ws { gateway }
 
         // next: receive Hello
         return WaitingHello(bot, session) { hello ->
-            WaitingReadyEvent(bot, identify, hello.data, session)
+            WaitingReadyEvent(bot, identify, hello.data, session, wsClient)
         }
     }
 }
@@ -128,9 +129,9 @@ internal class WaitingHello(
             val frame = session.incoming.receive() as? Frame.Text ?: continue
             val text = frame.readText()
             logger.debug("Waiting hello : received frame {}", text)
-            val json = bot.wsDecoder.parseToJsonElement(text)
+            val json = bot.eventDecoder.parseToJsonElement(text)
             if (json.jsonObject["op"]?.jsonPrimitive?.int == Opcodes.Hello) {
-                hello = bot.wsDecoder.decodeFromJsonElement(Signal.Hello.serializer(), json)
+                hello = bot.eventDecoder.decodeFromJsonElement(Signal.Hello.serializer(), json)
                 break
             }
         }
@@ -157,25 +158,15 @@ internal class WaitingReadyEvent(
     override val bot: BotImpl,
     private val identify: Signal.Identify,
     private val hello: Signal.Hello.Data,
-    private val session: DefaultClientWebSocketSession
+    private val session: DefaultClientWebSocketSession,
+    private val wsClient: HttpClient,
 ) : State() {
     override suspend fun invoke(): State {
         // 发送 identify
-        val identifyJson = bot.wsDecoder.encodeToString(Signal.Identify.serializer(), identify)
+        val identifyJson = bot.eventDecoder.encodeToString(Signal.Identify.serializer(), identify)
         logger.debug("Send identify {}, JSON: {}", identify, identifyJson)
         session.send(identifyJson)
         logger.debug("Send identify Successfully.")
-
-//        HeartbeatJob(
-//            bot, hello,
-//            Ready.Data(
-//                "",
-//                "",
-//                User("", ""),
-//                Shard.FULL
-//            ), session
-//        ).invoke()
-
 
         // 等待ready
         var ready: Ready? = null
@@ -191,9 +182,13 @@ internal class WaitingReadyEvent(
             val frame = frameResult.getOrThrow() as? Frame.Text ?: continue
             val text = frame.readText()
             logger.debug("Waiting ready event : received frame {}", text)
-            val json = bot.wsDecoder.parseToJsonElement(text)
-            if (json.jsonObject["op"]?.jsonPrimitive?.int == Opcodes.Dispatch) {
-                val dispatch = bot.wsDecoder.decodeFromJsonElement(Signal.Dispatch.serializer(), json)
+            val json = bot.eventDecoder.parseToJsonElement(text)
+            if (json.getOpcode() == Opcodes.Dispatch) {
+                val dispatchSerializer = resolveDispatchSerializer(json.jsonObject)
+                    ?: continue
+
+                val dispatch = bot.eventDecoder.decodeFromJsonElement(dispatchSerializer, json)
+
                 if (dispatch is Ready) {
                     ready = dispatch
                     break
@@ -210,7 +205,7 @@ internal class WaitingReadyEvent(
         logger.debug("Received Ready event: {}", r)
 
         // next: session
-        return HeartbeatJob(bot, hello, r.data, session)
+        return HeartbeatJob(bot, hello, r.data, session, wsClient)
     }
 }
 
@@ -219,7 +214,8 @@ internal class HeartbeatJob(
     override val bot: BotImpl,
     private val hello: Signal.Hello.Data,
     private val readyData: Ready.Data,
-    private val session: DefaultClientWebSocketSession
+    private val session: DefaultClientWebSocketSession,
+    private val wsClient: HttpClient,
 ) : State() {
     override suspend fun invoke(): State {
         val seq = AtomicLongRef(-1L)
@@ -230,7 +226,7 @@ internal class HeartbeatJob(
         val sessionInfo = SessionInfo(session, seq, heartbeatJob, logger, readyData)
 
         // next: process event
-        return CreateClient(bot, sessionInfo, session)
+        return CreateClient(bot, sessionInfo, session, wsClient)
     }
 
 
@@ -252,7 +248,7 @@ internal class HeartbeatJob(
                 }
                 delay(timeMillis)
                 val hb = Signal.Heartbeat(seq.value.takeIf { it >= 0 })
-                session.send(bot.wsDecoder.encodeToString(serializer, hb))
+                session.send(bot.eventDecoder.encodeToString(serializer, hb))
             }
         }
     }
@@ -265,7 +261,8 @@ internal class HeartbeatJob(
 internal class CreateClient(
     override val bot: BotImpl,
     private val botClientSession: SessionInfo,
-    private val session: DefaultClientWebSocketSession
+    private val session: DefaultClientWebSocketSession,
+    private val wsClient: HttpClient,
 ) : State() {
     override suspend fun invoke(): State {
         val client = bot.ClientImpl(
@@ -280,7 +277,7 @@ internal class CreateClient(
         bot.updateClient(client)
 
         // next: receive events
-        return ReceiveEvent(bot, client)
+        return ReceiveEvent(bot, client, wsClient)
     }
 }
 
@@ -290,6 +287,7 @@ internal class CreateClient(
 internal class ReceiveEvent(
     override val bot: BotImpl,
     private val client: ClientImpl,
+    private val wsClient: HttpClient,
 ) : State() {
     override suspend fun invoke(): State? {
         val session = client.wsSession
@@ -297,7 +295,7 @@ internal class ReceiveEvent(
         if (!session.isActive) {
             val reason = session.closeReason.await()
             logger.error("Session is closed. reason: {}. Try to resume", reason)
-            return Resume(bot, client)
+            return Resume(bot, client, wsClient)
         }
 
         suspend fun onCatchErr(e: Throwable?): State? {
@@ -305,13 +303,13 @@ internal class ReceiveEvent(
             if (reason == null) {
                 logger.debug("Session closed and reason is null, try to resume", e)
                 // try resume
-                return Resume(bot, client)
+                return Resume(bot, client, wsClient)
             }
 
             suspend fun doIdentify(): State {
                 val gatewayInfo: GatewayInfo = GatewayApis.Normal.requestDataBy(bot)
                 logger.debug("Reconnect gateway {} by shard {}", gatewayInfo, bot.shard)
-                return Connect(bot, bot.shard, gatewayInfo)
+                return Connect(bot, bot.shard, gatewayInfo, wsClient)
             }
 
             val reasonCode = reason.code
@@ -319,7 +317,7 @@ internal class ReceiveEvent(
                 canBeResumed(reasonCode) -> {
                     logger.debug("Session closed({}), try to resume", reason, e)
                     // try resume
-                    return Resume(bot, client)
+                    return Resume(bot, client, wsClient)
                 }
 
                 canBeIdentified(reasonCode) -> {
@@ -376,44 +374,39 @@ internal class ReceiveEvent(
                 return this
             }
             logger.debug("Received text frame raw: {}", raw)
-            val json = bot.wsDecoder.parseToJsonElement(raw)
+            val json = bot.eventDecoder.parseToJsonElement(raw)
             when (val opcode = json.getOpcode()) {
                 Opcodes.Dispatch -> {
                     // event
-                    val dispatch = try {
-                        bot.wsDecoder.decodeFromJsonElement(Signal.Dispatch.serializer(), json)
-                    } catch (serEx: SerializationException) {
-//                        if (tryCheckIsPolymorphicException(serEx)) {
+                    val serializer = resolveDispatchSerializer(
+                        json = json.jsonObject,
+                        allowNameMissing = true
+                    )
+
+                    val dispatch = if (serializer != null) {
+                        bot.eventDecoder.decodeFromJsonElement(serializer, json)
+                    } else {
                         // 未知的事件类型
-                        val disSeq = runCatching {
-                            json.jsonObject["s"]?.jsonPrimitive?.longOrNull ?: seq.value
-                        }.getOrElse { seq.value }
-                        // dispatch.id
-                        val id = kotlin.runCatching {
-                            json.jsonObject["id"]?.jsonPrimitive?.contentOrNull
-                        }.getOrNull()
+                        val disSeq = json.tryGetSeq() ?: seq.value
+                        val id = json.tryGetId()
 
                         Signal.Dispatch.Unknown(id, disSeq, json, raw).also {
                             val t =
-                                kotlin.runCatching { json.jsonObject[Signal.Dispatch.DISPATCH_CLASS_DISCRIMINATOR]?.jsonPrimitive?.content }
-                                    .getOrNull()
-                            if (tryCheckIsPolymorphicException(serEx)) {
-                                logger.warn("Unknown event type {}, decode it as Unknown event: {}", t, it)
-                            } else {
-                                logger.warn("Unknown event type {}, decode it as Unknown event: {}", t, it, serEx)
-                            }
+                                kotlin.runCatching { 
+                                    json.jsonObject[Signal.Dispatch.DISPATCH_CLASS_DISCRIMINATOR]
+                                        ?.jsonPrimitive
+                                        ?.content 
+                                }.getOrNull()
+                            
+                            logger.warn("Unknown event type {}, decode it as Unknown event: {}", t, it)
                         }
-//                        } else {
-//                            // throw out
-//                            throw serEx
-//                        }
                     }
+
                     logger.debug("Received dispatch: {}", dispatch)
                     val dispatchSeq = dispatch.seq
 
                     // 推送事件
-                    emitEvent(bot, dispatch, raw)
-//                    eventSharedFlow.emit(EventData(raw, dispatch))
+                    bot.emitEvent(dispatch, raw)
 
                     // seq留下最大值
                     val currentSeq = seq.updateAndGet { pref -> max(pref, dispatchSeq) }
@@ -423,7 +416,7 @@ internal class ReceiveEvent(
                 Opcodes.Reconnect -> {
                     // 重新连接
                     logger.debug("Received reconnect signal. Do Resume.")
-                    return Resume(bot, client)
+                    return Resume(bot, client, wsClient)
                 }
 
                 else -> {
@@ -441,7 +434,8 @@ internal class ReceiveEvent(
     }
 }
 
-private fun tryCheckIsPolymorphicException(exception: SerializationException): Boolean {
+@Deprecated("Deprecated")
+internal fun tryCheckIsPolymorphicException(exception: SerializationException): Boolean {
     // 似乎是某个版本的错误提示，但是至少在 JSON v1.6.3 已经不适用了
     if (exception.message?.startsWith("Polymorphic serializer was not found for") == true) {
         return true
@@ -455,42 +449,6 @@ private fun tryCheckIsPolymorphicException(exception: SerializationException): B
     return false
 }
 
-@OptIn(ExperimentalSimbotCollectionApi::class)
-private suspend fun emitEvent(bot: BotImpl, dispatch: Signal.Dispatch, raw: String) {
-    val logger = bot.logger
-    // 先顺序地使用 preProcessor 处理
-    bot.preProcessorQueue.forEach { processor ->
-        runCatching {
-            processor.doInvoke(dispatch, raw)
-        }.onFailure { e ->
-            if (logger.isDebugEnabled) {
-                logger.debug(
-                    "Event pre-precess failure. raw: {}, event: {}", raw, dispatch
-                )
-            }
-            logger.error("Event pre-precess failure.", e)
-        }
-    }
-
-    // 然后异步地正常处理
-    // TODO 同步异步 configurable?
-    // bot launch or session launch?
-    bot.launch {
-        bot.processorQueue.forEach { processor ->
-            runCatching {
-                processor.doInvoke(dispatch, raw)
-            }.onFailure { e ->
-                if (logger.isDebugEnabled) {
-                    logger.debug(
-                        "Event precess failure. raw: {}, event: {}", raw, dispatch
-                    )
-                }
-                logger.error("Event precess failure.", e)
-            }
-        }
-    }
-}
-
 
 /**
  * [4. 恢复连接](https://bot.q.qq.com/wiki/develop/api/gateway/reference.html#_4-%E6%81%A2%E5%A4%8D%E8%BF%9E%E6%8E%A5)
@@ -502,23 +460,24 @@ private suspend fun emitEvent(bot: BotImpl, dispatch: Signal.Dispatch, raw: Stri
 internal class Resume(
     override val bot: BotImpl,
     private val client: ClientImpl,
+    private val wsClient: HttpClient,
 ) : State() {
     override suspend fun invoke(): State {
         val newSession = bot.startLock.withLock {
             // 关闭当前连接
             client.cancelAndJoin()
             val gateway = GatewayApis.Normal.requestDataBy(bot)
-            bot.wsClient.ws { gateway }.apply {
+            wsClient.ws { gateway }.apply {
                 // 发送 Opcode6
                 val resumeSignal =
                     Signal.Resume(Signal.Resume.Data(bot.qqBotToken, client.readyData.sessionId, client.seq))
-                send(bot.wsDecoder.encodeToString(Signal.Resume.serializer(), resumeSignal))
+                send(bot.eventDecoder.encodeToString(Signal.Resume.serializer(), resumeSignal))
             }
         }
 
         return WaitingHello(bot, newSession) { hello ->
             // 跳过 wait ready, 直接HeartbeatJob
-            HeartbeatJob(bot, hello.data, client.readyData, session)
+            HeartbeatJob(bot, hello.data, client.readyData, session, wsClient)
         }
     }
 }

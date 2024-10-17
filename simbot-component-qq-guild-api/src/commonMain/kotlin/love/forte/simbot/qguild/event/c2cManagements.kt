@@ -47,9 +47,10 @@ public sealed class C2CManagementDispatch : Signal.Dispatch() {
  */
 @Serializable
 @SerialName(EventIntents.GroupAndC2CEvent.FRIEND_ADD_TYPE)
+@DispatchTypeName(EventIntents.GroupAndC2CEvent.FRIEND_ADD_TYPE)
 public data class FriendAdd(
     override val id: String? = null,
-    override val s: Long,
+    override val s: Long = DEFAULT_SEQ,
     @SerialName("d")
     override val data: C2CManagementData
 ) : C2CManagementDispatch()
@@ -61,9 +62,10 @@ public data class FriendAdd(
  */
 @Serializable
 @SerialName(EventIntents.GroupAndC2CEvent.FRIEND_DEL_TYPE)
+@DispatchTypeName(EventIntents.GroupAndC2CEvent.FRIEND_DEL_TYPE)
 public data class FriendDel(
     override val id: String? = null,
-    override val s: Long,
+    override val s: Long = DEFAULT_SEQ,
     @SerialName("d")
     override val data: C2CManagementData
 ) : C2CManagementDispatch()
@@ -75,9 +77,10 @@ public data class FriendDel(
  */
 @Serializable
 @SerialName(EventIntents.GroupAndC2CEvent.C2C_MSG_REJECT_TYPE)
+@DispatchTypeName(EventIntents.GroupAndC2CEvent.C2C_MSG_REJECT_TYPE)
 public data class C2CMsgReject(
     override val id: String? = null,
-    override val s: Long,
+    override val s: Long = DEFAULT_SEQ,
     @SerialName("d")
     override val data: C2CManagementData
 ) : C2CManagementDispatch()
@@ -89,9 +92,10 @@ public data class C2CMsgReject(
  */
 @Serializable
 @SerialName(EventIntents.GroupAndC2CEvent.C2C_MSG_RECEIVE_TYPE)
+@DispatchTypeName(EventIntents.GroupAndC2CEvent.C2C_MSG_RECEIVE_TYPE)
 public data class C2CMsgReceive(
     override val id: String? = null,
-    override val s: Long,
+    override val s: Long = DEFAULT_SEQ,
     @SerialName("d")
     override val data: C2CManagementData
 ) : C2CManagementDispatch()

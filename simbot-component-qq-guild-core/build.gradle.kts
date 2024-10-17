@@ -52,14 +52,17 @@ kotlin {
     }
 
     applyTier1()
-    applyTier2()
+    applyTier2(
+        // stdlib 不再支持
+        watchosX64 = false
+    )
     applyTier3(supportKtorClient = true)
 
     sourceSets {
         commonMain.dependencies {
-            compileOnly(libs.simbot.api)
             api(project(":simbot-component-qq-guild-stdlib"))
-            compileOnly(libs.simbot.common.annotations)
+            implementation(libs.simbot.api)
+            implementation(libs.simbot.common.annotations)
             // ktor
             api(libs.ktor.client.contentNegotiation)
             api(libs.ktor.serialization.kotlinxJson)
@@ -78,24 +81,11 @@ kotlin {
         }
 
         jvmTest.dependencies {
-//            implementation(libs.ktor.client.cio)
             implementation(libs.ktor.client.java)
-//            runtimeOnly(libs.kotlinx.coroutines.reactor)
-//            implementation(libs.reactor.core)
 
             implementation(libs.log4j.api)
             implementation(libs.log4j.core)
             implementation(libs.log4j.slf4j2)
-        }
-
-        jsMain.dependencies {
-            implementation(libs.simbot.api)
-            api(libs.simbot.common.annotations)
-        }
-
-        nativeMain.dependencies {
-            implementation(libs.simbot.api)
-            api(libs.simbot.common.annotations)
         }
 
         mingwTest.dependencies {

@@ -408,6 +408,7 @@ internal class QGBotImpl(
 
             source.start().also {
                 // set everytime.
+                logger.debug("Initial @me for {}", source.ticket.appId)
                 botSelf = me().also { me ->
                     logger.debug("bot own information: {}", me)
                 }

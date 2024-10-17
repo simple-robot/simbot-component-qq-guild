@@ -47,6 +47,7 @@ import kotlin.jvm.JvmStatic
  */
 @SerialName("qg.embed")
 @Serializable
+@ConsistentCopyVisibility
 public data class QGEmbed internal constructor(public val embed: Message.Embed) : QGMessageElement {
 
     public companion object {

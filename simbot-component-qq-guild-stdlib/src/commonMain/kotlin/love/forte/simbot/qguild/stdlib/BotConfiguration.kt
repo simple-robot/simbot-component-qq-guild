@@ -140,6 +140,14 @@ public interface BotConfiguration {
     public val wsClientEngineFactory: HttpClientEngineFactory<*>?
 
     /**
+     * 是否禁用 ws 连接。如果你打算使用 webhook，则设置为 `true`,
+     * 届时在启动 bot 时不会再连接 ws 服务。
+     *
+     * @since 4.1.0
+     */
+    public val disableWs: Boolean
+
+    /**
      * 用于API请求结果反序列化的 [Json].
      *
      * 如果为null则会使用一个默认的 Json:
@@ -152,28 +160,6 @@ public interface BotConfiguration {
      *
      */
     public val apiDecoder: Json
-//
-//    /**
-//     * BOT内事件冲区的容量。
-//     *
-//     * 缓冲区中堆积的事件如果已满则后续推送的事件会挂起等待缓冲区内元素的消费。
-//     *
-//     * @see DEFAULT_EVENT_BUFFER_CAPACITY
-//     *
-//     */
-//    public val eventBufferCapacity: Int
-//
-//
-//    public companion object {
-//
-//        /**
-//         * 事件缓冲区的默认容量: `64`
-//         *
-//         * _此默认值没什么特殊含义，一拍脑袋想的。_
-//         *
-//         */
-//        public const val DEFAULT_EVENT_BUFFER_CAPACITY: Int = 64
-//    }
 }
 
 

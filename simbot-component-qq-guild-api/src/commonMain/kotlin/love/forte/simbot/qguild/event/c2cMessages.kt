@@ -28,9 +28,10 @@ import love.forte.simbot.qguild.model.Message
  */
 @Serializable
 @SerialName(EventIntents.GroupAndC2CEvent.C2C_MESSAGE_CREATE_TYPE)
+@DispatchTypeName(EventIntents.GroupAndC2CEvent.C2C_MESSAGE_CREATE_TYPE)
 public data class C2CMessageCreate(
     override val id: String? = null,
-    override val s: Long,
+    override val s: Long = DEFAULT_SEQ,
     @SerialName("d")
     override val data: Data,
 ) : Signal.Dispatch() {
@@ -72,9 +73,10 @@ public data class C2CMessageCreate(
  */
 @Serializable
 @SerialName(EventIntents.GroupAndC2CEvent.GROUP_AT_MESSAGE_CREATE_TYPE)
+@DispatchTypeName(EventIntents.GroupAndC2CEvent.GROUP_AT_MESSAGE_CREATE_TYPE)
 public data class GroupAtMessageCreate(
     override val id: String? = null,
-    override val s: Long,
+    override val s: Long = DEFAULT_SEQ,
     @SerialName("d")
     override val data: Data,
 ) : Signal.Dispatch() {

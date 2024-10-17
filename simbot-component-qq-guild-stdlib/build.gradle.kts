@@ -52,7 +52,10 @@ kotlin {
     }
 
     applyTier1()
-    applyTier2()
+    applyTier2(
+        // multiplatform-crypto-libsodium 不支持 watchosX64 target.
+        watchosX64 = false
+    )
     applyTier3(supportKtorClient = true)
 
     sourceSets {
@@ -61,34 +64,43 @@ kotlin {
             api(libs.simbot.common.loop)
             api(libs.simbot.common.atomic)
             api(libs.simbot.common.core)
-            compileOnly(libs.simbot.common.annotations)
+            implementation(libs.simbot.common.annotations)
             // ktor
             api(libs.ktor.client.contentNegotiation)
             api(libs.ktor.serialization.kotlinxJson)
             api(libs.ktor.client.ws)
+
+            // https://github.com/andreypfau/curve25519-kotlin
+//            implementation("io.github.andreypfau:curve25519-kotlin:0.0.8")
+
+            // https://github.com/ionspin/kotlin-multiplatform-libsodium
+            implementation("com.ionspin.kotlin:multiplatform-crypto-libsodium-bindings:0.9.2")
         }
 
         commonTest.dependencies {
             implementation(kotlin("test"))
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.ktor.client.mock)
+            // https://github.com/diglol/crypto
+//            implementation("com.diglol.crypto:pkc:0.2.0")
         }
 
         jvmTest.dependencies {
-//            implementation(libs.ktor.client.cio)
             implementation(libs.ktor.client.java)
             implementation(libs.log4j.api)
             implementation(libs.log4j.core)
             implementation(libs.log4j.slf4j2)
+
+//            implementation("dev.whyoleg.cryptography:cryptography-core:0.4.0")
+//            implementation(kotlincrypto.core.digest)
+//            implementation(kotlincrypto.core.mac)
+//            implementation(kotlincrypto.core.xof)
+//            implementation(kotlincrypto.macs.hmac.sha1)
+//            implementation(kotlincrypto.macs.kmac)
         }
 
         jsMain.dependencies {
-            api(libs.simbot.common.annotations)
             api(libs.ktor.client.js)
-        }
-
-        nativeMain.dependencies {
-            api(libs.simbot.common.annotations)
         }
 
         mingwTest.dependencies {

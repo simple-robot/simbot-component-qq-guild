@@ -32,6 +32,7 @@ import kotlin.jvm.JvmStatic
  * @author ForteScarlet
  */
 @Serializable
+@ConsistentCopyVisibility
 public data class QGMarkdown internal constructor(
     public val markdown: Message.Markdown
 ) : QGMessageElement {

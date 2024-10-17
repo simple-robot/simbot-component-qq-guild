@@ -48,9 +48,7 @@ import love.forte.simbot.qguild.api.QQGuildApi
 import love.forte.simbot.qguild.api.files.UploadGroupFilesApi
 import love.forte.simbot.qguild.api.files.UploadUserFilesApi
 import love.forte.simbot.qguild.api.message.GetMessageApi
-import love.forte.simbot.qguild.stdlib.requestBy
-import love.forte.simbot.qguild.stdlib.requestDataBy
-import love.forte.simbot.qguild.stdlib.requestTextBy
+import love.forte.simbot.qguild.stdlib.*
 import love.forte.simbot.suspendrunner.ST
 import love.forte.simbot.suspendrunner.STP
 import kotlin.jvm.JvmSynthetic
@@ -385,8 +383,10 @@ public interface QGBot : Bot, EventMentionAware {
      */
     @ST
     override suspend fun messageFromId(id: ID): QGMessageContent {
-        throw UnsupportedOperationException("Cannot query message from `messageId` only. " +
-                "Use the QGBot.messageFromId(channelId, messageId) or QGBot.messageFromReference(QGReference) plz.")
+        throw UnsupportedOperationException(
+            "Cannot query message from `messageId` only. " +
+                    "Use the QGBot.messageFromId(channelId, messageId) or QGBot.messageFromReference(QGReference) plz."
+        )
     }
 
     /**
@@ -401,8 +401,10 @@ public interface QGBot : Bot, EventMentionAware {
     @ExperimentalQGApi
     override suspend fun messageFromReference(reference: MessageReference): QGMessageContent {
         if (reference !is QGReference) {
-            throw UnsupportedOperationException("Cannot query message use a reference that type is not QGReference. " +
-                    "Use `reference` type of QGReference or use messageFromId(channelId, messageId) plz.")
+            throw UnsupportedOperationException(
+                "Cannot query message use a reference that type is not QGReference. " +
+                        "Use `reference` type of QGReference or use messageFromId(channelId, messageId) plz."
+            )
         }
 
         val cid = reference.channelId ?: throw IllegalArgumentException("`reference.channelId` must not be null")
@@ -422,4 +424,54 @@ public interface QGBot : Bot, EventMentionAware {
         val data = executeData(api)
         return QGMessageContentImpl(this, data)
     }
+
+
+    /**
+     * 主动推送一个事件原文。
+     * 可用于在 webhook 模式下推送事件。
+     *
+     * @param payload 接收到的事件推送的JSON格式正文字符串。
+     * @param options 额外提供的属性或配置。默认为 `null`。
+     *
+     * @throws IllegalArgumentException 参考:
+     * - [EmitEventOptions.ignoreUnknownOpcode]
+     * - [EmitEventOptions.ignoreMissingOpcode]
+     *
+     * @see QGSourceBot.emitEvent
+     *
+     * @since 4.1.0
+     */
+    @ST
+    public suspend fun emitEvent(
+        payload: String,
+        options: EmitEventOptions? = null,
+    ): EmitResult {
+        return source.emitEvent(payload, options)
+    }
+
+    /**
+     * 主动推送一个事件原文。
+     * 可用于在 webhook 模式下推送事件。
+     *
+     * @param payload 接收到的事件推送的JSON格式正文字符串。
+     *
+     * @see QGSourceBot.emitEvent
+     * @since 4.1.0
+     */
+    @ST
+    public suspend fun emitEvent(payload: String): EmitResult {
+        return source.emitEvent(payload)
+    }
+}
+
+/**
+ * 使用 [QGBot.emitEvent] 推送一个外部事件，并且在 [block] 中配置 [EmitEventOptions]。
+ * @see QGBot.emitEvent
+ * @since 4.1.0
+ */
+public suspend inline fun QGBot.emitEvent(
+    payload: String,
+    block: EmitEventOptions.() -> Unit
+): EmitResult {
+    return source.emitEvent(payload, block)
 }

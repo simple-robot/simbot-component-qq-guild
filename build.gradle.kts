@@ -63,14 +63,17 @@ idea {
     }
 }
 
-
 apiValidation {
     ignoredPackages.add("*.internal.*")
 
     this.ignoredProjects.addAll(
         listOf(
             "api-reader",
-            "intents-processor"
+            "intents-processor",
+            "dispatch-serializer-processor",
+            "webhook-server-ktor",
+            "webhook-server-spring",
+            "webhook-server-spring-webflux",
         ),
     )
 

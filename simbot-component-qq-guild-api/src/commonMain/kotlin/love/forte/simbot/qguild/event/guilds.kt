@@ -41,9 +41,10 @@ public sealed class EventGuildDispatch : Signal.Dispatch() {
  */
 @Serializable
 @SerialName(EventIntents.Guilds.GUILD_CREATE_TYPE)
+@DispatchTypeName(EventIntents.Guilds.GUILD_CREATE_TYPE)
 public data class GuildCreate(
     override val id: String? = null,
-    override val s: Long,
+    override val s: Long = DEFAULT_SEQ,
     @SerialName("d") override val data: EventGuild
 ) : EventGuildDispatch()
 
@@ -57,9 +58,10 @@ public data class GuildCreate(
  */
 @Serializable
 @SerialName(EventIntents.Guilds.GUILD_UPDATE_TYPE)
+@DispatchTypeName(EventIntents.Guilds.GUILD_UPDATE_TYPE)
 public data class GuildUpdate(
     override val id: String? = null,
-    override val s: Long,
+    override val s: Long = DEFAULT_SEQ,
     @SerialName("d") override val data: EventGuild
 ) : EventGuildDispatch()
 
@@ -74,9 +76,10 @@ public data class GuildUpdate(
  */
 @Serializable
 @SerialName(EventIntents.Guilds.GUILD_DELETE_TYPE)
+@DispatchTypeName(EventIntents.Guilds.GUILD_DELETE_TYPE)
 public data class GuildDelete(
     override val id: String? = null,
-    override val s: Long,
+    override val s: Long = DEFAULT_SEQ,
     @SerialName("d") override val data: EventGuild
 ) : EventGuildDispatch()
 

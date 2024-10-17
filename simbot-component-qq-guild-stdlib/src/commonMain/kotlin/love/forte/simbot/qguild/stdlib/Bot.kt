@@ -26,6 +26,7 @@ import kotlinx.serialization.json.Json
 import love.forte.simbot.qguild.api.GatewayInfo
 import love.forte.simbot.qguild.api.user.GetBotInfoApi
 import love.forte.simbot.qguild.event.Shard
+import love.forte.simbot.qguild.event.Signal
 import love.forte.simbot.qguild.model.User
 import love.forte.simbot.suspendrunner.ST
 import love.forte.simbot.suspendrunner.STP
@@ -166,6 +167,38 @@ public interface Bot : CoroutineScope {
     public suspend fun start(gateway: GatewayInfo)
 
     /**
+     * 主动推送一个事件原文。
+     * 可用于在 webhook 模式下推送事件。
+     *
+     * @param payload 接收到的事件推送的JSON格式正文字符串。
+     * @param options 额外提供的属性或配置。默认为 `null`。
+     *
+     * @throws IllegalArgumentException 参考:
+     * - [EmitEventOptions.ignoreUnknownOpcode]
+     * - [EmitEventOptions.ignoreMissingOpcode]
+     *
+     * @since 4.1.0
+     */
+    @ST
+    public suspend fun emitEvent(
+        payload: String,
+        options: EmitEventOptions? = null,
+    ): EmitResult
+
+    /**
+     * 主动推送一个事件原文。
+     * 可用于在 webhook 模式下推送事件。
+     *
+     * @param payload 接收到的事件推送的JSON格式正文字符串。
+     *
+     * @since 4.1.0
+     */
+    @ST
+    public suspend fun emitEvent(payload: String): EmitResult {
+        return emitEvent(payload, null)
+    }
+
+    /**
      * 终止当前BOT。
      */
     public fun cancel(reason: Throwable?)
@@ -195,7 +228,8 @@ public interface Bot : CoroutineScope {
      * 如果当前处于重连、重启的状态，得到的 [client] 中 [client.isActive][Client.isActive] 可能为 `false`，
      * [client] 本身也可能不存在。
      *
-     * @return 当前bot持有的连接。如果当前正处于连接中、重连中或尚未启动，则可能得到null
+     * @return 当前bot持有的连接。如果当前正处于连接中、重连中、尚未启动或未启用ws连接，
+     * 则可能得到null
      */
     public val client: Client?
 
@@ -244,3 +278,92 @@ public enum class SubscribeSequence {
      */
     NORMAL;
 }
+
+/**
+ * 使用 [Bot.emitEvent] 推送一个外部事件，并且在 [block] 中配置 [EmitEventOptions]。
+ * @see Bot.emitEvent
+ * @since 4.1.0
+ */
+public suspend inline fun Bot.emitEvent(
+    payload: String,
+    block: EmitEventOptions.() -> Unit
+): EmitResult {
+    return emitEvent(payload, EmitEventOptions().apply(block))
+}
+
+/**
+ * 使用 [Bot.emitEvent] 推送事件后的结果，
+ * 会根据配置的不同和推送事件的 `opcode` 的不同得到不同的结果.
+ *
+ * @since 4.1.0
+ */
+public sealed class EmitResult {
+    /**
+     * 不属于任何可处理的 `opcode`, 但在 [EmitEventOptions]
+     * 中配置了跳过而得到的无效返回值。
+     */
+    public data object Nothing : EmitResult()
+
+    /**
+     * `opcode` 为 `0`，
+     * 普通的执行了事件调度、结束并返回。
+     */
+    public data object Dispatched : EmitResult()
+
+    /**
+     * `opcode` 为 `13`，
+     * 对内容进行校验后得到了 [verified] 签名结果。
+     */
+    public data class Verified(val verified: Signal.CallbackVerify.Verified) : EmitResult()
+}
+
+/**
+ * 在使用 [Bot.emitEvent] 时可选的一些额外属性或选项信息。
+ * @since 4.1.0
+ */
+public class EmitEventOptions {
+    /**
+     * 如果为 `true`,
+     * 则 payload 中解析出 [0, 13] 以外的 `op` 值不会抛出异常。
+     * 默认为 `false`
+     */
+    public var ignoreUnknownOpcode: Boolean = false
+
+    /**
+     * 如果为 `true`,
+     * 则 payload 中不存在 `op` 值时不会抛出异常。
+     * 默认为 `false`
+     */
+    public var ignoreMissingOpcode: Boolean = false
+
+    /**
+     * 如果需要对此回调事件进行 ed25519 签名校验，
+     * 则配置它所需的请求头透传参数。
+     *
+     * 如果你想要以自己的逻辑提前校验则可设为 `null`，
+     * 如果为 `null` 则不会进行校验。
+     *
+     * 默认为 `null`。
+     *
+     * 更多参考 [官方文档](https://bot.q.qq.com/wiki/develop/api-v2/dev-prepare/interface-framework/sign.html)
+     */
+    public var ed25519SignatureVerification: Ed25519SignatureVerification? = null
+}
+
+/**
+ * 进行 Ed25519 签名校验所需的参数。
+ *
+ * 更多参考 [官方文档](https://bot.q.qq.com/wiki/develop/api-v2/dev-prepare/interface-framework/sign.html)
+ *
+ * @since 4.1.0
+ */
+public data class Ed25519SignatureVerification(
+    /**
+     * 来自请求头中的 `X-Signature-Ed25519`.
+     */
+    val signatureEd25519: String,
+    /**
+     * 来自请求头中的 `X-Signature-Timestamp`.
+     */
+    val signatureTimestamp: String,
+)

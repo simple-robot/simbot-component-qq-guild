@@ -19,19 +19,16 @@ rootProject.name = "qq-guild"
 
 // internals
 include(":internal-processors:api-reader")
+include(":internal-processors:dispatch-serializer-processor")
 include(":internal-processors:intents-processor")
 
-//include(":builder-generator")
 include(":simbot-component-qq-guild-api")
 include(":simbot-component-qq-guild-stdlib")
 include(":simbot-component-qq-guild-core")
-//include(":simbot-component-qq-guild-core")
-//include(":simbot-component-qq-guild-benchmark")
 
-// tests
-//if (!System.getenv("IS_CI").toBoolean()) {
-//    include(":tests:application-test")
-//    include(":tests:spring-boot-test")
-//    include(":tests:plugin-test")
-//}
+// samples
+include(":samples:webhook-server-ktor")
+include(":samples:webhook-server-spring")
+include(":samples:webhook-server-spring-webflux")
+
 

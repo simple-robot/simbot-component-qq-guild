@@ -17,17 +17,21 @@
 
 package love.forte.simbot.qguild.stdlib.internal
 
+import com.ionspin.kotlin.crypto.signature.crypto_sign_BYTES
 import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
+import io.ktor.utils.io.core.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import love.forte.simbot.common.atomic.AtomicLong
 import love.forte.simbot.common.atomic.atomic
 import love.forte.simbot.common.collection.ConcurrentQueue
@@ -38,6 +42,7 @@ import love.forte.simbot.common.weak.WeakRef
 import love.forte.simbot.common.weak.weakRef
 import love.forte.simbot.logger.Logger
 import love.forte.simbot.logger.LoggerFactory
+import love.forte.simbot.logger.isDebugEnabled
 import love.forte.simbot.qguild.QQGuildResultSerializationException
 import love.forte.simbot.qguild.api.GatewayApis
 import love.forte.simbot.qguild.api.GatewayInfo
@@ -45,9 +50,7 @@ import love.forte.simbot.qguild.api.app.AppAccessToken
 import love.forte.simbot.qguild.api.app.GetAppAccessTokenApi
 import love.forte.simbot.qguild.api.requestData
 import love.forte.simbot.qguild.api.user.GetBotInfoApi
-import love.forte.simbot.qguild.event.Ready
-import love.forte.simbot.qguild.event.Shard
-import love.forte.simbot.qguild.event.Signal
+import love.forte.simbot.qguild.event.*
 import love.forte.simbot.qguild.model.User
 import love.forte.simbot.qguild.stdlib.*
 import love.forte.simbot.qguild.stdlib.DisposableHandle
@@ -92,21 +95,35 @@ internal class BotImpl(
 
     private fun checkTicketSecret() {
         if (ticket.secret.isEmpty()) {
-            logger.error("The `ticket.secret` is empty. " +
-                    "Since v4.0.0-beta6, the authentication logic within component " +
-                    "has been migrated to new logic that requires the use of `secret`. " +
-                    "If you do not configure the `ticket.secret`, " +
-                    "it will most likely fail to start and throw an exception. " +
-                    "See also: https://github.com/simple-robot/simbot-component-qq-guild/pull/163")
+            logger.error(
+                "The `ticket.secret` is empty. " +
+                        "Since v4.0.0-beta6, the authentication logic within component " +
+                        "has been migrated to new logic that requires the use of `secret`. " +
+                        "If you do not configure the `ticket.secret`, " +
+                        "it will most likely fail to start and throw an exception. " +
+                        "See also: https://github.com/simple-robot/simbot-component-qq-guild/pull/163"
+            )
         }
     }
 
-    internal val wsDecoder = Signal.Dispatch.dispatchJson {
+    private val ed25519KeyPair: Ed25519Keypair by lazy {
+        genEd25519Keypair(ticket.secret.paddingEd25519Seed().toByteArray())
+    }
+
+    private val ed25519PrivateKey
+        get() = ed25519KeyPair.privateKey
+
+    private val ed25519PublicKey
+        get() = ed25519KeyPair.publicKey
+
+    internal val eventDecoder = Signal.Dispatch.dispatchJson {
         isLenient = true
         ignoreUnknownKeys = true
     }
 
-    internal val wsClient: HttpClient = configuration.let {
+    private val wsClient: HttpClient? = configuration.let {
+        if (it.disableWs) return@let null
+
         val wsClientEngine = it.wsClientEngine
         val wsClientEngineFactory = it.wsClientEngineFactory
 
@@ -124,7 +141,6 @@ internal class BotImpl(
             }
         }
     }
-
 
     private fun HttpClientConfig<*>.configWsHttpClient() {
         WebSockets {
@@ -296,37 +312,45 @@ internal class BotImpl(
                 flushAccessTokenJob = initFlushAccessTokenJob()
             }
 
-            val gateway = gatewayFactory()
+            if (wsClient != null) {
+                val gateway = gatewayFactory()
 
-            logger.debug("Request gateway {} by shard {}", gateway, shard)
+                logger.debug("Request gateway {} by shard {}", gateway, shard)
 
-            val state = Connect(this, shard, gateway)
-
-            logger.debug("Create state loop {}", state)
-
-            var st: State? = state
-            do {
-                logger.debug("Current state: {}", st)
-                st = st?.invoke()
-            } while (st != null && st !is ReceiveEvent)
-
-            if (st == null) {
-                // 当前状态为空且尚未进入事件接收状态
-                throw IllegalStateException("The current state is null and not yet in the event receiving state")
+                this.stageLoopJob = launchWsLoop(wsClient, gateway)
+            } else {
+                logger.debug("WsClient is null, will not connect to ws server.")
             }
-
-            val stageLoopJob: Job = launch {
-                st.loop()
-            }
-
-            stageLoopJob.invokeOnCompletion { reason ->
-                reason?.also {
-                    logger.debug("StageLoopJob is on completion: {}", it.message, it)
-                }
-            }
-
-            this.stageLoopJob = stageLoopJob
         }
+    }
+
+    private suspend fun launchWsLoop(wsClient: HttpClient, gateway: GatewayInfo): Job {
+        val state = Connect(this, shard, gateway, wsClient)
+
+        logger.debug("Create state loop {}", state)
+
+        var st: State? = state
+        do {
+            logger.debug("Current state: {}", st)
+            st = st?.invoke()
+        } while (st != null && st !is ReceiveEvent)
+
+        if (st == null) {
+            // 当前状态为空且尚未进入事件接收状态
+            throw IllegalStateException("The current state is null and not yet in the event receiving state")
+        }
+
+        val stageLoopJob: Job = launch {
+            st.loop()
+        }
+
+        stageLoopJob.invokeOnCompletion { reason ->
+            reason?.also {
+                logger.debug("StageLoopJob is on completion: {}", it.message, it)
+            }
+        }
+
+        return stageLoopJob
     }
 
     private suspend fun initFlushAccessTokenJob(): Job {
@@ -386,6 +410,112 @@ internal class BotImpl(
                 else -> throw err
             }
         }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    override suspend fun emitEvent(
+        payload: String,
+        options: EmitEventOptions?,
+    ): EmitResult {
+        // CODE	名称	客户端行为	描述
+        //  0	Dispatch	Receive	服务端进行消息推送
+        //  13	回调地址验证	Receive	开放平台对机器人服务端进行验证
+        logger.debug("Emit raw event with payload: {}", payload)
+
+        fun verifyIfNecessary() {
+            val (signature, signatureTimestamp) = options?.ed25519SignatureVerification ?: return
+            logger.debug("`ed25519SignatureVerification` exists, verity the payload")
+
+            val signatureBytes = signature.hexToByteArray()
+
+            check(crypto_sign_BYTES == signatureBytes.size) {
+                "Invalid signature hex size, " +
+                        "expect ${crypto_sign_BYTES}, " +
+                        "actual ${signatureBytes.size}"
+            }
+
+            val and: UByte = signatureBytes[63].toUByte().and(224u)
+
+            check(and == 0u.toUByte()) {
+                "Invalid signature hex, " +
+                        "expect signatureBytes[63] && 224 == 0, " +
+                        "actual $and (0x${and.toHexString()})"
+            }
+
+            val msg = "$signatureTimestamp$payload"
+
+            check(ed25519PublicKey.verify(msg.toByteArray(), signatureBytes)) {
+                "Ed25519 verify failed"
+            }
+        }
+
+        fun signatureIfNecessary(verify: Signal.CallbackVerify): EmitResult {
+            val (plainToken, eventTs) = verify.data
+            val msg = "$eventTs$plainToken"
+
+            val signature = ed25519PrivateKey.sign(msg.toByteArray())
+
+            val verified = Signal.CallbackVerify.Verified(
+                plainToken,
+                signature.signatureBytes().toHexString()
+            )
+
+            return EmitResult.Verified(verified)
+        }
+
+        // Verify payload
+        verifyIfNecessary()
+
+        val json = eventDecoder.parseToJsonElement(payload)
+
+        when (val opcode = json.getOpcode()) {
+            null -> {
+                if (options?.ignoreMissingOpcode == true) return EmitResult.Nothing
+
+                throw IllegalArgumentException("Required attribute `$.op` is missing")
+            }
+
+            Opcodes.Dispatch -> {
+                val serializer = resolveDispatchSerializer(
+                    json = json.jsonObject,
+                    allowNameMissing = true
+                )
+
+                val dispatch = if (serializer != null) {
+                    eventDecoder.decodeFromJsonElement(serializer, json)
+                } else {
+                    // Unknown
+                    val disSeq = -1L
+                    val id = json.tryGetId()
+
+                    Signal.Dispatch.Unknown(id, disSeq, json, payload).also {
+                        val t =
+                            kotlin.runCatching {
+                                json.jsonObject[Signal.Dispatch.DISPATCH_CLASS_DISCRIMINATOR]
+                                    ?.jsonPrimitive
+                                    ?.content
+                            }.getOrNull()
+
+                        logger.warn("Unknown event type {}, decode it as Unknown event: {}", t, it)
+                    }
+                }
+
+                emitEvent(dispatch, payload)
+                return EmitResult.Dispatched
+            }
+
+            Opcodes.CallbackVerify -> {
+                val verify = eventDecoder.decodeFromJsonElement(Signal.CallbackVerify.serializer(), json)
+                logger.debug("On Signal.CallbackVerify: {}", verify)
+                return signatureIfNecessary(verify)
+            }
+
+            else -> {
+                if (options?.ignoreUnknownOpcode == true) return EmitResult.Nothing
+
+                throw IllegalArgumentException("Unknown opcode: $opcode, emitEvent can only support opcode in [0, 13]")
+            }
+        }
+    }
 
     override fun cancel(reason: Throwable?) {
         if (!job.isActive) return
@@ -460,3 +590,62 @@ internal data class SessionInfo(
     val readyData: Ready.Data,
 )
 
+@OptIn(ExperimentalSimbotCollectionApi::class)
+internal suspend fun BotImpl.emitEvent(dispatch: Signal.Dispatch, raw: String) {
+    logger.debug("Emit event {} from raw {}", dispatch, raw)
+    // 先顺序地使用 preProcessor 处理
+    preProcessorQueue.forEach { processor ->
+        runCatching {
+            processor.doInvoke(dispatch, raw)
+        }.onFailure { e ->
+            if (logger.isDebugEnabled) {
+                logger.debug(
+                    "Event pre-precess failure. raw: {}, event: {}", raw, dispatch
+                )
+            }
+            logger.error("Event pre-precess failure.", e)
+        }
+    }
+
+    // 然后异步地正常处理
+    // TODO 同步异步 configurable?
+    // bot launch or session launch?
+    launch {
+        processorQueue.forEach { processor ->
+            runCatching {
+                processor.doInvoke(dispatch, raw)
+            }.onFailure { e ->
+                if (logger.isDebugEnabled) {
+                    logger.debug(
+                        "Event precess failure. raw: {}, event: {}", raw, dispatch
+                    )
+                }
+                logger.error("Event precess failure.", e)
+            }
+        }
+    }
+}
+
+
+/**
+ * Repeat to `length` == 32
+ */
+internal fun String.paddingEd25519Seed(): String {
+    return when {
+        length == 32 || isEmpty() -> this
+        length > 32 -> substring(32)
+        else -> {
+            buildString(32) {
+                append(this@paddingEd25519Seed)
+                while (length < 32) {
+                    append(
+                        this@paddingEd25519Seed,
+                        0,
+                        kotlin.math.min(32 - length, this@paddingEd25519Seed.length)
+                    )
+                }
+            }
+
+        }
+    }
+}

@@ -37,6 +37,7 @@ import love.forte.simbot.message.Message as SimbotMessage
  */
 @SerialName("qg.ark")
 @Serializable
+@ConsistentCopyVisibility
 public data class QGArk internal constructor(
     @SerialName("template_id")
     public val templateId: ID,
