@@ -23,10 +23,8 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.serialization.json.Json
-import love.forte.simbot.common.function.Action
 import love.forte.simbot.qguild.api.GatewayInfo
 import love.forte.simbot.qguild.api.user.GetBotInfoApi
-import love.forte.simbot.qguild.event.Opcode
 import love.forte.simbot.qguild.event.Shard
 import love.forte.simbot.qguild.event.Signal
 import love.forte.simbot.qguild.model.User
@@ -174,9 +172,6 @@ public interface Bot : CoroutineScope {
      *
      * @param payload 接收到的事件推送的JSON格式正文字符串。
      * @param options 额外提供的属性或配置。默认为 `null`。
-     * @param onVerified 如果事件是验证事件
-     * ([Opcode.CallbackVerify]),
-     * 且验证成功后，则通过 [onVerified] 回调结果。
      *
      * @throws IllegalArgumentException 参考:
      * - [EmitEventOptions.ignoreUnknownOpcode]
@@ -188,8 +183,7 @@ public interface Bot : CoroutineScope {
     public suspend fun emitEvent(
         payload: String,
         options: EmitEventOptions? = null,
-        onVerified: Action<Signal.CallbackVerify.Verified>? = null
-    )
+    ): EmitResult
 
     /**
      * 主动推送一个事件原文。
@@ -200,8 +194,8 @@ public interface Bot : CoroutineScope {
      * @since 4.1.0
      */
     @ST
-    public suspend fun emitEvent(payload: String) {
-        emitEvent(payload, null, null)
+    public suspend fun emitEvent(payload: String): EmitResult {
+        return emitEvent(payload, null)
     }
 
     /**
@@ -292,10 +286,35 @@ public enum class SubscribeSequence {
  */
 public suspend inline fun Bot.emitEvent(
     payload: String,
-    onVerified: Action<Signal.CallbackVerify.Verified>? = null,
     block: EmitEventOptions.() -> Unit
-) {
-    emitEvent(payload, EmitEventOptions().apply(block), onVerified)
+): EmitResult {
+    return emitEvent(payload, EmitEventOptions().apply(block))
+}
+
+/**
+ * 使用 [Bot.emitEvent] 推送事件后的结果，
+ * 会根据配置的不同和推送事件的 `opcode` 的不同得到不同的结果.
+ *
+ * @since 4.1.0
+ */
+public sealed class EmitResult {
+    /**
+     * 不属于任何可处理的 `opcode`, 但在 [EmitEventOptions]
+     * 中配置了跳过而得到的无效返回值。
+     */
+    public data object Nothing : EmitResult()
+
+    /**
+     * `opcode` 为 `0`，
+     * 普通的执行了事件调度、结束并返回。
+     */
+    public data object Dispatched : EmitResult()
+
+    /**
+     * `opcode` 为 `13`，
+     * 对内容进行校验后得到了 [verified] 签名结果。
+     */
+    public data class Verified(val verified: Signal.CallbackVerify.Verified) : EmitResult()
 }
 
 /**
