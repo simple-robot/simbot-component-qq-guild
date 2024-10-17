@@ -52,7 +52,10 @@ kotlin {
     }
 
     applyTier1()
-    applyTier2()
+    applyTier2(
+        // stdlib 不再支持
+        watchosX64 = false
+    )
     applyTier3(supportKtorClient = true)
 
     sourceSets {
