@@ -17,7 +17,7 @@
 
 package love.forte.simbot.qguild.stdlib.internal
 
-import io.github.andreypfau.curve25519.ed25519.Ed25519
+import com.ionspin.kotlin.crypto.signature.crypto_sign_BYTES
 import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -106,13 +106,15 @@ internal class BotImpl(
         }
     }
 
-    private val ed25519PrivateKey by lazy {
-        Ed25519.keyFromSeed(ticket.secret.paddingEd25519Seed().toByteArray())
+    private val ed25519KeyPair: Ed25519Keypair by lazy {
+        genEd25519Keypair(ticket.secret.paddingEd25519Seed().toByteArray())
     }
 
-    private val ed25519PublicKey by lazy {
-        ed25519PrivateKey.publicKey()
-    }
+    private val ed25519PrivateKey
+        get() = ed25519KeyPair.privateKey
+
+    private val ed25519PublicKey
+        get() = ed25519KeyPair.publicKey
 
     internal val eventDecoder = Signal.Dispatch.dispatchJson {
         isLenient = true
@@ -425,9 +427,9 @@ internal class BotImpl(
 
             val signatureBytes = signature.hexToByteArray()
 
-            check(Ed25519.SIGNATURE_SIZE_BYTES == signatureBytes.size) {
+            check(crypto_sign_BYTES == signatureBytes.size) {
                 "Invalid signature hex size, " +
-                        "expect ${Ed25519.SIGNATURE_SIZE_BYTES}, " +
+                        "expect ${crypto_sign_BYTES}, " +
                         "actual ${signatureBytes.size}"
             }
 
@@ -452,7 +454,11 @@ internal class BotImpl(
 
             val signature = ed25519PrivateKey.sign(msg.toByteArray())
 
-            val verified = Signal.CallbackVerify.Verified(plainToken, signature.toHexString())
+            val verified = Signal.CallbackVerify.Verified(
+                plainToken,
+                signature.signatureBytes().toHexString()
+            )
+
             return EmitResult.Verified(verified)
         }
 

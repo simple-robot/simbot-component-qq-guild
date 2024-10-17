@@ -68,7 +68,10 @@ kotlin {
             api(libs.ktor.client.ws)
 
             // https://github.com/andreypfau/curve25519-kotlin
-            implementation("io.github.andreypfau:curve25519-kotlin:0.0.8")
+//            implementation("io.github.andreypfau:curve25519-kotlin:0.0.8")
+
+            // https://github.com/ionspin/kotlin-multiplatform-libsodium
+            implementation("com.ionspin.kotlin:multiplatform-crypto-libsodium-bindings:0.9.2")
         }
 
         commonTest.dependencies {
