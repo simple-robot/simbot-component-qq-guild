@@ -37,7 +37,6 @@ import love.forte.simbot.common.atomic.atomic
 import love.forte.simbot.common.collection.ConcurrentQueue
 import love.forte.simbot.common.collection.ExperimentalSimbotCollectionApi
 import love.forte.simbot.common.collection.createConcurrentQueue
-import love.forte.simbot.common.function.Action
 import love.forte.simbot.common.stageloop.loop
 import love.forte.simbot.common.weak.WeakRef
 import love.forte.simbot.common.weak.weakRef
@@ -414,13 +413,11 @@ internal class BotImpl(
     override suspend fun emitEvent(
         payload: String,
         options: EmitEventOptions?,
-        onVerified: Action<Signal.CallbackVerify.Verified>?
-    ) {
+    ): EmitResult {
         // CODE	名称	客户端行为	描述
         //  0	Dispatch	Receive	服务端进行消息推送
         //  13	回调地址验证	Receive	开放平台对机器人服务端进行验证
         logger.debug("Emit raw event with payload: {}", payload)
-        val json = eventDecoder.parseToJsonElement(payload)
 
         fun verifyIfNecessary() {
             val (signature, signatureTimestamp) = options?.ed25519SignatureVerification ?: return
@@ -449,29 +446,29 @@ internal class BotImpl(
             }
         }
 
-        fun signatureIfNecessary(verify: Signal.CallbackVerify) {
-            verifyIfNecessary() // verify itself first.
-            val callback = onVerified ?: return
-
+        fun signatureIfNecessary(verify: Signal.CallbackVerify): EmitResult {
             val (plainToken, eventTs) = verify.data
             val msg = "$eventTs$plainToken"
 
             val signature = ed25519PrivateKey.sign(msg.toByteArray())
 
-            callback.invoke(Signal.CallbackVerify.Verified(plainToken, signature.toHexString()))
+            val verified = Signal.CallbackVerify.Verified(plainToken, signature.toHexString())
+            return EmitResult.Verified(verified)
         }
 
+        // Verify payload
+        verifyIfNecessary()
+
+        val json = eventDecoder.parseToJsonElement(payload)
 
         when (val opcode = json.getOpcode()) {
             null -> {
-                if (options?.ignoreMissingOpcode == true) return
+                if (options?.ignoreMissingOpcode == true) return EmitResult.Nothing
 
                 throw IllegalArgumentException("Required attribute `$.op` is missing")
             }
 
             Opcodes.Dispatch -> {
-                verifyIfNecessary()
-
                 val dispatch = try {
                     eventDecoder.decodeFromJsonElement(Signal.Dispatch.serializer(), json)
                 } catch (serEx: SerializationException) {
@@ -491,16 +488,17 @@ internal class BotImpl(
                 }
 
                 emitEvent(dispatch, payload)
+                return EmitResult.Dispatched
             }
 
             Opcodes.CallbackVerify -> {
                 val verify = eventDecoder.decodeFromJsonElement(Signal.CallbackVerify.serializer(), json)
                 logger.debug("On Signal.CallbackVerify: {}", verify)
-                signatureIfNecessary(verify)
+                return signatureIfNecessary(verify)
             }
 
             else -> {
-                if (options?.ignoreUnknownOpcode == true) return
+                if (options?.ignoreUnknownOpcode == true) return EmitResult.Nothing
 
                 throw IllegalArgumentException("Unknown opcode: $opcode, emitEvent can only support opcode in [0, 13]")
             }

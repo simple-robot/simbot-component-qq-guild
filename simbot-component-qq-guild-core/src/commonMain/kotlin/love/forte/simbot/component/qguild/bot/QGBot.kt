@@ -23,7 +23,6 @@ import io.ktor.client.statement.*
 import love.forte.simbot.ability.EventMentionAware
 import love.forte.simbot.bot.Bot
 import love.forte.simbot.bot.ContactRelation
-import love.forte.simbot.common.function.Action
 import love.forte.simbot.common.id.ID
 import love.forte.simbot.common.id.StringID.Companion.ID
 import love.forte.simbot.common.id.literal
@@ -49,8 +48,6 @@ import love.forte.simbot.qguild.api.QQGuildApi
 import love.forte.simbot.qguild.api.files.UploadGroupFilesApi
 import love.forte.simbot.qguild.api.files.UploadUserFilesApi
 import love.forte.simbot.qguild.api.message.GetMessageApi
-import love.forte.simbot.qguild.event.Opcode
-import love.forte.simbot.qguild.event.Signal
 import love.forte.simbot.qguild.stdlib.*
 import love.forte.simbot.suspendrunner.ST
 import love.forte.simbot.suspendrunner.STP
@@ -386,8 +383,10 @@ public interface QGBot : Bot, EventMentionAware {
      */
     @ST
     override suspend fun messageFromId(id: ID): QGMessageContent {
-        throw UnsupportedOperationException("Cannot query message from `messageId` only. " +
-                "Use the QGBot.messageFromId(channelId, messageId) or QGBot.messageFromReference(QGReference) plz.")
+        throw UnsupportedOperationException(
+            "Cannot query message from `messageId` only. " +
+                    "Use the QGBot.messageFromId(channelId, messageId) or QGBot.messageFromReference(QGReference) plz."
+        )
     }
 
     /**
@@ -402,8 +401,10 @@ public interface QGBot : Bot, EventMentionAware {
     @ExperimentalQGApi
     override suspend fun messageFromReference(reference: MessageReference): QGMessageContent {
         if (reference !is QGReference) {
-            throw UnsupportedOperationException("Cannot query message use a reference that type is not QGReference. " +
-                    "Use `reference` type of QGReference or use messageFromId(channelId, messageId) plz.")
+            throw UnsupportedOperationException(
+                "Cannot query message use a reference that type is not QGReference. " +
+                        "Use `reference` type of QGReference or use messageFromId(channelId, messageId) plz."
+            )
         }
 
         val cid = reference.channelId ?: throw IllegalArgumentException("`reference.channelId` must not be null")
@@ -431,9 +432,6 @@ public interface QGBot : Bot, EventMentionAware {
      *
      * @param payload 接收到的事件推送的JSON格式正文字符串。
      * @param options 额外提供的属性或配置。默认为 `null`。
-     * @param onVerified 如果事件是验证事件
-     * ([Opcode.CallbackVerify]),
-     * 且验证成功后，则通过 [onVerified] 回调结果。
      *
      * @throws IllegalArgumentException 参考:
      * - [EmitEventOptions.ignoreUnknownOpcode]
@@ -447,9 +445,8 @@ public interface QGBot : Bot, EventMentionAware {
     public suspend fun emitEvent(
         payload: String,
         options: EmitEventOptions? = null,
-        onVerified: Action<Signal.CallbackVerify.Verified>? = null
-    ) {
-        source.emitEvent(payload, options, onVerified)
+    ): EmitResult {
+        return source.emitEvent(payload, options)
     }
 
     /**
@@ -462,8 +459,8 @@ public interface QGBot : Bot, EventMentionAware {
      * @since 4.1.0
      */
     @ST
-    public suspend fun emitEvent(payload: String) {
-        source.emitEvent(payload)
+    public suspend fun emitEvent(payload: String): EmitResult {
+        return source.emitEvent(payload)
     }
 }
 
@@ -474,8 +471,7 @@ public interface QGBot : Bot, EventMentionAware {
  */
 public suspend inline fun QGBot.emitEvent(
     payload: String,
-    onVerified: Action<Signal.CallbackVerify.Verified>? = null,
     block: EmitEventOptions.() -> Unit
-) {
-    source.emitEvent(payload, onVerified, block)
+): EmitResult {
+    return source.emitEvent(payload, block)
 }
