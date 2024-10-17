@@ -36,12 +36,12 @@ kotlin {
 
 configJavaCompileWithModule()
 
-//application {
-//    mainClass.set("com.example.ApplicationKt")
-//
-//    val isDevelopment: Boolean = project.ext.has("development")
-//    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
-//}
+application {
+    mainClass.set("com.example.ApplicationKt")
+
+    val isDevelopment: Boolean = project.ext.has("development")
+    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
+}
 
 dependencies {
     implementation(project(":simbot-component-qq-guild-core"))
