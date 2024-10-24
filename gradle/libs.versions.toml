@@ -7,7 +7,7 @@ dokka = "1.9.20"
 ktor = "2.3.12"
 log4j = "2.24.1"
 # simbot
-simbot = "4.6.1"
+simbot = "4.7.0"
 suspendTransform = "2.0.20-0.9.3"
 gradleCommon = "0.6.0"
 # ksp
