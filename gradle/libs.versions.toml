@@ -13,7 +13,7 @@ gradleCommon = "0.6.0"
 # ksp
 ksp = "2.0.20-1.0.25"
 # https://square.github.io/kotlinpoet/
-kotlinPoet = "1.18.1"
+kotlinPoet = "2.0.0"
 # https://detekt.dev/docs/intro
 # TODO apply detekt
 detekt = "1.23.7"
