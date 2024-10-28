@@ -3,11 +3,12 @@ kotlin = "2.0.20"
 kotlinx-coroutines = "1.9.0"
 kotlinx-serialization = "1.7.3"
 kotlinx-datetime = "0.6.1"
+kotlinx-io = "0.5.4"
 dokka = "1.9.20"
 ktor = "2.3.12"
 log4j = "2.24.1"
 # simbot
-simbot = "4.6.1"
+simbot = "4.7.0"
 suspendTransform = "2.0.20-0.9.3"
 gradleCommon = "0.6.0"
 # ksp
@@ -58,6 +59,9 @@ kotlinx-serialization-properties = { group = "org.jetbrains.kotlinx", name = "ko
 
 # kotlinx-datetime
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinx-datetime" }
+
+# kotlinx-io
+kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinx-io" }
 
 # ktor
 ktor-serialization-kotlinxJson = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
