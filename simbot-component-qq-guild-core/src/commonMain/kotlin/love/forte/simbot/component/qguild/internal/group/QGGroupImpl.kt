@@ -30,9 +30,11 @@ import love.forte.simbot.component.qguild.message.sendGroupMessage
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.message.MessageReceipt
+import love.forte.simbot.qguild.ExperimentalQGMediaApi
 import love.forte.simbot.qguild.api.message.GroupAndC2CSendBody
 import love.forte.simbot.qguild.api.message.group.GroupMessageSendApi
 import love.forte.simbot.qguild.event.GroupAtMessageCreate
+import love.forte.simbot.resource.Resource
 import kotlin.coroutines.CoroutineContext
 
 
@@ -87,6 +89,11 @@ internal class QGGroupImpl(
 
     override suspend fun uploadMedia(url: String, type: Int): QGMedia {
         return bot.uploadGroupMedia(id, url, type)
+    }
+
+    @ExperimentalQGMediaApi
+    override suspend fun uploadMedia(resource: Resource, type: Int): QGMedia {
+        return bot.uploadGroupMedia(id, resource, type)
     }
 
     override fun toString(): String {

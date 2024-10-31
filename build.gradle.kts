@@ -84,6 +84,7 @@ apiValidation {
             "love.forte.simbot.annotations.InternalSimbotAPI",
             "love.forte.simbot.qguild.QGInternalApi",
             "love.forte.simbot.component.qguild.ExperimentalQGApi",
+            "love.forte.simbot.qguild.ExperimentalQGMediaApi"
         ),
     )
 

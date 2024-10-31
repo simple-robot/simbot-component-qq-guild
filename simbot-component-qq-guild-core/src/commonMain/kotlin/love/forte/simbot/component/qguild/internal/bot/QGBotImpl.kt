@@ -56,6 +56,7 @@ import love.forte.simbot.event.onEachError
 import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
+import love.forte.simbot.qguild.ExperimentalQGMediaApi
 import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.addStackTrace
 import love.forte.simbot.qguild.api.channel.GetChannelApi
@@ -73,6 +74,7 @@ import love.forte.simbot.qguild.model.SimpleChannel
 import love.forte.simbot.qguild.model.SimpleGuild
 import love.forte.simbot.qguild.stdlib.DisposableHandle
 import love.forte.simbot.qguild.stdlib.requestDataBy
+import love.forte.simbot.resource.Resource
 import kotlin.concurrent.Volatile
 import kotlin.coroutines.CoroutineContext
 import love.forte.simbot.qguild.model.User as QGUser
@@ -455,6 +457,42 @@ internal class QGBotImpl(
         return QGMedia(media)
     }
 
+    @ExperimentalQGMediaApi
+    override suspend fun uploadGroupMedia(target: ID, resource: Resource, type: Int): QGMedia {
+        val url = resource.httpUrlValue()
+        if (url != null) {
+            return uploadGroupMedia(target, url, type)
+        }
+
+        val media = UploadGroupFilesApi.create(
+            openid = target.literal,
+            fileType = type,
+            fileData = kotlin.runCatching { resource.data() }.getOrElse { e ->
+                throw IllegalStateException("Failed to read data from resource $resource", e)
+            }
+        ).requestDataBy(source)
+
+        return QGMedia(media)
+    }
+
+    @ExperimentalQGMediaApi
+    override suspend fun uploadUserMedia(target: ID, resource: Resource, type: Int): QGMedia {
+        val url = resource.httpUrlValue()
+        if (url != null) {
+            return uploadUserMedia(target, url, type)
+        }
+
+        val media = UploadUserFilesApi.create(
+            openid = target.literal,
+            fileType = type,
+            fileData = kotlin.runCatching { resource.data() }.getOrElse { e ->
+                throw IllegalStateException("Failed to read data from resource $resource", e)
+            }
+        ).requestDataBy(source)
+
+        return QGMedia(media)
+    }
+
     private val isTransmitCacheable = cacheable && cacheConfig?.transmitCacheConfig?.enable == true
 
     internal fun <T> checkIfTransmitCacheable(target: T): T? = target.takeIf { isTransmitCacheable }
@@ -478,3 +516,5 @@ internal inline fun <reified T : QGChannel> QGChannel.castChannel(target: () -> 
     return this as? T
         ?: throw IllegalStateException("The type of channel(id=${source.id}, name=${source.name}) is not ${target()}, it is ${source.type}")
 }
+
+internal expect fun Resource.httpUrlValue(): String?

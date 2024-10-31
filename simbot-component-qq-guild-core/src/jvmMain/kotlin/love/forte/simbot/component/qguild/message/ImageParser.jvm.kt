@@ -65,6 +65,7 @@ internal actual suspend fun processOfflineImage0(
     builderContext: SendingMessageParser.GroupAndC2CBuilderContext
 ): Boolean {
     // TODO Upload 目前只支持 URL 链接的格式
+    //   2024/10/31 update: 群聊可以用 `file_data` 放 base64 数据
 
     fun builder() = builderContext.builderOrNew {
         isTextOrMedia(it.msgType) && it.media == null
@@ -78,20 +79,32 @@ internal actual suspend fun processOfflineImage0(
             if (resource is URIResource) {
                 resource.uri.toASCIIString()
             } else {
-                ImageParser.logger.warn(
-                    "QQGroup or C2C currently only supports sending **offline** images using URL links, " +
-                            "the type of element {} (index={}, type={}) is not supported. " +
-                            "Please use `URIResource`, `OfflineURIImage` or use `QGMedia` instead.",
-                    element,
+                return processBase64OfflineImage(
                     index,
-                    element::class,
+                    element,
+                    resource,
+                    runCatching {
+                        resource.data()
+                    }.getOrElse { e ->
+                        throw IllegalStateException("Failed to read data from resource $resource", e)
+                    },
+                    builderContext
                 )
-
-                return false
             }
         }
 
-        else -> return false
+        else ->
+            return processBase64OfflineImage(
+                index,
+                element,
+                null,
+                runCatching {
+                    element.data()
+                }.getOrElse { e ->
+                    throw IllegalStateException("Failed to read data from offlineImage $element", e)
+                },
+                builderContext
+            )
     }
 
     val type = builderContext.type
@@ -124,4 +137,8 @@ internal actual suspend fun processOfflineImage0(
     }
 
     return true
+}
+
+internal actual val base64UploadWarnInitialValue: Boolean by lazy {
+    !System.getProperty(JVM_DISABLE_BASE64_UPLOAD_WARN).toBoolean()
 }

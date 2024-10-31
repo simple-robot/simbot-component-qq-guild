@@ -1586,6 +1586,7 @@ public final class love/forte/simbot/component/qguild/internal/message/QGMessage
 
 public final class love/forte/simbot/component/qguild/message/ImageParser : love/forte/simbot/component/qguild/message/SendingMessageParser {
 	public static final field INSTANCE Llove/forte/simbot/component/qguild/message/ImageParser;
+	public static final fun disableBase64UploadWarn ()V
 	public fun invoke (ILlove/forte/simbot/message/Message$Element;Llove/forte/simbot/message/Messages;Llove/forte/simbot/component/qguild/message/SendingMessageParser$BuilderContext;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun invoke (ILlove/forte/simbot/message/Message$Element;Llove/forte/simbot/message/Messages;Llove/forte/simbot/component/qguild/message/SendingMessageParser$GroupAndC2CBuilderContext;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
