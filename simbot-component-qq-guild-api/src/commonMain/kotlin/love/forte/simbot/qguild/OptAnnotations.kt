@@ -18,7 +18,6 @@
 package love.forte.simbot.qguild
 
 
-
 /**
  * 一个仅服务于Java的API。对于Kotlin来讲通常有更优选择。
  */
@@ -26,6 +25,7 @@ package love.forte.simbot.qguild
 @MustBeDocumented
 @RequiresOptIn("API marked for Java use, not recommended for Kotlin.", level = RequiresOptIn.Level.WARNING)
 public annotation class QGApi4J
+
 /**
  * 一个仅服务于JS的API。对于Kotlin来讲通常有更优选择。
  */
@@ -50,3 +50,16 @@ public annotation class QGInternalApi
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
 public annotation class Generated
+
+/**
+ * 一个**实验性**的与媒体资源相关的API，可能在未来发生变更或被移除。
+ *
+ * @since 4.1.1
+ */
+@Retention(AnnotationRetention.BINARY)
+@MustBeDocumented
+@RequiresOptIn(
+    "一个实验性的与媒体资源相关的API，可能在未来发生变更或被移除。",
+    level = RequiresOptIn.Level.WARNING
+)
+public annotation class ExperimentalQGMediaApi

@@ -18,11 +18,23 @@
 package love.forte.simbot.component.qguild.message
 
 import io.ktor.utils.io.core.*
+import love.forte.simbot.common.id.StringID.Companion.ID
+import love.forte.simbot.component.qguild.message.SendingMessageParser.GroupBuilderType.C2C
+import love.forte.simbot.component.qguild.message.SendingMessageParser.GroupBuilderType.GROUP
 import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.message.*
+import love.forte.simbot.qguild.ExperimentalQGMediaApi
+import love.forte.simbot.qguild.api.files.UploadGroupFilesApi
+import love.forte.simbot.qguild.api.files.UploadUserFilesApi
 import love.forte.simbot.qguild.api.message.GroupAndC2CSendBody
 import love.forte.simbot.resource.ByteArrayResource
+import love.forte.simbot.resource.Resource
+import love.forte.simbot.resource.toResource
+import kotlin.concurrent.Volatile
+import kotlin.jvm.JvmStatic
 
+internal const val JVM_DISABLE_BASE64_UPLOAD_WARN = "simbot.qqguild.media.disableBase64UploadWarn"
+internal expect val base64UploadWarnInitialValue: Boolean
 
 /**
  *
@@ -30,6 +42,22 @@ import love.forte.simbot.resource.ByteArrayResource
  */
 public object ImageParser : SendingMessageParser {
     internal val logger = LoggerFactory.getLogger("love.forte.simbot.component.qguild.message.ImageParser")
+
+    @Volatile
+    internal var base64UploadWarn = base64UploadWarnInitialValue
+
+    /**
+     * 关闭针对 base64 上传文件的警告。
+     *
+     * 在 JVM 中，也可以通过JVM参数 `-Dsimbot.qqguild.media.disableBase64UploadWarn=true`
+     * 来关闭。
+     *
+     * @since 4.1.1
+     */
+    @JvmStatic
+    public fun disableBase64UploadWarn() {
+        base64UploadWarn = false
+    }
 
     override suspend fun invoke(
         index: Int,
@@ -63,7 +91,6 @@ public object ImageParser : SendingMessageParser {
                 if (element is OfflineImage) {
                     processOfflineImage(index, element, messages, builderContext)
                 }
-
             }
 
             // TODO more image type support for file_image
@@ -85,6 +112,7 @@ internal fun processOfflineImage(
             is ByteArrayResource -> {
                 builderContext.builderOrNew { it.fileImage == null }.setFileImage(resource.data())
             }
+
             else -> {
                 builderContext.builderOrNew { it.fileImage == null }.setFileImage(ByteReadPacket(resource.data()))
             }
@@ -108,7 +136,6 @@ internal suspend fun processOfflineImage(
     messages: Messages?,
     builderContext: SendingMessageParser.GroupAndC2CBuilderContext
 ) {
-    // TODO 目前只支持使用 URL 由平台转存。
     processOfflineImage0(index, element, messages, builderContext)
 }
 
@@ -119,6 +146,7 @@ internal suspend fun processOfflineImage(
 internal fun isTextOrMedia(type: Int) = when (type) {
     GroupAndC2CSendBody.MSG_TYPE_TEXT,
     GroupAndC2CSendBody.MSG_TYPE_MEDIA -> true
+
     else -> false
 }
 
@@ -128,3 +156,70 @@ internal expect suspend fun processOfflineImage0(
     messages: Messages?,
     builderContext: SendingMessageParser.GroupAndC2CBuilderContext
 ): Boolean
+
+@OptIn(ExperimentalQGMediaApi::class)
+internal suspend fun processBase64OfflineImage(
+    index: Int,
+    element: OfflineImage,
+    resource: Resource?,
+    data: ByteArray,
+    builderContext: SendingMessageParser.GroupAndC2CBuilderContext
+): Boolean {
+    fun builder() = builderContext.builderOrNew {
+        isTextOrMedia(it.msgType) && it.media == null
+    }.also {
+        it.msgType = GroupAndC2CSendBody.MSG_TYPE_MEDIA
+    }
+
+    val type = builderContext.type
+    ImageParser.logger.debug(
+        "Uploading offline image via base64 to {} with target {}",
+        type,
+        builderContext.targetOpenid
+    )
+
+    if (ImageParser.base64UploadWarn) {
+        ImageParser.logger.warn(
+            "Uploading media to QQGroup or C2C using base64 is still experimental now. " +
+                    "(for index={}, type={}, element={})" +
+                    "The official documentation does not describe this capability and is therefore unstable. " +
+                    "Please give preference to using `URIResource`, `OfflineURIImage` " +
+                    "or `QGMedia` instance " +
+                    "or see `ImageParser.disableBase64UploadWarn()` to disable this warn log.",
+            element::class,
+            index,
+            element,
+        )
+    }
+
+    val uploadedMedia = when (type) {
+        GROUP -> {
+            builderContext.bot.uploadGroupMedia(
+                target = builderContext.targetOpenid.ID,
+                resource = resource ?: data.toResource(),
+                type = UploadGroupFilesApi.FILE_TYPE_IMAGE,
+            )
+        }
+
+        C2C -> {
+            builderContext.bot.uploadUserMedia(
+                target = builderContext.targetOpenid.ID,
+                resource = resource ?: data.toResource(),
+                type = UploadUserFilesApi.FILE_TYPE_IMAGE,
+            )
+        }
+    }
+
+    ImageParser.logger.debug(
+        "Uploaded offline image via base64 to media {}",
+        uploadedMedia
+    )
+
+    val builder = builder()
+    builder.media = uploadedMedia.media
+    if (builder.content.isEmpty()) {
+        builder.content = " "
+    }
+
+    return true
+}

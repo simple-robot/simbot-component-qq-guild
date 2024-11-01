@@ -21,6 +21,8 @@ import love.forte.simbot.common.id.ID
 import love.forte.simbot.component.qguild.bot.QGBot
 import love.forte.simbot.component.qguild.message.QGMedia
 import love.forte.simbot.definition.Contact
+import love.forte.simbot.qguild.ExperimentalQGMediaApi
+import love.forte.simbot.resource.Resource
 import love.forte.simbot.suspendrunner.ST
 import kotlin.coroutines.CoroutineContext
 
@@ -63,6 +65,25 @@ public interface QGFriend : Contact {
     @ST
     public suspend fun uploadMedia(
         url: String,
+        type: Int,
+    ): QGMedia
+
+    /**
+     * 上传一个资源为用于向QQ单聊发送的 [QGMedia], 可用于后续的发送。
+     *
+     * @param resource 目标数据。如果是 `URIResource` 则会使用 `url`，否则通过 `file_data` 上传。
+     * @param type 媒体类型。
+     *
+     * > 1 图片，2 视频，3 语音，4 文件（暂不开放） 资源格式要求: 图片：png/ jpg，视频：mp4，语音：silk
+     *
+     * @see QGBot.uploadUserMedia
+     *
+     * @since 4.1.1
+     */
+    @ST
+    @ExperimentalQGMediaApi
+    public suspend fun uploadMedia(
+        resource: Resource,
         type: Int,
     ): QGMedia
 }

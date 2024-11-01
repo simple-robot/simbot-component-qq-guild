@@ -42,6 +42,7 @@ import love.forte.simbot.event.Event
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.message.MessageReference
+import love.forte.simbot.qguild.ExperimentalQGMediaApi
 import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.api.MessageAuditedException
 import love.forte.simbot.qguild.api.QQGuildApi
@@ -49,6 +50,7 @@ import love.forte.simbot.qguild.api.files.UploadGroupFilesApi
 import love.forte.simbot.qguild.api.files.UploadUserFilesApi
 import love.forte.simbot.qguild.api.message.GetMessageApi
 import love.forte.simbot.qguild.stdlib.*
+import love.forte.simbot.resource.Resource
 import love.forte.simbot.suspendrunner.ST
 import love.forte.simbot.suspendrunner.STP
 import kotlin.jvm.JvmSynthetic
@@ -346,6 +348,58 @@ public interface QGBot : Bot, EventMentionAware {
     public suspend fun uploadUserMedia(
         target: ID,
         url: String,
+        type: Int,
+    ): QGMedia
+
+    /**
+     * 上传一个资源为用于向QQ群发送的 [QGMedia], 可用于后续的发送。
+     *
+     * @param target 目标群的ID
+     * @param resource 目标数据。如果是 `URIResource` 则会使用 `url`，否则通过 `file_data` 上传。
+     * @param type 媒体类型。
+     *
+     * > 1 图片，2 视频，3 语音，4 文件（暂不开放） 资源格式要求: 图片：png/ jpg，视频：mp4，语音：silk
+     *
+     * 参考 [UploadGroupFilesApi]。
+     *
+     * @see QGGroup.uploadMedia
+     *
+     * @throws IllegalStateException 如果无法从 [resource] 中读取数据，异常会被包装在 [IllegalStateException] 中。
+     * @throws Exception 任何可能在发送API时产生的异常
+     *
+     * @since 4.1.1
+     */
+    @ST
+    @ExperimentalQGMediaApi
+    public suspend fun uploadGroupMedia(
+        target: ID,
+        resource: Resource,
+        type: Int,
+    ): QGMedia
+
+    /**
+     * 上传一个资源为用于向QQ单聊发送的 [QGMedia], 可用于后续的发送。
+     *
+     * @param target 目标用户的ID
+     * @param resource 目标数据。如果是 `URIResource` 则会使用 `url`，否则通过 `file_data` 上传。
+     * @param type 媒体类型。
+     *
+     * > 1 图片，2 视频，3 语音，4 文件（暂不开放） 资源格式要求: 图片：png/ jpg，视频：mp4，语音：silk
+     *
+     * 参考 [UploadUserFilesApi]。
+     *
+     * @see QGFriend.uploadMedia
+     *
+     * @throws IllegalStateException 如果无法从 [resource] 中读取数据，异常会被包装在 [IllegalStateException] 中。
+     * @throws Exception 任何可能在发送API时产生的异常
+     *
+     * @since 4.1.1
+     */
+    @ST
+    @ExperimentalQGMediaApi
+    public suspend fun uploadUserMedia(
+        target: ID,
+        resource: Resource,
         type: Int,
     ): QGMedia
 

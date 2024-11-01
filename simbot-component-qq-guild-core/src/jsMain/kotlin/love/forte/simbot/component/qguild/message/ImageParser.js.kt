@@ -19,6 +19,7 @@ package love.forte.simbot.component.qguild.message
 
 import love.forte.simbot.message.Messages
 import love.forte.simbot.message.OfflineImage
+import love.forte.simbot.message.OfflineResourceImage
 
 internal actual fun processOfflineImage0(
     index: Int,
@@ -32,4 +33,23 @@ internal actual suspend fun processOfflineImage0(
     element: OfflineImage,
     messages: Messages?,
     builderContext: SendingMessageParser.GroupAndC2CBuilderContext
-): Boolean = false
+): Boolean {
+    return when (element) {
+        is OfflineResourceImage -> processBase64OfflineImage(
+            index,
+            element,
+            resource = element.resource,
+            data = element.data(),
+            builderContext
+        )
+        else -> processBase64OfflineImage(
+            index,
+            element,
+            resource = null,
+            data = element.data(),
+            builderContext
+        )
+    }
+}
+
+internal actual const val base64UploadWarnInitialValue: Boolean = true
