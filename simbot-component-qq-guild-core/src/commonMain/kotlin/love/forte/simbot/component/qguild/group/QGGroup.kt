@@ -26,6 +26,8 @@ import love.forte.simbot.component.qguild.bot.QGBot
 import love.forte.simbot.component.qguild.message.QGMedia
 import love.forte.simbot.definition.ChatGroup
 import love.forte.simbot.definition.Role
+import love.forte.simbot.qguild.ExperimentalQGMediaApi
+import love.forte.simbot.resource.Resource
 import love.forte.simbot.suspendrunner.ST
 import love.forte.simbot.suspendrunner.STP
 
@@ -90,6 +92,27 @@ public interface QGGroup : ChatGroup {
     @ST
     public suspend fun uploadMedia(
         url: String,
+        type: Int,
+    ): QGMedia
+
+    /**
+     * 上传一个资源为用于向QQ群发送的 [QGMedia], 可用于后续的发送。
+     *
+     * 目前上传仅支持使用链接，QQ平台会对此链接进行转存。
+     *
+     * @param resource 目标资源
+     * @param type 媒体类型。
+     *
+     * > 1 图片，2 视频，3 语音，4 文件（暂不开放） 资源格式要求: 图片：png/ jpg，视频：mp4，语音：silk
+     *
+     * @see QGBot.uploadGroupMedia
+     *
+     * @since 4.1.1
+     */
+    @ST
+    @ExperimentalQGMediaApi
+    public suspend fun uploadMedia(
+        resource: Resource,
         type: Int,
     ): QGMedia
 }

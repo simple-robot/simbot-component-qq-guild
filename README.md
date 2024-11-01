@@ -52,35 +52,22 @@ SDK 实现库，
 [协助](https://github.com/simple-robot/simbot-component-qq-guild/pulls)，
 感谢您的贡献与支持！
 
-## 模块引导
+## 概述
 
-### API模块
-
-基于 `Ktor` 针对 [QQ频道API](https://bot.q.qq.com/wiki/develop/api/) 
-的基本完整的[KMP](https://kotlinlang.org/docs/multiplatform.html)多平台封装实现，
-是一个简单高效轻量级的API实现模块。
-
-此模块基本不会提供什么多余的实现，其目标为在提供封装的情况下尽可能地保留原始API的使用手感，不做过多的封装。
-
-👉 [前往模块](simbot-component-qq-guild-api) 了解更多。
-
-### 标准库模块
-
-基于 [API模块](simbot-component-qq-guild-api) 针对bot的"登录"鉴权实现简单高效轻量级的事件订阅功能。
-
-此模块在API模块的基础上提供了针对事件相关的功能实现，包括事件订阅的能力。
-同样的，其目标为在提供封装的情况下尽可能地保留原始API的使用手感，不做过多的封装。
-
-👉 [前往模块](simbot-component-qq-guild-stdlib) 了解更多。
-
-### 核心组件模块 ⭐
-
-基于 [标准库模块](simbot-component-qq-guild-stdlib) 
-对 [simbot4核心库](https://github.com/simple-robot/simpler-robot) 
+QQ机器人组件是对 [simbot4核心库](https://github.com/simple-robot/simpler-robot) 
 的组件实现，
-是一个相对高度封装的模块，并提供simbot4大部分能力，包括事件监听、多组件协同、Spring Boot Starter 等。
+是一个相对高度封装的模块，并提供simbot大部分能力，包括事件监听、多组件协同、Spring Boot Starter 等。
 
-👉 [前往模块](simbot-component-qq-guild-core) 了解更多。
+👉 [前往模块](simbot-component-qq-guild-core) 了解更多~
+
+## 命名说明
+
+QQ机器人组件命名为 `simbot-component-qq-guild` ， 
+因为最早开始QQ并未开放普通个人开发者使用QQ群聊、QQ单聊的功能，
+因此此组件当时仅支持QQ频道。
+在开放后，其两端可以合并在一起使用，因此QQ群相关的能力才被支持。
+
+> 也许未来会更名为 `simbot-component-qq` ?
 
 ## 法欧莉!
 

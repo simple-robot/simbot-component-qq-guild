@@ -29,8 +29,10 @@ import love.forte.simbot.component.qguild.message.sendUserMessage
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.message.MessageReceipt
+import love.forte.simbot.qguild.ExperimentalQGMediaApi
 import love.forte.simbot.qguild.api.message.GroupAndC2CSendBody
 import love.forte.simbot.qguild.event.C2CMessageCreate
+import love.forte.simbot.resource.Resource
 import kotlin.coroutines.CoroutineContext
 
 
@@ -50,6 +52,11 @@ internal class QGFriendImpl(
 
     override suspend fun uploadMedia(url: String, type: Int): QGMedia {
         return bot.uploadUserMedia(id, url, type)
+    }
+
+    @ExperimentalQGMediaApi
+    override suspend fun uploadMedia(resource: Resource, type: Int): QGMedia {
+        return bot.uploadUserMedia(id, resource, type)
     }
 
     private fun GroupAndC2CSendBody.initMsgIdAndSeq() {
