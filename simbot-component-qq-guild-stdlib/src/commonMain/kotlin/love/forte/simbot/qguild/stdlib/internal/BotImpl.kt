@@ -443,7 +443,7 @@ internal class BotImpl(
 
             val msg = "$signatureTimestamp$payload"
 
-            check(ed25519PublicKey.verify(msg.toByteArray(), signatureBytes)) {
+            check(ed25519PublicKey.verify(signature = signatureBytes, message = msg.toByteArray())) {
                 "Ed25519 verify failed"
             }
         }
