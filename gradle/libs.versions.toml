@@ -6,7 +6,7 @@ kotlinx-datetime = "0.6.1"
 kotlinx-io = "0.6.0"
 dokka = "1.9.20"
 ktor = "2.3.12"
-log4j = "2.24.1"
+log4j = "2.24.2"
 # simbot
 simbot = "4.7.0"
 suspendTransform = "2.0.20-0.9.3"
