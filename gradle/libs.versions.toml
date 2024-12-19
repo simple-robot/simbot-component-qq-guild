@@ -5,7 +5,7 @@ kotlinx-serialization = "1.7.3"
 kotlinx-datetime = "0.6.1"
 kotlinx-io = "0.6.0"
 dokka = "1.9.20"
-ktor = "2.3.12"
+ktor = "3.0.3"
 log4j = "2.24.2"
 # simbot
 simbot = "4.7.0"
