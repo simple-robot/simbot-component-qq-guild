@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024. ForteScarlet.
+ * Copyright (c) 2023-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -56,8 +56,8 @@ object P {
         override val homepage: String get() = HOMEPAGE
 
 
-        const val VERSION = "4.1.2"
-        const val NEXT_VERSION = "4.1.3"
+        const val VERSION = "4.1.3"
+        const val NEXT_VERSION = "4.1.4"
 
         override val snapshotVersion = "$NEXT_VERSION-SNAPSHOT"
         override val version = if (isSnapshot()) snapshotVersion else VERSION
