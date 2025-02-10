@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2022-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -23,10 +23,7 @@ import io.ktor.client.plugins.*
 import io.ktor.http.*
 import kotlinx.serialization.json.Json
 import love.forte.simbot.qguild.QQGuild
-import love.forte.simbot.qguild.event.EventIntents
-import love.forte.simbot.qguild.event.Intents
-import love.forte.simbot.qguild.event.Shard
-import love.forte.simbot.qguild.event.Signal
+import love.forte.simbot.qguild.event.*
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.jvm.JvmName
@@ -38,7 +35,7 @@ import kotlin.jvm.JvmSynthetic
  * 如果在配置bot之后对内容进行后续修改，可能会影响到当前bot的使用。
  */
 @Suppress("MemberVisibilityCanBePrivate")
-public class ConfigurableBotConfiguration : BotConfiguration {
+public class ConfigurableBotConfiguration : BotConfiguration, IntentsAppender {
 
     /**
      * Context.
@@ -64,6 +61,10 @@ public class ConfigurableBotConfiguration : BotConfiguration {
     @set:JvmSynthetic
     override var intents: Intents =
         EventIntents.Guilds.intents + EventIntents.GuildMembers.intents + EventIntents.PublicGuildMessages.intents
+
+    override fun appendIntents(intents: Intents) {
+        this.intents += intents
+    }
 
     /**
      * bot需要订阅的事件 [Intents] （的整型字面值）.

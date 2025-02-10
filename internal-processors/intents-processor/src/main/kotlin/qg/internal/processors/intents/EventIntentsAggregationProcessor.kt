@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. ForteScarlet.
+ * Copyright (c) 2024-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -28,6 +28,7 @@ import com.google.devtools.ksp.symbol.KSPropertyDeclaration
 import com.google.devtools.ksp.symbol.Modifier
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.jvm.jvmInline
 import com.squareup.kotlinpoet.jvm.jvmName
 import com.squareup.kotlinpoet.jvm.jvmStatic
 import com.squareup.kotlinpoet.ksp.toClassName
@@ -43,6 +44,10 @@ private const val AGGREGATION_FILE_NAME = "$AGGREGATION_OBJ_NAME.generated"
 private const val EVENT_INTENTS_PACKAGE = "love.forte.simbot.qguild.event"
 private const val EVENT_INTENTS_CLASS_NAME = "EventIntents"
 private val EventIntentsClassName = ClassName(EVENT_INTENTS_PACKAGE, EVENT_INTENTS_CLASS_NAME)
+
+private const val INTENTS_APPENDER_PACKAGE = "love.forte.simbot.qguild.event"
+private const val INTENTS_APPENDER_CLASS_NAME = "IntentsAppender"
+private val IntentsAppenderClassName = ClassName(INTENTS_APPENDER_PACKAGE, INTENTS_APPENDER_CLASS_NAME)
 
 private const val INTENTS_CONST_NAME = "INTENTS"
 
@@ -64,6 +69,15 @@ private const val EVENT_NAME_BASED_MARKER_PKG = "love.forte.simbot.qguild.intern
 internal class EventIntentsAggregationProcessor(
     val environment: SymbolProcessorEnvironment
 ) : SymbolProcessor {
+    data class NamesToType(
+        val names: Set<String>,
+        val declaration: KSClassDeclaration,
+        val firstUpper: String,
+        val firstLower: String,
+        val snackUpper: String,
+        val snackLower: String,
+    )
+
     private val processed = AtomicBoolean(false)
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
@@ -78,32 +92,69 @@ internal class EventIntentsAggregationProcessor(
             .getSealedSubclasses()
             .toList()
 
-//        val allSubObjects = resolver.getAllFiles()
-//            .filterIsInstance<KSClassDeclaration>()
-//            .flatMap { dec ->
-//                sequence {
-//                    yield(dec)
-//                    yieldAll(dec.getSealedSubclasses())
-//                }
-//            }
-//            .filter { declaration ->
-//                declaration.classKind == ClassKind.OBJECT &&
-//                        declaration.asStarProjectedType()
-//                            .isAssignableFrom(eventIntentsDeclaration.asStarProjectedType())
-//            }
-//            .toList()
-
         environment.logger.info("Found sub object: $allSubObjects")
 
         val aggregationBuilder = TypeSpec.objectBuilder(AGGREGATION_OBJ_NAME)
 
         generateAll(aggregationBuilder, allSubObjects)
-        generateGetByName(aggregationBuilder, allSubObjects)
+
+        // name -> type
+        val nameToTypes = allSubObjects.map { declaration ->
+            val nameBasedAnnotation = declaration.annotations
+                .firstOrNull {
+                    (it.annotationType.resolve().declaration as? KSClassDeclaration)?.let { annoDecl ->
+                        annoDecl.simpleName.asString() == EVENT_NAME_BASED_MARKER_NAME
+                                && annoDecl.packageName.asString() == EVENT_NAME_BASED_MARKER_PKG
+                    } == true
+                }
+
+            fun baseName(): String = declaration.simpleName.asString()
+
+            fun findFromAnnotation(name: String): String? =
+                nameBasedAnnotation?.arguments?.firstOrNull {
+                    it.name?.asString() == name
+                }?.value as? String?
+
+            val firstUpper = findFromAnnotation("firstUpper")
+                ?.takeUnless { it.isBlank() }
+                ?: baseName()
+            val firstLower = findFromAnnotation("firstLower")
+                ?.takeUnless { it.isBlank() }
+                ?: baseName().replaceFirstChar(Char::lowercaseChar)
+            val snackUpper = findFromAnnotation("snackUpper")
+                ?.takeUnless { it.isBlank() }
+                ?: baseName().toSnack(true)
+            val snackLower = findFromAnnotation("snackLower")
+                ?.takeUnless { it.isBlank() }
+                ?: baseName().toSnack(false)
+
+
+            val set = setOf(
+                firstUpper,
+                firstLower,
+                snackUpper,
+                snackLower,
+            )
+
+            NamesToType(
+                set,
+                declaration,
+                firstUpper,
+                firstLower,
+                snackUpper,
+                snackLower
+            )
+        }
+
+        generateGetByName(aggregationBuilder, nameToTypes)
+
+        val intentsAppenderOpTypeSpec = generateIntentsAppenderOp(nameToTypes)
 
         val fileBuilder = FileSpec.builder(OUTPUT_PACKAGE, AGGREGATION_FILE_NAME)
         fileBuilder.addType(aggregationBuilder.build())
+        fileBuilder.addType(intentsAppenderOpTypeSpec)
         fileBuilder.addFileComment(
-            "本文件内容为自动生成，生成于 %L",
+            "\n本文件内容为自动生成，生成于 %L\n",
             OffsetDateTime.now(ZoneOffset.ofHours(8)).toString()
         )
 
@@ -196,53 +247,12 @@ internal class EventIntentsAggregationProcessor(
         builder.addFunction(allIntentsFunc.build())
     }
 
+
     /**
      * 生成根据名称获取结果的 `getByName(name: String)`,
      * 名称支持驼峰、全大写和全小写。
      */
-    private fun generateGetByName(builder: TypeSpec.Builder, list: List<KSClassDeclaration>) {
-        data class NamesToType(val names: Set<String>, val declaration: KSClassDeclaration)
-
-        val nameToTypes = list.map { declaration ->
-            val nameBasedAnnotation = declaration.annotations
-                .firstOrNull {
-                    (it.annotationType.resolve().declaration as? KSClassDeclaration)?.let { annoDecl ->
-                        annoDecl.simpleName.asString() == EVENT_NAME_BASED_MARKER_NAME
-                                && annoDecl.packageName.asString() == EVENT_NAME_BASED_MARKER_PKG
-                    } ?: false
-                }
-
-            fun baseName(): String = declaration.simpleName.asString()
-
-            fun findFromAnnotation(name: String): String? =
-                nameBasedAnnotation?.arguments?.firstOrNull {
-                    it.name?.asString() == name
-                }?.value as? String?
-
-            val firstUpper = findFromAnnotation("firstUpper")
-                ?.takeUnless { it.isBlank() }
-                ?: baseName()
-            val firstLower = findFromAnnotation("firstLower")
-                ?.takeUnless { it.isBlank() }
-                ?: baseName().replaceFirstChar(Char::lowercaseChar)
-            val snackUpper = findFromAnnotation("snackUpper")
-                ?.takeUnless { it.isBlank() }
-                ?: baseName().toSnack(true)
-            val snackLower = findFromAnnotation("snackLower")
-                ?.takeUnless { it.isBlank() }
-                ?: baseName().toSnack(false)
-
-
-            val set = setOf(
-                firstUpper,
-                firstLower,
-                snackUpper,
-                snackLower,
-            )
-
-            NamesToType(set, declaration)
-        }
-
+    private fun generateGetByName(builder: TypeSpec.Builder, nameToTypes: List<NamesToType>) {
         val doc = CodeBlock.builder().apply {
             addStatement("使用简单的字符串名称来获取一个对应的 [%T] 子类型的 intents 值，", EventIntentsClassName)
             addStatement("字符串名称与这个类型的简单类型相关：类名的名称，以及对应的snack(下滑线)格式。")
@@ -295,6 +305,45 @@ internal class EventIntentsAggregationProcessor(
     }
 
 
+    /**
+     * 生成 `IntentsAppenderOp`
+     *
+     * ```kotlin
+     * @JvmInline
+     * value class IntentsAppenderOp (private val appender: IntentsAppender) {
+     *   fun guilds() { appender.appendIntents(EventIntents.Guilds.intents) }
+     *   fun groupAndC2C() { ... }
+     *   // ...
+     * }
+     * ```
+     */
+    private fun generateIntentsAppenderOp(nameToTypes: List<NamesToType>): TypeSpec {
+        val builder = TypeSpec.classBuilder("IntentsAppenderOp")
+            .addModifiers(KModifier.PUBLIC, KModifier.VALUE)
+            .jvmInline()
+            .primaryConstructor(
+                FunSpec.constructorBuilder().apply {
+                    addParameter("appender", IntentsAppenderClassName)
+                }.build()
+            )
+            .addProperty(
+                PropertySpec.builder("appender", IntentsAppenderClassName, KModifier.PRIVATE)
+                    .initializer("appender")
+                    .build()
+            )
+
+        nameToTypes.forEach { nameToType ->
+            builder.addFunction(FunSpec.builder(nameToType.firstLower).apply {
+                addModifiers(KModifier.PUBLIC)
+                addCode(
+                    "appender.appendIntents(%T.intents)",
+                    nameToType.declaration.asStarProjectedType().toClassName()
+                )
+            }.build())
+        }
+
+        return builder.build()
+    }
 }
 
 private fun String.toSnack(allUpper: Boolean): String = buildString(length) {
