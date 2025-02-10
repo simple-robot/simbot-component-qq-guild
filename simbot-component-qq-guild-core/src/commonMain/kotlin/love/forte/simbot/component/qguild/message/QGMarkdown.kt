@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. ForteScarlet.
+ * Copyright (c) 2024-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -21,6 +21,7 @@ import kotlinx.serialization.Serializable
 import love.forte.simbot.message.Messages
 import love.forte.simbot.qguild.api.message.GroupAndC2CSendBody
 import love.forte.simbot.qguild.model.Message
+import love.forte.simbot.qguild.model.Message.Markdown.Param
 import love.forte.simbot.qguild.model.Message.Markdown.Params
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
@@ -41,14 +42,14 @@ public data class QGMarkdown internal constructor(
          * 使用 [markdown] 直接包装构建。
          */
         @JvmStatic
-        public fun byMarkdown(markdown: Message.Markdown) : QGMarkdown =
+        public fun byMarkdown(markdown: Message.Markdown): QGMarkdown =
             QGMarkdown(markdown)
 
         /**
          * 使用 [content] 构建一个 [QGMarkdown]。
          */
         @JvmStatic
-        public fun create(content: String) : QGMarkdown =
+        public fun create(content: String): QGMarkdown =
             byMarkdown(Message.Markdown(content = content))
 
         /**
@@ -57,8 +58,34 @@ public data class QGMarkdown internal constructor(
          * @see Message.Markdown.createByTemplateId
          */
         @JvmStatic
+        @Deprecated(
+            "Use createByTemplateId(templateId, Param(...))",
+            replaceWith = ReplaceWith(
+                "createByTemplateId(templateId, params?.let { Param(it.key, it.values) })",
+                "love.forte.simbot.qguild.model.Message.Markdown.Param"
+            )
+        )
+        @Suppress("DEPRECATION")
+        public fun createByTemplateId(templateId: Int, params: Params? = null): QGMarkdown =
+            createByTemplateId(templateId, params?.let { Param(it.key, it.values) })
+
+        /**
+         * 使用 `templateId` 构建一个 [QGMarkdown]。
+         *
+         * @see Message.Markdown.createByTemplateId
+         */
+        @JvmStatic
         @JvmOverloads
-        public fun createByTemplateId(templateId: Int, params: Params? = null) : QGMarkdown =
+        public fun createByTemplateId(templateId: Int, param: Param? = null): QGMarkdown =
+            byMarkdown(Message.Markdown.createByTemplateId(templateId, param?.let { listOf(it) }))
+
+        /**
+         * 使用 `templateId` 构建一个 [QGMarkdown]。
+         *
+         * @see Message.Markdown.createByTemplateId
+         */
+        @JvmStatic
+        public fun createByTemplateId(templateId: Int, params: List<Param>? = null): QGMarkdown =
             byMarkdown(Message.Markdown.createByTemplateId(templateId, params))
 
         /**
@@ -67,8 +94,41 @@ public data class QGMarkdown internal constructor(
          * @see Message.Markdown.createByCustomTemplateId
          */
         @JvmStatic
+        @Deprecated(
+            "Use createByCustomTemplateId(customTemplateId, Param(...))",
+            replaceWith = ReplaceWith(
+                "createByCustomTemplateId(customTemplateId, " +
+                        "params?.let { Param(it.key, it.values) })",
+                "love.forte.simbot.qguild.model.Message.Markdown.Param"
+            )
+        )
+        @Suppress("DEPRECATION")
+        public fun createByCustomTemplateId(customTemplateId: String, params: Params? = null): QGMarkdown =
+            createByCustomTemplateId(
+                customTemplateId,
+                param = params?.let { Param(it.key, it.values) }
+            )
+
+        /**
+         * 使用 `customTemplateId` 构建一个 [QGMarkdown]。
+         *
+         * @see Message.Markdown.createByCustomTemplateId
+         */
+        @JvmStatic
         @JvmOverloads
-        public fun createByCustomTemplateId(customTemplateId: String, params: Params? = null) : QGMarkdown =
+        public fun createByCustomTemplateId(customTemplateId: String, param: Param? = null): QGMarkdown =
+            byMarkdown(Message.Markdown.createByCustomTemplateId(
+                customTemplateId,
+                param?.let { listOf(it) }
+            ))
+
+        /**
+         * 使用 `customTemplateId` 构建一个 [QGMarkdown]。
+         *
+         * @see Message.Markdown.createByCustomTemplateId
+         */
+        @JvmStatic
+        public fun createByCustomTemplateId(customTemplateId: String, params: List<Param>? = null): QGMarkdown =
             byMarkdown(Message.Markdown.createByCustomTemplateId(customTemplateId, params))
     }
 }

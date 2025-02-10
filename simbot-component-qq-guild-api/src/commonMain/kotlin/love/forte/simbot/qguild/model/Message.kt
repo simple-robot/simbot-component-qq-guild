@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2022-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -323,8 +323,13 @@ public data class Message(
 
         /**
          * markdown 模板模板参数
+         *
+         * Note: 在 4.1.4 中修改为了列表类型 `List<Param>` ，在那之前是单个元素类型 `Params?`，
+         * 但是这似乎是错误的，因此我们修正了它。而由于他作为一个公开暴露的 `data class`, 对他的修改可能产生的兼容性问题是被默许的，
+         * 这也是我们提供了工厂API而不建议你直接通过构造函数创建它的原因，如果你原本使用工厂函数构建，则不会存在兼容性问题。
+         * 同时，我们保留了原本的的 [Params] 并标记废弃，用于警告原本API的使用者。
          */
-        val params: Params? = null,
+        val params: List<Param>? = null,
 
         /**
          * 原生 markdown 内容,与上面三个参数互斥,参数都传值将报错。
@@ -334,9 +339,41 @@ public data class Message(
 
         /**
          * [MessageMarkdownParams](https://bot.q.qq.com/wiki/develop/api/openapi/message/model.html#MessageMarkdownParams)
+         *
+         * Deprecated: 在 4.1.4 中 [Markdown.params] 被修改以修复原本错误的定义，
+         * 并由此提供了更符合语义的 [Param]。
+         *
+         * @see Param
          */
         @Serializable
+        @Deprecated("在 4.1.4 中 [Markdown.params] 被修改以修复原本错误的定义，" +
+                    "并由此提供了更符合语义的 [Param]。",
+            replaceWith = ReplaceWith(
+                "Param(key, values)",
+                "love.forte.simbot.qguild.model.Message.Markdown.Param"
+            )
+        )
         public data class Params(
+            /**
+             * markdown 模版 key
+             */
+            val key: String,
+            /**
+             * markdown 模版 [key] 对应的 `values` .
+             *
+             * > 列表长度大小为 1，传入多个会报错
+             *
+             * _但代码层面暂时不做验证限制。_
+             *
+             */
+            val values: List<String>
+        )
+
+        /**
+         * [MessageMarkdownParams](https://bot.q.qq.com/wiki/develop/api-v2/server-inter/message/type/markdown.html#%E5%8F%91%E9%80%81%E6%96%B9%E5%BC%8F)
+         */
+        @Serializable
+        public data class Param(
             /**
              * markdown 模版 key
              */
@@ -359,14 +396,55 @@ public data class Message(
             }
 
             @JvmStatic
-            @JvmOverloads
+            @Deprecated(
+                "Use createByTemplateId(templateId, Param(...))",
+                replaceWith = ReplaceWith(
+                    "createByTemplateId(templateId, params?.let { Param(it.key, it.values) })",
+                    "love.forte.simbot.qguild.model.Message.Markdown.Param"
+                )
+            )
+            @Suppress("DEPRECATION")
             public fun createByTemplateId(templateId: Int, params: Params? = null): Markdown {
-                return Markdown(templateId = templateId, params = params)
+                return createByTemplateId(
+                    templateId = templateId,
+                    param = params?.let { Param(it.key, it.values) }
+                )
             }
 
             @JvmStatic
             @JvmOverloads
+            public fun createByTemplateId(templateId: Int, param: Param? = null): Markdown {
+                return createByTemplateId(templateId = templateId, params = param?.let { listOf(it) })
+            }
+
+            @JvmStatic
+            public fun createByTemplateId(templateId: Int, params: List<Param>? = null): Markdown {
+                return Markdown(templateId = templateId, params = params)
+            }
+
+            @JvmStatic
+            @Deprecated(
+                "Use createByCustomTemplateId(customTemplateId, Param(...))",
+                replaceWith = ReplaceWith(
+                    "createByCustomTemplateId(customTemplateId, params?.let { Param(it.key, it.values) })",
+                )
+            )
+            @Suppress("DEPRECATION")
             public fun createByCustomTemplateId(customTemplateId: String, params: Params? = null): Markdown {
+                return createByCustomTemplateId(
+                    customTemplateId = customTemplateId,
+                    param = params?.let { Param(it.key, it.values) }
+                )
+            }
+
+            @JvmStatic
+            @JvmOverloads
+            public fun createByCustomTemplateId(customTemplateId: String, param: Param? = null): Markdown {
+                return Markdown(customTemplateId = customTemplateId, params = param?.let { listOf(it) })
+            }
+
+            @JvmStatic
+            public fun createByCustomTemplateId(customTemplateId: String, params: List<Param>? = null): Markdown {
                 return Markdown(customTemplateId = customTemplateId, params = params)
             }
         }
