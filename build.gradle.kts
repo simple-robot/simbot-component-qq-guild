@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2022-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,7 +17,8 @@
 
 import love.forte.gradle.common.core.project.setup
 import love.forte.gradle.common.core.repository.Repositories
-
+import love.forte.plugin.suspendtrans.gradle.SuspendTransformGradleExtension
+import love.forte.simbot.gradle.suspendtransforms.addSimbotJvmTransformers
 
 plugins {
     idea
@@ -25,6 +26,7 @@ plugins {
     id("simbot-tencent-guild.dokka-multi-module")
     id("simbot-tencent-guild.nexus-publish")
     alias(libs.plugins.kotlinxBinaryCompatibilityValidator)
+    alias(libs.plugins.suspendTransform) apply false
 }
 
 setup(P.ComponentQQGuild)
@@ -32,6 +34,10 @@ setup(P.ComponentQQGuild)
 buildscript {
     repositories {
         mavenCentral()
+    }
+
+    dependencies {
+        classpath(libs.simbot.gradle)
     }
 }
 
@@ -45,6 +51,24 @@ allprojects {
             url = uri(Repositories.Snapshot.URL)
             mavenContent {
                 snapshotsOnly()
+            }
+        }
+        mavenLocal()
+    }
+}
+
+subprojects {
+    afterEvaluate {
+        if (plugins.hasPlugin("io.gitlab.arturbosch.detekt")) {
+            return@afterEvaluate
+        }
+
+        if (plugins.hasPlugin(libs.plugins.suspendTransform.get().pluginId)) {
+            extensions.configure<SuspendTransformGradleExtension>("suspendTransform") {
+                includeRuntime = false
+                includeAnnotation = false
+
+                addSimbotJvmTransformers()
             }
         }
     }

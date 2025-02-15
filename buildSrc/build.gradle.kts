@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024. ForteScarlet.
+ * Copyright (c) 2021-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -38,10 +38,10 @@ dependencies {
     implementation("io.github.gradle-nexus:publish-plugin:2.0.0")
 
     // simbot suspend transform gradle common
-    implementation(libs.simbot.gradle)
+//    implementation(libs.simbot.gradle)
 
     // suspend transform
-    implementation(libs.suspend.transform.gradle)
+//    implementation(libs.suspend.transform.gradle)
 
     // gradle common
     implementation(libs.bundles.gradle.common)
