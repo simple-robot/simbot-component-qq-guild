@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2022-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -24,7 +24,7 @@ plugins {
     kotlin("multiplatform")
     kotlin("plugin.serialization")
     `qq-guild-dokka-partial-configure`
-    `simbot-tcg-suspend-transform-configure`
+    alias(libs.plugins.suspendTransform)
     `qq-guild-module-config`
 }
 
@@ -64,6 +64,7 @@ kotlin {
             api(libs.simbot.common.loop)
             api(libs.simbot.common.atomic)
             api(libs.simbot.common.core)
+            api(libs.simbot.common.suspend)
             implementation(libs.simbot.common.annotations)
             // ktor
             api(libs.ktor.client.contentNegotiation)

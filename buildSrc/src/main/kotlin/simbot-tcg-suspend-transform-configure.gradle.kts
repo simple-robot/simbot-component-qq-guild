@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. ForteScarlet.
+ * Copyright (c) 2024-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -15,17 +15,15 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-import love.forte.simbot.gradle.suspendtransforms.addSimbotJvmTransformers
-
-plugins {
-    id("love.forte.plugin.suspend-transform")
-}
-
-suspendTransform {
-    includeRuntime = false
-    includeAnnotation = false
-
-    addSimbotJvmTransformers()
-}
-
+//plugins {
+//    id("love.forte.plugin.suspend-transform")
+//}
+//
+//suspendTransform {
+//    includeRuntime = false
+//    includeAnnotation = false
+//
+//    addSimbotJvmTransformers()
+//}
+//
 

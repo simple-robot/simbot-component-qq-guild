@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024. ForteScarlet.
+ * Copyright (c) 2023-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,7 +17,10 @@
 
 package love.forte.simbot.component.qguild.message
 
+import io.ktor.client.request.forms.*
+import io.ktor.utils.io.*
 import io.ktor.utils.io.core.*
+import kotlinx.io.readByteArray
 import love.forte.simbot.common.id.StringID.Companion.ID
 import love.forte.simbot.component.qguild.message.SendingMessageParser.GroupBuilderType.C2C
 import love.forte.simbot.component.qguild.message.SendingMessageParser.GroupBuilderType.GROUP
@@ -29,6 +32,7 @@ import love.forte.simbot.qguild.api.files.UploadUserFilesApi
 import love.forte.simbot.qguild.api.message.GroupAndC2CSendBody
 import love.forte.simbot.resource.ByteArrayResource
 import love.forte.simbot.resource.Resource
+import love.forte.simbot.resource.SourceResource
 import love.forte.simbot.resource.toResource
 import kotlin.concurrent.Volatile
 import kotlin.jvm.JvmStatic
@@ -107,19 +111,29 @@ internal fun processOfflineImage(
     if (processOfflineImage0(index, element, messages, builderContext)) {
         return
     }
-    if (element is OfflineResourceImage) {
-        when (val resource = element.resource) {
-            is ByteArrayResource -> {
-                builderContext.builderOrNew { it.fileImage == null }.setFileImage(resource.data())
-            }
 
-            else -> {
-                builderContext.builderOrNew { it.fileImage == null }.setFileImage(ByteReadPacket(resource.data()))
+    when (element) {
+        is OfflineResourceImage -> {
+            when (val resource = element.resource) {
+                is ByteArrayResource -> {
+                    builderContext.builderOrNew { it.fileImage == null }.setFileImage(resource.data())
+                }
+
+                is SourceResource -> {
+                    builderContext.builderOrNew { it.fileImage == null }.setFileImage(
+                        ChannelProvider {
+                            // TODO 等待更新到 Ktor 3.x，现在性能略差
+                            resource.source().use { ByteReadChannel(it.readByteArray()) }
+                        }
+                    )
+                }
             }
         }
-    } else {
-        val dataBytes = element.data()
-        builderContext.builderOrNew { it.fileImage == null }.setFileImage(ByteReadPacket(dataBytes))
+
+        else -> {
+            builderContext.builderOrNew { it.fileImage == null }
+                .setFileImage(ByteReadPacket(element.data()))
+        }
     }
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024. ForteScarlet.
+ * Copyright (c) 2023-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -29,6 +29,7 @@ import love.forte.simbot.component.qguild.forum.QGThread
 import love.forte.simbot.component.qguild.guild.QGGuild
 import love.forte.simbot.component.qguild.guild.QGMember
 import love.forte.simbot.event.ChannelEvent
+import love.forte.simbot.event.FuzzyEventTypeImplementation
 import love.forte.simbot.qguild.PrivateDomainOnly
 import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.event.*
@@ -47,6 +48,7 @@ import love.forte.simbot.suspendrunner.STP
  */
 @STP
 @PrivateDomainOnly
+@SubclassOptInRequired(FuzzyEventTypeImplementation::class)
 public abstract class QGForumEvent : QGBotEvent<ForumSourceInfo>(), ChannelEvent {
     /**
      * 事件ID。是一个随机ID。
@@ -115,6 +117,7 @@ public abstract class QGForumEvent : QGBotEvent<ForumSourceInfo>(), ChannelEvent
  *
  * @see ForumThreadDispatch
  */
+@OptIn(FuzzyEventTypeImplementation::class)
 @PrivateDomainOnly
 public abstract class QGForumThreadEvent : QGForumEvent() {
     abstract override val sourceEventEntity: Thread
@@ -172,6 +175,7 @@ public abstract class QGForumThreadDeleteEvent : QGForumThreadEvent() {
  * @see ForumPostDispatch
  */
 @PrivateDomainOnly
+@OptIn(FuzzyEventTypeImplementation::class)
 public abstract class QGForumPostEvent : QGForumEvent() {
     abstract override val sourceEventEntity: Post
 
@@ -216,6 +220,7 @@ public abstract class QGForumPostDeleteEvent : QGForumPostEvent() {
  * @see ForumReplyDispatch
  */
 @PrivateDomainOnly
+@OptIn(FuzzyEventTypeImplementation::class)
 public abstract class QGForumReplyEvent : QGForumEvent() {
     abstract override val sourceEventEntity: Reply
 
@@ -260,6 +265,7 @@ public abstract class QGForumReplyDeleteEvent : QGForumReplyEvent() {
  *
  */
 @PrivateDomainOnly
+@OptIn(FuzzyEventTypeImplementation::class)
 public abstract class QGForumPublishAuditResultEvent : QGForumEvent() {
     /**
      * 得到此事件中的源数据 [AuditResult]。

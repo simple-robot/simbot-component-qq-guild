@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2022-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -24,6 +24,7 @@ import love.forte.simbot.common.id.StringID.Companion.ID
 import love.forte.simbot.common.time.Timestamp
 import love.forte.simbot.component.qguild.guild.QGGuild
 import love.forte.simbot.event.ChangeEvent
+import love.forte.simbot.event.FuzzyEventTypeImplementation
 import love.forte.simbot.event.GuildEvent
 import love.forte.simbot.event.OrganizationChangeEvent
 import love.forte.simbot.qguild.event.EventGuild
@@ -48,6 +49,7 @@ import love.forte.simbot.suspendrunner.STP
  *
  * @author ForteScarlet
  */
+@OptIn(FuzzyEventTypeImplementation::class)
 public sealed class QGGuildEvent : QGBotEvent<EventGuild>() {
     /**
      * 事件操作者的ID
@@ -62,6 +64,7 @@ public sealed class QGGuildEvent : QGBotEvent<EventGuild>() {
  * - 机器人被加入到某个频道服务器的时候
  */
 @STP
+@OptIn(FuzzyEventTypeImplementation::class)
 public abstract class QGGuildCreateEvent : QGGuildEvent(), GuildEvent, ChangeEvent {
     @OptIn(ExperimentalSimbotAPI::class)
     override val time: Timestamp = Timestamp.now()
@@ -79,6 +82,7 @@ public abstract class QGGuildCreateEvent : QGGuildEvent(), GuildEvent, ChangeEve
  * - 频道信息变更
  */
 @STP
+@OptIn(FuzzyEventTypeImplementation::class)
 public abstract class QGGuildUpdateEvent : QGGuildEvent(), GuildEvent, OrganizationChangeEvent {
     @OptIn(ExperimentalSimbotAPI::class)
     override val time: Timestamp = Timestamp.now()

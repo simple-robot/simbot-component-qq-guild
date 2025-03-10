@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2022-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -26,6 +26,7 @@ import love.forte.simbot.component.qguild.bot.QQGuildBotManager
 import love.forte.simbot.event.BotRegisteredEvent
 import love.forte.simbot.event.BotStartedEvent
 import love.forte.simbot.event.Event
+import love.forte.simbot.event.FuzzyEventTypeImplementation
 
 /**
  *
@@ -33,6 +34,7 @@ import love.forte.simbot.event.Event
  *
  * @author ForteScarlet
  */
+@OptIn(FuzzyEventTypeImplementation::class)
 public sealed interface QGInternalBotEvent : Event
 
 /**
