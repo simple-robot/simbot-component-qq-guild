@@ -60,8 +60,8 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            // api (compile only)
-            compileOnly(libs.simbot.api)
+            // api (compile only for JVM)
+            implementation(libs.simbot.api)
 
             api(project(":simbot-component-qq-guild-stdlib"))
             api(libs.simbot.common.annotations)
@@ -85,6 +85,7 @@ kotlin {
         }
 
         jvmTest.dependencies {
+            compileOnly(libs.simbot.api)
             implementation(libs.ktor.client.java)
 
             implementation(libs.log4j.api)

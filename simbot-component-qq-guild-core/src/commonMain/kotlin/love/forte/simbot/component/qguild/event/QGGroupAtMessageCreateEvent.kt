@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. ForteScarlet.
+ * Copyright (c) 2024-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -27,6 +27,7 @@ import love.forte.simbot.component.qguild.group.QGGroupMember
 import love.forte.simbot.component.qguild.message.QGGroupAndC2CMessageContent
 import love.forte.simbot.component.qguild.utils.toTimestamp
 import love.forte.simbot.event.ChatGroupMessageEvent
+import love.forte.simbot.event.FuzzyEventTypeImplementation
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.message.MessageReceipt
@@ -42,6 +43,7 @@ import love.forte.simbot.suspendrunner.STP
  *
  * @author ForteScarlet
  */
+@OptIn(FuzzyEventTypeImplementation::class)
 public abstract class QGGroupAtMessageCreateEvent : QGBotEvent<GroupAtMessageCreate>(), ChatGroupMessageEvent {
     abstract override val bot: QGBot
 

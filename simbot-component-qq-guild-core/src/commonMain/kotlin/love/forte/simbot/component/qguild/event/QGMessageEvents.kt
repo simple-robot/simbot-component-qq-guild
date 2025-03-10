@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024. ForteScarlet.
+ * Copyright (c) 2023-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -28,10 +28,7 @@ import love.forte.simbot.component.qguild.message.QGMessageContent
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
 import love.forte.simbot.component.qguild.utils.toTimestamp
 import love.forte.simbot.definition.Actor
-import love.forte.simbot.event.ActorEvent
-import love.forte.simbot.event.ChatChannelMessageEvent
-import love.forte.simbot.event.ContentEvent
-import love.forte.simbot.event.MessageEvent
+import love.forte.simbot.event.*
 import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.model.Message
 import love.forte.simbot.suspendrunner.STP
@@ -50,6 +47,7 @@ import love.forte.simbot.qguild.model.Message as QGSourceMessage
  *
  * @author ForteScarlet
  */
+@OptIn(FuzzyEventTypeImplementation::class)
 public sealed class QGMessageEvent : QGBotEvent<QGSourceMessage>(), MessageEvent, ContentEvent, ActorEvent {
     /**
      * 标准库接收到的原始事件内容。

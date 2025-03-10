@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2022-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -22,6 +22,7 @@ import love.forte.simbot.common.time.Timestamp
 import love.forte.simbot.component.qguild.bot.QGBot
 import love.forte.simbot.event.BotEvent
 import love.forte.simbot.event.Event
+import love.forte.simbot.event.FuzzyEventTypeImplementation
 
 /**
  *
@@ -31,6 +32,7 @@ import love.forte.simbot.event.Event
  *
  * @author ForteScarlet
  */
+@SubclassOptInRequired(FuzzyEventTypeImplementation::class)
 public abstract class QGEvent<T : Any> : Event {
     /**
      * 事件ID。
@@ -57,6 +59,7 @@ public abstract class QGEvent<T : Any> : Event {
  * 与 [QGBot] 相关的 QQ频道 [BotEvent] 子类型。
  *
  */
+@SubclassOptInRequired(FuzzyEventTypeImplementation::class)
 public abstract class QGBotEvent<T : Any> : QGEvent<T>(), BotEvent {
     abstract override val bot: QGBot
 }

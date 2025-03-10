@@ -8,8 +8,8 @@ dokka = "1.9.20"
 ktor = "2.3.12"
 log4j = "2.24.2"
 # simbot
-simbot = "4.10.0"
-suspendTransform = "2.1.0-0.11.0"
+simbot = "4.11.0"
+suspendTransform = "2.1.0-0.11.1"
 gradleCommon = "0.6.0"
 # ksp
 # https://github.com/google/ksp

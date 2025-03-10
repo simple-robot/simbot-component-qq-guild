@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. ForteScarlet.
+ * Copyright (c) 2024-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -24,6 +24,7 @@ import love.forte.simbot.component.qguild.ExperimentalQGApi
 import love.forte.simbot.component.qguild.friend.QGFriend
 import love.forte.simbot.component.qguild.utils.toTimestamp
 import love.forte.simbot.event.ContactEvent
+import love.forte.simbot.event.FuzzyEventTypeImplementation
 import love.forte.simbot.qguild.event.C2CManagementData
 import love.forte.simbot.suspendrunner.STP
 
@@ -33,6 +34,7 @@ import love.forte.simbot.suspendrunner.STP
  * @see C2CManagementData
  * @author ForteScarlet
  */
+@SubclassOptInRequired(FuzzyEventTypeImplementation::class)
 public abstract class QGC2CManagementEvent : QGBotEvent<C2CManagementData>(), ContactEvent {
     abstract override val id: ID
 
@@ -61,6 +63,7 @@ public abstract class QGC2CManagementEvent : QGBotEvent<C2CManagementData>(), Co
  *
  * @author ForteScarlet
  */
+@OptIn(FuzzyEventTypeImplementation::class)
 public abstract class QGFriendAddEvent : QGC2CManagementEvent()
 
 /**
@@ -68,6 +71,7 @@ public abstract class QGFriendAddEvent : QGC2CManagementEvent()
  *
  * @author ForteScarlet
  */
+@OptIn(FuzzyEventTypeImplementation::class)
 public abstract class QGFriendDelEvent : QGC2CManagementEvent()
 
 /**
@@ -75,6 +79,7 @@ public abstract class QGFriendDelEvent : QGC2CManagementEvent()
  *
  * @author ForteScarlet
  */
+@OptIn(FuzzyEventTypeImplementation::class)
 public abstract class QGC2CMsgRejectEvent : QGC2CManagementEvent()
 
 /**
@@ -82,4 +87,5 @@ public abstract class QGC2CMsgRejectEvent : QGC2CManagementEvent()
  *
  * @author ForteScarlet
  */
+@OptIn(FuzzyEventTypeImplementation::class)
 public abstract class QGC2CMsgReceiveEvent : QGC2CManagementEvent()
