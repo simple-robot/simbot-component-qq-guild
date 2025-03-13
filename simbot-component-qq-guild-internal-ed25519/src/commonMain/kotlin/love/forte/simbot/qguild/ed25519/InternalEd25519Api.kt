@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025. ForteScarlet.
+ * Copyright (c) 2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -15,29 +15,11 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = "qq-guild"
+package love.forte.simbot.qguild.ed25519
 
-pluginManagement {
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
-        mavenLocal()
-    }
-}
-
-// internals
-include(":internal-processors:api-reader")
-include(":internal-processors:dispatch-serializer-processor")
-include(":internal-processors:intents-processor")
-
-include(":simbot-component-qq-guild-api")
-include(":simbot-component-qq-guild-stdlib")
-include(":simbot-component-qq-guild-core")
-include(":simbot-component-qq-guild-internal-ed25519")
-
-// samples
-include(":samples:webhook-server-ktor")
-include(":samples:webhook-server-spring")
-include(":samples:webhook-server-spring-webflux")
-
-
+@RequiresOptIn(
+    message = "This is an internal API for ed25519 " +
+            "and it may be changed or removed in the future without notice.",
+    level = RequiresOptIn.Level.WARNING
+)
+public annotation class InternalEd25519Api

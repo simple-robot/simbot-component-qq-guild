@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025. ForteScarlet.
+ * Copyright (c) 2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -15,29 +15,37 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = "qq-guild"
+package love.forte.simbot.qguild.ed25519
 
-pluginManagement {
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
-        mavenLocal()
-    }
+
+/**
+ *
+ * @author ForteScarlet
+ */
+@InternalEd25519Api
+public class Ed25519KeyPair {
 }
 
-// internals
-include(":internal-processors:api-reader")
-include(":internal-processors:dispatch-serializer-processor")
-include(":internal-processors:intents-processor")
+/**
+ * Repeat to `length` == 32
+ */
+@InternalEd25519Api
+public fun String.paddingEd25519Seed(): String {
+    return when {
+        length == 32 || isEmpty() -> this
+        length > 32 -> substring(32)
+        else -> {
+            buildString(32) {
+                append(this@paddingEd25519Seed)
+                while (length < 32) {
+                    append(
+                        this@paddingEd25519Seed,
+                        0,
+                        kotlin.math.min(32 - length, this@paddingEd25519Seed.length)
+                    )
+                }
+            }
 
-include(":simbot-component-qq-guild-api")
-include(":simbot-component-qq-guild-stdlib")
-include(":simbot-component-qq-guild-core")
-include(":simbot-component-qq-guild-internal-ed25519")
-
-// samples
-include(":samples:webhook-server-ktor")
-include(":samples:webhook-server-spring")
-include(":samples:webhook-server-spring-webflux")
-
-
+        }
+    }
+}
