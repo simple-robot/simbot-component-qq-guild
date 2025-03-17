@@ -15,7 +15,7 @@ import kotlin.test.*
  *
  * @author ForteScarlet
  */
-class GenTest {
+class Ed25519Tests {
     companion object {
         // 下面这些都是官方文档里提供的用于测试的数据，不包含敏感信息。
 
@@ -98,7 +98,7 @@ class GenTest {
      * 使用 bouncy castle 进行 ed25519 的验证。
      */
     @OptIn(InternalEd25519Api::class, ExperimentalStdlibApi::class)
-    // @Test // TODO
+    // @Test // TODO 官方文档的签名验证部分跑不通，但是自己生成一个又没意义
     fun testBouncyCastleEd25519Verify() {
         val sig =
             "865ad13a61752ca65e26bde6676459cd36cf1be609375b37bd62af366e1dc25a8dc789ba7f14e017ada3d554c671a911bfdf075ba54835b23391d509579ed002"
