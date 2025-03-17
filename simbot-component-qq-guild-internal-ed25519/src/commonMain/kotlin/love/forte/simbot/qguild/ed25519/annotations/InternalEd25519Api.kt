@@ -15,7 +15,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package love.forte.simbot.qguild.ed25519
+package love.forte.simbot.qguild.ed25519.annotations
 
 @RequiresOptIn(
     message = "This is an internal API for ed25519 " +

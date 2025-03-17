@@ -1,8 +1,6 @@
 package love.forte.simbot.qguild.ed25519
 
-import net.i2p.crypto.eddsa.EdDSAPrivateKey
-import net.i2p.crypto.eddsa.spec.EdDSANamedCurveTable
-import net.i2p.crypto.eddsa.spec.EdDSAPrivateKeySpec
+import love.forte.simbot.qguild.ed25519.annotations.InternalEd25519Api
 import org.bouncycastle.crypto.params.Ed25519PrivateKeyParameters
 import org.bouncycastle.crypto.signers.Ed25519Signer
 import org.bouncycastle.jce.provider.BouncyCastleProvider
@@ -44,26 +42,27 @@ class Ed25519Tests {
         }
     }
 
+    @OptIn(InternalEd25519Api::class)
+    private fun bouncyCastleKeyGen(seed: ByteArray): BouncyCastleEd25519KeyPair {
+        return BouncyCastleEd25519KeyPair(seed)
+    }
+
     /**
      * 使用 bouncy castle 生成 ed25519 的公私钥对。
      */
+    @OptIn(InternalEd25519Api::class)
     @Test
     fun testBouncyCastleEd25519KeyPairGeneration() {
         val seedBytes = SEED.toByteArray()
         assertEquals("BC", Security.getProvider("BC").name)
 
-        // 2. 生成Bouncy Castle的Ed25519私钥和公钥参数
-        val privateKeyParams = Ed25519PrivateKeyParameters(seedBytes, 0)
-        val publicKeyParams = privateKeyParams.generatePublicKey()
+        val (privateKey, publicKey) = bouncyCastleKeyGen(seedBytes)
 
         // 3. 提取公钥字节并转换为十六进制
-        val publicKeyBytes = publicKeyParams.encoded
+        val publicKeyBytes = publicKey.bytes
 
         // 4. 构造私钥字节（种子 + 公钥）
-        val privateKeyCombined = ByteArray(seedBytes.size + publicKeyBytes.size)
-
-        seedBytes.copyInto(privateKeyCombined, destinationOffset = 0)
-        publicKeyBytes.copyInto(privateKeyCombined, destinationOffset = seedBytes.size)
+        val privateKeyCombined = privateKey.bytes64
 
         verifyKeyPair(publicKeyBytes, privateKeyCombined)
     }
@@ -77,20 +76,15 @@ class Ed25519Tests {
         val seed = SECRET.paddingEd25519Seed()
         val seedBytes = seed.toByteArray()
 
-        // 2. 生成Bouncy Castle的Ed25519私钥和公钥参数
-        val privateKey = Ed25519PrivateKeyParameters(seedBytes, 0)
-        // val publicKey = privateKey.generatePublicKey()
+        val (privateKey, _) = bouncyCastleKeyGen(seedBytes)
 
         val msgBytes = "$TS$PLAIN_TOKEN".toByteArray()
 
-        val signer = Ed25519Signer()
-        signer.init(true, privateKey)
-        signer.update(msgBytes, 0, msgBytes.size)
-        val signature = signer.generateSignature()
+        val signature = privateKey.sign(msgBytes)
 
         assertEquals(
             SIGNATURE,
-            signature.toHexString()
+            signature.data.toHexString()
         )
     }
 
@@ -98,7 +92,7 @@ class Ed25519Tests {
      * 使用 bouncy castle 进行 ed25519 的验证。
      */
     @OptIn(InternalEd25519Api::class, ExperimentalStdlibApi::class)
-    // @Test // TODO 官方文档的签名验证部分跑不通，但是自己生成一个又没意义
+    // @Test // TODO 官方文档的签名验证部分跑不通，但是自己生成一个又没意义，测不了一点儿
     fun testBouncyCastleEd25519Verify() {
         val sig =
             "865ad13a61752ca65e26bde6676459cd36cf1be609375b37bd62af366e1dc25a8dc789ba7f14e017ada3d554c671a911bfdf075ba54835b23391d509579ed002"
@@ -128,24 +122,31 @@ class Ed25519Tests {
     }
 
     @Test
-    fun testEd25519JavaGenerate() {
+    @OptIn(InternalEd25519Api::class)
+    fun testEddsaKeyPairGenerationn() {
         val seedBytes = SEED.toByteArray()
 
-        val privateKey = EdDSAPrivateKey(
-            EdDSAPrivateKeySpec(
-                seedBytes,
-                EdDSANamedCurveTable.getByName(EdDSANamedCurveTable.ED_25519)
-            )
+        val (privateKey, publicKey) = EddsaEd25519KeyPair(seedBytes)
+
+        verifyKeyPair(publicKey.bytes, privateKey.bytes64)
+    }
+
+    @Test
+    @OptIn(InternalEd25519Api::class, ExperimentalStdlibApi::class)
+    fun testEddsaSign() {
+        val seed = SECRET.paddingEd25519Seed()
+        val seedBytes = seed.toByteArray()
+
+        val (privateKey, _) = EddsaEd25519KeyPair(seedBytes)
+
+        val msgBytes = "$TS$PLAIN_TOKEN".toByteArray()
+
+        val signature = privateKey.sign(msgBytes)
+
+        assertEquals(
+            SIGNATURE,
+            signature.data.toHexString()
         )
-
-        val pub = privateKey.abyte
-        // seed + pub
-        val pri = ByteArray(seedBytes.size + pub.size)
-
-        seedBytes.copyInto(pri, destinationOffset = 0)
-        pub.copyInto(pri, destinationOffset = seedBytes.size)
-
-        verifyKeyPair(pub, pri)
     }
 
     @OptIn(ExperimentalStdlibApi::class)
