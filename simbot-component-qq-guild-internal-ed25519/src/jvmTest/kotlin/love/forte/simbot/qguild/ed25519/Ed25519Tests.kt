@@ -54,7 +54,6 @@ class Ed25519Tests {
     @Test
     fun testBouncyCastleEd25519KeyPairGeneration() {
         val seedBytes = SEED.toByteArray()
-        assertEquals("BC", Security.getProvider("BC").name)
 
         val (privateKey, publicKey) = bouncyCastleKeyGen(seedBytes)
 
@@ -62,7 +61,7 @@ class Ed25519Tests {
         val publicKeyBytes = publicKey.bytes
 
         // 4. 构造私钥字节（种子 + 公钥）
-        val privateKeyCombined = privateKey.bytes64
+        val privateKeyCombined = privateKey.bytes
 
         verifyKeyPair(publicKeyBytes, privateKeyCombined)
     }
@@ -128,7 +127,7 @@ class Ed25519Tests {
 
         val (privateKey, publicKey) = EddsaEd25519KeyPair(seedBytes)
 
-        verifyKeyPair(publicKey.bytes, privateKey.bytes64)
+        verifyKeyPair(publicKey.bytes, privateKey.bytes)
     }
 
     @Test

@@ -23,6 +23,12 @@ import org.bouncycastle.crypto.params.Ed25519PrivateKeyParameters
 import org.bouncycastle.crypto.params.Ed25519PublicKeyParameters
 import org.bouncycastle.crypto.signers.Ed25519Signer
 
+@InternalEd25519Api
+public object BouncyCastleEd25519KeyPairGenerator : Ed25519KeyPairGenerator {
+    override fun generate(seed: ByteArray): BouncyCastleEd25519KeyPair {
+        return BouncyCastleEd25519KeyPair(seed)
+    }
+}
 
 /**
  * Ed25519 key pair implementation based on BouncyCastle.
@@ -30,7 +36,7 @@ import org.bouncycastle.crypto.signers.Ed25519Signer
  * @author ForteScarlet
  */
 @InternalEd25519Api
-internal class BouncyCastleEd25519KeyPair(
+public class BouncyCastleEd25519KeyPair(
     seed: ByteArray,
 ) : Ed25519KeyPair {
     override val privateKey: BouncyCastleEd25519PrivateKey =
@@ -46,13 +52,10 @@ internal class BouncyCastleEd25519KeyPair(
 }
 
 @InternalEd25519Api
-internal class BouncyCastleEd25519PrivateKey(
+public class BouncyCastleEd25519PrivateKey(
     private val seed: ByteArray,
     internal val privateKey: Ed25519PrivateKeyParameters
 ) : Ed25519PrivateKey {
-    override val bytes: ByteArray
-        get() = privateKey.encoded
-
     private val _bytes64: ByteArray by lazy {
         val publicKey = privateKey.generatePublicKey()
         val publicKeyBytes = publicKey.encoded
@@ -60,7 +63,7 @@ internal class BouncyCastleEd25519PrivateKey(
         seed + publicKeyBytes
     }
 
-    override val bytes64: ByteArray
+    override val bytes: ByteArray
         get() = _bytes64.clone()
 
     override fun sign(data: ByteArray): Signature {
@@ -72,7 +75,7 @@ internal class BouncyCastleEd25519PrivateKey(
 }
 
 @InternalEd25519Api
-internal class BouncyCastleEd25519PublicKey(
+public class BouncyCastleEd25519PublicKey(
     private val publicKey: Ed25519PublicKeyParameters
 ) : Ed25519PublicKey {
     override val bytes: ByteArray

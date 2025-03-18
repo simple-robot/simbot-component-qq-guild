@@ -61,18 +61,16 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(project(":simbot-component-qq-guild-api"))
+            implementation(project(":simbot-component-qq-guild-internal-ed25519"))
             api(libs.simbot.common.loop)
             api(libs.simbot.common.atomic)
             api(libs.simbot.common.core)
             api(libs.simbot.common.suspend)
-            implementation(libs.simbot.common.annotations)
+            api(libs.simbot.common.annotations)
             // ktor
             api(libs.ktor.client.contentNegotiation)
             api(libs.ktor.serialization.kotlinxJson)
             api(libs.ktor.client.ws)
-
-            // https://github.com/andreypfau/curve25519-kotlin
-//            implementation("io.github.andreypfau:curve25519-kotlin:0.0.8")
 
             // https://github.com/ionspin/kotlin-multiplatform-libsodium
             implementation("com.ionspin.kotlin:multiplatform-crypto-libsodium-bindings:0.9.2")
@@ -91,7 +89,7 @@ kotlin {
             implementation(libs.log4j.api)
             implementation(libs.log4j.core)
             implementation(libs.log4j.slf4j2)
-
+            implementation(libs.bouncycastle.bcprov.jdk18on)
 //            implementation("dev.whyoleg.cryptography:cryptography-core:0.4.0")
 //            implementation(kotlincrypto.core.digest)
 //            implementation(kotlincrypto.core.mac)

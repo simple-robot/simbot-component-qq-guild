@@ -19,7 +19,6 @@ import love.forte.gradle.common.core.project.setup
 import love.forte.gradle.common.kotlin.multiplatform.applyTier1
 import love.forte.gradle.common.kotlin.multiplatform.applyTier2
 import love.forte.gradle.common.kotlin.multiplatform.applyTier3
-import org.jetbrains.kotlin.js.translate.context.Namer.kotlin
 
 plugins {
     kotlin("multiplatform")
@@ -65,6 +64,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            implementation(libs.simbot.logger)
         }
 
         commonTest.dependencies {
@@ -87,6 +87,7 @@ kotlin {
 
         nativeMain.dependencies {
             implementation(libs.libsodium.bindings)
+            implementation(libs.kotlinx.coroutines.core)
         }
     }
 }

@@ -26,12 +26,15 @@ import net.i2p.crypto.eddsa.spec.EdDSAPrivateKeySpec
 import net.i2p.crypto.eddsa.spec.EdDSAPublicKeySpec
 
 
-/**
- *
- * @author ForteScarlet
- */
 @InternalEd25519Api
-internal class EddsaEd25519KeyPair(
+public object EddsaEd25519KeyPairGenerator : Ed25519KeyPairGenerator {
+    override fun generate(seed: ByteArray): Ed25519KeyPair {
+        return EddsaEd25519KeyPair(seed)
+    }
+}
+
+@InternalEd25519Api
+public class EddsaEd25519KeyPair(
     seed: ByteArray,
 ) : Ed25519KeyPair {
     override val privateKey: EddsaEd25519PrivateKey =
@@ -57,18 +60,15 @@ internal class EddsaEd25519KeyPair(
 }
 
 @InternalEd25519Api
-internal class EddsaEd25519PrivateKey(
+public class EddsaEd25519PrivateKey(
     private val seed: ByteArray,
     internal val privateKey: EdDSAPrivateKey,
 ) : Ed25519PrivateKey {
-    override val bytes: ByteArray
-        get() = privateKey.encoded
-
     private val _bytes64: ByteArray by lazy {
         seed + privateKey.abyte
     }
 
-    override val bytes64: ByteArray
+    override val bytes: ByteArray
         get() = _bytes64.clone()
 
     @Throws(Exception::class)
@@ -81,7 +81,7 @@ internal class EddsaEd25519PrivateKey(
 }
 
 @InternalEd25519Api
-internal class EddsaEd25519PublicKey(
+public class EddsaEd25519PublicKey(
     private val publicKey: EdDSAPublicKey,
 ) : Ed25519PublicKey {
     override val bytes: ByteArray
