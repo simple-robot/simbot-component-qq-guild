@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2022-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,7 +17,6 @@
 
 package love.forte.simbot.qguild.stdlib.internal
 
-import com.ionspin.kotlin.crypto.signature.crypto_sign_BYTES
 import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -50,6 +49,8 @@ import love.forte.simbot.qguild.api.app.AppAccessToken
 import love.forte.simbot.qguild.api.app.GetAppAccessTokenApi
 import love.forte.simbot.qguild.api.requestData
 import love.forte.simbot.qguild.api.user.GetBotInfoApi
+import love.forte.simbot.qguild.ed25519.*
+import love.forte.simbot.qguild.ed25519.annotations.InternalEd25519Api
 import love.forte.simbot.qguild.event.*
 import love.forte.simbot.qguild.model.User
 import love.forte.simbot.qguild.stdlib.*
@@ -65,7 +66,7 @@ import kotlin.time.Duration.Companion.seconds
  * implementation for [Bot].
  * @author ForteScarlet
  */
-@OptIn(ExperimentalSimbotCollectionApi::class)
+@OptIn(ExperimentalSimbotCollectionApi::class, InternalEd25519Api::class)
 internal class BotImpl(
     override val ticket: Bot.Ticket,
     override val configuration: BotConfiguration,
@@ -106,15 +107,23 @@ internal class BotImpl(
         }
     }
 
-    private val ed25519KeyPair: Ed25519Keypair by lazy {
-        genEd25519Keypair(ticket.secret.paddingEd25519Seed().toByteArray())
+    private lateinit var _ed25519PrivateKey: Ed25519PrivateKey
+    private lateinit var _ed25519PublicKey: Ed25519PublicKey
+
+    private val ed25519KeyPair: Deferred<Ed25519KeyPair> = async(start = CoroutineStart.LAZY) {
+        genEd25519Keypair(ticket.secret.paddingEd25519Seed().toByteArray()).also { (pri, pub) ->
+            _ed25519PrivateKey = pri
+            _ed25519PublicKey = pub
+        }
     }
 
-    private val ed25519PrivateKey
-        get() = ed25519KeyPair.privateKey
+    private suspend fun ed25519PrivateKey() =
+        if (::_ed25519PrivateKey.isInitialized) _ed25519PrivateKey
+        else ed25519KeyPair.await().privateKey
 
-    private val ed25519PublicKey
-        get() = ed25519KeyPair.publicKey
+    private suspend fun ed25519PublicKey() =
+        if (::_ed25519PublicKey.isInitialized) _ed25519PublicKey
+        else ed25519KeyPair.await().publicKey
 
     internal val eventDecoder = Signal.Dispatch.dispatchJson {
         isLenient = true
@@ -411,7 +420,7 @@ internal class BotImpl(
             }
         }
 
-    @OptIn(ExperimentalStdlibApi::class)
+    @OptIn(ExperimentalStdlibApi::class, InternalEd25519Api::class)
     override suspend fun emitEvent(
         payload: String,
         options: EmitEventOptions?,
@@ -421,15 +430,15 @@ internal class BotImpl(
         //  13	回调地址验证	Receive	开放平台对机器人服务端进行验证
         logger.debug("Emit raw event with payload: {}", payload)
 
-        fun verifyIfNecessary() {
+        suspend fun verifyIfNecessary() {
             val (signature, signatureTimestamp) = options?.ed25519SignatureVerification ?: return
             logger.debug("`ed25519SignatureVerification` exists, verity the payload")
 
             val signatureBytes = signature.hexToByteArray()
 
-            check(crypto_sign_BYTES == signatureBytes.size) {
+            check(Ed25519KeyPair.CRYPTO_SIGN_BYTES == signatureBytes.size) {
                 "Invalid signature hex size, " +
-                        "expect ${crypto_sign_BYTES}, " +
+                        "expect ${Ed25519KeyPair.CRYPTO_SIGN_BYTES}, " +
                         "actual ${signatureBytes.size}"
             }
 
@@ -443,20 +452,20 @@ internal class BotImpl(
 
             val msg = "$signatureTimestamp$payload"
 
-            check(ed25519PublicKey.verify(signature = signatureBytes, message = msg.toByteArray())) {
+            check(ed25519PublicKey().verify(signature = Signature(signatureBytes), data = msg.toByteArray())) {
                 "Ed25519 verify failed"
             }
         }
 
-        fun signatureIfNecessary(verify: Signal.CallbackVerify): EmitResult {
+        suspend fun signatureIfNecessary(verify: Signal.CallbackVerify): EmitResult {
             val (plainToken, eventTs) = verify.data
             val msg = "$eventTs$plainToken"
 
-            val signature = ed25519PrivateKey.sign(msg.toByteArray())
+            val signature = ed25519PrivateKey().sign(msg.toByteArray())
 
             val verified = Signal.CallbackVerify.Verified(
                 plainToken,
-                signature.signatureBytes().toHexString()
+                signature.data.toHexString()
             )
 
             return EmitResult.Verified(verified)
@@ -622,30 +631,6 @@ internal suspend fun BotImpl.emitEvent(dispatch: Signal.Dispatch, raw: String) {
                 }
                 logger.error("Event precess failure.", e)
             }
-        }
-    }
-}
-
-
-/**
- * Repeat to `length` == 32
- */
-internal fun String.paddingEd25519Seed(): String {
-    return when {
-        length == 32 || isEmpty() -> this
-        length > 32 -> substring(32)
-        else -> {
-            buildString(32) {
-                append(this@paddingEd25519Seed)
-                while (length < 32) {
-                    append(
-                        this@paddingEd25519Seed,
-                        0,
-                        kotlin.math.min(32 - length, this@paddingEd25519Seed.length)
-                    )
-                }
-            }
-
         }
     }
 }

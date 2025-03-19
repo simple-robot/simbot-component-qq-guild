@@ -33,6 +33,7 @@ include(":internal-processors:intents-processor")
 include(":simbot-component-qq-guild-api")
 include(":simbot-component-qq-guild-stdlib")
 include(":simbot-component-qq-guild-core")
+include(":simbot-component-qq-guild-internal-ed25519")
 
 // samples
 include(":samples:webhook-server-ktor")

@@ -22,9 +22,7 @@ import love.forte.gradle.common.kotlin.multiplatform.applyTier3
 
 plugins {
     kotlin("multiplatform")
-    kotlin("plugin.serialization")
     `qq-guild-dokka-partial-configure`
-    alias(libs.plugins.suspendTransform)
     `qq-guild-module-config`
 }
 
@@ -40,7 +38,6 @@ kotlin {
 
     sourceSets.configureEach {
         languageSettings {
-            optIn("love.forte.simbot.qguild.QGInternalApi")
         }
     }
 
@@ -53,47 +50,47 @@ kotlin {
     applyTier1()
     applyTier2(
         // multiplatform-crypto-libsodium 不支持 watchosX64 target.
-        watchosX64 = false
+        watchosX64 = false,
+
+        )
+    applyTier3(
+        androidNativeArm32 = false,
+        androidNativeArm64 = false,
+        androidNativeX64 = false,
+        androidNativeX86 = false,
+        watchosDeviceArm64 = false,
     )
-    applyTier3(supportKtorClient = true)
 
     sourceSets {
         commonMain.dependencies {
-            api(project(":simbot-component-qq-guild-api"))
-            implementation(project(":simbot-component-qq-guild-internal-ed25519"))
-            api(libs.simbot.common.loop)
-            api(libs.simbot.common.atomic)
-            api(libs.simbot.common.core)
-            api(libs.simbot.common.suspend)
-            api(libs.simbot.common.annotations)
-            // ktor
-            api(libs.ktor.client.contentNegotiation)
-            api(libs.ktor.serialization.kotlinxJson)
-            api(libs.ktor.client.ws)
+            implementation(libs.simbot.logger)
         }
 
         commonTest.dependencies {
             implementation(kotlin("test"))
             implementation(libs.kotlinx.coroutines.test)
-            implementation(libs.ktor.client.mock)
+        }
+
+        jvmMain.dependencies {
+            implementation(libs.i2p.crypto.eddsa)
+            compileOnly(libs.bouncycastle.bcprov.jdk18on)
         }
 
         jvmTest.dependencies {
-            implementation(libs.ktor.client.java)
-            implementation(libs.log4j.api)
-            implementation(libs.log4j.core)
-            implementation(libs.log4j.slf4j2)
+            implementation(libs.i2p.crypto.eddsa)
             implementation(libs.bouncycastle.bcprov.jdk18on)
         }
 
         jsMain.dependencies {
-            api(libs.ktor.client.js)
+            implementation(libs.libsodium.bindings)
         }
 
-        mingwTest.dependencies {
-            implementation(libs.ktor.client.winhttp)
+        nativeMain.dependencies {
+            implementation(libs.libsodium.bindings)
+            implementation(libs.kotlinx.coroutines.core)
         }
     }
 }
 
-configJavaCompileWithModule("simbot.component.qqguild.stdlib")
+configJavaCompileWithModule("simbot.component.qqguild.internal.ed25519s")
+

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025. ForteScarlet.
+ * Copyright (c) 2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -15,13 +15,18 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package love.forte.simbot.qguild.stdlib.internal
+package love.forte.simbot.qguild.ed25519
 
-import love.forte.simbot.qguild.ed25519.Ed25519KeyPair
 import love.forte.simbot.qguild.ed25519.annotations.InternalEd25519Api
-import love.forte.simbot.qguild.ed25519.ed25519KeyPairGenerator
 
-@OptIn(InternalEd25519Api::class)
-internal suspend fun genEd25519Keypair(seed: ByteArray): Ed25519KeyPair {
-    return ed25519KeyPairGenerator().generate(seed)
+/**
+ * 根据当前平台情况和classpath环境选择一个合适的 [Ed25519KeyPairGenerator] 实例。
+ *
+ * 在非 JVM 平台中，会使用 [libsodium bindings](https://github.com/ionspin/kotlin-multiplatform-libsodium)。
+ *
+ */
+@InternalEd25519Api
+public actual suspend fun ed25519KeyPairGenerator(): Ed25519KeyPairGenerator {
+    initialLibsodiumIfNecessary()
+    return LibsodiumEd25519KeyPairGenerator
 }

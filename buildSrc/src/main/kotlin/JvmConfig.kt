@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. ForteScarlet.
+ * Copyright (c) 2024-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -21,13 +21,11 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.assign
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.getByName
-import org.gradle.kotlin.dsl.withType
 import org.gradle.process.CommandLineArgumentProvider
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
 
@@ -52,17 +50,15 @@ inline fun KotlinJvmTarget.configJava(crossinline block: KotlinJvmTarget.() -> U
 }
 
 
-fun KotlinTopLevelExtension.configJavaToolchain(jdkVersion: Int) {
-    jvmToolchain(jdkVersion)
-}
-
 inline fun KotlinMultiplatformExtension.configKotlinJvm(
     jdkVersion: Int = JVMConstants.KT_JVM_TARGET_VALUE,
     crossinline block: KotlinJvmTarget.() -> Unit = {}
 ) {
-    configJavaToolchain(jdkVersion)
+    jvmToolchain(jdkVersion)
     jvm {
         configJava(block)
+        compilerOptions {
+        }
     }
 }
 
@@ -70,7 +66,7 @@ inline fun KotlinJvmProjectExtension.configKotlinJvm(
     jdkVersion: Int = JVMConstants.KT_JVM_TARGET_VALUE,
     crossinline block: KotlinJvmProjectExtension.() -> Unit = {}
 ) {
-    configJavaToolchain(jdkVersion)
+    jvmToolchain(jdkVersion)
     compilerOptions {
         javaParameters = true
         jvmTarget.set(JvmTarget.fromTarget(jdkVersion.toString()))
@@ -80,15 +76,22 @@ inline fun KotlinJvmProjectExtension.configKotlinJvm(
     block()
 }
 
+/**
+ * 要放在 `kotlin {}` 下面
+ */
 inline fun Project.configJavaCompileWithModule(
     moduleName: String? = null,
     jvmVersion: String = JVMConstants.KT_JVM_TARGET,
     crossinline block: JavaCompile.() -> Unit = {}
 ) {
-    tasks.withType<JavaCompile> {
+    tasks.named("compileJava", JavaCompile::class.java) {
         options.encoding = "UTF-8"
         sourceCompatibility = jvmVersion
         targetCompatibility = jvmVersion
+
+        println("$this sourceSets[\"main\"]: ${sourceSets["main"]}")
+        println("$this sourceSets[\"main\"].output: ${sourceSets["main"].output}")
+        println("$this sourceSets[\"main\"].output.asPath: ${sourceSets["main"].output.asPath}")
 
         if (moduleName != null) {
             options.compilerArgumentProviders.add(CommandLineArgumentProvider {

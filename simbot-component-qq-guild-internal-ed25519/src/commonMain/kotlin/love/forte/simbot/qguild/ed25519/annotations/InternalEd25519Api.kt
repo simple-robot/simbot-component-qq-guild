@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025. ForteScarlet.
+ * Copyright (c) 2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -15,13 +15,11 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package love.forte.simbot.qguild.stdlib.internal
+package love.forte.simbot.qguild.ed25519.annotations
 
-import love.forte.simbot.qguild.ed25519.Ed25519KeyPair
-import love.forte.simbot.qguild.ed25519.annotations.InternalEd25519Api
-import love.forte.simbot.qguild.ed25519.ed25519KeyPairGenerator
-
-@OptIn(InternalEd25519Api::class)
-internal suspend fun genEd25519Keypair(seed: ByteArray): Ed25519KeyPair {
-    return ed25519KeyPairGenerator().generate(seed)
-}
+@RequiresOptIn(
+    message = "This is an internal API for ed25519 " +
+            "and it may be changed or removed in the future without notice.",
+    level = RequiresOptIn.Level.WARNING
+)
+public annotation class InternalEd25519Api

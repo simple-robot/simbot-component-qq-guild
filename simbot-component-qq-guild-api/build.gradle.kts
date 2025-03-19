@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024. ForteScarlet.
+ * Copyright (c) 2023-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -34,8 +34,6 @@ plugins {
 
 setup(P.ComponentQQGuild)
 
-configJavaCompileWithModule("simbot.component.qqguild.api")
-//apply(plugin = "qq-guild-dokka-partial-configure")
 apply(plugin = "qq-guild-multiplatform-maven-publish")
 
 //configJsTestTasks()
@@ -133,3 +131,5 @@ tasks.withType<DokkaTaskPartial>().configureEach {
         suppressGeneratedFiles.set(false)
     }
 }
+
+configJavaCompileWithModule("simbot.component.qqguild.api")
