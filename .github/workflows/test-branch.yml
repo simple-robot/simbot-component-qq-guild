@@ -33,12 +33,12 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: 21
-#          cache: 'gradle'
+          cache: 'gradle'
 
       - name: Run All Tests
         uses: gradle/actions/setup-gradle@v3
         with:
-          gradle-version: 8.5
+          gradle-version: 8.8
           arguments: |
             assemble
             build

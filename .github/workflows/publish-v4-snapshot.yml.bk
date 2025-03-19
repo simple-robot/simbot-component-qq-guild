@@ -57,7 +57,7 @@ jobs:
       - name: Gradle test and publish snapshot
         uses: gradle/gradle-build-action@v2
         with:
-          gradle-version: 8.5
+          gradle-version: 8.8
           arguments: |
             test 
             publishToSonatype
@@ -89,7 +89,7 @@ jobs:
       - name: Gradle generate documentation
         uses: gradle/gradle-build-action@v2
         with:
-          gradle-version: 8.5
+          gradle-version: 8.8
           arguments: |
             -Porg.gradle.jvmargs="-Xmx4g -Xms4g -XX:MaxMetaspaceSize=2g -Dfile.encoding=UTF-8" 
             -Porg.gradle.daemon=false
