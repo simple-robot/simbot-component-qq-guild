@@ -24,10 +24,6 @@ import love.forte.simbot.qguild.ed25519.annotations.InternalEd25519Api
 
 @InternalEd25519Api
 public object LibsodiumEd25519KeyPairGenerator : Ed25519KeyPairGenerator {
-    init {
-        initialLibsodium
-    }
-
     override fun generate(seed: ByteArray): Ed25519KeyPair {
         return LibsodiumEd25519KeyPair(seed)
     }
@@ -79,28 +75,10 @@ public class LibsodiumEd25519PublicKey(private val key: UByteArray) : Ed25519Pub
     }
 }
 
-
-/**
- * Initialed libsodium by lazy.
- */
-private val initialLibsodium: Unit by lazy(
-    mode = LazyThreadSafetyMode.SYNCHRONIZED
-) {
+internal suspend fun initialLibsodiumIfNecessary() {
     if (!LibsodiumInitializer.isInitialized()) {
         ed25519sLogger.info("LibsodiumInitializer is not initialed yet, initializing...")
-        var done = false
-
-        LibsodiumInitializer.initializeWithCallback {
-            ed25519sLogger.info("LibsodiumInitializer initialized in callback")
-            done = true
-        }
-
-        while (!done) {
-            // loop
-        }
-
+        LibsodiumInitializer.initialize()
         ed25519sLogger.info("LibsodiumInitializer initialized")
     }
-
-    Unit
 }

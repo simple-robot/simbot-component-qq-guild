@@ -19,16 +19,12 @@ package love.forte.simbot.qguild.ed25519
 
 import com.ionspin.kotlin.crypto.LibsodiumInitializer
 import com.ionspin.kotlin.crypto.signature.InvalidSignatureException
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.CompletableDeferred
 import love.forte.simbot.qguild.ed25519.annotations.InternalEd25519Api
 
 
 @InternalEd25519Api
 public object LibsodiumEd25519KeyPairGenerator : Ed25519KeyPairGenerator {
-    init {
-        initialLibsodium
-    }
-
     override fun generate(seed: ByteArray): Ed25519KeyPair {
         return LibsodiumEd25519KeyPair(seed)
     }
@@ -81,6 +77,13 @@ public class LibsodiumEd25519PublicKey(private val key: UByteArray) : Ed25519Pub
 }
 
 
+internal suspend fun initialLibsodiumIfNecessary() {
+    initialLibsodium // Init by lazy
+    return initialDeferred.await()
+}
+
+private val initialDeferred = CompletableDeferred(Unit)
+
 /**
  * Initialed libsodium by lazy.
  */
@@ -90,10 +93,10 @@ private val initialLibsodium: Unit by lazy(
     if (!LibsodiumInitializer.isInitialized()) {
         ed25519sLogger.info("LibsodiumInitializer is not initialed yet, initializing...")
 
-        runBlocking { LibsodiumInitializer.initialize() }
-
-        ed25519sLogger.info("LibsodiumInitializer initialized")
+        LibsodiumInitializer.initializeWithCallback {
+            initialDeferred.complete(Unit)
+            ed25519sLogger.info("LibsodiumInitializer initialized")
+        }
     }
-
     Unit
 }

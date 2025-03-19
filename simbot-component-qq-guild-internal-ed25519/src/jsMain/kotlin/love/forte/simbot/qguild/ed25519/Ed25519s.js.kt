@@ -26,5 +26,7 @@ import love.forte.simbot.qguild.ed25519.annotations.InternalEd25519Api
  *
  */
 @InternalEd25519Api
-public actual fun ed25519KeyPairGenerator(): Ed25519KeyPairGenerator = LibsodiumEd25519KeyPairGenerator
-
+public actual suspend fun ed25519KeyPairGenerator(): Ed25519KeyPairGenerator {
+    initialLibsodiumIfNecessary()
+    return LibsodiumEd25519KeyPairGenerator
+}

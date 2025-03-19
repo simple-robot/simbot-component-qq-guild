@@ -36,7 +36,7 @@ import love.forte.simbot.qguild.ed25519.annotations.InternalEd25519Api
  *
  */
 @InternalEd25519Api
-public actual fun ed25519KeyPairGenerator(): Ed25519KeyPairGenerator {
+public actual suspend fun ed25519KeyPairGenerator(): Ed25519KeyPairGenerator {
     return if (bouncyCastleAccessible) {
         BouncyCastleEd25519KeyPairGenerator
     } else {

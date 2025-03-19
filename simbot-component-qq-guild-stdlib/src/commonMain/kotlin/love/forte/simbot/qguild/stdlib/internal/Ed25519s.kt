@@ -22,6 +22,6 @@ import love.forte.simbot.qguild.ed25519.annotations.InternalEd25519Api
 import love.forte.simbot.qguild.ed25519.ed25519KeyPairGenerator
 
 @OptIn(InternalEd25519Api::class)
-internal fun genEd25519Keypair(seed: ByteArray): Ed25519KeyPair {
+internal suspend fun genEd25519Keypair(seed: ByteArray): Ed25519KeyPair {
     return ed25519KeyPairGenerator().generate(seed)
 }

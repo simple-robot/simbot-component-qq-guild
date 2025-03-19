@@ -1,5 +1,6 @@
 package love.forte.simbot.qguild.ed25519
 
+import kotlinx.coroutines.test.runTest
 import love.forte.simbot.qguild.ed25519.annotations.InternalEd25519Api
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
@@ -33,7 +34,7 @@ class Ed25519CommonTests {
     }
 
     @Test
-    fun testCommonKeyPairGeneration() {
+    fun testCommonKeyPairGeneration() = runTest {
         val (pri, pub) = ed25519KeyPairGenerator().generate(SEED.encodeToByteArray())
         val publicKeyBytes = pub.bytes
         val privateKeyCombined = pri.bytes
@@ -56,5 +57,3 @@ class Ed25519CommonTests {
         )
     }
 }
-
-internal fun a() {}
