@@ -40,7 +40,7 @@ public actual fun ed25519KeyPairGenerator(): Ed25519KeyPairGenerator {
     return if (bouncyCastleAccessible) {
         BouncyCastleEd25519KeyPairGenerator
     } else {
-        TODO()
+        EddsaEd25519KeyPairGenerator
     }
 }
 
@@ -65,13 +65,11 @@ private val bouncyCastleAccessible: Boolean by lazy {
         }
     }.also {
         if (!it) {
-            // TODO log debug
             val msg = "BouncyCastle is inaccessible because of the classes {} are not found in classpath. " +
                     "`ed25519-java` will be used instead."
 
             ed25519sLogger.info(msg, bouncyCastleRequiredClasses.asList())
             ed25519sLogger.debug(msg, bouncyCastleRequiredClasses.asList(), bouncyCastleInaccessible)
-
         }
 
     }

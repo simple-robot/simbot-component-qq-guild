@@ -28,7 +28,6 @@ plugins {
 
 setup(P.ComponentQQGuild)
 
-configJavaCompileWithModule("simbot.component.qqguild.internal.ed25519")
 apply(plugin = "qq-guild-multiplatform-maven-publish")
 
 configJsTestTasks()
@@ -91,3 +90,6 @@ kotlin {
         }
     }
 }
+
+configJavaCompileWithModule("simbot.component.qqguild.internal.ed25519s")
+

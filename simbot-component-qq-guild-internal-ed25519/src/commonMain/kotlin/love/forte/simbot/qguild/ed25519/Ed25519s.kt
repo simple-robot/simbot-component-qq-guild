@@ -61,6 +61,11 @@ public expect fun ed25519KeyPairGenerator(): Ed25519KeyPairGenerator
 public interface Ed25519KeyPair {
     public val privateKey: Ed25519PrivateKey
     public val publicKey: Ed25519PublicKey
+
+    @InternalEd25519Api
+    public companion object {
+        public const val CRYPTO_SIGN_BYTES: Int = 64
+    }
 }
 
 @InternalEd25519Api

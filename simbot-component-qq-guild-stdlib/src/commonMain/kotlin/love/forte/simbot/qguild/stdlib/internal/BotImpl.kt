@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2022-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,7 +17,6 @@
 
 package love.forte.simbot.qguild.stdlib.internal
 
-import com.ionspin.kotlin.crypto.signature.crypto_sign_BYTES
 import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -50,6 +49,10 @@ import love.forte.simbot.qguild.api.app.AppAccessToken
 import love.forte.simbot.qguild.api.app.GetAppAccessTokenApi
 import love.forte.simbot.qguild.api.requestData
 import love.forte.simbot.qguild.api.user.GetBotInfoApi
+import love.forte.simbot.qguild.ed25519.Ed25519KeyPair
+import love.forte.simbot.qguild.ed25519.Signature
+import love.forte.simbot.qguild.ed25519.annotations.InternalEd25519Api
+import love.forte.simbot.qguild.ed25519.paddingEd25519Seed
 import love.forte.simbot.qguild.event.*
 import love.forte.simbot.qguild.model.User
 import love.forte.simbot.qguild.stdlib.*
@@ -65,7 +68,7 @@ import kotlin.time.Duration.Companion.seconds
  * implementation for [Bot].
  * @author ForteScarlet
  */
-@OptIn(ExperimentalSimbotCollectionApi::class)
+@OptIn(ExperimentalSimbotCollectionApi::class, InternalEd25519Api::class)
 internal class BotImpl(
     override val ticket: Bot.Ticket,
     override val configuration: BotConfiguration,
@@ -106,7 +109,7 @@ internal class BotImpl(
         }
     }
 
-    private val ed25519KeyPair: Ed25519Keypair by lazy {
+    private val ed25519KeyPair: Ed25519KeyPair by lazy {
         genEd25519Keypair(ticket.secret.paddingEd25519Seed().toByteArray())
     }
 
@@ -411,7 +414,7 @@ internal class BotImpl(
             }
         }
 
-    @OptIn(ExperimentalStdlibApi::class)
+    @OptIn(ExperimentalStdlibApi::class, InternalEd25519Api::class)
     override suspend fun emitEvent(
         payload: String,
         options: EmitEventOptions?,
@@ -427,9 +430,9 @@ internal class BotImpl(
 
             val signatureBytes = signature.hexToByteArray()
 
-            check(crypto_sign_BYTES == signatureBytes.size) {
+            check(Ed25519KeyPair.CRYPTO_SIGN_BYTES == signatureBytes.size) {
                 "Invalid signature hex size, " +
-                        "expect ${crypto_sign_BYTES}, " +
+                        "expect ${Ed25519KeyPair.CRYPTO_SIGN_BYTES}, " +
                         "actual ${signatureBytes.size}"
             }
 
@@ -443,7 +446,7 @@ internal class BotImpl(
 
             val msg = "$signatureTimestamp$payload"
 
-            check(ed25519PublicKey.verify(signature = signatureBytes, message = msg.toByteArray())) {
+            check(ed25519PublicKey.verify(signature = Signature(signatureBytes), data = msg.toByteArray())) {
                 "Ed25519 verify failed"
             }
         }
@@ -454,9 +457,11 @@ internal class BotImpl(
 
             val signature = ed25519PrivateKey.sign(msg.toByteArray())
 
+            signature.data
+
             val verified = Signal.CallbackVerify.Verified(
                 plainToken,
-                signature.signatureBytes().toHexString()
+                signature.data.toHexString()
             )
 
             return EmitResult.Verified(verified)
@@ -622,30 +627,6 @@ internal suspend fun BotImpl.emitEvent(dispatch: Signal.Dispatch, raw: String) {
                 }
                 logger.error("Event precess failure.", e)
             }
-        }
-    }
-}
-
-
-/**
- * Repeat to `length` == 32
- */
-internal fun String.paddingEd25519Seed(): String {
-    return when {
-        length == 32 || isEmpty() -> this
-        length > 32 -> substring(32)
-        else -> {
-            buildString(32) {
-                append(this@paddingEd25519Seed)
-                while (length < 32) {
-                    append(
-                        this@paddingEd25519Seed,
-                        0,
-                        kotlin.math.min(32 - length, this@paddingEd25519Seed.length)
-                    )
-                }
-            }
-
         }
     }
 }

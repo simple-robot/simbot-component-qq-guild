@@ -30,7 +30,6 @@ plugins {
 
 setup(P.ComponentQQGuild)
 
-configJavaCompileWithModule("simbot.component.qqguild.stdlib")
 apply(plugin = "qq-guild-multiplatform-maven-publish")
 
 configJsTestTasks()
@@ -71,17 +70,12 @@ kotlin {
             api(libs.ktor.client.contentNegotiation)
             api(libs.ktor.serialization.kotlinxJson)
             api(libs.ktor.client.ws)
-
-            // https://github.com/ionspin/kotlin-multiplatform-libsodium
-            implementation("com.ionspin.kotlin:multiplatform-crypto-libsodium-bindings:0.9.2")
         }
 
         commonTest.dependencies {
             implementation(kotlin("test"))
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.ktor.client.mock)
-            // https://github.com/diglol/crypto
-//            implementation("com.diglol.crypto:pkc:0.2.0")
         }
 
         jvmTest.dependencies {
@@ -90,12 +84,6 @@ kotlin {
             implementation(libs.log4j.core)
             implementation(libs.log4j.slf4j2)
             implementation(libs.bouncycastle.bcprov.jdk18on)
-//            implementation("dev.whyoleg.cryptography:cryptography-core:0.4.0")
-//            implementation(kotlincrypto.core.digest)
-//            implementation(kotlincrypto.core.mac)
-//            implementation(kotlincrypto.core.xof)
-//            implementation(kotlincrypto.macs.hmac.sha1)
-//            implementation(kotlincrypto.macs.kmac)
         }
 
         jsMain.dependencies {
@@ -107,3 +95,5 @@ kotlin {
         }
     }
 }
+
+configJavaCompileWithModule("simbot.component.qqguild.stdlib")
