@@ -17,8 +17,8 @@
 
 import love.forte.gradle.common.core.project.setup
 import love.forte.gradle.common.core.repository.Repositories
-import love.forte.plugin.suspendtrans.gradle.SuspendTransformGradleExtension
-import love.forte.simbot.gradle.suspendtransforms.addSimbotJvmTransformers
+import love.forte.plugin.suspendtrans.gradle.SuspendTransformPluginExtension
+import love.forte.simbot.gradle.suspendtransforms.addSimbotJvmTransforms
 
 plugins {
     idea
@@ -36,9 +36,9 @@ buildscript {
         mavenCentral()
     }
 
-    dependencies {
-        classpath(libs.simbot.gradle)
-    }
+//    dependencies {
+//        classpath(libs.simbot.gradle)
+//    }
 }
 
 logger.info("=== Current version: {} ===", version)
@@ -64,11 +64,10 @@ subprojects {
         }
 
         if (plugins.hasPlugin(libs.plugins.suspendTransform.get().pluginId)) {
-            extensions.configure<SuspendTransformGradleExtension>("suspendTransform") {
+            extensions.configure<SuspendTransformPluginExtension>("suspendTransformPlugin") {
                 includeRuntime = false
                 includeAnnotation = false
-
-                addSimbotJvmTransformers()
+                addSimbotJvmTransforms()
             }
         }
     }

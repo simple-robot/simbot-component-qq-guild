@@ -78,6 +78,7 @@ kotlin {
             implementation(kotlin("test"))
             implementation(kotlin("reflect"))
             implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.kotlinx.serialization.core)
             implementation(libs.kotlinx.serialization.json)
             api(libs.simbot.core)
             api(libs.simbot.common.core)
