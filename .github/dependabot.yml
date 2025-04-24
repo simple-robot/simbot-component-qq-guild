@@ -13,9 +13,9 @@ updates:
 
     ignore:
       - dependency-name: 'io.ktor:*'
-        version: '3.+'
+        versions: ['3.+']
       - dependency-name: 'io.ktor.plugin'
-        version: '3.+'
+        versions: ['3.+']
       - dependency-name: 'love.forte.plugin.suspend-transform:*'
       - dependency-name: 'love.forte.plugin.suspend-transform'
       - dependency-name: 'love.forte.plugin.suspend-transform'
