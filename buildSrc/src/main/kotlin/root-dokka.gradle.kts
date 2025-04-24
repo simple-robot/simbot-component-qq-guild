@@ -15,11 +15,6 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-import gradle.kotlin.dsl.accessors._970e5eb52742fb615d1693cfc4f6fb41.dokka
-import gradle.kotlin.dsl.accessors._970e5eb52742fb615d1693cfc4f6fb41.html
-import org.jetbrains.dokka.DokkaDefaults.moduleName
-import org.jetbrains.dokka.DokkaDefaults.offlineMode
-import org.jetbrains.dokka.DokkaDefaults.pluginsConfiguration
 import org.jetbrains.kotlin.com.intellij.openapi.util.text.HtmlChunk.p
 
 /*
@@ -44,27 +39,15 @@ plugins {
 }
 
 // region Dokka
-
-val rootP = project
-
-subprojects {
-    afterEvaluate {
-        if (plugins.hasPlugin("org.jetbrains.dokka")) {
-            val p = this
-            dokka {
-                configSourceSets(p)
-                pluginsConfiguration.html {
-                    configHtmlCustoms(p)
-                }
-            }
-            rootP.dependencies.dokka(p)
-        }
-    }
+dependencies {
+    dokka(project(":simbot-component-qq-guild-api"))
+    dokka(project(":simbot-component-qq-guild-core"))
+    dokka(project(":simbot-component-qq-guild-internal-ed25519"))
+    dokka(project(":simbot-component-qq-guild-stdlib"))
 }
 
 dokka {
     moduleName = "Simple Robot 组件 | QQ"
-
     dokkaPublications.all {
         if (isSimbotLocal()) {
             logger.info("Is 'SIMBOT_LOCAL', offline")

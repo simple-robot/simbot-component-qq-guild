@@ -23,7 +23,7 @@ import love.forte.gradle.common.kotlin.multiplatform.applyTier3
 plugins {
     kotlin("multiplatform")
     kotlin("plugin.serialization")
-    id("org.jetbrains.dokka")
+    `dokka-convention`
     id("love.forte.plugin.suspend-transform")
 }
 

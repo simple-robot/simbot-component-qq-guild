@@ -22,7 +22,7 @@ import love.forte.gradle.common.kotlin.multiplatform.applyTier3
 
 plugins {
     kotlin("multiplatform")
-    id("org.jetbrains.dokka")
+    `dokka-convention`
 }
 
 setup(P.ComponentQQGuild)

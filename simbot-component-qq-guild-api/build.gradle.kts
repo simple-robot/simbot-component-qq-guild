@@ -27,7 +27,7 @@ import util.isCi
 plugins {
     kotlin("multiplatform")
     kotlin("plugin.serialization")
-    id("org.jetbrains.dokka")
+    `dokka-convention`
     alias(libs.plugins.ksp)
 }
 
