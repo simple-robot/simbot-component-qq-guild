@@ -47,7 +47,7 @@ dependencies {
     implementation(project(":simbot-component-qq-guild-core"))
     implementation(libs.simbot.core)
 
-    val ktorVersion = "2.3.12"
+    val ktorVersion = "2.3.13"
     implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
 
