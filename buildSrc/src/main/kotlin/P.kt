@@ -48,7 +48,7 @@ object P {
 
     object ComponentQQGuild : ProjectDetail() {
         const val GROUP = "love.forte.simbot.component"
-        const val DESCRIPTION = "Simple Robot框架下针对QQ频道的组件实现"
+        const val DESCRIPTION = "Simple Robot框架下针对 QQ bot 官方API的组件实现"
         const val HOMEPAGE = "https://github.com/simple-robot/simbot-component-qq-guild"
 
         override val group: String get() = GROUP
@@ -79,11 +79,12 @@ object P {
 
         override val licenses: List<License> = licenses {
             license {
-                name = "GNU GENERAL PUBLIC LICENSE, Version 3"
+                // Use SPDX identifier, see https://spdx.org/licenses/
+                name = "GPL-3.0-or-later"
                 url = "https://www.gnu.org/licenses/gpl-3.0-standalone.html"
             }
             license {
-                name = "GNU LESSER GENERAL PUBLIC LICENSE, Version 3"
+                name = "LGPL-3.0-or-later"
                 url = "https://www.gnu.org/licenses/lgpl-3.0-standalone.html"
             }
         }

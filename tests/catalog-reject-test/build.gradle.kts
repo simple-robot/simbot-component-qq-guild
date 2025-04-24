@@ -15,30 +15,16 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = "qq-guild"
-
-pluginManagement {
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
-        mavenLocal()
-    }
+plugins {
+    kotlin("jvm")
 }
 
-// internals
-include(":internal-processors:api-reader")
-include(":internal-processors:dispatch-serializer-processor")
-include(":internal-processors:intents-processor")
+kotlin {
 
-include(":simbot-component-qq-guild-api")
-include(":simbot-component-qq-guild-stdlib")
-include(":simbot-component-qq-guild-core")
-include(":simbot-component-qq-guild-internal-ed25519")
+}
 
-// samples
-include(":samples:webhook-server-ktor")
-include(":samples:webhook-server-spring")
-include(":samples:webhook-server-spring-webflux")
-
-//include(":tests:catalog-reject-test")
-
+dependencies {
+    implementation(project(":simbot-component-qq-guild-core"))
+//    implementation("io.ktor:ktor-client-core:3.1.2")
+//    implementation("io.ktor:ktor-client-core:2.3.12")
+}

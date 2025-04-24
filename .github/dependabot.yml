@@ -10,3 +10,12 @@ updates:
     assignees:
       - ForteScarlet
     open-pull-requests-limit: 10
+
+    ignore:
+      - dependency-name: 'io.ktor:*'
+        versions: ['3.+']
+      - dependency-name: 'io.ktor.plugin'
+        versions: ['3.+']
+      - dependency-name: 'love.forte.plugin.suspend-transform:*'
+      - dependency-name: 'love.forte.plugin.suspend-transform'
+      - dependency-name: 'org.jetbrains.dokka:*'

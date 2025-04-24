@@ -20,6 +20,7 @@ import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.assign
 import org.gradle.kotlin.dsl.get
+import org.gradle.kotlin.dsl.withType
 import org.gradle.kotlin.dsl.getByName
 import org.gradle.process.CommandLineArgumentProvider
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
@@ -31,7 +32,6 @@ import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
 @OptIn(ExperimentalKotlinGradlePluginApi::class)
 inline fun KotlinJvmTarget.configJava(crossinline block: KotlinJvmTarget.() -> Unit = {}) {
-    withJava()
     compilerOptions {
         javaParameters.set(true)
         freeCompilerArgs.addAll(
@@ -84,19 +84,20 @@ inline fun Project.configJavaCompileWithModule(
     jvmVersion: String = JVMConstants.KT_JVM_TARGET,
     crossinline block: JavaCompile.() -> Unit = {}
 ) {
-    tasks.named("compileJava", JavaCompile::class.java) {
+    tasks.withType<JavaCompile> {
         options.encoding = "UTF-8"
         sourceCompatibility = jvmVersion
         targetCompatibility = jvmVersion
 
-        println("$this sourceSets[\"main\"]: ${sourceSets["main"]}")
-        println("$this sourceSets[\"main\"].output: ${sourceSets["main"].output}")
-        println("$this sourceSets[\"main\"].output.asPath: ${sourceSets["main"].output.asPath}")
-
         if (moduleName != null) {
             options.compilerArgumentProviders.add(CommandLineArgumentProvider {
-                // Provide compiled Kotlin classes to javac – needed for Java/Kotlin mixed sources to work
-                listOf("--patch-module", "$moduleName=${sourceSets["main"].output.asPath}")
+                val sourceSet = sourceSets.findByName("main") ?: sourceSets.findByName("jvmMain")
+                if (sourceSet != null) {
+                    // Provide compiled Kotlin classes to javac – needed for Java/Kotlin mixed sources to work
+                    listOf("--patch-module", "$moduleName=${sourceSet.output.asPath}")
+                } else {
+                    emptyList()
+                }
             })
         }
 
