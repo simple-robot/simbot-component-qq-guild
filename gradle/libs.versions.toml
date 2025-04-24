@@ -19,7 +19,7 @@ ksp = "2.1.20-1.0.32"
 kotlinPoet = "2.1.0"
 # https://detekt.dev/docs/intro
 # TODO apply detekt
-detekt = "1.23.7"
+detekt = "1.23.8"
 
 #
 bouncycastle = "1.80"
