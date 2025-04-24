@@ -23,9 +23,8 @@ import love.forte.gradle.common.kotlin.multiplatform.applyTier3
 plugins {
     kotlin("multiplatform")
     kotlin("plugin.serialization")
-    `qq-guild-dokka-partial-configure`
+    id("org.jetbrains.dokka")
     id("love.forte.plugin.suspend-transform")
-    `qq-guild-module-config`
 }
 
 setup(P.ComponentQQGuild)

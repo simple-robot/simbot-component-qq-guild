@@ -27,9 +27,8 @@ import util.isCi
 plugins {
     kotlin("multiplatform")
     kotlin("plugin.serialization")
-    `qq-guild-dokka-partial-configure`
+    id("org.jetbrains.dokka")
     alias(libs.plugins.ksp)
-    `qq-guild-module-config`
 }
 
 setup(P.ComponentQQGuild)

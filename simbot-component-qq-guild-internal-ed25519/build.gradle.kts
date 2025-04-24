@@ -22,8 +22,7 @@ import love.forte.gradle.common.kotlin.multiplatform.applyTier3
 
 plugins {
     kotlin("multiplatform")
-    `qq-guild-dokka-partial-configure`
-    `qq-guild-module-config`
+    id("org.jetbrains.dokka")
 }
 
 setup(P.ComponentQQGuild)

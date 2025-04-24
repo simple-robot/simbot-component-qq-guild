@@ -4,7 +4,7 @@ kotlinx-coroutines = "1.9.0"
 kotlinx-serialization = "1.7.3"
 kotlinx-datetime = "0.6.2"
 kotlinx-io = "0.7.0"
-dokka = "1.9.20"
+dokka = "2.0.0"
 # 暂时不支持 3.x 的 ktor
 ktor = { prefer = "2.3.12", reject = ["3.+"] }
 log4j = "2.24.2"
