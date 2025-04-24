@@ -26,7 +26,7 @@ plugins {
     id("simbot-tencent-guild.dokka-multi-module")
     id("simbot-tencent-guild.nexus-publish")
     alias(libs.plugins.kotlinxBinaryCompatibilityValidator)
-    alias(libs.plugins.suspendTransform) apply false
+    id("love.forte.plugin.suspend-transform") apply false
 }
 
 setup(P.ComponentQQGuild)

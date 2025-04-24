@@ -24,7 +24,7 @@ plugins {
     kotlin("multiplatform")
     kotlin("plugin.serialization")
     `qq-guild-dokka-partial-configure`
-    alias(libs.plugins.suspendTransform)
+    id("love.forte.plugin.suspend-transform")
     `qq-guild-module-config`
 }
 
