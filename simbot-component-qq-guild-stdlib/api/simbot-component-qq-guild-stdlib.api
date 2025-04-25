@@ -5,7 +5,6 @@ public abstract interface class love/forte/simbot/qguild/stdlib/Bot : kotlinx/co
 	public synthetic fun emitEvent (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract synthetic fun emitEvent (Ljava/lang/String;Llove/forte/simbot/qguild/stdlib/EmitEventOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun emitEvent$default (Llove/forte/simbot/qguild/stdlib/Bot;Ljava/lang/String;Llove/forte/simbot/qguild/stdlib/EmitEventOptions;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
-	public static synthetic fun emitEvent$suspendImpl (Llove/forte/simbot/qguild/stdlib/Bot;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun emitEventAsync (Ljava/lang/String;)Ljava/util/concurrent/CompletableFuture;
 	public fun emitEventAsync (Ljava/lang/String;Llove/forte/simbot/qguild/stdlib/EmitEventOptions;)Ljava/util/concurrent/CompletableFuture;
 	public static synthetic fun emitEventAsync$default (Llove/forte/simbot/qguild/stdlib/Bot;Ljava/lang/String;Llove/forte/simbot/qguild/stdlib/EmitEventOptions;ILjava/lang/Object;)Ljava/util/concurrent/CompletableFuture;
@@ -256,13 +255,11 @@ public abstract interface class love/forte/simbot/qguild/stdlib/ExceptionProcess
 public abstract interface class love/forte/simbot/qguild/stdlib/JAsyncEventProcessor : love/forte/simbot/qguild/stdlib/EventProcessor {
 	public abstract fun async (Llove/forte/simbot/qguild/event/Signal$Dispatch;Ljava/lang/String;)Ljava/util/concurrent/CompletionStage;
 	public synthetic fun invoke (Llove/forte/simbot/qguild/event/Signal$Dispatch;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun invoke$suspendImpl (Llove/forte/simbot/qguild/stdlib/JAsyncEventProcessor;Llove/forte/simbot/qguild/event/Signal$Dispatch;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class love/forte/simbot/qguild/stdlib/JBlockEventProcessor : love/forte/simbot/qguild/stdlib/EventProcessor {
 	public abstract fun block (Llove/forte/simbot/qguild/event/Signal$Dispatch;Ljava/lang/String;)V
 	public synthetic fun invoke (Llove/forte/simbot/qguild/event/Signal$Dispatch;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun invoke$suspendImpl (Llove/forte/simbot/qguild/stdlib/JBlockEventProcessor;Llove/forte/simbot/qguild/event/Signal$Dispatch;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class love/forte/simbot/qguild/stdlib/SubscribeSequence : java/lang/Enum {
