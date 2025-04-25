@@ -58,7 +58,7 @@ jobs:
           gradle-version: ${{ env.GRADLE_VERSION }}
 
       - name: Gradle run all tests
-        run: gradle assemble allTests --stacktrace --warning-mode all
+        run: gradle assemble allTests --stacktrace --warning-mode all -Pkotlin.native.enableKlibsCrossCompilation=false
 
   publish-snapshots:
     name: Publish snapshots
