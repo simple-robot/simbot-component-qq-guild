@@ -33,7 +33,7 @@ env:
   SIMBOT_IS_SNAPSHOT: true
   SIMBOT_SNAPSHOT_ONLY: true
   GRADLE_OPTS: "-Dfile.encoding=UTF-8"
-  GRADLE_VERSION: 8.5
+  GRADLE_VERSION: 8.10.2
 
 
 jobs:
@@ -117,7 +117,7 @@ jobs:
             --warning-mode all
             -x test
             --build-cache
-            dokkaHtmlMultiModule
+            dokkaGenerate
 
       - name: Push to doc repository
         uses: peaceiris/actions-gh-pages@v3

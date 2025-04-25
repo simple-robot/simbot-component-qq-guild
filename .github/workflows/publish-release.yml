@@ -16,7 +16,7 @@ env:
   SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
   SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
   GRADLE_OPTS: "-Xmx8g -Xms2g -XX:MaxMetaspaceSize=1g -Dfile.encoding=UTF-8"
-  GRADLE_VERSION: 8.5
+  GRADLE_VERSION: 8.10.2
 
 
 jobs:
@@ -136,7 +136,7 @@ jobs:
         with:
           gradle-version: ${{ env.GRADLE_VERSION }}
           arguments: |
-            dokkaHtmlMultiModule
+            dokkaGenerate
             --info 
             --warning-mode all
             -x test

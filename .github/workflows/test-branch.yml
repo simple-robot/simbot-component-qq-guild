@@ -38,7 +38,7 @@ jobs:
       - name: Run All Tests
         uses: gradle/actions/setup-gradle@v3
         with:
-          gradle-version: 8.8
+          gradle-version: 8.10.2
           arguments: |
             assemble
             build
