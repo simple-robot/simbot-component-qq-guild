@@ -31,16 +31,12 @@ setup(P.ComponentQQGuild)
 
 apply(plugin = "qq-guild-multiplatform-maven-publish")
 
-configJsTestTasks()
-
 kotlin {
     explicitApi()
     applyDefaultHierarchyTemplate()
 
-    sourceSets.configureEach {
-        languageSettings {
-            optIn("love.forte.simbot.qguild.QGInternalApi")
-        }
+    compilerOptions {
+        optIn.add("love.forte.simbot.qguild.QGInternalApi")
     }
 
     configKotlinJvm()

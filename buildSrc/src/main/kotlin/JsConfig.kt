@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. ForteScarlet.
+ * Copyright (c) 2024-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -15,7 +15,6 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 
 
@@ -33,16 +32,4 @@ inline fun KotlinJsTargetDsl.configJs(
 
     binaries.library()
     block()
-}
-
-
-fun Project.configJsTestTasks() {
-    // val shouldRunJsBrowserTest = !hasProperty("teamcity") || hasProperty("enable-js-tests")
-    // if (shouldRunJsBrowserTest) return
-//    tasks.findByName("cleanJsBrowserTest")?.apply {
-//        onlyIf { false }
-//    }
-//    tasks.findByName("jsBrowserTest")?.apply {
-//        onlyIf { false }
-//    }
 }

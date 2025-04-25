@@ -22,9 +22,9 @@ import love.forte.simbot.gradle.suspendtransforms.addSimbotJvmTransforms
 
 plugins {
     idea
-    id("simbot-tencent-guild.changelog-generator")
+    `changelog-generator`
     `root-dokka`
-    id("simbot-tencent-guild.nexus-publish")
+    `nexus-publish`
     alias(libs.plugins.kotlinxBinaryCompatibilityValidator)
     id("love.forte.plugin.suspend-transform") apply false
 }

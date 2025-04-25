@@ -42,10 +42,10 @@ fun DokkaExtension.configSourceSets(project: Project) {
 
         configModuleMdInclude(project)
 
-        perPackageOption {
-            matchingRegex.set(".*internal.*") // will match all .internal packages and sub-packages
-            suppress.set(true)
-        }
+//        perPackageOption {
+//            matchingRegex.set("(.*\\.)?internal(\\..*)?") // will match all .internal packages and sub-packages
+//            suppress.set(true)
+//        }
 
         configSourceLink(project)
 

@@ -29,16 +29,9 @@ setup(P.ComponentQQGuild)
 
 apply(plugin = "qq-guild-multiplatform-maven-publish")
 
-configJsTestTasks()
-
 kotlin {
     explicitApi()
     applyDefaultHierarchyTemplate()
-
-    sourceSets.configureEach {
-        languageSettings {
-        }
-    }
 
     configKotlinJvm()
 
@@ -93,3 +86,8 @@ kotlin {
 
 configJavaCompileWithModule("simbot.component.qqguild.internal.ed25519s")
 
+dokka {
+    dokkaSourceSets.all {
+        suppress = true
+    }
+}
