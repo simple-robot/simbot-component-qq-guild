@@ -21,15 +21,13 @@ import love.forte.gradle.common.kotlin.multiplatform.applyTier1
 import love.forte.gradle.common.kotlin.multiplatform.applyTier2
 import love.forte.gradle.common.kotlin.multiplatform.applyTier3
 import org.jetbrains.dokka.gradle.DokkaTaskPartial
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import util.isCi
 
 plugins {
     kotlin("multiplatform")
     kotlin("plugin.serialization")
-    `qq-guild-dokka-partial-configure`
+    `dokka-convention`
     alias(libs.plugins.ksp)
-    `qq-guild-module-config`
 }
 
 setup(P.ComponentQQGuild)
@@ -42,17 +40,9 @@ kotlin {
     explicitApi()
     applyDefaultHierarchyTemplate()
 
-    @OptIn(ExperimentalKotlinGradlePluginApi::class)
     compilerOptions {
-        freeCompilerArgs.addAll(
-            "-Xexpect-actual-classes"
-        )
-    }
-
-    sourceSets.configureEach {
-        languageSettings {
-            optIn("love.forte.simbot.qguild.QGInternalApi")
-        }
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+        optIn.add("love.forte.simbot.qguild.QGInternalApi")
     }
 
     configKotlinJvm()

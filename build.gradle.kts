@@ -22,9 +22,9 @@ import love.forte.simbot.gradle.suspendtransforms.addSimbotJvmTransforms
 
 plugins {
     idea
-    id("simbot-tencent-guild.changelog-generator")
-    id("simbot-tencent-guild.dokka-multi-module")
-    id("simbot-tencent-guild.nexus-publish")
+    `changelog-generator`
+    `root-dokka`
+    `nexus-publish`
     alias(libs.plugins.kotlinxBinaryCompatibilityValidator)
     id("love.forte.plugin.suspend-transform") apply false
 }
@@ -59,10 +59,6 @@ allprojects {
 
 subprojects {
     afterEvaluate {
-        if (plugins.hasPlugin("io.gitlab.arturbosch.detekt")) {
-            return@afterEvaluate
-        }
-
         if (plugins.hasPlugin(libs.plugins.suspendTransform.get().pluginId)) {
             extensions.configure<SuspendTransformPluginExtension>("suspendTransformPlugin") {
                 includeRuntime = false
@@ -114,3 +110,35 @@ apiValidation {
 
     apiDumpDirectory = "api"
 }
+
+//subprojects {
+//    afterEvaluate {
+//        val p = this
+//        if (plugins.hasPlugin("org.jetbrains.dokka")) {
+//            dokka {
+//                configSourceSets(p)
+//                pluginsConfiguration.html {
+//                    configHtmlCustoms(p)
+//                }
+//            }
+//            rootProject.dependencies.dokka(p)
+//        }
+//    }
+//}
+//
+//dokka {
+//    moduleName = "Simple Robot 组件 | QQ"
+//
+//    dokkaPublications.all {
+//        if (isSimbotLocal()) {
+//            logger.info("Is 'SIMBOT_LOCAL', offline")
+//            offlineMode = true
+//        }
+//    }
+//
+//    configSourceSets(project)
+//
+//    pluginsConfiguration.html {
+//        configHtmlCustoms(project)
+//    }
+//}

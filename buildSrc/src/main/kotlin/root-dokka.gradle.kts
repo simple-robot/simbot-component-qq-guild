@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025. ForteScarlet.
+ * Copyright (c) 2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -15,15 +15,32 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-//plugins {
-//    id("love.forte.plugin.suspend-transform")
-//}
-//
-//suspendTransform {
-//    includeRuntime = false
-//    includeAnnotation = false
-//
-//    addSimbotJvmTransformers()
-//}
-//
 
+plugins {
+    id("org.jetbrains.dokka")
+}
+
+// region Dokka
+dependencies {
+    dokka(project(":simbot-component-qq-guild-api"))
+    dokka(project(":simbot-component-qq-guild-stdlib"))
+    dokka(project(":simbot-component-qq-guild-core"))
+//    dokka(project(":simbot-component-qq-guild-internal-ed25519"))
+}
+
+dokka {
+    moduleName = "Simple Robot 组件 | QQ"
+    dokkaPublications.all {
+        if (isSimbotLocal()) {
+            logger.info("Is 'SIMBOT_LOCAL', offline")
+            offlineMode = true
+        }
+    }
+
+    configSourceSets(project)
+
+    pluginsConfiguration.html {
+        configHtmlCustoms(project)
+    }
+}
+// endregion

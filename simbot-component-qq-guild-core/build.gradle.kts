@@ -23,25 +23,20 @@ import love.forte.gradle.common.kotlin.multiplatform.applyTier3
 plugins {
     kotlin("multiplatform")
     kotlin("plugin.serialization")
-    `qq-guild-dokka-partial-configure`
+    `dokka-convention`
     id("love.forte.plugin.suspend-transform")
-    `qq-guild-module-config`
 }
 
 setup(P.ComponentQQGuild)
 
 apply(plugin = "qq-guild-multiplatform-maven-publish")
 
-configJsTestTasks()
-
 kotlin {
     explicitApi()
     applyDefaultHierarchyTemplate()
 
-    sourceSets.configureEach {
-        languageSettings {
-            optIn("love.forte.simbot.qguild.QGInternalApi")
-        }
+    compilerOptions {
+        optIn.add("love.forte.simbot.qguild.QGInternalApi")
     }
 
     configKotlinJvm()

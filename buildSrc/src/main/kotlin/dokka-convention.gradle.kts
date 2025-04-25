@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. ForteScarlet.
+ * Copyright (c) 2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -15,3 +15,15 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+import org.jetbrains.kotlin.com.intellij.openapi.util.text.HtmlChunk.p
+
+plugins {
+    id("org.jetbrains.dokka")
+}
+
+dokka {
+    configSourceSets(project)
+    pluginsConfiguration.html {
+        configHtmlCustoms(project)
+    }
+}

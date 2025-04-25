@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024. ForteScarlet.
+ * Copyright (c) 2023-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -25,21 +25,20 @@ import love.forte.gradle.common.publication.configure.setupPom
 plugins {
     signing
     `maven-publish`
+    id("org.jetbrains.dokka")
 }
 
 
 setup(P.ComponentQQGuild)
 
-val p = project
 val isSnapshot = project.version.toString().contains("SNAPSHOT", true)
 
 val jarJavadoc by tasks.registering(Jar::class) {
     group = "documentation"
     archiveClassifier.set("javadoc")
     if (!(isSnapshot || isSnapshot() || isSimbotLocal())) {
-        dependsOn(tasks.dokkaHtml)
-        from(tasks.dokkaHtml.flatMap { it.outputDirectory })
-        // from(tasks.findByName("dokkaHtml"))
+        dependsOn(tasks.dokkaGeneratePublicationHtml)
+        from(tasks.dokkaGeneratePublicationHtml.flatMap { it.outputDirectory })
     }
 }
 
@@ -94,10 +93,3 @@ fun show() {
         group, name, version, description, systemProp("os.name")
     )
 }
-
-
-inline val Project.sourceSets: SourceSetContainer
-    get() = extensions.getByName("sourceSets") as SourceSetContainer
-
-internal val TaskContainer.dokkaHtml: TaskProvider<org.jetbrains.dokka.gradle.DokkaTask>
-    get() = named<org.jetbrains.dokka.gradle.DokkaTask>("dokkaHtml")
