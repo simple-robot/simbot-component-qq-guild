@@ -39,9 +39,15 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: ${{ env.GRADLE_VERSION }}
+          arguments: |
+            assemble
+            allTests
+            --stacktrace 
+            --warning-mode all 
+            -Pkotlin.native.enableKlibsCrossCompilation=false
 
-      - name: Run all tests
-        run: gradle assemble allTests --stacktrace --warning-mode all -Pkotlin.native.enableKlibsCrossCompilation=false
+#      - name: Run all tests
+#        run: gradle assemble allTests --stacktrace --warning-mode all -Pkotlin.native.enableKlibsCrossCompilation=false
 
       - name: Upload test reports
         uses: actions/upload-artifact@v4
