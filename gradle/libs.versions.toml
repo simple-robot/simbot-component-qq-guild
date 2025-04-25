@@ -42,7 +42,7 @@ simbot-common-annotations = { module = "love.forte.simbot.common:simbot-common-a
 simbot-common-loop = { module = "love.forte.simbot.common:simbot-common-stage-loop", version.ref = "simbot" }
 simbot-gradle = { module = "love.forte.simbot.gradle:simbot-gradle-suspendtransforms", version.ref = "simbot" }
 # jetbrains-annotation
-jetbrains-annotations = "org.jetbrains:annotations:26.0.1"
+jetbrains-annotations = "org.jetbrains:annotations:26.0.2"
 
 # kotlinx-coroutines
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
