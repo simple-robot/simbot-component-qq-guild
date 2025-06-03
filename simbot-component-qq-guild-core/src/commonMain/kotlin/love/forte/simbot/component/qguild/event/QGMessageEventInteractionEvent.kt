@@ -17,7 +17,6 @@
 
 package love.forte.simbot.component.qguild.event
 
-import love.forte.simbot.ability.SendSupport
 import love.forte.simbot.component.qguild.bot.QGBot
 import love.forte.simbot.event.*
 
@@ -28,37 +27,35 @@ import love.forte.simbot.event.*
  * @author ForteScarlet
  */
 @SubclassOptInRequired(FuzzyEventTypeImplementation::class)
-public interface QGSendSupportInteractionEvent :
-    QGInternalMessageInteractionEvent,
-    SendSupportInteractionEvent {
+public interface QGMessageEventInteractionEvent : MessageEventInteractionEvent,
+    QGInternalMessageInteractionEvent {
     override val bot: QGBot
-    override val content: SendSupport
+    override val content: QGMessageEvent
 }
 
 /**
- * QG组件中针对 [SendSupport.send] 的拦截事件。
+ * QG组件中针对 [QGMessageEvent.reply] 的拦截事件。
  * 可以对其中的参数进行修改。
  *
  * @since 4.2.0
- * @author ForteScarlet
  */
-@SubclassOptInRequired(FuzzyEventTypeImplementation::class)
-public interface QGSendSupportPreSendEvent :
-    SendSupportPreSendEvent,
-    QGInternalMessagePreSendEvent,
-    QGSendSupportInteractionEvent
+@OptIn(FuzzyEventTypeImplementation::class)
+public interface OneBotMessageEventPreReplyEvent :
+    QGMessageEventInteractionEvent,
+    MessageEventPreReplyEvent {
+    override val content: QGMessageEvent
+    override val message: InteractionMessage
+}
 
 /**
- * QG组件中针对 [SendSupport.send] 的通知事件。
- * 会在 [SendSupport.send] 执行成功后带着它的相关结果进行异步通知。
+ * QG组件中针对 [QGMessageEvent.reply] 的通知事件。
  *
  * @since 4.2.0
- * @author ForteScarlet
  */
-@SubclassOptInRequired(FuzzyEventTypeImplementation::class)
-public interface QGSendSupportPostSendEvent :
-    SendSupportPostSendEvent,
-    QGInternalMessagePostSendEvent,
-    QGSendSupportInteractionEvent {
+@OptIn(FuzzyEventTypeImplementation::class)
+public interface OneBotMessageEventPostReplyEvent :
+    QGMessageEventInteractionEvent,
+    MessageEventPostReplyEvent {
+    override val content: QGMessageEvent
     override val message: InteractionMessage
 }
