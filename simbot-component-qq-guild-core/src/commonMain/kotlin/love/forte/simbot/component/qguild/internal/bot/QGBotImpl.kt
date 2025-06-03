@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024. ForteScarlet.
+ * Copyright (c) 2021-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -33,6 +33,7 @@ import love.forte.simbot.component.qguild.QQGuildComponent
 import love.forte.simbot.component.qguild.bot.QGBot
 import love.forte.simbot.component.qguild.bot.config.QGBotComponentConfiguration
 import love.forte.simbot.component.qguild.channel.*
+import love.forte.simbot.component.qguild.event.QGInternalInterceptionException
 import love.forte.simbot.component.qguild.group.QGGroup
 import love.forte.simbot.component.qguild.group.QGGroupRelation
 import love.forte.simbot.component.qguild.guild.QGGuild
@@ -51,8 +52,7 @@ import love.forte.simbot.component.qguild.message.QGMedia
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
 import love.forte.simbot.component.qguild.message.sendDmsMessage
 import love.forte.simbot.component.qguild.message.sendMessage
-import love.forte.simbot.event.EventDispatcher
-import love.forte.simbot.event.onEachError
+import love.forte.simbot.event.*
 import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
@@ -396,6 +396,19 @@ internal class QGBotImpl(
     @Volatile
     private var sourceListenerDisposableHandle: DisposableHandle? = null
 
+    private suspend fun pushEventAndCollect(event: Event) {
+        pushEvent(event).collect()
+    }
+
+    internal fun pushEventAndCollectAsync(event: Event): Job {
+        return pushEvent(event).launchIn(this)
+    }
+
+    private fun pushEvent(event: Event): Flow<EventResult> {
+        return eventDispatcher.push(event)
+            .onEachError { e -> logger.error("Event {} process failed: {}", event, e, e.content) }
+    }
+
     /**
      * 启动当前bot。
      */
@@ -418,22 +431,16 @@ internal class QGBotImpl(
                 fun pushStartedEvent() {
                     launch {
                         val event = QGBotStartedEventImpl(this@QGBotImpl)
-                        eventDispatcher.push(event)
-                            .onEachError { e -> logger.error("Event {} process failed: {}", event, e, e.content) }
-                            .collect()
+                        pushEventAndCollect(event)
                     }
                 }
 
                 if (!isStarted) {
                     pushStartedEvent()
-                    return@also
                 }
-
-
-                isStarted = true
-                pushStartedEvent()
             }
 
+            isStarted = true
         }
     }
 
@@ -496,6 +503,19 @@ internal class QGBotImpl(
     private val isTransmitCacheable = cacheable && cacheConfig?.transmitCacheConfig?.enable == true
 
     internal fun <T> checkIfTransmitCacheable(target: T): T? = target.takeIf { isTransmitCacheable }
+
+    internal suspend fun emitMessagePreSendEvent(event: InternalMessagePreSendEvent) {
+        val errors = pushEvent(event)
+            .filterIsInstance<StandardEventResult.Error>()
+            .toList()
+
+        if (errors.isNotEmpty()) {
+            val ex = QGInternalInterceptionException("Internal message pre send event process failed")
+            errors.forEach { ex.addSuppressed(it.content) }
+            logger.error("Internal message pre send event process failed", ex)
+            throw ex
+        }
+    }
 
     override fun toString(): String {
         // 还未初始化

@@ -19,6 +19,7 @@ package love.forte.simbot.component.qguild.internal.event
 
 import love.forte.simbot.ability.SendSupport
 import love.forte.simbot.annotations.ExperimentalSimbotAPI
+import love.forte.simbot.common.atomic.atomic
 import love.forte.simbot.common.id.ID
 import love.forte.simbot.common.id.UUID
 import love.forte.simbot.common.time.Timestamp
@@ -38,7 +39,26 @@ internal class QGSendSupportPreSendEventImpl(
     override val time: Timestamp = Timestamp.now(),
 ) : QGSendSupportPreSendEvent {
     override val id: ID = UUID.random()
-    override var currentMessage: InteractionMessage = message
+
+    private val currentMessageUsed = atomic(false)
+    private var _currentMessage: InteractionMessage = message
+
+    override var currentMessage: InteractionMessage
+        get() = _currentMessage
+        set(value) {
+            if (currentMessageUsed.value) {
+                error("`currentMessage` has been used.")
+            }
+            _currentMessage = value
+        }
+
+
+    fun useMessage(): InteractionMessage {
+        if (!currentMessageUsed.compareAndSet(expect = false, value = true)) {
+            error("`currentMessage` has been used.")
+        }
+        return _currentMessage
+    }
 }
 
 @OptIn(FuzzyEventTypeImplementation::class, ExperimentalSimbotAPI::class)
