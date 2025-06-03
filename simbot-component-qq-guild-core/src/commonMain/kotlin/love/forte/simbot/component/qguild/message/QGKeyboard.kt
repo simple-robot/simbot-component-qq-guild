@@ -18,7 +18,7 @@
 package love.forte.simbot.component.qguild.message
 
 import kotlinx.serialization.Serializable
-import love.forte.simbot.component.qguild.message.ImageParser.logger
+import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.Messages
 import love.forte.simbot.qguild.model.MessageKeyboard
@@ -57,9 +57,11 @@ public data class QGKeyboard internal constructor(
 }
 
 internal object KeyboardParser : SendingMessageParser {
+    internal val logger = LoggerFactory.getLogger("love.forte.simbot.component.qguild.message.KeyboardParser")
+
     override suspend fun invoke(
         index: Int,
-        element: love.forte.simbot.message.Message.Element,
+        element: Message.Element,
         messages: Messages?,
         builderContext: SendingMessageParser.BuilderContext
     ) {
