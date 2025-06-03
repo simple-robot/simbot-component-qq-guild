@@ -1813,6 +1813,34 @@ public abstract class love/forte/simbot/component/qguild/message/QGGroupAndC2CMe
 	protected fun queryReferenceMessage (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
+public final class love/forte/simbot/component/qguild/message/QGKeyboard : love/forte/simbot/component/qguild/message/QGMessageElement {
+	public static final field Companion Llove/forte/simbot/component/qguild/message/QGKeyboard$Companion;
+	public final fun component1 ()Llove/forte/simbot/qguild/model/MessageKeyboard;
+	public static final fun create (Llove/forte/simbot/qguild/model/MessageKeyboard;)Llove/forte/simbot/component/qguild/message/QGKeyboard;
+	public static final fun createById (Ljava/lang/String;)Llove/forte/simbot/component/qguild/message/QGKeyboard;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getKeyboard ()Llove/forte/simbot/qguild/model/MessageKeyboard;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public synthetic class love/forte/simbot/component/qguild/message/QGKeyboard$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Llove/forte/simbot/component/qguild/message/QGKeyboard$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Llove/forte/simbot/component/qguild/message/QGKeyboard;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Llove/forte/simbot/component/qguild/message/QGKeyboard;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class love/forte/simbot/component/qguild/message/QGKeyboard$Companion {
+	public final fun create (Llove/forte/simbot/qguild/model/MessageKeyboard;)Llove/forte/simbot/component/qguild/message/QGKeyboard;
+	public final fun createById (Ljava/lang/String;)Llove/forte/simbot/component/qguild/message/QGKeyboard;
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class love/forte/simbot/component/qguild/message/QGMarkdown : love/forte/simbot/component/qguild/message/QGMessageElement {
 	public static final field Companion Llove/forte/simbot/component/qguild/message/QGMarkdown$Companion;
 	public static final fun byMarkdown (Llove/forte/simbot/qguild/model/Message$Markdown;)Llove/forte/simbot/component/qguild/message/QGMarkdown;
