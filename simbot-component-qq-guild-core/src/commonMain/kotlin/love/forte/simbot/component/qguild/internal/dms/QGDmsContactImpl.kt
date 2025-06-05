@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. ForteScarlet.
+ * Copyright (c) 2024-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -20,13 +20,15 @@ package love.forte.simbot.component.qguild.internal.dms
 import love.forte.simbot.component.qguild.dms.QGDmsContact
 import love.forte.simbot.component.qguild.internal.bot.QGBotImpl
 import love.forte.simbot.component.qguild.internal.bot.newSupervisorCoroutineContext
+import love.forte.simbot.component.qguild.internal.event.QGSendSupportPreSendEventImpl
 import love.forte.simbot.component.qguild.message.sendDmsMessage
-import love.forte.simbot.component.qguild.message.sendMessage
+import love.forte.simbot.event.InteractionMessage
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.message.MessageReceipt
 import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.addStackTrace
+import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.qguild.model.User
 import kotlin.coroutines.CoroutineContext
 
@@ -44,35 +46,58 @@ internal class QGDmsContactImpl(
     override val coroutineContext: CoroutineContext = bot.newSupervisorCoroutineContext()
 
     override suspend fun send(text: String): MessageReceipt {
-        return try {
-            bot.sendDmsMessage(guildId, text) {
-                if (msgId == null) {
-                    msgId = currentMsgId
-                }
-            }
-        } catch (e: QQGuildApiException) {
-            throw e.addStackTrace { "dmsContact.send" }
-        }
+        return emitPreSendEventForSend(InteractionMessage.valueOf(text))
     }
 
     override suspend fun send(message: Message): MessageReceipt {
-        return try {
-            bot.sendDmsMessage(guildId, message) {
-                if (msgId == null) {
-                    msgId = currentMsgId
-                }
-            }
-        } catch (e: QQGuildApiException) {
-            throw e.addStackTrace { "dmsContact.send" }
-        }
+        return emitPreSendEventForSend(InteractionMessage.valueOf(message))
     }
 
     override suspend fun send(messageContent: MessageContent): MessageReceipt {
-        return try {
-            bot.sendMessage(source.id, messageContent) {
-                if (msgId == null) {
-                    msgId = currentMsgId
+        return emitPreSendEventForSend(InteractionMessage.valueOf(messageContent))
+    }
+
+    private suspend fun emitPreSendEventForSend(
+        message: InteractionMessage,
+    ): MessageReceipt {
+        val event = QGSendSupportPreSendEventImpl(
+            bot = bot,
+            content = this,
+            message = message
+        )
+        bot.emitMessagePreSendEvent(event)
+        val message = event.useMessage()
+        return sendByInteractionMessage(message)
+    }
+
+    private suspend fun sendByInteractionMessage(message: InteractionMessage): MessageReceipt {
+        fun MessageSendApi.Body.Builder.configMsgId() {
+            if (msgId == null) {
+                msgId = currentMsgId
+            }
+        }
+
+        try {
+            return when (message) {
+                is InteractionMessage.Message -> {
+                    bot.sendDmsMessage(guildId, message.message) {
+                        configMsgId()
+                    }
                 }
+
+                is InteractionMessage.MessageContent -> {
+                    bot.sendDmsMessage(guildId, message.messageContent) {
+                        configMsgId()
+                    }
+                }
+
+                is InteractionMessage.Text -> {
+                    bot.sendDmsMessage(guildId, message.text) {
+                        configMsgId()
+                    }
+                }
+
+                is InteractionMessage.Extension -> error("Unknown type of InteractionMessage: $message")
             }
         } catch (e: QQGuildApiException) {
             throw e.addStackTrace { "dmsContact.send" }

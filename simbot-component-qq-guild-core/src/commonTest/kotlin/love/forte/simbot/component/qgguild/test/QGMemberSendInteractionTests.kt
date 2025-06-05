@@ -4,10 +4,15 @@ import io.ktor.client.engine.mock.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import love.forte.simbot.common.atomic.atomic
 import love.forte.simbot.common.id.LongID.Companion.ID
 import love.forte.simbot.common.id.UUID
 import love.forte.simbot.component.qguild.event.QGSendSupportInteractionEvent
+import love.forte.simbot.component.qguild.event.QGSendSupportPreSendEvent
 import love.forte.simbot.component.qguild.guild.QGMember
 import love.forte.simbot.component.qguild.internal.bot.QGBotImpl
 import love.forte.simbot.component.qguild.internal.guild.QGMemberImpl
@@ -39,13 +44,24 @@ class QGMemberSendInteractionTests : AbstractInteractionTests() {
         )
     }
 
-    private fun MockRequestHandleScope.respondSendOk(req: HttpRequestData): HttpResponseData {
+    private suspend fun MockRequestHandleScope.respondSendOk(
+        req: HttpRequestData,
+        assertText: String? = null
+    ): HttpResponseData {
         if (req.url.encodedPath.endsWith("users/@me/dms")) {
-            return respondOk("""
+            return respondOk(
+                """
                 {"guild_id":"555555",
                 "channel_id":"666666",
                 create_time: "${Clock.System.now()}"}
-            """.trimIndent())
+            """.trimIndent()
+            )
+        }
+
+        if (assertText != null) {
+            val body = req.body.toByteArray().decodeToString()
+            val json = Json.decodeFromString(JsonElement.serializer(), body)
+            assertEquals(assertText, json.jsonObject["content"]?.jsonPrimitive?.content)
         }
 
         return respondOk(
@@ -74,16 +90,16 @@ class QGMemberSendInteractionTests : AbstractInteractionTests() {
             prepare = {
                 atomic(false) to member(it)
             },
-            listener = { (atob, friend), e, _, _ ->
+            listener = { (atob, member), e, _, _ ->
                 atob.value = true
                 assertIs<QGMember>(e.content)
-                assertSame(friend, e.content)
+                assertSame(member, e.content)
                 val message = e.message
                 assertIs<InteractionMessage.Text>(message)
                 assertEquals("TEXT", message.text)
             }
-        ) { (atob, friend), _ ->
-            friend.send("TEXT")
+        ) { (atob, member), _ ->
+            member.send("TEXT")
             assertTrue(atob.value)
         }
 
@@ -93,18 +109,40 @@ class QGMemberSendInteractionTests : AbstractInteractionTests() {
             prepare = {
                 atomic(false) to member(it)
             },
-            listener = { (atob, friend), e, _, _ ->
+            listener = { (atob, member), e, _, _ ->
                 atob.value = true
                 assertIs<QGMember>(e.content)
-                assertSame(friend, e.content)
+                assertSame(member, e.content)
                 val message = e.message
                 assertIs<InteractionMessage.Message>(message)
                 val messageMessage = message.message
                 assertIs<Text>(messageMessage)
                 assertEquals("TEXT", messageMessage.text)
             }
-        ) { (atob, friend), _ ->
-            friend.send(Text { "TEXT" })
+        ) { (atob, member), _ ->
+            member.send(Text { "TEXT" })
+            assertTrue(atob.value)
+        }
+
+        // 修改TEXT->TEXT_EDIT
+        testInteractionEvent<_, QGSendSupportInteractionEvent>(
+            mockClient = { respondSendOk(it, "TEXT_EDIT") },
+            prepare = {
+                atomic(false) to member(it)
+            },
+            listener = { (atob, member), e, _, _ ->
+                atob.value = true
+                assertIs<QGSendSupportPreSendEvent>(e)
+                assertIs<QGMember>(e.content)
+                assertSame(member, e.content)
+                val message = e.message
+                assertIs<InteractionMessage.Text>(message)
+                assertEquals("TEXT", message.text)
+                // edit message
+                e.currentMessage = InteractionMessage.valueOf("TEXT_EDIT")
+            }
+        ) { (atob, member), _ ->
+            member.send("TEXT")
             assertTrue(atob.value)
         }
     }
