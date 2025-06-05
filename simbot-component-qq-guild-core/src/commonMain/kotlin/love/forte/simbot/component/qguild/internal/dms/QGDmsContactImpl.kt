@@ -46,18 +46,18 @@ internal class QGDmsContactImpl(
     override val coroutineContext: CoroutineContext = bot.newSupervisorCoroutineContext()
 
     override suspend fun send(text: String): MessageReceipt {
-        return emitPreSendEventForSend(InteractionMessage.valueOf(text))
+        return emitPreSendEventAndSend(InteractionMessage.valueOf(text))
     }
 
     override suspend fun send(message: Message): MessageReceipt {
-        return emitPreSendEventForSend(InteractionMessage.valueOf(message))
+        return emitPreSendEventAndSend(InteractionMessage.valueOf(message))
     }
 
     override suspend fun send(messageContent: MessageContent): MessageReceipt {
-        return emitPreSendEventForSend(InteractionMessage.valueOf(messageContent))
+        return emitPreSendEventAndSend(InteractionMessage.valueOf(messageContent))
     }
 
-    private suspend fun emitPreSendEventForSend(
+    private suspend fun emitPreSendEventAndSend(
         message: InteractionMessage,
     ): MessageReceipt {
         val event = QGSendSupportPreSendEventImpl(
