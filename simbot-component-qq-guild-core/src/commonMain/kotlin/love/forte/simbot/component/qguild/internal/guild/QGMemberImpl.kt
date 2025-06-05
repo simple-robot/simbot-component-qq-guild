@@ -38,6 +38,7 @@ import love.forte.simbot.component.qguild.message.QGMessageContent
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
 import love.forte.simbot.component.qguild.message.sendMessage
 import love.forte.simbot.component.qguild.role.QGMemberRole
+import love.forte.simbot.component.qguild.utils.alsoEmitPostSendEvent
 import love.forte.simbot.event.InteractionMessage
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
@@ -178,7 +179,7 @@ internal class QGMemberImpl(
             }
 
             else -> error("Unknown type of InteractionMessage: $message")
-        }
+        }.alsoEmitPostSendEvent(bot, this, message)
     }
 
 

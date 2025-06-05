@@ -22,6 +22,7 @@ import love.forte.simbot.component.qguild.internal.bot.QGBotImpl
 import love.forte.simbot.component.qguild.internal.bot.newSupervisorCoroutineContext
 import love.forte.simbot.component.qguild.internal.event.QGSendSupportPreSendEventImpl
 import love.forte.simbot.component.qguild.message.sendDmsMessage
+import love.forte.simbot.component.qguild.utils.alsoEmitPostSendEvent
 import love.forte.simbot.event.InteractionMessage
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
@@ -98,7 +99,7 @@ internal class QGDmsContactImpl(
                 }
 
                 is InteractionMessage.Extension -> error("Unknown type of InteractionMessage: $message")
-            }
+            }.alsoEmitPostSendEvent(bot, this, message)
         } catch (e: QQGuildApiException) {
             throw e.addStackTrace { "dmsContact.send" }
         }

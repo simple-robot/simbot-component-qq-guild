@@ -28,6 +28,7 @@ import love.forte.simbot.component.qguild.internal.bot.newSupervisorCoroutineCon
 import love.forte.simbot.component.qguild.internal.event.QGSendSupportPreSendEventImpl
 import love.forte.simbot.component.qguild.message.QGMedia
 import love.forte.simbot.component.qguild.message.sendGroupMessage
+import love.forte.simbot.component.qguild.utils.alsoEmitPostSendEvent
 import love.forte.simbot.event.InteractionMessage
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
@@ -121,7 +122,7 @@ internal class QGGroupImpl(
             else -> {
                 error("Unknown type of InteractionMessage: $message")
             }
-        }
+        }.alsoEmitPostSendEvent(bot, this, message)
     }
 
     override suspend fun uploadMedia(url: String, type: Int): QGMedia {
