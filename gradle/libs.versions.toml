@@ -22,7 +22,7 @@ kotlinPoet = "2.1.0"
 detekt = "1.23.8"
 
 #
-bouncycastle = "1.80"
+bouncycastle = "1.81"
 #
 eddsa = "0.3.0"
 # https://github.com/ionspin/kotlin-multiplatform-libsodium
