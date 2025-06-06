@@ -18,6 +18,7 @@
 package love.forte.simbot.component.qguild.event
 
 import love.forte.simbot.component.qguild.bot.QGBot
+import love.forte.simbot.component.qguild.message.QGMessageReceipt
 import love.forte.simbot.event.*
 
 /**
@@ -30,7 +31,7 @@ import love.forte.simbot.event.*
 public interface QGMessageEventInteractionEvent : MessageEventInteractionEvent,
     QGInternalMessageInteractionEvent {
     override val bot: QGBot
-    override val content: QGMessageEvent
+    override val content: QGBaseMessageEvent<*>
 }
 
 /**
@@ -39,11 +40,11 @@ public interface QGMessageEventInteractionEvent : MessageEventInteractionEvent,
  *
  * @since 4.2.0
  */
-@OptIn(FuzzyEventTypeImplementation::class)
-public interface OneBotMessageEventPreReplyEvent :
+@SubclassOptInRequired(FuzzyEventTypeImplementation::class)
+public interface QGMessageEventPreReplyEvent :
     QGMessageEventInteractionEvent,
     MessageEventPreReplyEvent {
-    override val content: QGMessageEvent
+    override val content: QGBaseMessageEvent<*>
     override val message: InteractionMessage
 }
 
@@ -52,10 +53,135 @@ public interface OneBotMessageEventPreReplyEvent :
  *
  * @since 4.2.0
  */
-@OptIn(FuzzyEventTypeImplementation::class)
-public interface OneBotMessageEventPostReplyEvent :
+@SubclassOptInRequired(FuzzyEventTypeImplementation::class)
+public interface QGMessageEventPostReplyEvent :
     QGMessageEventInteractionEvent,
     MessageEventPostReplyEvent {
-    override val content: QGMessageEvent
+    override val content: QGBaseMessageEvent<*>
     override val message: InteractionMessage
+    override val receipt: QGMessageReceipt
 }
+
+/**
+ * QG组件中针对 [QGAtMessageCreateEvent.reply] 的拦截事件。
+ * @since 4.2.0
+ */
+@SubclassOptInRequired(FuzzyEventTypeImplementation::class)
+public interface QGAtMessageCreateEventInteractionEvent :
+    QGMessageEventInteractionEvent,
+    ChatChannelMessageEventInteractionEvent {
+    override val content: QGAtMessageCreateEvent
+}
+
+/**
+ * 针对 [ChatChannelMessageEvent.reply] 的发送前拦截事件。
+ * @since 4.2.0
+ */
+@OptIn(FuzzyEventTypeImplementation::class)
+public interface QGAtMessageCreateEventPreReplyEvent :
+    QGAtMessageCreateEventInteractionEvent,
+    QGMessageEventPreReplyEvent,
+    ChatChannelMessageEventPreReplyEvent
+
+/**
+ * 针对 [ChatChannelMessageEvent.reply] 的发送后通知事件。
+ * @since 4.2.0
+ */
+@OptIn(FuzzyEventTypeImplementation::class)
+public interface QGAtMessageCreateEventPostReplyEvent :
+    QGAtMessageCreateEventInteractionEvent,
+    QGMessageEventPostReplyEvent,
+    ChatChannelMessageEventPostReplyEvent
+
+/**
+ * QG组件中针对 [QGDirectMessageCreateEvent.reply] 的拦截事件。
+ * @since 4.2.0
+ */
+@SubclassOptInRequired(FuzzyEventTypeImplementation::class)
+public interface QGDirectMessageCreateEventInteractionEvent :
+    QGMessageEventInteractionEvent,
+    ContactMessageEventInteractionEvent {
+    override val content: QGDirectMessageCreateEvent
+}
+
+/**
+ * 针对 [QGDirectMessageCreateEvent.reply] 的发送前拦截事件。
+ * @since 4.2.0
+ */
+@OptIn(FuzzyEventTypeImplementation::class)
+public interface QGDirectMessageCreateEventPreReplyEvent :
+    QGDirectMessageCreateEventInteractionEvent,
+    QGMessageEventPreReplyEvent,
+    ContactMessageEventPreReplyEvent
+
+/**
+ * 针对 [QGDirectMessageCreateEvent.reply] 的发送后通知事件。
+ * @since 4.2.0
+ */
+@OptIn(FuzzyEventTypeImplementation::class)
+public interface QGDirectMessageCreateEventPostReplyEvent :
+    QGDirectMessageCreateEventInteractionEvent,
+    QGMessageEventPostReplyEvent,
+    ContactMessageEventPostReplyEvent
+
+/**
+ * QG组件中针对 [QGC2CMessageCreateEvent.reply] 的拦截事件。
+ * @since 4.2.0
+ */
+@SubclassOptInRequired(FuzzyEventTypeImplementation::class)
+public interface QGC2CMessageCreateEventInteractionEvent :
+    QGMessageEventInteractionEvent,
+    ContactMessageEventInteractionEvent {
+    override val content: QGC2CMessageCreateEvent
+}
+
+/**
+ * 针对 [QGC2CMessageCreateEvent.reply] 的发送前拦截事件。
+ * @since 4.2.0
+ */
+@OptIn(FuzzyEventTypeImplementation::class)
+public interface QGC2CMessageCreateEventPreReplyEvent :
+    QGC2CMessageCreateEventInteractionEvent,
+    QGMessageEventPreReplyEvent,
+    ContactMessageEventPreReplyEvent
+
+/**
+ * 针对 [QGC2CMessageCreateEvent.reply] 的发送后通知事件。
+ * @since 4.2.0
+ */
+@OptIn(FuzzyEventTypeImplementation::class)
+public interface QGC2CMessageCreateEventPostReplyEvent :
+    QGC2CMessageCreateEventInteractionEvent,
+    QGMessageEventPostReplyEvent,
+    ContactMessageEventPostReplyEvent
+
+/**
+ * QG组件中针对 [QGGroupAtMessageCreateEvent.reply] 的拦截事件。
+ * @since 4.2.0
+ */
+@SubclassOptInRequired(FuzzyEventTypeImplementation::class)
+public interface QGGroupAtMessageCreateEventInteractionEvent :
+    QGMessageEventInteractionEvent,
+    ChatGroupMessageEventInteractionEvent {
+    override val content: QGGroupAtMessageCreateEvent
+}
+
+/**
+ * 针对 [QGGroupAtMessageCreateEvent.reply] 的发送前拦截事件。
+ * @since 4.2.0
+ */
+@OptIn(FuzzyEventTypeImplementation::class)
+public interface QGGroupAtMessageCreateEventPreReplyEvent :
+    QGGroupAtMessageCreateEventInteractionEvent,
+    QGMessageEventPreReplyEvent,
+    ChatGroupMessageEventPreReplyEvent
+
+/**
+ * 针对 [QGGroupAtMessageCreateEvent.reply] 的发送后通知事件。
+ * @since 4.2.0
+ */
+@OptIn(FuzzyEventTypeImplementation::class)
+public interface QGGroupAtMessageCreateEventPostReplyEvent :
+    QGGroupAtMessageCreateEventInteractionEvent,
+    QGMessageEventPostReplyEvent,
+    ChatGroupMessageEventPostReplyEvent

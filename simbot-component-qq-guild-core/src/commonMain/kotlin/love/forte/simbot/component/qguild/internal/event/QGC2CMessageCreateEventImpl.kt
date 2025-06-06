@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. ForteScarlet.
+ * Copyright (c) 2024-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -29,6 +29,8 @@ import love.forte.simbot.component.qguild.internal.message.QGGroupAndC2CMessageC
 import love.forte.simbot.component.qguild.message.QGGroupAndC2CMessageContent
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
 import love.forte.simbot.component.qguild.message.sendUserMessage
+import love.forte.simbot.component.qguild.utils.alsoEmitPostReplyEvent
+import love.forte.simbot.event.InteractionMessage
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.qguild.api.message.GroupAndC2CSendBody
@@ -64,40 +66,64 @@ internal class QGC2CMessageCreateEventImpl(
         )
     }
 
-    private fun GroupAndC2CSendBody.initMsgIdAndSeq() {
-        if (msgId == null) {
-            msgId = sourceEventEntity.data.id
-        }
-        if (msgSeq == null) {
-            msgSeq = this@QGC2CMessageCreateEventImpl.msgSeq.getAndIncrement()
-        }
-    }
-
     override suspend fun reply(text: String): QGMessageReceipt {
-        return bot.sendUserMessage(
-            openid = sourceEventEntity.data.author.userOpenid,
-            text = text,
-            msgType = GroupMessageSendApi.MSG_TYPE_TEXT,
-        ) {
-            initMsgIdAndSeq()
-        }
+        return emitPreReplyEventAndReply(InteractionMessage.valueOf(text))
     }
 
     override suspend fun reply(message: Message): QGMessageReceipt {
-        return bot.sendUserMessage(
-            openid = sourceEventEntity.data.author.userOpenid,
-            message = message,
-        ) {
-            initMsgIdAndSeq()
-        }
+        return emitPreReplyEventAndReply(InteractionMessage.valueOf(message))
     }
 
     override suspend fun reply(messageContent: MessageContent): QGMessageReceipt {
-        return bot.sendUserMessage(
-            openid = sourceEventEntity.data.author.userOpenid,
-            messageContent = messageContent,
-        ) {
-            initMsgIdAndSeq()
+        return emitPreReplyEventAndReply(InteractionMessage.valueOf(messageContent))
+    }
+
+    private suspend fun emitPreReplyEventAndReply(message: InteractionMessage): QGMessageReceipt {
+        val event = QGC2CMessageCreateEventPreReplyEventImpl(bot, this, message)
+        bot.emitMessagePreSendEvent(event)
+        return replyByInteractionMessage(event.useMessage())
+    }
+
+    private suspend fun replyByInteractionMessage(message: InteractionMessage): QGMessageReceipt {
+        fun GroupAndC2CSendBody.configMsgIdAndSeq() {
+            if (msgId == null) {
+                msgId = sourceEventEntity.data.id
+            }
+            if (msgSeq == null) {
+                msgSeq = this@QGC2CMessageCreateEventImpl.msgSeq.getAndIncrement()
+            }
         }
+
+        return when (message) {
+            is InteractionMessage.Message -> {
+                bot.sendUserMessage(
+                    openid = sourceEventEntity.data.author.userOpenid,
+                    message = message.message,
+                ) {
+                    configMsgIdAndSeq()
+                }
+            }
+
+            is InteractionMessage.MessageContent -> {
+                bot.sendUserMessage(
+                    openid = sourceEventEntity.data.author.userOpenid,
+                    messageContent = message.messageContent,
+                ) {
+                    configMsgIdAndSeq()
+                }
+            }
+
+            is InteractionMessage.Text -> {
+                bot.sendUserMessage(
+                    openid = sourceEventEntity.data.author.userOpenid,
+                    text = message.text,
+                    msgType = GroupMessageSendApi.MSG_TYPE_TEXT,
+                ) {
+                    configMsgIdAndSeq()
+                }
+            }
+
+            is InteractionMessage.Extension -> error("Unknown type of InteractionMessage: $message")
+        }.alsoEmitPostReplyEvent(bot, this, message)
     }
 }

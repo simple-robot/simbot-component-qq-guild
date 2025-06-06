@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024. ForteScarlet.
+ * Copyright (c) 2023-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -28,8 +28,10 @@ import love.forte.simbot.component.qguild.internal.guild.QGMemberImpl
 import love.forte.simbot.component.qguild.internal.message.QGMessageContentImpl
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
 import love.forte.simbot.component.qguild.message.sendMessage
+import love.forte.simbot.component.qguild.utils.alsoEmitPostReplyEvent
+import love.forte.simbot.event.InteractionMessage
 import love.forte.simbot.message.MessageContent
-import love.forte.simbot.message.MessageReceipt
+import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.qguild.model.ChannelType
 import love.forte.simbot.qguild.model.Message
 
@@ -56,32 +58,27 @@ internal class QGAtMessageCreateEventImpl(
     override val messageContent: QGMessageContentImpl = QGMessageContentImpl(bot, sourceEventEntity)
 
     override suspend fun reply(message: love.forte.simbot.message.Message): QGMessageReceipt {
-        var ref: Message.Reference? = null
-        return bot.sendMessage(sourceEventEntity.channelId, message) {
-            if (msgId == null) {
-                msgId = sourceEventEntity.id
-            }
-            if (messageReference == null) {
-                messageReference = ref ?: Message.Reference(sourceEventEntity.id).also { ref = it }
-            }
-        }
+        return emitPreReplyEventAndReply(InteractionMessage.valueOf(message))
     }
 
-    override suspend fun reply(messageContent: MessageContent): MessageReceipt {
-        var ref: Message.Reference? = null
-        return bot.sendMessage(sourceEventEntity.channelId, messageContent) {
-            if (msgId == null) {
-                msgId = sourceEventEntity.id
-            }
-            if (messageReference == null) {
-                messageReference = ref ?: Message.Reference(sourceEventEntity.id).also { ref = it }
-            }
-        }
+    override suspend fun reply(messageContent: MessageContent): QGMessageReceipt {
+        return emitPreReplyEventAndReply(InteractionMessage.valueOf(messageContent))
     }
 
-    override suspend fun reply(text: String): MessageReceipt {
+    override suspend fun reply(text: String): QGMessageReceipt {
+        return emitPreReplyEventAndReply(InteractionMessage.valueOf(text))
+    }
+
+    private suspend fun emitPreReplyEventAndReply(message: InteractionMessage): QGMessageReceipt {
+        val event = QGAtMessageCreateEventPreReplyEventImpl(bot, this, message)
+        bot.emitMessagePreSendEvent(event)
+        return replyByInteractionMessage(event.useMessage())
+    }
+
+    private suspend fun replyByInteractionMessage(message: InteractionMessage): QGMessageReceipt {
         var ref: Message.Reference? = null
-        return bot.sendMessage(sourceEventEntity.channelId, text) {
+
+        fun MessageSendApi.Body.Builder.configMsgIdAndRef() {
             if (msgId == null) {
                 msgId = sourceEventEntity.id
             }
@@ -89,6 +86,28 @@ internal class QGAtMessageCreateEventImpl(
                 messageReference = ref ?: Message.Reference(sourceEventEntity.id).also { ref = it }
             }
         }
+
+        return when (message) {
+            is InteractionMessage.Message -> {
+                bot.sendMessage(sourceEventEntity.channelId, message.message) {
+                    configMsgIdAndRef()
+                }
+            }
+
+            is InteractionMessage.MessageContent -> {
+                bot.sendMessage(sourceEventEntity.channelId, message.messageContent) {
+                    configMsgIdAndRef()
+                }
+            }
+
+            is InteractionMessage.Text -> {
+                bot.sendMessage(sourceEventEntity.channelId, message.text) {
+                    configMsgIdAndRef()
+                }
+            }
+
+            is InteractionMessage.Extension -> error("Unknown type of InteractionMessage: $message")
+        }.alsoEmitPostReplyEvent(bot, this, message)
     }
 
     override suspend fun source(): QGGuild {
