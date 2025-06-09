@@ -34,47 +34,90 @@ import love.forte.simbot.event.InteractionMessage
 
 internal fun QGMessageReceipt.alsoEmitPostSendEvent(
     bot: QGBotImpl,
+    content: QGTextChannel,
+    message: InteractionMessage,
+): QGMessageReceipt {
+    val event = QGTextChannelSendSupportPostSendEventImpl(
+        bot = bot,
+        content = content,
+        message = message,
+        receipt = this
+    )
+    bot.pushEventAndCollectAsync(event)
+    return this
+}
+
+internal fun QGMessageReceipt.alsoEmitPostSendEvent(
+    bot: QGBotImpl,
+    content: QGMember,
+    message: InteractionMessage,
+): QGMessageReceipt {
+    val event = QGMemberSendSupportPostSendEventImpl(
+        bot = bot,
+        content = content,
+        message = message,
+        receipt = this
+    )
+    bot.pushEventAndCollectAsync(event)
+    return this
+}
+
+internal fun QGMessageReceipt.alsoEmitPostSendEvent(
+    bot: QGBotImpl,
+    content: QGDmsContact,
+    message: InteractionMessage,
+): QGMessageReceipt {
+    val event = QGDmsContactSendSupportPostSendEventImpl(
+        bot = bot,
+        content = content,
+        message = message,
+        receipt = this
+    )
+    bot.pushEventAndCollectAsync(event)
+    return this
+}
+
+internal fun QGMessageReceipt.alsoEmitPostSendEvent(
+    bot: QGBotImpl,
+    content: QGFriend,
+    message: InteractionMessage,
+): QGMessageReceipt {
+    val event = QGFriendSendSupportPostSendEventImpl(
+        bot = bot,
+        content = content,
+        message = message,
+        receipt = this
+    )
+    bot.pushEventAndCollectAsync(event)
+    return this
+}
+
+internal fun QGMessageReceipt.alsoEmitPostSendEvent(
+    bot: QGBotImpl,
+    content: QGGroup,
+    message: InteractionMessage,
+): QGMessageReceipt {
+    val event = QGGroupSendSupportPostSendEventImpl(
+        bot = bot,
+        content = content,
+        message = message,
+        receipt = this
+    )
+    bot.pushEventAndCollectAsync(event)
+    return this
+}
+
+internal fun QGMessageReceipt.alsoEmitPostSendEvent(
+    bot: QGBotImpl,
     content: SendSupport,
     message: InteractionMessage,
 ): QGMessageReceipt {
-    val event = when (content) {
-        is QGTextChannel -> QGTextChannelSendSupportPostSendEventImpl(
-            bot = bot,
-            content = content,
-            message = message,
-            receipt = this
-        )
-        is QGMember -> QGMemberSendSupportPostSendEventImpl(
-            bot = bot,
-            content = content,
-            message = message,
-            receipt = this
-        )
-        is QGDmsContact -> QGDmsContactSendSupportPostSendEventImpl(
-            bot = bot,
-            content = content,
-            message = message,
-            receipt = this
-        )
-        is QGFriend -> QGFriendSendSupportPostSendEventImpl(
-            bot = bot,
-            content = content,
-            message = message,
-            receipt = this
-        )
-        is QGGroup -> QGGroupSendSupportPostSendEventImpl(
-            bot = bot,
-            content = content,
-            message = message,
-            receipt = this
-        )
-        else -> QGSendSupportPostSendEventImpl(
-            bot = bot,
-            content = content,
-            message = message,
-            receipt = this
-        )
-    }
+    val event = QGSendSupportPostSendEventImpl(
+        bot = bot,
+        content = content,
+        message = message,
+        receipt = this
+    )
     bot.pushEventAndCollectAsync(event)
     return this
 }
