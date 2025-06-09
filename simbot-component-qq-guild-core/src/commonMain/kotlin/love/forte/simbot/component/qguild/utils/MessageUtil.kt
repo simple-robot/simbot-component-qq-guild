@@ -18,10 +18,15 @@
 package love.forte.simbot.component.qguild.utils
 
 import love.forte.simbot.ability.SendSupport
+import love.forte.simbot.component.qguild.channel.QGTextChannel
+import love.forte.simbot.component.qguild.dms.QGDmsContact
 import love.forte.simbot.component.qguild.event.QGAtMessageCreateEvent
 import love.forte.simbot.component.qguild.event.QGC2CMessageCreateEvent
 import love.forte.simbot.component.qguild.event.QGDirectMessageCreateEvent
 import love.forte.simbot.component.qguild.event.QGGroupAtMessageCreateEvent
+import love.forte.simbot.component.qguild.friend.QGFriend
+import love.forte.simbot.component.qguild.group.QGGroup
+import love.forte.simbot.component.qguild.guild.QGMember
 import love.forte.simbot.component.qguild.internal.bot.QGBotImpl
 import love.forte.simbot.component.qguild.internal.event.*
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
@@ -32,12 +37,44 @@ internal fun QGMessageReceipt.alsoEmitPostSendEvent(
     content: SendSupport,
     message: InteractionMessage,
 ): QGMessageReceipt {
-    val event = QGSendSupportPostSendEventImpl(
-        bot = bot,
-        content = content,
-        message = message,
-        receipt = this
-    )
+    val event = when (content) {
+        is QGTextChannel -> QGTextChannelSendSupportPostSendEventImpl(
+            bot = bot,
+            content = content,
+            message = message,
+            receipt = this
+        )
+        is QGMember -> QGMemberSendSupportPostSendEventImpl(
+            bot = bot,
+            content = content,
+            message = message,
+            receipt = this
+        )
+        is QGDmsContact -> QGDmsContactSendSupportPostSendEventImpl(
+            bot = bot,
+            content = content,
+            message = message,
+            receipt = this
+        )
+        is QGFriend -> QGFriendSendSupportPostSendEventImpl(
+            bot = bot,
+            content = content,
+            message = message,
+            receipt = this
+        )
+        is QGGroup -> QGGroupSendSupportPostSendEventImpl(
+            bot = bot,
+            content = content,
+            message = message,
+            receipt = this
+        )
+        else -> QGSendSupportPostSendEventImpl(
+            bot = bot,
+            content = content,
+            message = message,
+            receipt = this
+        )
+    }
     bot.pushEventAndCollectAsync(event)
     return this
 }

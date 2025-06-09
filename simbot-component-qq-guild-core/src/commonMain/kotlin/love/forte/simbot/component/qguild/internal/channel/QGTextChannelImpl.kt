@@ -24,7 +24,7 @@ import love.forte.simbot.component.qguild.channel.QGTextChannel
 import love.forte.simbot.component.qguild.guild.QGGuild
 import love.forte.simbot.component.qguild.internal.bot.QGBotImpl
 import love.forte.simbot.component.qguild.internal.bot.newSupervisorCoroutineContext
-import love.forte.simbot.component.qguild.internal.event.QGSendSupportPreSendEventImpl
+import love.forte.simbot.component.qguild.internal.event.QGTextChannelSendSupportPreSendEventImpl
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
 import love.forte.simbot.component.qguild.message.sendMessage
 import love.forte.simbot.component.qguild.utils.alsoEmitPostSendEvent
@@ -77,7 +77,7 @@ internal class QGTextChannelImpl internal constructor(
     private suspend fun emitPreSendEventAndSend(
         message: InteractionMessage,
     ): QGMessageReceipt {
-        val event = QGSendSupportPreSendEventImpl(
+        val event = QGTextChannelSendSupportPreSendEventImpl(
             bot = bot,
             content = this,
             message = message
@@ -139,5 +139,3 @@ internal fun Channel.toTextChannel(
     category = category,
     currentMsgId = currentMsgId
 )
-
-

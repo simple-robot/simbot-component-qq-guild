@@ -24,7 +24,7 @@ import love.forte.simbot.common.id.literal
 import love.forte.simbot.component.qguild.friend.QGFriend
 import love.forte.simbot.component.qguild.internal.bot.QGBotImpl
 import love.forte.simbot.component.qguild.internal.bot.newSupervisorCoroutineContext
-import love.forte.simbot.component.qguild.internal.event.QGSendSupportPreSendEventImpl
+import love.forte.simbot.component.qguild.internal.event.QGFriendSendSupportPreSendEventImpl
 import love.forte.simbot.component.qguild.message.QGMedia
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
 import love.forte.simbot.component.qguild.message.sendUserMessage
@@ -112,7 +112,7 @@ internal class QGFriendImpl(
     }
 
     override suspend fun send(text: String): MessageReceipt {
-        val event = QGSendSupportPreSendEventImpl(
+        val event = QGFriendSendSupportPreSendEventImpl(
             bot = bot,
             content = this,
             message = InteractionMessage.valueOf(text),
@@ -124,7 +124,7 @@ internal class QGFriendImpl(
     }
 
     override suspend fun send(message: Message): MessageReceipt {
-        val event = QGSendSupportPreSendEventImpl(
+        val event = QGFriendSendSupportPreSendEventImpl(
             bot = bot,
             content = this,
             message = InteractionMessage.valueOf(message),
@@ -136,7 +136,7 @@ internal class QGFriendImpl(
     }
 
     override suspend fun send(messageContent: MessageContent): MessageReceipt {
-        val event = QGSendSupportPreSendEventImpl(
+        val event = QGFriendSendSupportPreSendEventImpl(
             bot = bot,
             content = this,
             message = InteractionMessage.valueOf(messageContent),

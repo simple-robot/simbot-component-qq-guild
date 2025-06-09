@@ -25,7 +25,7 @@ import love.forte.simbot.component.qguild.group.QGGroup
 import love.forte.simbot.component.qguild.group.QGGroupMember
 import love.forte.simbot.component.qguild.internal.bot.QGBotImpl
 import love.forte.simbot.component.qguild.internal.bot.newSupervisorCoroutineContext
-import love.forte.simbot.component.qguild.internal.event.QGSendSupportPreSendEventImpl
+import love.forte.simbot.component.qguild.internal.event.QGGroupSendSupportPreSendEventImpl
 import love.forte.simbot.component.qguild.message.QGMedia
 import love.forte.simbot.component.qguild.message.sendGroupMessage
 import love.forte.simbot.component.qguild.utils.alsoEmitPostSendEvent
@@ -79,7 +79,7 @@ internal class QGGroupImpl(
     }
 
     private suspend fun emitPreSendEventAndSend(message: InteractionMessage): MessageReceipt {
-        val event = QGSendSupportPreSendEventImpl(
+        val event = QGGroupSendSupportPreSendEventImpl(
             bot = bot,
             content = this,
             message = message

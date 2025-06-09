@@ -19,7 +19,13 @@ package love.forte.simbot.component.qguild.event
 
 import love.forte.simbot.ability.SendSupport
 import love.forte.simbot.component.qguild.bot.QGBot
+import love.forte.simbot.component.qguild.channel.QGTextChannel
+import love.forte.simbot.component.qguild.dms.QGDmsContact
+import love.forte.simbot.component.qguild.friend.QGFriend
+import love.forte.simbot.component.qguild.group.QGGroup
+import love.forte.simbot.component.qguild.guild.QGMember
 import love.forte.simbot.event.*
+import love.forte.simbot.suspendrunner.STP
 
 /**
  * QQ组件中针对 [SendSupportInteractionEvent] 的子类型实现。
@@ -61,4 +67,230 @@ public interface QGSendSupportPostSendEvent :
     QGInternalMessagePostSendEvent,
     QGSendSupportInteractionEvent {
     override val message: InteractionMessage
+}
+
+// For QGTextChannel
+
+/**
+ * QG组件中针对 [QGTextChannel.send] 的拦截事件。
+ * @since 4.2.0
+ */
+@SubclassOptInRequired(FuzzyEventTypeImplementation::class)
+public interface QGTextChannelSendSupportInteractionEvent :
+    QGSendSupportInteractionEvent,
+    ChatChannelInteractionEvent {
+    override val content: QGTextChannel
+
+    @STP
+    override suspend fun target(): QGTextChannel = content
+}
+
+/**
+ * 针对 [QGTextChannel.send] 的发送前拦截事件。
+ * @since 4.2.0
+ */
+@OptIn(FuzzyEventTypeImplementation::class)
+public interface QGTextChannelSendSupportPreSendEvent :
+    QGTextChannelSendSupportInteractionEvent,
+    QGSendSupportPreSendEvent,
+    ChatChannelPreSendEvent {
+    override val content: QGTextChannel
+
+    @STP
+    override suspend fun target(): QGTextChannel = content
+}
+
+/**
+ * 针对 [QGTextChannel.send] 的发送后通知事件。
+ * @since 4.2.0
+ */
+@OptIn(FuzzyEventTypeImplementation::class)
+public interface QGTextChannelSendSupportPostSendEvent :
+    QGTextChannelSendSupportInteractionEvent,
+    QGSendSupportPostSendEvent,
+    ChatChannelPostSendEvent {
+    override val content: QGTextChannel
+
+    @STP
+    override suspend fun target(): QGTextChannel = content
+}
+
+// For QGMember
+
+/**
+ * QG组件中针对 [QGMember.send] 的拦截事件。
+ * @since 4.2.0
+ */
+@SubclassOptInRequired(FuzzyEventTypeImplementation::class)
+public interface QGMemberSendSupportInteractionEvent :
+    QGSendSupportInteractionEvent,
+    MemberInteractionEvent {
+    override val content: QGMember
+
+    @STP
+    override suspend fun target(): QGMember = content
+}
+
+/**
+ * 针对 [QGMember.send] 的发送前拦截事件。
+ * @since 4.2.0
+ */
+@OptIn(FuzzyEventTypeImplementation::class)
+public interface QGMemberSendSupportPreSendEvent :
+    QGMemberSendSupportInteractionEvent,
+    QGSendSupportPreSendEvent,
+    MemberPreSendEvent {
+
+    override val content: QGMember
+
+    @STP
+    override suspend fun target(): QGMember = content
+}
+
+/**
+ * 针对 [QGMember.send] 的发送后通知事件。
+ * @since 4.2.0
+ */
+@OptIn(FuzzyEventTypeImplementation::class)
+public interface QGMemberSendSupportPostSendEvent :
+    QGMemberSendSupportInteractionEvent,
+    QGSendSupportPostSendEvent,
+    MemberPostSendEvent {
+
+    override val content: QGMember
+
+    @STP
+    override suspend fun target(): QGMember = content
+}
+
+// For QGDmsContact
+
+/**
+ * QG组件中针对 [QGDmsContact.send] 的拦截事件。
+ * @since 4.2.0
+ */
+@SubclassOptInRequired(FuzzyEventTypeImplementation::class)
+public interface QGDmsContactSendSupportInteractionEvent :
+    QGSendSupportInteractionEvent,
+    ContactInteractionEvent {
+    override val content: QGDmsContact
+
+    @STP
+    override suspend fun target(): QGDmsContact
+}
+
+/**
+ * 针对 [QGDmsContact.send] 的发送前拦截事件。
+ * @since 4.2.0
+ */
+@OptIn(FuzzyEventTypeImplementation::class)
+public interface QGDmsContactSendSupportPreSendEvent :
+    QGDmsContactSendSupportInteractionEvent,
+    QGSendSupportPreSendEvent,
+    ContactPreSendEvent {
+    override val content: QGDmsContact
+
+    @STP
+    override suspend fun target(): QGDmsContact
+}
+
+/**
+ * 针对 [QGDmsContact.send] 的发送后通知事件。
+ * @since 4.2.0
+ */
+@OptIn(FuzzyEventTypeImplementation::class)
+public interface QGDmsContactSendSupportPostSendEvent :
+    QGDmsContactSendSupportInteractionEvent,
+    QGSendSupportPostSendEvent,
+    ContactPostSendEvent {
+    override val content: QGDmsContact
+
+    @STP
+    override suspend fun target(): QGDmsContact
+}
+
+// For QGFriend
+
+/**
+ * QG组件中针对 [QGFriend.send] 的拦截事件。
+ * @since 4.2.0
+ */
+@SubclassOptInRequired(FuzzyEventTypeImplementation::class)
+public interface QGFriendSendSupportInteractionEvent :
+    QGSendSupportInteractionEvent {
+    override val content: QGFriend
+
+    @STP
+    override suspend fun target(): QGFriend = content
+}
+
+/**
+ * 针对 [QGFriend.send] 的发送前拦截事件。
+ * @since 4.2.0
+ */
+@OptIn(FuzzyEventTypeImplementation::class)
+public interface QGFriendSendSupportPreSendEvent :
+    QGFriendSendSupportInteractionEvent,
+    QGSendSupportPreSendEvent {
+    override val content: QGFriend
+
+    @STP
+    override suspend fun target(): QGFriend = content
+}
+
+/**
+ * 针对 [QGFriend.send] 的发送后通知事件。
+ * @since 4.2.0
+ */
+@OptIn(FuzzyEventTypeImplementation::class)
+public interface QGFriendSendSupportPostSendEvent :
+    QGFriendSendSupportInteractionEvent,
+    QGSendSupportPostSendEvent {
+    override val content: QGFriend
+
+    @STP
+    override suspend fun target(): QGFriend = content
+}
+
+// For QGGroup
+
+/**
+ * QG组件中针对 [QGGroup.send] 的拦截事件。
+ * @since 4.2.0
+ */
+@SubclassOptInRequired(FuzzyEventTypeImplementation::class)
+public interface QGGroupSendSupportInteractionEvent :
+    QGSendSupportInteractionEvent {
+    override val content: QGGroup
+
+    @STP
+    override suspend fun target(): QGGroup = content
+}
+
+/**
+ * 针对 [QGGroup.send] 的发送前拦截事件。
+ * @since 4.2.0
+ */
+@OptIn(FuzzyEventTypeImplementation::class)
+public interface QGGroupSendSupportPreSendEvent :
+    QGGroupSendSupportInteractionEvent,
+    QGSendSupportPreSendEvent {
+    override val content: QGGroup
+
+    @STP
+    override suspend fun target(): QGGroup = content
+}
+
+/**
+ * 针对 [QGGroup.send] 的发送后通知事件。
+ * @since 4.2.0
+ */
+@OptIn(FuzzyEventTypeImplementation::class)
+public interface QGGroupSendSupportPostSendEvent :
+    QGGroupSendSupportInteractionEvent,
+    QGSendSupportPostSendEvent {
+    override val content: QGGroup
+
+    @STP
+    override suspend fun target(): QGGroup = content
 }

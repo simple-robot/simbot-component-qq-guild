@@ -20,7 +20,7 @@ package love.forte.simbot.component.qguild.internal.dms
 import love.forte.simbot.component.qguild.dms.QGDmsContact
 import love.forte.simbot.component.qguild.internal.bot.QGBotImpl
 import love.forte.simbot.component.qguild.internal.bot.newSupervisorCoroutineContext
-import love.forte.simbot.component.qguild.internal.event.QGSendSupportPreSendEventImpl
+import love.forte.simbot.component.qguild.internal.event.QGDmsContactSendSupportPreSendEventImpl
 import love.forte.simbot.component.qguild.message.sendDmsMessage
 import love.forte.simbot.component.qguild.utils.alsoEmitPostSendEvent
 import love.forte.simbot.event.InteractionMessage
@@ -61,7 +61,7 @@ internal class QGDmsContactImpl(
     private suspend fun emitPreSendEventAndSend(
         message: InteractionMessage,
     ): MessageReceipt {
-        val event = QGSendSupportPreSendEventImpl(
+        val event = QGDmsContactSendSupportPreSendEventImpl(
             bot = bot,
             content = this,
             message = message

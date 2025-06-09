@@ -29,7 +29,7 @@ import love.forte.simbot.component.qguild.ExperimentalQGApi
 import love.forte.simbot.component.qguild.guild.QGMember
 import love.forte.simbot.component.qguild.internal.bot.QGBotImpl
 import love.forte.simbot.component.qguild.internal.bot.newSupervisorCoroutineContext
-import love.forte.simbot.component.qguild.internal.event.QGSendSupportPreSendEventImpl
+import love.forte.simbot.component.qguild.internal.event.QGMemberSendSupportPreSendEventImpl
 import love.forte.simbot.component.qguild.internal.message.asReceipt
 import love.forte.simbot.component.qguild.internal.role.toGuildRole
 import love.forte.simbot.component.qguild.internal.role.toMemberRole
@@ -117,7 +117,7 @@ internal class QGMemberImpl(
 
     @JvmSynthetic
     override suspend fun send(message: Message): QGMessageReceipt {
-        val event = QGSendSupportPreSendEventImpl(
+        val event = QGMemberSendSupportPreSendEventImpl(
             bot = bot,
             content = this,
             message = InteractionMessage.valueOf(message),
@@ -129,7 +129,7 @@ internal class QGMemberImpl(
     }
 
     override suspend fun send(text: String): QGMessageReceipt {
-        val event = QGSendSupportPreSendEventImpl(
+        val event = QGMemberSendSupportPreSendEventImpl(
             bot = bot,
             content = this,
             message = InteractionMessage.valueOf(text),
@@ -142,7 +142,7 @@ internal class QGMemberImpl(
 
 
     override suspend fun send(messageContent: MessageContent): QGMessageReceipt {
-        val event = QGSendSupportPreSendEventImpl(
+        val event = QGMemberSendSupportPreSendEventImpl(
             bot = bot,
             content = this,
             message = InteractionMessage.valueOf(messageContent),
@@ -234,4 +234,3 @@ internal class QGMemberImpl(
         return "QGMember(id=$id, name=$name, nick=$nick, guildId=$guildId)"
     }
 }
-
