@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. ForteScarlet.
+ * Copyright (c) 2024-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -25,6 +25,7 @@ import love.forte.simbot.component.qguild.group.QGGroup
 import love.forte.simbot.component.qguild.group.QGGroupMember
 import love.forte.simbot.component.qguild.utils.toTimestamp
 import love.forte.simbot.event.ChatGroupEvent
+import love.forte.simbot.event.FuzzyEventTypeImplementation
 import love.forte.simbot.qguild.event.GroupRobotManagementData
 import love.forte.simbot.suspendrunner.STP
 
@@ -33,6 +34,7 @@ import love.forte.simbot.suspendrunner.STP
  *
  * @see GroupRobotManagementData
  */
+@SubclassOptInRequired(FuzzyEventTypeImplementation::class)
 public abstract class QGGroupManagementEvent :
     QGBotEvent<GroupRobotManagementData>(),
     ChatGroupEvent {
@@ -72,22 +74,26 @@ public abstract class QGGroupManagementEvent :
  * 机器人加入群聊
  * @author ForteScarlet
  */
+@OptIn(FuzzyEventTypeImplementation::class)
 public abstract class QGGroupAddRobotEvent : QGGroupManagementEvent()
 
 /**
  * 机器人退出群聊
  * @author ForteScarlet
  */
+@OptIn(FuzzyEventTypeImplementation::class)
 public abstract class QGGroupDelRobotEvent : QGGroupManagementEvent()
 
 /**
  * 群聊拒绝机器人主动消息
  * @author ForteScarlet
  */
+@OptIn(FuzzyEventTypeImplementation::class)
 public abstract class QGGroupMsgRejectEvent : QGGroupManagementEvent()
 
 /**
  * 群聊接受机器人主动消息
  * @author ForteScarlet
  */
+@OptIn(FuzzyEventTypeImplementation::class)
 public abstract class QGGroupMsgReceiveEvent : QGGroupManagementEvent()

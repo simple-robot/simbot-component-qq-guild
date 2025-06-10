@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024. ForteScarlet.
+ * Copyright (c) 2023-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -21,22 +21,48 @@ import love.forte.simbot.common.id.ID
 import love.forte.simbot.common.id.StringID.Companion.ID
 import love.forte.simbot.common.time.Timestamp
 import love.forte.simbot.component.qguild.ExperimentalQGApi
+import love.forte.simbot.component.qguild.bot.QGBot
 import love.forte.simbot.component.qguild.channel.QGTextChannel
 import love.forte.simbot.component.qguild.guild.QGGuild
 import love.forte.simbot.component.qguild.guild.QGMember
+import love.forte.simbot.component.qguild.message.QGBaseMessageContent
 import love.forte.simbot.component.qguild.message.QGMessageContent
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
 import love.forte.simbot.component.qguild.utils.toTimestamp
 import love.forte.simbot.definition.Actor
-import love.forte.simbot.event.ActorEvent
-import love.forte.simbot.event.ChatChannelMessageEvent
-import love.forte.simbot.event.ContentEvent
-import love.forte.simbot.event.MessageEvent
+import love.forte.simbot.event.*
+import love.forte.simbot.message.MessageContent
 import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.model.Message
 import love.forte.simbot.suspendrunner.STP
 import love.forte.simbot.qguild.model.Message as QGSourceMessage
 
+
+/**
+ * 针对所有端（QQ群和QQ频道）的 [MessageEvent] 时间的统一父类型。
+ * 原本的 [QGMessageEvent] 仅针对频道相关的消息事件，而群聊和私信的消息体类型不同，无法适配。
+ *
+ * @see QGMessageEvent
+ * @see QGC2CMessageCreateEvent
+ * @see QGGroupAtMessageCreateEvent
+ *
+ * @since 4.2.0
+ */
+@OptIn(FuzzyEventTypeImplementation::class)
+public sealed class QGBaseMessageEvent<T : Any> : QGBotEvent<T>(), MessageEvent {
+    abstract override val bot: QGBot
+
+    /**
+     * 消息发生（收到）的时间
+     */
+    abstract override val time: Timestamp
+
+    /**
+     * 接收到的消息内容。
+     */
+    abstract override val messageContent: QGBaseMessageContent
+
+}
 
 /**
  * [消息事件](https://bot.q.qq.com/wiki/develop/api/gateway/message.html#at-message-create-intents-public-guild-messages)
@@ -50,11 +76,12 @@ import love.forte.simbot.qguild.model.Message as QGSourceMessage
  *
  * @author ForteScarlet
  */
-public sealed class QGMessageEvent : QGBotEvent<QGSourceMessage>(), MessageEvent, ContentEvent, ActorEvent {
+@OptIn(FuzzyEventTypeImplementation::class)
+public sealed class QGMessageEvent : QGBaseMessageEvent<QGSourceMessage>(), ContentEvent, ActorEvent {
     /**
      * 标准库接收到的原始事件内容。
      */
-    abstract override val sourceEventEntity: Message
+    abstract override val sourceEventEntity: QGSourceMessage
 
     /**
      * 消息发生（收到）的时间
@@ -76,6 +103,10 @@ public sealed class QGMessageEvent : QGBotEvent<QGSourceMessage>(), MessageEvent
      * @throws QQGuildApiException 请求失败，例如无权限
      */
     abstract override suspend fun reply(message: love.forte.simbot.message.Message): QGMessageReceipt
+
+    abstract override suspend fun reply(messageContent: MessageContent): QGMessageReceipt
+
+    abstract override suspend fun reply(text: String): QGMessageReceipt
 
     /**
      * 接收到消息的事件主体。实现子类型来决定具体类型。
@@ -170,7 +201,6 @@ public abstract class QGAtMessageCreateEvent : QGMessageEvent(), ChatChannelMess
 //     */
 //    abstract override suspend fun source(): QGGuild
 //}
-
 
 
 // TODO 私聊 Message event

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2022-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -23,26 +23,20 @@ import love.forte.gradle.common.kotlin.multiplatform.applyTier3
 plugins {
     kotlin("multiplatform")
     kotlin("plugin.serialization")
-    `qq-guild-dokka-partial-configure`
-    `simbot-tcg-suspend-transform-configure`
-    `qq-guild-module-config`
+    `dokka-convention`
+    id("love.forte.plugin.suspend-transform")
 }
 
 setup(P.ComponentQQGuild)
 
-configJavaCompileWithModule("simbot.component.qqguild.core")
 apply(plugin = "qq-guild-multiplatform-maven-publish")
-
-configJsTestTasks()
 
 kotlin {
     explicitApi()
     applyDefaultHierarchyTemplate()
 
-    sourceSets.configureEach {
-        languageSettings {
-            optIn("love.forte.simbot.qguild.QGInternalApi")
-        }
+    compilerOptions {
+        optIn.add("love.forte.simbot.qguild.QGInternalApi")
     }
 
     configKotlinJvm()
@@ -60,27 +54,34 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            api(project(":simbot-component-qq-guild-stdlib"))
+            // api (compile only for JVM)
             implementation(libs.simbot.api)
-            implementation(libs.simbot.common.annotations)
+
+            api(project(":simbot-component-qq-guild-stdlib"))
+            api(libs.simbot.common.annotations)
             // ktor
             api(libs.ktor.client.contentNegotiation)
             api(libs.ktor.serialization.kotlinxJson)
             api(libs.ktor.client.ws)
             // datetime
             api(libs.kotlinx.datetime)
+            // io (runtime scope)
+            implementation(libs.kotlinx.io.core)
         }
 
         commonTest.dependencies {
             implementation(kotlin("test"))
             implementation(kotlin("reflect"))
             implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.kotlinx.serialization.core)
             implementation(libs.kotlinx.serialization.json)
+            implementation(libs.ktor.client.mock)
             api(libs.simbot.core)
             api(libs.simbot.common.core)
         }
 
         jvmTest.dependencies {
+            compileOnly(libs.simbot.api)
             implementation(libs.ktor.client.java)
 
             implementation(libs.log4j.api)
@@ -91,5 +92,15 @@ kotlin {
         mingwTest.dependencies {
             implementation(libs.ktor.client.winhttp)
         }
+
+        linuxTest.dependencies {
+            implementation(libs.ktor.client.cio)
+        }
+
+        appleTest.dependencies {
+            implementation(libs.ktor.client.darwin)
+        }
     }
 }
+
+configJavaCompileWithModule("simbot.component.qqguild.core")

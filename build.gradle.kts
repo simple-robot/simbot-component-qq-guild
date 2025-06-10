@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2022-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,14 +17,16 @@
 
 import love.forte.gradle.common.core.project.setup
 import love.forte.gradle.common.core.repository.Repositories
-
+import love.forte.plugin.suspendtrans.gradle.SuspendTransformPluginExtension
+import love.forte.simbot.gradle.suspendtransforms.addSimbotJvmTransforms
 
 plugins {
     idea
-    id("simbot-tencent-guild.changelog-generator")
-    id("simbot-tencent-guild.dokka-multi-module")
-    id("simbot-tencent-guild.nexus-publish")
+    `changelog-generator`
+    `root-dokka`
+    `nexus-publish`
     alias(libs.plugins.kotlinxBinaryCompatibilityValidator)
+    id("love.forte.plugin.suspend-transform") apply false
 }
 
 setup(P.ComponentQQGuild)
@@ -33,6 +35,10 @@ buildscript {
     repositories {
         mavenCentral()
     }
+
+//    dependencies {
+//        classpath(libs.simbot.gradle)
+//    }
 }
 
 logger.info("=== Current version: {} ===", version)
@@ -45,6 +51,19 @@ allprojects {
             url = uri(Repositories.Snapshot.URL)
             mavenContent {
                 snapshotsOnly()
+            }
+        }
+        mavenLocal()
+    }
+}
+
+subprojects {
+    afterEvaluate {
+        if (plugins.hasPlugin(libs.plugins.suspendTransform.get().pluginId)) {
+            extensions.configure<SuspendTransformPluginExtension>("suspendTransformPlugin") {
+                includeRuntime = false
+                includeAnnotation = false
+                addSimbotJvmTransforms()
             }
         }
     }
@@ -84,9 +103,42 @@ apiValidation {
             "love.forte.simbot.annotations.InternalSimbotAPI",
             "love.forte.simbot.qguild.QGInternalApi",
             "love.forte.simbot.component.qguild.ExperimentalQGApi",
-            "love.forte.simbot.qguild.ExperimentalQGMediaApi"
+            "love.forte.simbot.qguild.ExperimentalQGMediaApi",
+            "love.forte.simbot.qguild.ed25519.annotations.InternalEd25519Api"
         ),
     )
 
     apiDumpDirectory = "api"
 }
+
+//subprojects {
+//    afterEvaluate {
+//        val p = this
+//        if (plugins.hasPlugin("org.jetbrains.dokka")) {
+//            dokka {
+//                configSourceSets(p)
+//                pluginsConfiguration.html {
+//                    configHtmlCustoms(p)
+//                }
+//            }
+//            rootProject.dependencies.dokka(p)
+//        }
+//    }
+//}
+//
+//dokka {
+//    moduleName = "Simple Robot 组件 | QQ"
+//
+//    dokkaPublications.all {
+//        if (isSimbotLocal()) {
+//            logger.info("Is 'SIMBOT_LOCAL', offline")
+//            offlineMode = true
+//        }
+//    }
+//
+//    configSourceSets(project)
+//
+//    pluginsConfiguration.html {
+//        configHtmlCustoms(project)
+//    }
+//}

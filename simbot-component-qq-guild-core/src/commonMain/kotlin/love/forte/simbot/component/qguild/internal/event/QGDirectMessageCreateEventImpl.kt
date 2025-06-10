@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. ForteScarlet.
+ * Copyright (c) 2024-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -27,8 +27,10 @@ import love.forte.simbot.component.qguild.internal.message.QGMessageContentImpl
 import love.forte.simbot.component.qguild.message.QGMessageContent
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
 import love.forte.simbot.component.qguild.message.sendDmsMessage
+import love.forte.simbot.component.qguild.utils.alsoEmitPostReplyEvent
+import love.forte.simbot.event.InteractionMessage
 import love.forte.simbot.message.MessageContent
-import love.forte.simbot.message.MessageReceipt
+import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.qguild.model.Message
 
 
@@ -55,21 +57,28 @@ internal class QGDirectMessageCreateEventImpl(
 
     override suspend fun content(): QGDmsContact = _content
 
-    override suspend fun reply(text: String): MessageReceipt {
-        var ref: Message.Reference? = null
-        return bot.sendDmsMessage(sourceEventEntity.guildId, text) {
-            if (msgId == null) {
-                msgId = sourceEventEntity.id
-            }
-            if (messageReference == null) {
-                messageReference = ref ?: Message.Reference(sourceEventEntity.id).also { ref = it }
-            }
-        }
+    override suspend fun reply(text: String): QGMessageReceipt {
+        return emitPreReplyEventAndReply(InteractionMessage.valueOf(text))
     }
 
     override suspend fun reply(message: love.forte.simbot.message.Message): QGMessageReceipt {
+        return emitPreReplyEventAndReply(InteractionMessage.valueOf(message))
+    }
+
+    override suspend fun reply(messageContent: MessageContent): QGMessageReceipt {
+        return emitPreReplyEventAndReply(InteractionMessage.valueOf(messageContent))
+    }
+
+    private suspend fun emitPreReplyEventAndReply(message: InteractionMessage): QGMessageReceipt {
+        val event = QGDirectMessageCreateEventPreReplyEventImpl(bot, this, message)
+        bot.emitMessagePreSendEvent(event)
+        return replyByInteractionMessage(event.useMessage())
+    }
+
+    private suspend fun replyByInteractionMessage(message: InteractionMessage): QGMessageReceipt {
         var ref: Message.Reference? = null
-        return bot.sendDmsMessage(sourceEventEntity.guildId, message) {
+
+        fun MessageSendApi.Body.Builder.configMsgIdAndRef() {
             if (msgId == null) {
                 msgId = sourceEventEntity.id
             }
@@ -77,18 +86,27 @@ internal class QGDirectMessageCreateEventImpl(
                 messageReference = ref ?: Message.Reference(sourceEventEntity.id).also { ref = it }
             }
         }
-    }
 
-    override suspend fun reply(messageContent: MessageContent): MessageReceipt {
-        var ref: Message.Reference? = null
-        return bot.sendDmsMessage(sourceEventEntity.guildId, messageContent) {
-            if (msgId == null) {
-                msgId = sourceEventEntity.id
+        return when (message) {
+            is InteractionMessage.Message -> {
+                bot.sendDmsMessage(sourceEventEntity.guildId, message.message) {
+                    configMsgIdAndRef()
+                }
             }
-            if (messageReference == null) {
-                messageReference = ref ?: Message.Reference(sourceEventEntity.id).also { ref = it }
-            }
-        }
-    }
 
+            is InteractionMessage.MessageContent -> {
+                bot.sendDmsMessage(sourceEventEntity.guildId, message.messageContent) {
+                    configMsgIdAndRef()
+                }
+            }
+
+            is InteractionMessage.Text -> {
+                bot.sendDmsMessage(sourceEventEntity.guildId, message.text) {
+                    configMsgIdAndRef()
+                }
+            }
+
+            is InteractionMessage.Extension -> error("Unknown type of InteractionMessage: $message")
+        }.alsoEmitPostReplyEvent(bot, this, message)
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2022-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -16,7 +16,7 @@
  */
 
 
-tasks.create("createChangelog") {
+tasks.register("createChangelog") {
     group = "documentation"
     doFirst {
         val realVersion = P.ComponentQQGuild.version
@@ -32,18 +32,28 @@ tasks.create("createChangelog") {
             val libs = rootProject.extensions.getByType<VersionCatalogsExtension>()
                 .named("libs")
 
-            val simbotVersion = libs.findVersion("simbot").get()
+            val simbotVersion = libs.findVersion("simbot")
+                .map { it.strictVersion.ifEmpty { it.requiredVersion }.ifEmpty { it.preferredVersion } }
+                .orElse("?")
 
-            val coreVersion = simbotVersion
+            val ktVersion = libs.findVersion("kotlin")
+                .map { it.strictVersion.ifEmpty { it.requiredVersion }.ifEmpty { it.preferredVersion } }
+                .orElse("?")
+
             val autoGenerateText = buildString {
-                appendLine("> [!note]\n> 对应核心版本: [**v$coreVersion**](https://github.com/simple-robot/simpler-robot/releases/tag/v$coreVersion)\n\n")
+                appendLine("""
+                    | 依赖 | 版本 |
+                    | --: | :-- |
+                    | Kotlin | **v${ktVersion}** |
+                    | [simbot核心库](https://github.com/simple-robot/simpler-robot) | [**v$simbotVersion**](https://github.com/simple-robot/simpler-robot/releases/tag/v$simbotVersion) |
+                """.trimIndent())
 
                 if ("dev" in version) {
                     appendLine(
                         """
+                        
                         > [!warning]
                         > **目前版本处于 `dev` 阶段，代表此版本是一个开发预览版，可能不稳定、可能随时发生更改、且不保证可用性。**
-                        
                         
                     """.trimIndent()
                     )
@@ -51,6 +61,7 @@ tasks.create("createChangelog") {
 
                 appendLine(
                     """
+                    
                     我们欢迎并期望着您的的[反馈](https://github.com/simple-robot/simbot-component-qq-guild/issues)或[协助](https://github.com/simple-robot/simbot-component-qq-guild/pulls)，
                     感谢您的贡献与支持！
 

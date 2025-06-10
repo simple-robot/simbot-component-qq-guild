@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024. ForteScarlet.
+ * Copyright (c) 2023-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -22,6 +22,7 @@ import love.forte.simbot.annotations.FragileSimbotAPI
 import love.forte.simbot.common.id.ID
 import love.forte.simbot.common.id.UUID
 import love.forte.simbot.common.time.Timestamp
+import love.forte.simbot.event.FuzzyEventTypeImplementation
 import love.forte.simbot.qguild.event.Signal
 
 
@@ -44,6 +45,7 @@ import love.forte.simbot.qguild.event.Signal
  * @author ForteScarlet
  */
 @FragileSimbotAPI
+@OptIn(FuzzyEventTypeImplementation::class)
 public abstract class QGUnsupportedEvent : QGBotEvent<Signal.Dispatch>() {
     /**
      * 事件ID。一个随机ID。

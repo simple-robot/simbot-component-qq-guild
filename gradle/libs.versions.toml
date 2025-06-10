@@ -1,119 +1,116 @@
 [versions]
-kotlin = "2.0.20"
+kotlin = "2.1.20"
 kotlinx-coroutines = "1.9.0"
 kotlinx-serialization = "1.7.3"
-kotlinx-datetime = "0.6.1"
-kotlinx-io = "0.6.0"
-dokka = "1.9.20"
-ktor = "2.3.12"
-log4j = "2.24.2"
+kotlinx-datetime = "0.6.2"
+kotlinx-io = "0.7.0"
+dokka = "2.0.0"
+# 暂时不支持 3.x 的 ktor
+ktor = { prefer = "2.3.12", reject = ["3.+"] }
+log4j = "2.24.3"
 # simbot
-simbot = "4.7.0"
-suspendTransform = "2.0.20-0.9.4"
+simbot = { prefer = "4.12.0" }
+suspendTransform = "2.1.20-0.12.0"
 gradleCommon = "0.6.0"
 # ksp
-ksp = "2.0.20-1.0.25"
+# https://github.com/google/ksp
+ksp = "2.1.20-1.0.32"
 # https://square.github.io/kotlinpoet/
-kotlinPoet = "2.0.0"
+kotlinPoet = "2.1.0"
 # https://detekt.dev/docs/intro
 # TODO apply detekt
-detekt = "1.23.7"
+detekt = "1.23.8"
 
-
+#
+bouncycastle = "1.81"
+#
+eddsa = "0.3.0"
+# https://github.com/ionspin/kotlin-multiplatform-libsodium
+libsodium-bindings = "0.9.2"
 [libraries]
 # simbot
-simbot-api = { group = "love.forte.simbot", name = "simbot-api", version.ref = "simbot" }
-simbot-core = { group = "love.forte.simbot", name = "simbot-core", version.ref = "simbot" }
-simbot-spring = { group = "love.forte.simbot", name = "simbot-core-spring-boot-starter", version.ref = "simbot" }
-simbot-logger = { group = "love.forte.simbot.logger", name = "simbot-logger", version.ref = "simbot" }
-simbot-logger-slf4jimpl = { group = "love.forte.simbot.logger", name = "simbot-logger-slf4j2-impl", version.ref = "simbot" }
-simbot-common-apidefinition = { group = "love.forte.simbot.common", name = "simbot-common-apidefinition", version.ref = "simbot" }
-simbot-common-atomic = { group = "love.forte.simbot.common", name = "simbot-common-atomic", version.ref = "simbot" }
-simbot-common-core = { group = "love.forte.simbot.common", name = "simbot-common-core", version.ref = "simbot" }
-simbot-common-suspend = { group = "love.forte.simbot.common", name = "simbot-common-suspend-runner", version.ref = "simbot" }
-simbot-common-annotations = { group = "love.forte.simbot.common", name = "simbot-common-annotations", version.ref = "simbot" }
-simbot-common-loop = { group = "love.forte.simbot.common", name = "simbot-common-stage-loop", version.ref = "simbot" }
-simbot-gradle = { group = "love.forte.simbot.gradle", name = "simbot-gradle-suspendtransforms", version.ref = "simbot" }
-
+simbot-api = { module = "love.forte.simbot:simbot-api", version.ref = "simbot" }
+simbot-core = { module = "love.forte.simbot:simbot-core", version.ref = "simbot" }
+simbot-spring = { module = "love.forte.simbot:simbot-core-spring-boot-starter", version.ref = "simbot" }
+simbot-logger = { module = "love.forte.simbot.logger:simbot-logger", version.ref = "simbot" }
+simbot-logger-slf4jimpl = { module = "love.forte.simbot.logger:simbot-logger-slf4j2-impl", version.ref = "simbot" }
+simbot-common-apidefinition = { module = "love.forte.simbot.common:simbot-common-apidefinition", version.ref = "simbot" }
+simbot-common-atomic = { module = "love.forte.simbot.common:simbot-common-atomic", version.ref = "simbot" }
+simbot-common-core = { module = "love.forte.simbot.common:simbot-common-core", version.ref = "simbot" }
+simbot-common-suspend = { module = "love.forte.simbot.common:simbot-common-suspend-runner", version.ref = "simbot" }
+simbot-common-annotations = { module = "love.forte.simbot.common:simbot-common-annotations", version.ref = "simbot" }
+simbot-common-loop = { module = "love.forte.simbot.common:simbot-common-stage-loop", version.ref = "simbot" }
+simbot-gradle = { module = "love.forte.simbot.gradle:simbot-gradle-suspendtransforms", version.ref = "simbot" }
 # jetbrains-annotation
-jetbrains-annotations = "org.jetbrains:annotations:26.0.1"
+jetbrains-annotations = "org.jetbrains:annotations:26.0.2"
 
 # kotlinx-coroutines
-kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
-kotlinx-coroutines-jdk8 = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-jdk8", version.ref = "kotlinx-coroutines" }
-kotlinx-coroutines-reactive = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-reactive", version.ref = "kotlinx-coroutines" }
-kotlinx-coroutines-reactor = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-reactor", version.ref = "kotlinx-coroutines" }
-kotlinx-coroutines-rx2 = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-rx2", version.ref = "kotlinx-coroutines" }
-kotlinx-coroutines-rx3 = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-rx3", version.ref = "kotlinx-coroutines" }
-kotlinx-coroutines-guava = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-guava", version.ref = "kotlinx-coroutines" }
-kotlinx-coroutines-debug = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-debug", version.ref = "kotlinx-coroutines" }
-kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-debug = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-debug", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
 
 # kotlinx-serialization
-kotlinx-serialization-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
-kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
-kotlinx-serialization-hocon = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-hocon", version.ref = "kotlinx-serialization" }
-kotlinx-serialization-protobuf = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-protobuf", version.ref = "kotlinx-serialization" }
-kotlinx-serialization-cbor = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-cbor", version.ref = "kotlinx-serialization" }
-kotlinx-serialization-properties = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-properties", version.ref = "kotlinx-serialization" }
+kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 
 # kotlinx-datetime
-kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinx-datetime" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 
 # kotlinx-io
 kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinx-io" }
 
 # ktor
-ktor-serialization-kotlinxJson = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
-ktor-server-contentNegotiation = { group = "io.ktor", name = "ktor-server-content-negotiation", version.ref = "ktor" }
-ktor-server-netty = { group = "io.ktor", name = "ktor-server-netty", version.ref = "ktor" }
+ktor-serialization-kotlinxJson = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
-ktor-client-contentNegotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
-ktor-client-serialization = { group = "io.ktor", name = "ktor-client-serialization", version.ref = "ktor" }
-ktor-client-ws = { group = "io.ktor", name = "ktor-client-websockets", version.ref = "ktor" }
-ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
-ktor-client-cio = { group = "io.ktor", name = "ktor-client-cio", version.ref = "ktor" }
-ktor-client-js = { group = "io.ktor", name = "ktor-client-js", version.ref = "ktor" }
-ktor-client-java = { group = "io.ktor", name = "ktor-client-java", version.ref = "ktor" }
-ktor-client-mock = { group = "io.ktor", name = "ktor-client-mock", version.ref = "ktor" }
-
+ktor-client-contentNegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-ws = { module = "io.ktor:ktor-client-websockets", version.ref = "ktor" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+ktor-client-js = { module = "io.ktor:ktor-client-js", version.ref = "ktor" }
+ktor-client-java = { module = "io.ktor:ktor-client-java", version.ref = "ktor" }
+ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
 # for linuxX64, macosX64, macosArm64, mingwX64
 # see https://ktor.io/docs/http-client-engines.html#curl
-ktor-client-curl = { group = "io.ktor", name = "ktor-client-curl", version.ref = "ktor" }
+ktor-client-curl = { module = "io.ktor:ktor-client-curl", version.ref = "ktor" }
 # for mingw
 # see https://ktor.io/docs/http-client-engines.html#winhttp
-ktor-client-winhttp = { group = "io.ktor", name = "ktor-client-winhttp", version.ref = "ktor" }
+ktor-client-winhttp = { module = "io.ktor:ktor-client-winhttp", version.ref = "ktor" }
 # Darwin-based operating systems (such as macOS, iOS, tvOS, and so on)
 # see https://ktor.io/docs/http-client-engines.html#darwin
-ktor-client-darwin = { group = "io.ktor", name = "ktor-client-darwin", version.ref = "ktor" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 
 # log4j
-log4j-api = { group = "org.apache.logging.log4j", name = "log4j-api", version.ref = "log4j" }
-log4j-core = { group = "org.apache.logging.log4j", name = "log4j-core", version.ref = "log4j" }
-log4j-slf4j2 = { group = "org.apache.logging.log4j", name = "log4j-slf4j2-impl", version.ref = "log4j" }
+log4j-api = { module = "org.apache.logging.log4j:log4j-api", version.ref = "log4j" }
+log4j-core = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4j" }
+log4j-slf4j2 = { module = "org.apache.logging.log4j:log4j-slf4j2-impl", version.ref = "log4j" }
 
 # ksp
 ksp = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
 # https://square.github.io/kotlinpoet/interop-ksp/
 kotlinPoet-ksp = { module = "com.squareup:kotlinpoet-ksp", version.ref = "kotlinPoet" }
-
 # dokka
-dokka-plugin = { group = "org.jetbrains.dokka", name = "dokka-gradle-plugin", version.ref = "dokka" }
-dokka-base = { group = "org.jetbrains.dokka", name = "dokka-base", version.ref = "dokka" }
+dokka-plugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
+dokka-base = { module = "org.jetbrains.dokka:dokka-base", version.ref = "dokka" }
 
 suspend-transform-gradle = { module = "love.forte.plugin.suspend-transform:suspend-transform-plugin-gradle", version.ref = "suspendTransform" }
 
 # gradle-common
-gradle-common-core = { group = "love.forte.gradle.common", name = "gradle-common-core", version.ref = "gradleCommon" }
-gradle-common-multiplatform = { group = "love.forte.gradle.common", name = "gradle-common-kotlin-multiplatform", version.ref = "gradleCommon" }
-gradle-common-publication = { group = "love.forte.gradle.common", name = "gradle-common-publication", version.ref = "gradleCommon" }
+gradle-common-core = { module = "love.forte.gradle.common:gradle-common-core", version.ref = "gradleCommon" }
+gradle-common-multiplatform = { module = "love.forte.gradle.common:gradle-common-kotlin-multiplatform", version.ref = "gradleCommon" }
+gradle-common-publication = { module = "love.forte.gradle.common:gradle-common-publication", version.ref = "gradleCommon" }
+
+# ed25519
+bouncycastle-bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", version.ref = "bouncycastle" }
+i2p-crypto-eddsa = { module = "net.i2p.crypto:eddsa", version.ref = "eddsa" }
+libsodium-bindings = { module = "com.ionspin.kotlin:multiplatform-crypto-libsodium-bindings", version.ref= "libsodium-bindings" }
 
 [plugins]
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 # binary-compatibility-validator
 # https://github.com/Kotlin/binary-compatibility-validator
-kotlinxBinaryCompatibilityValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version = "0.16.3" }
+kotlinxBinaryCompatibilityValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version = "0.17.0" }
+suspendTransform = { id = "love.forte.plugin.suspend-transform" } # , version.ref = "suspendTransform" }
 
 [bundles]
 gradle-common = ["gradle-common-core", "gradle-common-multiplatform", "gradle-common-publication"]

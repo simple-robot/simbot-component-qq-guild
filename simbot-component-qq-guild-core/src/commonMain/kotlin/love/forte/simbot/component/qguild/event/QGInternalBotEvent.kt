@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2022-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -25,15 +25,16 @@ import love.forte.simbot.component.qguild.bot.QGBot
 import love.forte.simbot.component.qguild.bot.QQGuildBotManager
 import love.forte.simbot.event.BotRegisteredEvent
 import love.forte.simbot.event.BotStartedEvent
-import love.forte.simbot.event.Event
+import love.forte.simbot.event.FuzzyEventTypeImplementation
 
 /**
  *
- * 频道组件中对于部分内部事件的统一实现接口。
+ * QQ组件中对内部 bot 事件的实现。
  *
  * @author ForteScarlet
  */
-public sealed interface QGInternalBotEvent : Event
+@OptIn(FuzzyEventTypeImplementation::class)
+public sealed interface QGInternalBotEvent : QGInternalEvent
 
 /**
  * qq频道组件中，每当 [QQGuildBotManager] 通过任意 [QQGuildBotManager.register] 注册并得到Bot实例后触发的事件。

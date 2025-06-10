@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2022-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,6 +17,14 @@
 
 rootProject.name = "qq-guild"
 
+pluginManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+        mavenLocal()
+    }
+}
+
 // internals
 include(":internal-processors:api-reader")
 include(":internal-processors:dispatch-serializer-processor")
@@ -25,10 +33,12 @@ include(":internal-processors:intents-processor")
 include(":simbot-component-qq-guild-api")
 include(":simbot-component-qq-guild-stdlib")
 include(":simbot-component-qq-guild-core")
+include(":simbot-component-qq-guild-internal-ed25519")
 
 // samples
 include(":samples:webhook-server-ktor")
 include(":samples:webhook-server-spring")
 include(":samples:webhook-server-spring-webflux")
 
+//include(":tests:catalog-reject-test")
 

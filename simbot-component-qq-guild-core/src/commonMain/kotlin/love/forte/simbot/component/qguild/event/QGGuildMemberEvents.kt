@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2022-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -23,10 +23,7 @@ import love.forte.simbot.common.id.StringID.Companion.ID
 import love.forte.simbot.common.time.Timestamp
 import love.forte.simbot.component.qguild.guild.QGGuild
 import love.forte.simbot.component.qguild.guild.QGMember
-import love.forte.simbot.event.GuildMemberDecreaseEvent
-import love.forte.simbot.event.GuildMemberIncreaseEvent
-import love.forte.simbot.event.MemberChangeEvent
-import love.forte.simbot.event.OrganizationSourceEvent
+import love.forte.simbot.event.*
 import love.forte.simbot.qguild.event.EventIntents
 import love.forte.simbot.qguild.event.EventMember
 import love.forte.simbot.suspendrunner.STP
@@ -44,6 +41,7 @@ import love.forte.simbot.suspendrunner.STP
  * @see QGMemberUpdateEvent
  * @see QGMemberRemoveEvent
  */
+@OptIn(FuzzyEventTypeImplementation::class)
 public sealed class QGMemberEvent : QGEvent<EventMember>() {
     /**
      * 事件接收到的原始的用户信息。
@@ -86,6 +84,7 @@ public abstract class QGMemberAddEvent : QGMemberEvent(), GuildMemberIncreaseEve
  * 频道成员信息更新事件。
  */
 @STP
+@OptIn(FuzzyEventTypeImplementation::class)
 public abstract class QGMemberUpdateEvent : QGMemberEvent(), MemberChangeEvent, OrganizationSourceEvent {
     @OptIn(ExperimentalSimbotAPI::class)
     override val time: Timestamp = Timestamp.now()

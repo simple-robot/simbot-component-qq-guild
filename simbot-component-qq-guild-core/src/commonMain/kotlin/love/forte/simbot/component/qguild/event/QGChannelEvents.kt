@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2022-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -47,6 +47,7 @@ import love.forte.simbot.qguild.event.EventChannel as QGSourceEventChannel
  *
  * @author ForteScarlet
  */
+@OptIn(FuzzyEventTypeImplementation::class)
 @STP
 public sealed class QGChannelEvent : QGBotEvent<QGSourceEventChannel>() {
     /**
@@ -65,6 +66,7 @@ public sealed class QGChannelEvent : QGBotEvent<QGSourceEventChannel>() {
  * 子频道被创建事件。是一个频道服务器变更事件。
  */
 @STP
+@OptIn(FuzzyEventTypeImplementation::class)
 public abstract class QGChannelCreateEvent : QGChannelEvent(), OrganizationChangeEvent {
     @OptIn(ExperimentalSimbotAPI::class)
     override val time: Timestamp = Timestamp.now()
@@ -85,6 +87,7 @@ public abstract class QGChannelCreateEvent : QGChannelEvent(), OrganizationChang
  * 事件通知即已完成变更。
  */
 @STP
+@OptIn(FuzzyEventTypeImplementation::class)
 public abstract class QGChannelUpdateEvent : QGChannelEvent(), ChangeEvent, ChannelEvent {
     @OptIn(ExperimentalSimbotAPI::class)
     override val time: Timestamp = Timestamp.now()
@@ -105,6 +108,7 @@ public abstract class QGChannelUpdateEvent : QGChannelEvent(), ChangeEvent, Chan
  *
  * 当收到此事件时，[content] 已经被删除。
  */
+@OptIn(FuzzyEventTypeImplementation::class)
 @STP
 public abstract class QGChannelDeleteEvent : QGChannelEvent(), OrganizationChangeEvent {
     @OptIn(ExperimentalSimbotAPI::class)

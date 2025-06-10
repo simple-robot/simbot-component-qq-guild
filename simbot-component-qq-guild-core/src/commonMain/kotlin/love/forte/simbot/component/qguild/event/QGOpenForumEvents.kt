@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024. ForteScarlet.
+ * Copyright (c) 2023-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -26,6 +26,7 @@ import love.forte.simbot.component.qguild.channel.QGForumChannel
 import love.forte.simbot.component.qguild.guild.QGGuild
 import love.forte.simbot.component.qguild.guild.QGMember
 import love.forte.simbot.event.ChannelEvent
+import love.forte.simbot.event.FuzzyEventTypeImplementation
 import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.event.*
 import love.forte.simbot.suspendrunner.STP
@@ -41,6 +42,7 @@ import love.forte.simbot.suspendrunner.STP
  * @see OpenForumDispatch
  */
 @STP
+@SubclassOptInRequired(FuzzyEventTypeImplementation::class)
 public abstract class QGOpenForumEvent : QGBotEvent<OpenForumEventData>(), ChannelEvent {
     override val id: ID = UUID.random()
 
@@ -106,6 +108,7 @@ public abstract class QGOpenForumEvent : QGBotEvent<OpenForumEventData>(), Chann
  * @see OpenForumThreadDispatch
  * @see QGOpenForumEvent
  */
+@OptIn(FuzzyEventTypeImplementation::class)
 public abstract class QGOpenForumThreadEvent : QGOpenForumEvent() {
     /**
      * API模块的原事件内容。
@@ -164,6 +167,7 @@ public abstract class QGOpenForumThreadDeleteEvent : QGOpenForumThreadEvent() {
  * @see OpenForumPostDispatch
  * @see QGOpenForumEvent
  */
+@OptIn(FuzzyEventTypeImplementation::class)
 public abstract class QGOpenForumPostEvent : QGOpenForumEvent() {
     /**
      * API模块的原事件内容。
@@ -208,6 +212,7 @@ public abstract class QGOpenForumPostDeleteEvent : QGOpenForumPostEvent() {
  * @see OpenForumReplyDispatch
  * @see QGOpenForumEvent
  */
+@OptIn(FuzzyEventTypeImplementation::class)
 public abstract class QGOpenForumReplyEvent : QGOpenForumEvent() {
     /**
      * API模块的原事件内容。

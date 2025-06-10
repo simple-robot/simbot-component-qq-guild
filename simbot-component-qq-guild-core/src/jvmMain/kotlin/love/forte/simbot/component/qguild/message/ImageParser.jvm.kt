@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. ForteScarlet.
+ * Copyright (c) 2024-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -52,6 +52,8 @@ internal actual fun processOfflineImage0(
                 builderContext.builderOrNew { it.fileImage == null }.fileImage = resource.uri
                 return true
             }
+
+            else -> return false
         }
     }
 

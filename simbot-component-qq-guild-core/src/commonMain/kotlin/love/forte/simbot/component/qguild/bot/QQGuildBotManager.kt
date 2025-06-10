@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024. ForteScarlet.
+ * Copyright (c) 2021-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -39,7 +39,6 @@ import love.forte.simbot.plugin.PluginFactory
 import love.forte.simbot.plugin.PluginFactoryConfigurerProvider
 import love.forte.simbot.plugin.PluginFactoryProvider
 import love.forte.simbot.qguild.stdlib.Bot
-import love.forte.simbot.qguild.stdlib.BotConfiguration
 import love.forte.simbot.qguild.stdlib.ConfigurableBotConfiguration
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -257,7 +256,7 @@ public class QQGuildBotManagerConfiguration {
      * botConfigure = { appId, secret, token -> /* ... */ }
      * ```
      */
-    public var botConfigure: BotConfiguration.(appId: String, secret: String, token: String) -> Unit =
+    public var botConfigure: ConfigurableBotConfiguration.(appId: String, secret: String, token: String) -> Unit =
         { _, _, _ -> }
 
     /**
@@ -272,7 +271,7 @@ public class QQGuildBotManagerConfiguration {
      * ```
      */
     @QGBotManagerConfigurationDsl
-    public fun botConfigure(configure: BotConfiguration.(appId: String, secret: String, token: String) -> Unit) {
+    public fun botConfigure(configure: ConfigurableBotConfiguration.(appId: String, secret: String, token: String) -> Unit) {
         botConfigure.also { old ->
             botConfigure = { appId, secret, token ->
                 old(appId, secret, token)

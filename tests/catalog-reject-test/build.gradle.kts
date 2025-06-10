@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. ForteScarlet.
+ * Copyright (c) 2022-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -15,17 +15,16 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-import love.forte.simbot.gradle.suspendtransforms.addSimbotJvmTransformers
-
 plugins {
-    id("love.forte.plugin.suspend-transform")
+    kotlin("jvm")
 }
 
-suspendTransform {
-    includeRuntime = false
-    includeAnnotation = false
+kotlin {
 
-    addSimbotJvmTransformers()
 }
 
-
+dependencies {
+    implementation(project(":simbot-component-qq-guild-core"))
+//    implementation("io.ktor:ktor-client-core:3.1.2")
+//    implementation("io.ktor:ktor-client-core:2.3.12")
+}

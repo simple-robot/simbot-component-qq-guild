@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024. ForteScarlet.
+ * Copyright (c) 2021-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -32,7 +32,8 @@ dependencies {
     implementation(kotlin("serialization", kotlinVersion))
     // for plugin.spring
     implementation(kotlin("allopen", kotlinVersion))
-    implementation(libs.bundles.dokka)
+    implementation(libs.dokka.plugin)
+//    implementation(libs.bundles.dokka)
 
     // see https://github.com/gradle-nexus/publish-plugin
     implementation("io.github.gradle-nexus:publish-plugin:2.0.0")
