@@ -18,25 +18,6 @@
 import love.forte.gradle.common.core.project.ProjectDetail
 import love.forte.gradle.common.core.property.systemProp
 
-//val simbotVersion = v(3, 2, 0)
-////- v("RC", 3)
-//
-//fun simbot(name: String, version: String = simbotVersion.toString()): String = "love.forte.simbot:simbot-$name:$version"
-//fun simboot(name: String, version: String = simbotVersion.toString()): String =
-//    "love.forte.simbot.boot:simboot-$name:$version"
-//
-//val simbotApi = simbot("api")
-//val simbotCore = simbot("core")
-//val simbotLogger = simbot("logger")
-//val simbotLoggerJvm = simbot("logger-jvm")
-//val simbotLoggerSlf4jImpl = simbot("logger-slf4j-impl")
-//
-//val simbotUtilLoop = "love.forte.simbot.util:simbot-util-stage-loop:$simbotVersion"
-//val simbotUtilSuspendTransformer = "love.forte.simbot.util:simbot-util-suspend-transformer:$simbotVersion"
-//val simbotUtilAnnotations = "love.forte.simbot.util:simbot-annotations:$simbotVersion"
-
-const val SIMBOT_GROUP = "love.forte.simbot"
-
 /**
  * Project versions.
  */
@@ -57,7 +38,7 @@ object P {
 
 
         const val VERSION = "4.2.0"
-        const val NEXT_VERSION = "4.2.0"
+        const val NEXT_VERSION = "4.2.1"
 
         override val snapshotVersion = "$NEXT_VERSION-SNAPSHOT"
         override val version = if (isSnapshot()) snapshotVersion else VERSION
