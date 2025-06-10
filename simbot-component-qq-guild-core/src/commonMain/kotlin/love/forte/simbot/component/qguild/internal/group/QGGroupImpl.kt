@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. ForteScarlet.
+ * Copyright (c) 2024-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -25,8 +25,11 @@ import love.forte.simbot.component.qguild.group.QGGroup
 import love.forte.simbot.component.qguild.group.QGGroupMember
 import love.forte.simbot.component.qguild.internal.bot.QGBotImpl
 import love.forte.simbot.component.qguild.internal.bot.newSupervisorCoroutineContext
+import love.forte.simbot.component.qguild.internal.event.QGGroupSendSupportPreSendEventImpl
 import love.forte.simbot.component.qguild.message.QGMedia
 import love.forte.simbot.component.qguild.message.sendGroupMessage
+import love.forte.simbot.component.qguild.utils.alsoEmitPostSendEvent
+import love.forte.simbot.event.InteractionMessage
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.message.MessageReceipt
@@ -64,27 +67,62 @@ internal class QGGroupImpl(
     }
 
     override suspend fun send(text: String): MessageReceipt {
-        return bot.sendGroupMessage(id.literal, text, GroupMessageSendApi.MSG_TYPE_TEXT) {
-            initMsgIdAndSeq()
-        }
+        return emitPreSendEventAndSend(InteractionMessage.valueOf(text))
     }
 
     override suspend fun send(message: Message): MessageReceipt {
-        return bot.sendGroupMessage(
-            id.literal,
-            message = message,
-        ) {
-            initMsgIdAndSeq()
-        }
+        return emitPreSendEventAndSend(InteractionMessage.valueOf(message))
     }
 
     override suspend fun send(messageContent: MessageContent): MessageReceipt {
-        return bot.sendGroupMessage(
-            id.literal,
-            messageContent = messageContent,
-        ) {
-            initMsgIdAndSeq()
-        }
+        return emitPreSendEventAndSend(InteractionMessage.valueOf(messageContent))
+    }
+
+    private suspend fun emitPreSendEventAndSend(message: InteractionMessage): MessageReceipt {
+        val event = QGGroupSendSupportPreSendEventImpl(
+            bot = bot,
+            content = this,
+            message = message
+        )
+        bot.emitMessagePreSendEvent(event)
+        val message = event.useMessage()
+        return sendByInteractionMessage(message)
+    }
+
+    private suspend fun sendByInteractionMessage(message: InteractionMessage): MessageReceipt {
+        return when (message) {
+            is InteractionMessage.Text -> {
+                bot.sendGroupMessage(
+                    openid = id.literal,
+                    text = message.text,
+                    msgType = GroupMessageSendApi.MSG_TYPE_TEXT
+                ) {
+                    initMsgIdAndSeq()
+                }
+            }
+
+            is InteractionMessage.Message -> {
+                bot.sendGroupMessage(
+                    openid = id.literal,
+                    message = message.message,
+                ) {
+                    initMsgIdAndSeq()
+                }
+            }
+
+            is InteractionMessage.MessageContent -> {
+                bot.sendGroupMessage(
+                    openid = id.literal,
+                    messageContent = message.messageContent,
+                ) {
+                    initMsgIdAndSeq()
+                }
+            }
+
+            else -> {
+                error("Unknown type of InteractionMessage: $message")
+            }
+        }.alsoEmitPostSendEvent(bot, this, message)
     }
 
     override suspend fun uploadMedia(url: String, type: Int): QGMedia {

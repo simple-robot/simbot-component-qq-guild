@@ -43,7 +43,7 @@ import love.forte.simbot.suspendrunner.STP
  * @author ForteScarlet
  */
 @OptIn(FuzzyEventTypeImplementation::class)
-public abstract class QGC2CMessageCreateEvent : QGBotEvent<C2CMessageCreate>(), ContactMessageEvent {
+public abstract class QGC2CMessageCreateEvent : QGBaseMessageEvent<C2CMessageCreate>(), ContactMessageEvent {
     abstract override val bot: QGBot
 
     abstract override val id: ID

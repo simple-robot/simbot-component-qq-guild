@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2022-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -24,12 +24,16 @@ import love.forte.simbot.component.qguild.channel.QGTextChannel
 import love.forte.simbot.component.qguild.guild.QGGuild
 import love.forte.simbot.component.qguild.internal.bot.QGBotImpl
 import love.forte.simbot.component.qguild.internal.bot.newSupervisorCoroutineContext
+import love.forte.simbot.component.qguild.internal.event.QGTextChannelSendSupportPreSendEventImpl
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
 import love.forte.simbot.component.qguild.message.sendMessage
+import love.forte.simbot.component.qguild.utils.alsoEmitPostSendEvent
+import love.forte.simbot.event.InteractionMessage
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.qguild.QQGuildApiException
 import love.forte.simbot.qguild.addStackTrace
+import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.qguild.model.Channel
 import kotlin.coroutines.CoroutineContext
 import love.forte.simbot.qguild.model.Channel as QGSourceChannel
@@ -59,38 +63,62 @@ internal class QGTextChannelImpl internal constructor(
     override val id: ID = source.id.ID
 
     override suspend fun send(message: Message): QGMessageReceipt {
-        return try {
-            bot.sendMessage(source.id, message) {
-                if (msgId == null) {
-                    msgId = currentMsgId
-                }
-            }
-        } catch (e: QQGuildApiException) {
-            throw e.addStackTrace { "channel.send" }
-        }
+        return emitPreSendEventAndSend(InteractionMessage.valueOf(message))
     }
 
     override suspend fun send(messageContent: MessageContent): QGMessageReceipt {
-        return try {
-            bot.sendMessage(source.id, messageContent) {
-                if (msgId == null) {
-                    msgId = currentMsgId
-                }
-            }
-        } catch (e: QQGuildApiException) {
-            throw e.addStackTrace { "channel.send" }
-        }
+        return emitPreSendEventAndSend(InteractionMessage.valueOf(messageContent))
     }
 
     override suspend fun send(text: String): QGMessageReceipt {
-        return try {
-            bot.sendMessage(source.id, text) {
-                if (msgId == null) {
-                    msgId = currentMsgId
-                }
+        return emitPreSendEventAndSend(InteractionMessage.valueOf(text))
+    }
+
+    private suspend fun emitPreSendEventAndSend(
+        message: InteractionMessage,
+    ): QGMessageReceipt {
+        val event = QGTextChannelSendSupportPreSendEventImpl(
+            bot = bot,
+            content = this,
+            message = message
+        )
+        bot.emitMessagePreSendEvent(event)
+        val message = event.useMessage()
+
+        return sendByInteractionMessage(message)
+    }
+
+    private suspend fun sendByInteractionMessage(message: InteractionMessage): QGMessageReceipt {
+        fun MessageSendApi.Body.Builder.configMsgId() {
+            if (msgId == null) {
+                msgId = currentMsgId
             }
+        }
+
+        try {
+            return when (message) {
+                is InteractionMessage.Message -> {
+                    bot.sendMessage(source.id, message.message) {
+                        configMsgId()
+                    }
+                }
+
+                is InteractionMessage.MessageContent -> {
+                    bot.sendMessage(source.id, message.messageContent) {
+                        configMsgId()
+                    }
+                }
+
+                is InteractionMessage.Text -> {
+                    bot.sendMessage(source.id, message.text) {
+                        configMsgId()
+                    }
+                }
+
+                is InteractionMessage.Extension -> error("Unknown type of InteractionMessage: $message.")
+            }.alsoEmitPostSendEvent(bot, this, message)
         } catch (e: QQGuildApiException) {
-            throw e.addStackTrace { "channel.send" }
+            throw e.addStackTrace { "textChannel.send" }
         }
     }
 
@@ -111,5 +139,3 @@ internal fun Channel.toTextChannel(
     category = category,
     currentMsgId = currentMsgId
 )
-
-

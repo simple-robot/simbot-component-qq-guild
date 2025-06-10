@@ -44,7 +44,7 @@ import love.forte.simbot.suspendrunner.STP
  * @author ForteScarlet
  */
 @OptIn(FuzzyEventTypeImplementation::class)
-public abstract class QGGroupAtMessageCreateEvent : QGBotEvent<GroupAtMessageCreate>(), ChatGroupMessageEvent {
+public abstract class QGGroupAtMessageCreateEvent : QGBaseMessageEvent<GroupAtMessageCreate>(), ChatGroupMessageEvent {
     abstract override val bot: QGBot
 
     /**

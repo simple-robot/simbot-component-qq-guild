@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. ForteScarlet.
+ * Copyright (c) 2024-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -24,8 +24,12 @@ import love.forte.simbot.common.id.literal
 import love.forte.simbot.component.qguild.friend.QGFriend
 import love.forte.simbot.component.qguild.internal.bot.QGBotImpl
 import love.forte.simbot.component.qguild.internal.bot.newSupervisorCoroutineContext
+import love.forte.simbot.component.qguild.internal.event.QGFriendSendSupportPreSendEventImpl
 import love.forte.simbot.component.qguild.message.QGMedia
+import love.forte.simbot.component.qguild.message.QGMessageReceipt
 import love.forte.simbot.component.qguild.message.sendUserMessage
+import love.forte.simbot.component.qguild.utils.alsoEmitPostSendEvent
+import love.forte.simbot.event.InteractionMessage
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.message.MessageReceipt
@@ -73,32 +77,74 @@ internal class QGFriendImpl(
         }
     }
 
+    /**
+     * 发送消息，然后emit post send事件并返回 receipt.
+     */
+    private suspend fun sendByInteractionMessage(message: InteractionMessage): QGMessageReceipt {
+        return when (message) {
+            is InteractionMessage.Extension -> error("Unknown type of InteractionMessage: $message")
+            is InteractionMessage.Text -> {
+                bot.sendUserMessage(
+                    openid = id.literal,
+                    text = message.text,
+                    msgType = GroupAndC2CSendBody.MSG_TYPE_TEXT,
+                ) {
+                    initMsgIdAndSeq()
+                }
+            }
+            is InteractionMessage.Message -> {
+                bot.sendUserMessage(
+                    openid = id.literal,
+                    message = message.message,
+                ) {
+                    initMsgIdAndSeq()
+                }
+            }
+            is InteractionMessage.MessageContent -> {
+                bot.sendUserMessage(
+                    openid = id.literal,
+                    messageContent = message.messageContent,
+                ) {
+                    initMsgIdAndSeq()
+                }
+            }
+        }.alsoEmitPostSendEvent(bot, this, message)
+    }
+
     override suspend fun send(text: String): MessageReceipt {
-        return bot.sendUserMessage(
-            openid = id.literal,
-            text = text,
-            msgType = GroupAndC2CSendBody.MSG_TYPE_TEXT,
-        ) {
-            initMsgIdAndSeq()
-        }
+        val event = QGFriendSendSupportPreSendEventImpl(
+            bot = bot,
+            content = this,
+            message = InteractionMessage.valueOf(text),
+        )
+        bot.emitMessagePreSendEvent(event)
+        val message = event.useMessage()
+
+        return sendByInteractionMessage(message)
     }
 
     override suspend fun send(message: Message): MessageReceipt {
-        return bot.sendUserMessage(
-            openid = id.literal,
-            message = message,
-        ) {
-            initMsgIdAndSeq()
-        }
+        val event = QGFriendSendSupportPreSendEventImpl(
+            bot = bot,
+            content = this,
+            message = InteractionMessage.valueOf(message),
+        )
+        bot.emitMessagePreSendEvent(event)
+        val message = event.useMessage()
+
+        return sendByInteractionMessage(message)
     }
 
     override suspend fun send(messageContent: MessageContent): MessageReceipt {
-        return bot.sendUserMessage(
-            openid = id.literal,
-            messageContent = messageContent,
-        ) {
-            initMsgIdAndSeq()
-        }
+        val event = QGFriendSendSupportPreSendEventImpl(
+            bot = bot,
+            content = this,
+            message = InteractionMessage.valueOf(messageContent),
+        )
+        bot.emitMessagePreSendEvent(event)
+        val message = event.useMessage()
+
+        return sendByInteractionMessage(message)
     }
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2022-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -29,6 +29,7 @@ import love.forte.simbot.component.qguild.ExperimentalQGApi
 import love.forte.simbot.component.qguild.guild.QGMember
 import love.forte.simbot.component.qguild.internal.bot.QGBotImpl
 import love.forte.simbot.component.qguild.internal.bot.newSupervisorCoroutineContext
+import love.forte.simbot.component.qguild.internal.event.QGMemberSendSupportPreSendEventImpl
 import love.forte.simbot.component.qguild.internal.message.asReceipt
 import love.forte.simbot.component.qguild.internal.role.toGuildRole
 import love.forte.simbot.component.qguild.internal.role.toMemberRole
@@ -37,6 +38,8 @@ import love.forte.simbot.component.qguild.message.QGMessageContent
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
 import love.forte.simbot.component.qguild.message.sendMessage
 import love.forte.simbot.component.qguild.role.QGMemberRole
+import love.forte.simbot.component.qguild.utils.alsoEmitPostSendEvent
+import love.forte.simbot.event.InteractionMessage
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.qguild.QQGuildApiException
@@ -114,25 +117,71 @@ internal class QGMemberImpl(
 
     @JvmSynthetic
     override suspend fun send(message: Message): QGMessageReceipt {
-        val builder = MessageParsers.parse(message)
-        return send0(builder)
+        val event = QGMemberSendSupportPreSendEventImpl(
+            bot = bot,
+            content = this,
+            message = InteractionMessage.valueOf(message),
+        )
+        bot.emitMessagePreSendEvent(event)
+        val message = event.useMessage()
+
+        return sendByInteractionMessage(message)
     }
 
     override suspend fun send(text: String): QGMessageReceipt {
-        return bot.sendMessage(dms.guildId, text)
+        val event = QGMemberSendSupportPreSendEventImpl(
+            bot = bot,
+            content = this,
+            message = InteractionMessage.valueOf(text),
+        )
+        bot.emitMessagePreSendEvent(event)
+        val message = event.useMessage()
+
+        return sendByInteractionMessage(message)
     }
 
 
     override suspend fun send(messageContent: MessageContent): QGMessageReceipt {
-        if (messageContent is QGMessageContent) {
-            val body = MessageSendApi.Body {
-                fromMessage(messageContent.sourceMessage)
-            }
-            return send0(body)
-        }
+        val event = QGMemberSendSupportPreSendEventImpl(
+            bot = bot,
+            content = this,
+            message = InteractionMessage.valueOf(messageContent),
+        )
+        bot.emitMessagePreSendEvent(event)
+        val message = event.useMessage()
 
-        return send(messageContent.messages)
+        return sendByInteractionMessage(message)
     }
+
+    private suspend fun sendByInteractionMessage(message: InteractionMessage): QGMessageReceipt {
+        return when (message) {
+            is InteractionMessage.Text -> {
+                val dms = getDms()
+                bot.sendMessage(dms.guildId, message.text)
+            }
+
+            is InteractionMessage.Message -> {
+                val builder = MessageParsers.parse(message.message)
+                send0(builder)
+            }
+
+            is InteractionMessage.MessageContent -> {
+                val messageContent = message.messageContent
+                if (messageContent is QGMessageContent) {
+                    val body = MessageSendApi.Body {
+                        fromMessage(messageContent.sourceMessage)
+                    }
+                    return send0(body)
+                }
+
+                val builder = MessageParsers.parse(messageContent.messages)
+                send0(builder)
+            }
+
+            else -> error("Unknown type of InteractionMessage: $message")
+        }.alsoEmitPostSendEvent(bot, this, message)
+    }
+
 
     private suspend fun send0(body: MessageSendApi.Body): QGMessageReceipt {
         val dms = getDms()
@@ -185,4 +234,3 @@ internal class QGMemberImpl(
         return "QGMember(id=$id, name=$name, nick=$nick, guildId=$guildId)"
     }
 }
-

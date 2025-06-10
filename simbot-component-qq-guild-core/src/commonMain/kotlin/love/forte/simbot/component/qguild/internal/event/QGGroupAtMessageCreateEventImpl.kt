@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. ForteScarlet.
+ * Copyright (c) 2024-2025. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -30,6 +30,8 @@ import love.forte.simbot.component.qguild.internal.group.toGroup
 import love.forte.simbot.component.qguild.internal.message.QGGroupAndC2CMessageContentImpl
 import love.forte.simbot.component.qguild.message.QGGroupAndC2CMessageContent
 import love.forte.simbot.component.qguild.message.sendGroupMessage
+import love.forte.simbot.component.qguild.utils.alsoEmitPostReplyEvent
+import love.forte.simbot.event.InteractionMessage
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.message.MessageReceipt
@@ -68,47 +70,69 @@ internal class QGGroupAtMessageCreateEventImpl(
     override suspend fun content(): QGGroup =
         sourceEventEntity.data.toGroup(bot, msgSeq)
 
-    private fun GroupAndC2CSendBody.initRefAndMsgIdAndSeq() {
-        if (messageReference == null) {
-            messageReference = love.forte.simbot.qguild.model.Message.Reference(
-                sourceEventEntity.data.id,
-            )
-        }
-        if (msgId == null) {
-            msgId = sourceEventEntity.data.id
-        }
-        if (msgSeq == null) {
-            msgSeq = this@QGGroupAtMessageCreateEventImpl.msgSeq.getAndIncrement()
-        }
-    }
-
     override suspend fun reply(text: String): MessageReceipt {
-        return bot.sendGroupMessage(
-            openid = sourceEventEntity.data.groupOpenid,
-            text = text,
-            msgType = GroupMessageSendApi.MSG_TYPE_TEXT,
-        ) {
-            initRefAndMsgIdAndSeq()
-        }
+        return emitPreReplyEventAndReply(InteractionMessage.valueOf(text))
     }
 
     override suspend fun reply(message: Message): MessageReceipt {
-        return bot.sendGroupMessage(
-            openid = sourceEventEntity.data.groupOpenid,
-            message = message,
-        ) {
-            // post
-            initRefAndMsgIdAndSeq()
-        }
+        return emitPreReplyEventAndReply(InteractionMessage.valueOf(message))
     }
 
     override suspend fun reply(messageContent: MessageContent): MessageReceipt {
-        return bot.sendGroupMessage(
-            openid = sourceEventEntity.data.groupOpenid,
-            messageContent = messageContent,
-        ) {
-            // post
-            initRefAndMsgIdAndSeq()
+        return emitPreReplyEventAndReply(InteractionMessage.valueOf(messageContent))
+    }
+
+    private suspend fun emitPreReplyEventAndReply(message: InteractionMessage): MessageReceipt {
+        val event = QGGroupAtMessageCreateEventPreReplyEventImpl(bot, this, message)
+        bot.emitMessagePreSendEvent(event)
+        return replyByInteractionMessage(event.useMessage())
+    }
+
+    private suspend fun replyByInteractionMessage(message: InteractionMessage): MessageReceipt {
+        fun GroupAndC2CSendBody.configRefAndMsgIdAndSeq() {
+            if (messageReference == null) {
+                messageReference = love.forte.simbot.qguild.model.Message.Reference(
+                    sourceEventEntity.data.id,
+                )
+            }
+            if (msgId == null) {
+                msgId = sourceEventEntity.data.id
+            }
+            if (msgSeq == null) {
+                msgSeq = this@QGGroupAtMessageCreateEventImpl.msgSeq.getAndIncrement()
+            }
         }
+
+        return when (message) {
+            is InteractionMessage.Message -> {
+                bot.sendGroupMessage(
+                    openid = sourceEventEntity.data.groupOpenid,
+                    message = message.message,
+                ) {
+                    configRefAndMsgIdAndSeq()
+                }
+            }
+
+            is InteractionMessage.MessageContent -> {
+                bot.sendGroupMessage(
+                    openid = sourceEventEntity.data.groupOpenid,
+                    messageContent = message.messageContent,
+                ) {
+                    configRefAndMsgIdAndSeq()
+                }
+            }
+
+            is InteractionMessage.Text -> {
+                bot.sendGroupMessage(
+                    openid = sourceEventEntity.data.groupOpenid,
+                    text = message.text,
+                    msgType = GroupMessageSendApi.MSG_TYPE_TEXT,
+                ) {
+                    configRefAndMsgIdAndSeq()
+                }
+            }
+
+            is InteractionMessage.Extension -> error("Unknown type of InteractionMessage: $message")
+        }.alsoEmitPostReplyEvent(bot, this, message)
     }
 }
