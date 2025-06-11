@@ -154,7 +154,7 @@ internal fun C2CMessageCreate.Data.toFriend(
 ): QGFriendImpl =
     QGFriendImpl(
         bot = bot,
-        id = id.ID,
+        id = author.userOpenid.ID,
         eventId = null,
         sourceEvent = this,
         msgSeq = seq
