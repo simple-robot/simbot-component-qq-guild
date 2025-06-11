@@ -8,6 +8,7 @@ import love.forte.simbot.common.function.ConfigurerFunction
 import love.forte.simbot.common.id.ID
 import love.forte.simbot.common.id.StringID.Companion.ID
 import love.forte.simbot.common.time.Timestamp
+import love.forte.simbot.component.qguild.ExperimentalQGApi
 import love.forte.simbot.component.qguild.QQGuildComponent
 import love.forte.simbot.component.qguild.bot.QGBot
 import love.forte.simbot.component.qguild.bot.config.QGBotComponentConfiguration
@@ -15,8 +16,10 @@ import love.forte.simbot.component.qguild.internal.bot.QGBotImpl
 import love.forte.simbot.component.qguild.message.MessageParsers
 import love.forte.simbot.component.qguild.message.QGKeyboard
 import love.forte.simbot.component.qguild.message.QGMarkdown
+import love.forte.simbot.component.qguild.message.SendingMessageParser
 import love.forte.simbot.event.*
 import love.forte.simbot.message.plus
+import love.forte.simbot.qguild.api.message.GroupAndC2CSendBody
 import love.forte.simbot.qguild.stdlib.BotFactory
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -110,6 +113,7 @@ class QGBotTests {
         assertFalse(bot.isMention(mentionEvent))
     }
 
+    @OptIn(ExperimentalQGApi::class)
     @Test
     fun testMessageCreation() = runTest {
         // Test creating different types of messages
@@ -119,12 +123,23 @@ class QGBotTests {
         // Create a message with markdown and keyboard
         val message = markdown + keyboard
 
-        // Parse the message
-        val builders = MessageParsers.parse(message)
+        // Create a mock bot for testing
+        val bot = createMockBot()
+
+        // Parse the message using parseToGroupAndC2C
+        val bodies = MessageParsers.parseToGroupAndC2C(
+            bot = bot,
+            message = message,
+            builderType = SendingMessageParser.GroupBuilderType.GROUP,
+            targetOpenid = "test-openid",
+            factory = {
+                GroupAndC2CSendBody.create("", GroupAndC2CSendBody.MSG_TYPE_MARKDOWN)
+            }
+        )
 
         // Verify the parsed message
-        assertEquals(1, builders.size)
-        val build = builders.first().build()
-        assertEquals("# Hello", build.markdown?.content)
+        assertEquals(1, bodies.size)
+        assertEquals("# Hello", bodies.first().markdown?.content)
+        assertEquals("123", bodies.first().keyboard?.id)
     }
 }
