@@ -24,7 +24,6 @@ plugins {
     idea
     `changelog-generator`
     `root-dokka`
-    `nexus-publish`
     alias(libs.plugins.kotlinxBinaryCompatibilityValidator)
     id("love.forte.plugin.suspend-transform") apply false
 }

@@ -47,9 +47,10 @@ fun DokkaExtension.configSourceSets(project: Project) {
 //            suppress.set(true)
 //        }
 
-        configSourceLink(project)
-
-        configExternalDocumentations()
+        if (!isSimbotLocal()) {
+            configSourceLink(project)
+            configExternalDocumentations()
+        }
     }
 }
 

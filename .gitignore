@@ -161,3 +161,4 @@ generated-docs
 
 .kotlin
 .idea
+!.idea/icon.png
