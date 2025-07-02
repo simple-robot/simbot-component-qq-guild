@@ -15,81 +15,66 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-import love.forte.gradle.common.core.Gpg
 import love.forte.gradle.common.core.project.setup
-import love.forte.gradle.common.core.property.systemProp
-import love.forte.gradle.common.publication.configure.configPublishMaven
-import love.forte.gradle.common.publication.configure.publishingExtension
-import love.forte.gradle.common.publication.configure.setupPom
+import love.forte.gradle.common.core.property.ofIf
 
 plugins {
     signing
-    `maven-publish`
+    // https://www.jetbrains.com/help/kotlin-multiplatform-dev/multiplatform-publish-libraries.html#configure-the-project
+    id("com.vanniktech.maven.publish")
     id("org.jetbrains.dokka")
 }
 
-
 setup(P.ComponentQQGuild)
 
-val isSnapshot = project.version.toString().contains("SNAPSHOT", true)
+val p = project
 
-val jarJavadoc by tasks.registering(Jar::class) {
-    group = "documentation"
-    archiveClassifier.set("javadoc")
-    if (!(isSnapshot || isSnapshot() || isSimbotLocal())) {
-        dependsOn(tasks.dokkaGeneratePublicationHtml)
-        from(tasks.dokkaGeneratePublicationHtml.flatMap { it.outputDirectory })
-    }
-}
-
-publishing {
-    repositories {
-        mavenLocal()
-        if (isSnapshot) {
-            configPublishMaven(SnapshotRepository)
-        } else {
-            configPublishMaven(ReleaseRepository)
-        }
+mavenPublishing {
+    publishToMavenCentral(automaticRelease = true)
+    if (!isSimbotLocal()) {
+        signAllPublications()
     }
 
-    publications {
-        withType<MavenPublication> {
-            artifacts {
-                artifact(jarJavadoc)
+    pom {
+        name = p.name
+        description = p.description
+        url = P.ComponentQQGuild.HOMEPAGE
+        licenses {
+            P.ComponentQQGuild.licenses.forEach { license ->
+                license {
+                    name ofIf license.name
+                    url ofIf license.url
+                    distribution ofIf license.distribution
+                    comments ofIf license.comments
+                }
             }
+        }
 
-            setupPom(project.name, P.ComponentQQGuild)
+        val scm = P.ComponentQQGuild.scm
+        scm {
+            url ofIf scm.url
+            connection ofIf scm.connection
+            developerConnection ofIf scm.developerConnection
+            tag ofIf scm.tag
+        }
+
+        developers {
+            P.ComponentQQGuild.developers.forEach { developer ->
+                developer {
+                    id ofIf developer.id
+                    name ofIf developer.name
+                    email ofIf developer.email
+                    url ofIf developer.url
+                    organization ofIf developer.organization
+                    organizationUrl ofIf developer.organizationUrl
+                    timezone ofIf developer.timezone
+                    roles.addAll(developer.roles)
+                    properties.putAll(developer.properties)
+                }
+            }
         }
     }
 }
 
-signing {
-    val gpg = Gpg.ofSystemPropOrNull() ?: return@signing
-    val (keyId, secretKey, password) = gpg
-    useInMemoryPgpKeys(keyId, secretKey, password)
-    sign(publishingExtension.publications)
-}
-
-// TODO see https://github.com/gradle-nexus/publish-plugin/issues/208#issuecomment-1465029831
-val signingTasks: TaskCollection<Sign> = tasks.withType<Sign>()
-tasks.withType<PublishToMavenRepository>().configureEach {
-    mustRunAfter(signingTasks)
-}
-
-show()
-
-fun show() {
-    //// show project info
-    logger.info(
-        """
-        |=======================================================
-        |= project.group:       {}
-        |= project.name:        {}
-        |= project.version:     {}
-        |= project.description: {}
-        |= os.name:             {}
-        |=======================================================
-    """.trimIndent(),
-        group, name, version, description, systemProp("os.name")
-    )
-}
+inline val Project.sourceSets: SourceSetContainer
+    get() = extensions.getByName("sourceSets") as SourceSetContainer
