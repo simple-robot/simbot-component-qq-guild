@@ -8,11 +8,11 @@ env:
   JAVA_DISTRIBUTION: zulu
   GRADLE_VERSION: 8.10.2
   IS_CI: true
-  GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
-  GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
-  GPG_PASSWORD: ${{ secrets.GPG_PASSWORD }}
-  SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-  SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+  SIGNING_KEY_ID: ${{ secrets.GPG_KEY_ID }}
+  GPG_KEY_CONTENTS: ${{ secrets.GPG_SECRET_KEY }}
+  SIGNING_PASSWORD: ${{ secrets.GPG_PASSWORD }}
+  MAVEN_CENTRAL_USERNAME: ${{ secrets.CENTRAL_PORTAL_USERNAME }}
+  MAVEN_CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PORTAL_PASSWORD }}
   GRADLE_OPTS: "-XX:MaxMetaspaceSize=2g -Dfile.encoding=UTF-8"
 
 jobs:
@@ -34,18 +34,16 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
 
       # setup Gradle
-      - name: Gradle generate documentation
-        uses: gradle/actions/setup-gradle@v3
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: ${{ env.GRADLE_VERSION }}
-          arguments: |
-            dokkaGenerate
-            --info 
-            --warning-mode all
-            -x test
-            --build-cache
-            -Porg.gradle.jvmargs="-Xmx8g -Xms2g -XX:MaxMetaspaceSize=1g -Dfile.encoding=UTF-8" 
-            -Porg.gradle.daemon=false
+
+      - name: Gradle generate documentation
+        run: gradle dokkaGenerate -i --warning-mode all -x test --build-cache
+        env:
+          ORG_GRADLE_PROJECT_org.gradle.daemon: false
+          ORG_GRADLE_PROJECT_org.gradle.jvmargs: "-Xmx4g -Xms4g -XX:MaxMetaspaceSize=2g -Dfile.encoding=UTF-8"
 
       - name: Push to doc repository
         uses: peaceiris/actions-gh-pages@v3
