@@ -13,7 +13,6 @@
 <a href="https://github.com/simple-robot/simbot-component-qq-guild/releases/latest"><img alt="release" src="https://img.shields.io/github/v/release/simple-robot/simbot-component-qq-guild" /></a>
 <a href="https://repo1.maven.org/maven2/love/forte/simbot/component/simbot-component-qq-guild-api/" target="_blank">
   <img alt="release" src="https://img.shields.io/maven-central/v/love.forte.simbot.component/simbot-component-qq-guild-api" /></a>
-<a href="https://deepwiki.com/simple-robot/simbot-component-qq-guild"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
    <hr>
    <img alt="stars" src="https://img.shields.io/github/stars/simple-robot/simbot-component-qq-guild" />
    <img alt="forks" src="https://img.shields.io/github/forks/simple-robot/simbot-component-qq-guild" />
@@ -23,6 +22,7 @@
    <img alt="issues" src="https://img.shields.io/github/issues-closed/simple-robot/simbot-component-qq-guild?color=green" />
    <img alt="last commit" src="https://img.shields.io/github/last-commit/simple-robot/simbot-component-qq-guild" />
    <a href="./COPYING"><img alt="copying" src="https://img.shields.io/github/license/simple-robot/simbot-component-qq-guild" /></a>
+   <a href="https://deepwiki.com/simple-robot/simbot-component-qq-guild"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
 
 </div>
 
