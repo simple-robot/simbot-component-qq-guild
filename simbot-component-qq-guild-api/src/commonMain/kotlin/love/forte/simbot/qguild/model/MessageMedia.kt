@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. ForteScarlet.
+ * Copyright (c) 2024-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -20,6 +20,7 @@ package love.forte.simbot.qguild.model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.ApiModel
+import love.forte.simbot.qguild.ApiModelConstructor
 
 
 /**
@@ -34,7 +35,7 @@ import love.forte.simbot.qguild.ApiModel
  */
 @ApiModel
 @Serializable
-public data class MessageMedia(
+public data class MessageMedia @ApiModelConstructor constructor(
     @SerialName("file_uuid")
     val fileUuid: String,
     @SerialName("file_info")
@@ -52,7 +53,7 @@ public data class MessageMedia(
  */
 @ApiModel
 @Serializable
-public data class SendMessageMedia(
+public data class SendMessageMedia @ApiModelConstructor constructor(
     // TODO
     @SerialName("file_info")
     val fileInfo: String,

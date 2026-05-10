@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024. ForteScarlet.
+ * Copyright (c) 2023-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -20,6 +20,7 @@ package love.forte.simbot.qguild.model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.ApiModel
+import love.forte.simbot.qguild.ApiModelConstructor
 import love.forte.simbot.qguild.QGApi4J
 import kotlin.jvm.JvmName
 
@@ -29,7 +30,7 @@ import kotlin.jvm.JvmName
  */
 @ApiModel
 @Serializable
-public data class Announces(
+public data class Announces @ApiModelConstructor constructor(
     /** 频道 id */
     @SerialName("guild_id") val guildId: String,
     /** 子频道 id */
@@ -58,7 +59,7 @@ public data class Announces(
  */
 @ApiModel
 @Serializable
-public data class RecommendChannel(
+public data class RecommendChannel @ApiModelConstructor constructor(
     /** 子频道 id */
     @SerialName("channel_id") val channelId: String,
     /** 推荐语 */

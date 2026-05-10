@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -20,6 +20,7 @@ package love.forte.simbot.qguild.model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.ApiModel
+import love.forte.simbot.qguild.ApiModelConstructor
 import love.forte.simbot.qguild.time.ZERO_ISO_INSTANT
 
 /**
@@ -70,7 +71,7 @@ public interface MemberWithGuildId : Member {
  */
 @ApiModel
 @Serializable
-public data class SimpleMember(
+public data class SimpleMember @ApiModelConstructor constructor(
     /**
      * 用户的频道基础信息，只有成员相关接口中会填充此信息
      */
@@ -96,7 +97,7 @@ public data class SimpleMember(
  */
 @ApiModel
 @Serializable
-public data class SimpleMemberWithGuildId(
+public data class SimpleMemberWithGuildId @ApiModelConstructor constructor(
 
     /**
      * 频道id

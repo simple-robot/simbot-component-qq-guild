@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2022-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -21,6 +21,7 @@ import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.ApiModel
+import love.forte.simbot.qguild.ApiModelConstructor
 import love.forte.simbot.qguild.api.PostQQGuildApi
 import love.forte.simbot.qguild.api.SimplePostApiDescription
 import love.forte.simbot.qguild.model.ColorIntSerializer
@@ -93,7 +94,7 @@ public class CreateGuildRoleApi private constructor(
  */
 @ApiModel
 @Serializable
-public data class GuildRoleCreated(
+public data class GuildRoleCreated @ApiModelConstructor constructor(
     /**
      * 身份组 ID
      */

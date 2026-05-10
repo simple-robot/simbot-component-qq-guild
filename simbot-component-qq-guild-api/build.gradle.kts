@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025. ForteScarlet.
+ * Copyright (c) 2023-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -42,7 +42,10 @@ kotlin {
 
     compilerOptions {
         freeCompilerArgs.add("-Xexpect-actual-classes")
-        optIn.add("love.forte.simbot.qguild.QGInternalApi")
+        optIn.addAll(
+            "love.forte.simbot.qguild.QGInternalApi",
+            "love.forte.simbot.qguild.ApiModelConstructor",
+        )
     }
 
     configKotlinJvm()

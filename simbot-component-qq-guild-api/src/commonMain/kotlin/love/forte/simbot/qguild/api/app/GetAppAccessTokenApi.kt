@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. ForteScarlet.
+ * Copyright (c) 2024-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -22,6 +22,7 @@ import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.ApiModel
+import love.forte.simbot.qguild.ApiModelConstructor
 import love.forte.simbot.qguild.api.PostQQGuildApi
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
@@ -83,7 +84,7 @@ public class GetAppAccessTokenApi private constructor(
  */
 @ApiModel
 @Serializable
-public data class AppAccessToken(
+public data class AppAccessToken @ApiModelConstructor constructor(
     @SerialName("access_token")
     val accessToken: String,
     @SerialName("expires_in")

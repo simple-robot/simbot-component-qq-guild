@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025. ForteScarlet.
+ * Copyright (c) 2022-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -36,7 +36,10 @@ kotlin {
     applyDefaultHierarchyTemplate()
 
     compilerOptions {
-        optIn.add("love.forte.simbot.qguild.QGInternalApi")
+        optIn.addAll(
+            "love.forte.simbot.qguild.QGInternalApi",
+            "love.forte.simbot.qguild.ApiModelConstructor"
+        )
     }
 
     configKotlinJvm()
