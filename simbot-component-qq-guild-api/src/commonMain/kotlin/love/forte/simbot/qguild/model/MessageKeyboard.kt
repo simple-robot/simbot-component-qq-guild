@@ -20,6 +20,7 @@ package love.forte.simbot.qguild.model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.ApiModel
+import love.forte.simbot.qguild.ApiModelConstructor
 import love.forte.simbot.qguild.QQGuild
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
@@ -32,7 +33,7 @@ import kotlin.jvm.JvmStatic
  */
 @ApiModel
 @Serializable
-public data class MessageKeyboard(
+public data class MessageKeyboard @ApiModelConstructor constructor(
     /**
      * 按钮ID：在一个 keyboard 消息内设置唯一
      */
@@ -76,7 +77,7 @@ public data class MessageKeyboard(
      */
     @ApiModel
     @Serializable
-    public data class RenderData(
+    public data class RenderData @ApiModelConstructor constructor(
         /**
          * 	按钮上的文字
          */
@@ -97,7 +98,7 @@ public data class MessageKeyboard(
      */
     @ApiModel
     @Serializable
-    public data class ActionPermission(
+    public data class ActionPermission @ApiModelConstructor constructor(
         /**
          * 0 指定用户可操作，1 仅管理者可操作，2 所有人可操作，3 指定身份组可操作（仅频道可用）
          */
@@ -118,9 +119,10 @@ public data class MessageKeyboard(
      * [MessageKeyboard.action].
      * 参考 [官方文档](https://bot.q.qq.com/wiki/develop/api-v2/server-inter/message/trans/msg-btn.html)
      */
+    @ConsistentCopyVisibility
     @ApiModel
     @Serializable
-    public data class Action(
+    public data class Action @ApiModelConstructor internal constructor(
         val permission: ActionPermission? = null,
         /**
          * 操作相关的数据
@@ -159,6 +161,7 @@ public data class MessageKeyboard(
          * 4.2.2 版本以前作为主构造使用，现在用作兼容性辅助构造。
          * 为了兼容，`type` 属性默认为 `2`。
          */
+        @ApiModelConstructor
         public constructor(
             permission: ActionPermission? = null,
             data: String?,

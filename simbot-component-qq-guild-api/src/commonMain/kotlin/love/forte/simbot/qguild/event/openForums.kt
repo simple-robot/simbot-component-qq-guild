@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024. ForteScarlet.
+ * Copyright (c) 2023-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -20,6 +20,7 @@ package love.forte.simbot.qguild.event
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.ApiModel
+import love.forte.simbot.qguild.ApiModelConstructor
 import love.forte.simbot.qguild.model.forum.ForumSourceInfo
 
 /**
@@ -165,7 +166,7 @@ public data class OpenForumThreadDelete(
  */
 @Serializable
 @ApiModel
-public data class OpenForumThreadData(
+public data class OpenForumThreadData @ApiModelConstructor constructor(
     @SerialName("guild_id") override val guildId: String,
     @SerialName("channel_id") override val channelId: String,
     @SerialName("author_id") override val authorId: String,
@@ -221,7 +222,7 @@ public data class OpenForumPostDelete(
  */
 @Serializable
 @ApiModel
-public data class OpenForumPostData(
+public data class OpenForumPostData @ApiModelConstructor constructor(
     @SerialName("guild_id") override val guildId: String,
     @SerialName("channel_id") override val channelId: String,
     @SerialName("author_id") override val authorId: String,
@@ -276,7 +277,7 @@ public data class OpenForumReplyDelete(
  */
 @Serializable
 @ApiModel
-public data class OpenForumReplyData(
+public data class OpenForumReplyData @ApiModelConstructor constructor(
     @SerialName("guild_id") override val guildId: String,
     @SerialName("channel_id") override val channelId: String,
     @SerialName("author_id") override val authorId: String,

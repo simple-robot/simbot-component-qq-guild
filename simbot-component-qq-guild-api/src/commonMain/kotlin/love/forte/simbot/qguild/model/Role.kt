@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024. ForteScarlet.
+ * Copyright (c) 2023-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -25,6 +25,16 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import love.forte.simbot.qguild.ApiModel
+import love.forte.simbot.qguild.ApiModelConstructor
+import love.forte.simbot.qguild.model.Role.Companion.DEFAULT_ID_ADMIN
+import love.forte.simbot.qguild.model.Role.Companion.DEFAULT_ID_ALL_MEMBER
+import love.forte.simbot.qguild.model.Role.Companion.DEFAULT_ID_CHANNEL_ADMIN
+import love.forte.simbot.qguild.model.Role.Companion.DEFAULT_ID_OWNER
+import love.forte.simbot.qguild.model.Role.Companion.DefaultAdmin
+import love.forte.simbot.qguild.model.Role.Companion.DefaultAllMember
+import love.forte.simbot.qguild.model.Role.Companion.DefaultChannelAdmin
+import love.forte.simbot.qguild.model.Role.Companion.DefaultOwner
+import love.forte.simbot.qguild.model.Role.Companion.isDefault
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 
@@ -37,7 +47,7 @@ import kotlin.jvm.JvmStatic
  */
 @ApiModel
 @Serializable
-public data class Role(
+public data class Role @ApiModelConstructor constructor(
     /** 身份组ID */
     val id: String,
     /** 名称 */

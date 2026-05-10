@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024. ForteScarlet.
+ * Copyright (c) 2023-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -21,6 +21,7 @@ import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.ApiModel
+import love.forte.simbot.qguild.ApiModelConstructor
 import love.forte.simbot.qguild.PrivateDomainOnly
 import love.forte.simbot.qguild.api.GetQQGuildApi
 import love.forte.simbot.qguild.api.NumberAsBooleanSerializer
@@ -61,7 +62,7 @@ public class GetThreadListApi private constructor(channelId: String) : GetQQGuil
  */
 @ApiModel
 @Serializable
-public data class ThreadListResult(
+public data class ThreadListResult @ApiModelConstructor constructor(
     /**
      * 帖子列表对象（返回值里面的content字段，可参照RichText结构）
      */

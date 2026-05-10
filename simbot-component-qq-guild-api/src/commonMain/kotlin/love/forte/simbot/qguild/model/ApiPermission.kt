@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -20,6 +20,7 @@ package love.forte.simbot.qguild.model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.ApiModel
+import love.forte.simbot.qguild.ApiModelConstructor
 import love.forte.simbot.qguild.api.ApiDescription
 import kotlin.jvm.JvmName
 import kotlin.jvm.JvmStatic
@@ -30,7 +31,7 @@ import kotlin.jvm.JvmStatic
  */
 @ApiModel
 @Serializable
-public data class ApiPermission(
+public data class ApiPermission @ApiModelConstructor constructor(
     /**
      * API 接口名，例如 `/guilds/{guild_id}/members/{user_id}`
      */
@@ -69,7 +70,7 @@ public inline val ApiPermission.isAuthorized: Boolean
  */
 @ApiModel
 @Serializable
-public data class ApiPermissionDemand(
+public data class ApiPermissionDemand @ApiModelConstructor constructor(
     /**
      * 申请接口权限的频道 id
      */
