@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -20,7 +20,7 @@ package love.forte.simbot.qguild.model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.ApiModel
-import love.forte.simbot.qguild.model.Schedule.RemindTypes
+import love.forte.simbot.qguild.ApiModelConstructor
 
 
 /**
@@ -32,7 +32,7 @@ import love.forte.simbot.qguild.model.Schedule.RemindTypes
  */
 @ApiModel
 @Serializable
-public data class Schedule(
+public data class Schedule @ApiModelConstructor constructor(
     /**
      * 日程 id
      */

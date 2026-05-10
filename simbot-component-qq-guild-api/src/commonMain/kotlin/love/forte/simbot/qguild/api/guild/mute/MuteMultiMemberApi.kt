@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024. ForteScarlet.
+ * Copyright (c) 2023-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -22,6 +22,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.common.time.TimeUnit
 import love.forte.simbot.qguild.ApiModel
+import love.forte.simbot.qguild.ApiModelConstructor
 import love.forte.simbot.qguild.api.PatchQQGuildApi
 import love.forte.simbot.qguild.api.SimplePatchApiDescription
 import kotlin.jvm.JvmStatic
@@ -99,4 +100,4 @@ public class MuteMultiMemberApi private constructor(guildId: String, private val
  */
 @ApiModel
 @Serializable
-public data class MultiMuteResult(@SerialName("user_ids") val userIds: List<String>)
+public data class MultiMuteResult @ApiModelConstructor constructor(@SerialName("user_ids") val userIds: List<String>)

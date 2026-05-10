@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -20,6 +20,7 @@ package love.forte.simbot.qguild.model.forum
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.qguild.ApiModel
+import love.forte.simbot.qguild.ApiModelConstructor
 
 /**
  *
@@ -33,7 +34,7 @@ import love.forte.simbot.qguild.ApiModel
  */
 @ApiModel
 @Serializable
-public data class Thread(
+public data class Thread @ApiModelConstructor constructor(
     /**
      * 频道ID
      */
@@ -65,7 +66,7 @@ public data class Thread(
  */
 @ApiModel
 @Serializable
-public data class ThreadInfo(
+public data class ThreadInfo @ApiModelConstructor constructor(
     /**
      * 主帖ID
      */

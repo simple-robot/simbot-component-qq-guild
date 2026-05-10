@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -26,6 +26,7 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import love.forte.simbot.qguild.ApiModel
+import love.forte.simbot.qguild.ApiModelConstructor
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 import kotlin.jvm.JvmSynthetic
@@ -101,7 +102,7 @@ public interface Channel : Comparable<Channel> {
  */
 @ApiModel
 @Serializable
-public data class SimpleChannel(
+public data class SimpleChannel @ApiModelConstructor constructor(
     /** 子频道 id */
     override val id: String,
     /** 频道 id */

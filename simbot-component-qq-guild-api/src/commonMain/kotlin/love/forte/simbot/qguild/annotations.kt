@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024. ForteScarlet.
+ * Copyright (c) 2023-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -32,6 +32,23 @@ package love.forte.simbot.qguild
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
 public annotation class ApiModel
+
+/**
+ * 被标记了 [ApiModel] 的数据载体类型的构造函数（以及数据类生成的解构函数、copy 函数），
+ * 为了确保兼容性 **不应** 被直接调用。
+ * 在后续版本和 5.0 版本之后，它们会被过渡为隐藏了构造的数据类或普通类型。
+ *
+ * @since 4.2.3
+ */
+@RequiresOptIn(
+    message = "被标记了 `@ApiModel` 的数据载体类型的构造函数（以及解构函数、copy 函数），" +
+            "为了确保兼容性 **不应** 被直接调用。" +
+            "在后续版本和 5.0 版本之后，它们会被过渡为隐藏了构造的数据类或普通类型。"
+)
+@Retention(AnnotationRetention.BINARY)
+@Target(AnnotationTarget.CONSTRUCTOR)
+@MustBeDocumented
+public annotation class ApiModelConstructor
 
 /**
  * 标记一个API类型，代表它是一个在QQ频道API文档中被标记 **仅支持私域机器人** 的API。
