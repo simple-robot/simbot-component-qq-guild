@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025. ForteScarlet.
+ * Copyright (c) 2025-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -70,6 +70,7 @@ public class LibsodiumEd25519PublicKey(private val key: UByteArray) : Ed25519Pub
 
             true
         } catch (ise: InvalidSignatureException) {
+            ed25519sLogger.debug("Signature verification failed: {}", ise.message, ise)
             false
         }
     }
