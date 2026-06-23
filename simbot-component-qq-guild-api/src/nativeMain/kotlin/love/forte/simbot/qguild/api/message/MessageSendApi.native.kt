@@ -18,4 +18,5 @@
 package love.forte.simbot.qguild.api.message
 
 internal actual fun checkFileImage(fileImage: Any) {
+    // No-op
 }
