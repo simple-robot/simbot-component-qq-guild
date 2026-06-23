@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025. ForteScarlet.
+ * Copyright (c) 2025-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -74,6 +74,17 @@ public interface QGAtMessageCreateEventInteractionEvent :
 }
 
 /**
+ * QG组件中针对 [QGGroupMessageCreateEvent.reply] 的拦截事件。
+ * @since 4.3.0
+ */
+@SubclassOptInRequired(FuzzyEventTypeImplementation::class)
+public interface QGGroupMessageCreateEventInteractionEvent :
+    QGMessageEventInteractionEvent,
+    ChatGroupMessageEventInteractionEvent {
+    override val content: QGGroupMessageCreateEvent
+}
+
+/**
  * 针对 [ChatChannelMessageEvent.reply] 的发送前拦截事件。
  * @since 4.2.0
  */
@@ -92,6 +103,26 @@ public interface QGAtMessageCreateEventPostReplyEvent :
     QGAtMessageCreateEventInteractionEvent,
     QGMessageEventPostReplyEvent,
     ChatChannelMessageEventPostReplyEvent
+
+/**
+ * 针对 [ChatGroupMessageEvent.reply] 的发送前拦截事件。
+ * @since 4.3.0
+ */
+@OptIn(FuzzyEventTypeImplementation::class)
+public interface QGGroupMessageCreateEventPreReplyEvent :
+    QGGroupMessageCreateEventInteractionEvent,
+    QGMessageEventPreReplyEvent,
+    ChatGroupMessageEventPreReplyEvent
+
+/**
+ * 针对 [ChatGroupMessageEvent.reply] 的发送后通知事件。
+ * @since 4.3.0
+ */
+@OptIn(FuzzyEventTypeImplementation::class)
+public interface QGGroupMessageCreateEventPostReplyEvent :
+    QGGroupMessageCreateEventInteractionEvent,
+    QGMessageEventPostReplyEvent,
+    ChatGroupMessageEventPostReplyEvent
 
 /**
  * QG组件中针对 [QGDirectMessageCreateEvent.reply] 的拦截事件。

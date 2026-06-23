@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2022-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -154,7 +154,12 @@ internal fun QGBotImpl.registerEventProcessor(): DisposableHandle {
             }
             /// 群&单聊
             is GroupAtMessageCreate -> {
+                // at 消息
                 pushEvent { QGGroupAtMessageCreateEventImpl(bot, raw, event, event.id) }
+            }
+            is GroupMessageCreate -> {
+                // 全量消息
+                pushEvent { QGGroupMessageCreateEventImpl(bot, raw, event, event.id) }
             }
 
             is C2CMessageCreate -> {
