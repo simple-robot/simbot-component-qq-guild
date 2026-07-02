@@ -132,7 +132,7 @@ import kotlin.jvm.JvmSynthetic
  */
 public class MessageSendApi private constructor(
     channelId: String,
-    private val _body: Body, // TencentMessageForSending || MultiPartFormDataContent
+    private val body0: Body, // TencentMessageForSending || MultiPartFormDataContent
 ) : PostQQGuildApi<Message>() {
     public companion object Factory : SimplePostApiDescription(
         "/channels/{channel_id}/messages"
@@ -151,7 +151,7 @@ public class MessageSendApi private constructor(
         public fun create(channelId: String, body: Body): MessageSendApi = MessageSendApi(channelId, body)
     }
 
-    override fun createBody(): Any = _body.toRealBody(defaultJson)
+    override fun createBody(): Any = body0.toRealBody(defaultJson)
 
     override val path: Array<String> = arrayOf("channels", channelId, "messages")
 
@@ -302,7 +302,8 @@ public class MessageSendApi private constructor(
              * 判断 [Builder] 中的各属性是否都为空
              */
             public val isEmpty: Boolean
-                get() = content == null && embed == null && ark == null && messageReference == null && image == null && msgId == null && eventId == null && markdown == null
+                get() = content == null && embed == null && ark == null && messageReference == null &&
+                    image == null && msgId == null && eventId == null && markdown == null
 
             public fun appendContent(append: String) {
                 if (content == null) {
@@ -395,7 +396,8 @@ public inline fun MessageSendApi.Factory.create(channelId: String, builder: Buil
 
 internal expect fun checkFileImage(fileImage: Any)
 
-// // TencentMessageForSending || MultiPartFormDataContent
+// TencentMessageForSending || MultiPartFormDataContent
+
 /**
  *
  * @return [MessageSendApi.Body] or [MultiPartFormDataContent]
@@ -407,7 +409,8 @@ internal fun MessageSendApi.Body.toRealBody(json: Json): Any {
 
     val formParts = formData {
         MessageSendApi.Body.serializer().serialize(
-            FormDataDecoder(json.serializersModule, json, this), this@toRealBody
+            FormDataDecoder(json.serializersModule, json, this),
+            this@toRealBody
         )
 
         appendFileImage(fileImage)
@@ -593,6 +596,7 @@ internal class FormDataDecoder(
     }
 
     override fun endStructure(descriptor: SerialDescriptor) {
+        // No-op
     }
 
     override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder {
@@ -601,21 +605,27 @@ internal class FormDataDecoder(
 
 
     override fun encodeBoolean(value: Boolean) {
+        // No-op
     }
 
     override fun encodeByte(value: Byte) {
+        // No-op
     }
 
     override fun encodeChar(value: Char) {
+        // No-op
     }
 
     override fun encodeDouble(value: Double) {
+        // No-op
     }
 
     override fun encodeEnum(enumDescriptor: SerialDescriptor, index: Int) {
+        // No-op
     }
 
     override fun encodeFloat(value: Float) {
+        // No-op
     }
 
     override fun encodeInline(descriptor: SerialDescriptor): Encoder {
@@ -623,19 +633,24 @@ internal class FormDataDecoder(
     }
 
     override fun encodeInt(value: Int) {
+        // No-op
     }
 
     override fun encodeLong(value: Long) {
+        // No-op
     }
 
     @ExperimentalSerializationApi
     override fun encodeNull() {
+        // No-op
     }
 
     override fun encodeShort(value: Short) {
+        // No-op
     }
 
     override fun encodeString(value: String) {
+        // No-op
     }
 }
 

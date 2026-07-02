@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025. ForteScarlet.
+ * Copyright (c) 2025-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -20,10 +20,7 @@ package love.forte.simbot.component.qguild.utils
 import love.forte.simbot.ability.SendSupport
 import love.forte.simbot.component.qguild.channel.QGTextChannel
 import love.forte.simbot.component.qguild.dms.QGDmsContact
-import love.forte.simbot.component.qguild.event.QGAtMessageCreateEvent
-import love.forte.simbot.component.qguild.event.QGC2CMessageCreateEvent
-import love.forte.simbot.component.qguild.event.QGDirectMessageCreateEvent
-import love.forte.simbot.component.qguild.event.QGGroupAtMessageCreateEvent
+import love.forte.simbot.component.qguild.event.*
 import love.forte.simbot.component.qguild.friend.QGFriend
 import love.forte.simbot.component.qguild.group.QGGroup
 import love.forte.simbot.component.qguild.guild.QGMember
@@ -130,6 +127,24 @@ internal fun QGMessageReceipt.alsoEmitPostReplyEvent(
     message: InteractionMessage,
 ): QGMessageReceipt {
     val event = QGAtMessageCreateEventPostReplyEventImpl(
+        bot = bot,
+        content = content,
+        message = message,
+        receipt = this
+    )
+    bot.pushEventAndCollectAsync(event)
+    return this
+}
+
+/**
+ * @since 4.3.0
+ */
+internal fun QGMessageReceipt.alsoEmitPostReplyEvent(
+    bot: QGBotImpl,
+    content: QGGroupMessageCreateEvent,
+    message: InteractionMessage,
+): QGMessageReceipt {
+    val event = QGGroupMessageCreateEventPostReplyEventImpl(
         bot = bot,
         content = content,
         message = message,

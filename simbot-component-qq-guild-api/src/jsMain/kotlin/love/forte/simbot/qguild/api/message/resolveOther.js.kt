@@ -30,5 +30,6 @@ import love.forte.simbot.qguild.QGInternalApi
  */
 @QGInternalApi
 public actual fun FormBuilder.resolveOther(fileImage: Any?) {
+    // No-op
 }
 

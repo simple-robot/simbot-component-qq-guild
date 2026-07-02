@@ -37,8 +37,8 @@ object P {
         override val homepage: String get() = HOMEPAGE
 
 
-        const val VERSION = "4.2.3"
-        const val NEXT_VERSION = "4.2.4"
+        const val VERSION = "4.3.0"
+        const val NEXT_VERSION = "4.3.1"
 
         override val snapshotVersion = "$NEXT_VERSION-SNAPSHOT"
         override val version = if (isSnapshot()) snapshotVersion else VERSION
