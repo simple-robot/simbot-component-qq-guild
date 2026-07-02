@@ -46,11 +46,13 @@ class MessageParserTests {
     @Test
     fun testKeyboardParse() = runTest {
         val builders = MessageParsers.parse(
-            QGMarkdown.create("content") + QGKeyboard.createById("1"),
+            bot = null,
+            message = QGMarkdown.create("content") + QGKeyboard.createById("1"),
         )
 
         assertEquals(1, builders.size)
         val build = builders.first().build()
+        assertEquals(" ", build.content)
         assertEquals("content", build.markdown?.content)
 
         val bot = QGBotImpl(
@@ -89,6 +91,7 @@ class MessageParserTests {
         )
 
         assertEquals(1, bodies.size)
+        assertEquals(" ", bodies.first().content)
         assertEquals("content", bodies.first().markdown?.content)
         assertEquals("1", bodies.first().keyboards?.content?.rows?.single()?.buttons?.single()?.id)
     }
