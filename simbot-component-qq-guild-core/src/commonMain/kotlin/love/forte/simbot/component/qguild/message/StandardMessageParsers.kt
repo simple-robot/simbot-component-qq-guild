@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2022-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -36,15 +36,26 @@ internal object ContentParser : SendingMessageParser {
         messages: Messages?,
         builderContext: SendingMessageParser.BuilderContext
     ) {
+        val contentAsMarkdown = false // TODO("区分目的地，以及获取配置")
+
         when (element) {
-            is Text -> {
-                // 转义为无内嵌格式的文本
-                builderContext.builder.appendContent(ContentTextEncoder.encode(element.text))
+            is QGContentText -> {
+                if (contentAsMarkdown) {
+                    builderContext.builder.appendMarkdownContent(element.content)
+                } else {
+                    builderContext.builder.appendContent(element.content)
+                }
             }
 
-            is QGContentText -> {
-                builderContext.builder.appendContent(element.content)
+            is PlainText -> {
+                // 转义为无内嵌格式的文本
+                if (contentAsMarkdown) {
+                    builderContext.builder.appendMarkdownContent(ContentTextEncoder.encode(element.text))
+                } else {
+                    builderContext.builder.appendContent(ContentTextEncoder.encode(element.text))
+                }
             }
+
         }
     }
 
@@ -55,6 +66,8 @@ internal object ContentParser : SendingMessageParser {
         builderContext: SendingMessageParser.GroupAndC2CBuilderContext
     ) {
         fun builder() = builderContext.builder
+
+        val contentAsMarkdown = false // TODO("区分目的地，以及获取配置")
 
         when (element) {
             is Text -> {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025. ForteScarlet.
+ * Copyright (c) 2022-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -174,13 +174,9 @@ public class ConfigurableBotConfiguration : BotConfiguration, IntentsAppender {
 
     override var disableWs: Boolean = false
 
-    /**
-     * 用于API请求结果反序列化的 [Json].
-     *
-     * 如果为null则会使用默认 Json [QQGuild.DefaultJson]
-     *
-     */
     override var apiDecoder: Json = QQGuild.DefaultJson
+
+    override val contentAsMarkdown: MutableMap<MessageDestination, Boolean> = mutableMapOf()
 
     @Suppress("DEPRECATION")
     internal fun release(): BotConfiguration = BotConfigurationImpl(
@@ -199,7 +195,8 @@ public class ConfigurableBotConfiguration : BotConfiguration, IntentsAppender {
         wsClientEngineFactory = wsClientEngineFactory,
         disableWs = disableWs,
         apiDecoder = apiDecoder,
-    )
+        contentAsMarkdown = contentAsMarkdown.toMap(),
+        )
 
     public companion object
 }
@@ -220,4 +217,5 @@ private class BotConfigurationImpl(
     override val wsClientEngineFactory: HttpClientEngineFactory<*>?,
     override val disableWs: Boolean,
     override val apiDecoder: Json,
+    override val contentAsMarkdown: Map<MessageDestination, Boolean>
 ) : BotConfiguration

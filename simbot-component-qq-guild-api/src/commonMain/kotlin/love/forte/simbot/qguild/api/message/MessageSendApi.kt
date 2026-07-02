@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2022-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -311,6 +311,20 @@ public class MessageSendApi private constructor(
                 } else {
                     content += append
                 }
+            }
+
+            /**
+             * @since 4.4.0
+             */
+            public fun appendMarkdownContent(append: String) {
+                val currentMarkdown = markdown ?: Message.Markdown()
+                var content = currentMarkdown.content
+                if (content == null) {
+                    content = append
+                } else {
+                    content += append
+                }
+                markdown = currentMarkdown.copy(content = content)
             }
 
             public fun setFileImage(byteArray: ByteArray) {

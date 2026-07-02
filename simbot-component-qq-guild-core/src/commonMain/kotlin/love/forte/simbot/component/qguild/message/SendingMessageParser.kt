@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025. ForteScarlet.
+ * Copyright (c) 2022-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -21,10 +21,12 @@ import love.forte.simbot.component.qguild.ExperimentalQGApi
 import love.forte.simbot.component.qguild.bot.QGBot
 import love.forte.simbot.message.Messages
 import love.forte.simbot.message.emptyMessages
+import love.forte.simbot.qguild.QGInternalApi
 import love.forte.simbot.qguild.api.message.GroupAndC2CSendBody
 import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.qguild.api.message.isEmpty
 import love.forte.simbot.qguild.model.Message
+import love.forte.simbot.qguild.stdlib.BotConfiguration
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmSynthetic
 import love.forte.simbot.message.Message as SimbotMessage
@@ -66,7 +68,8 @@ public fun interface SendingMessageParser {
     public abstract class AbstractBuilderContext<B>(
         public val builderFactory: () -> B
     ) {
-        public val builders: ArrayDeque<B>
+        public val builders: ArrayDeque<B> = ArrayDeque()
+        public abstract val configuration: BotConfiguration?
 
         /**
          * 标记下一次再获取 builder 时必须新建。
@@ -77,10 +80,6 @@ public fun interface SendingMessageParser {
         @PublishedApi
         internal open fun nextMustBeNew(value: Boolean = true) {
             nextIsNew = value
-        }
-
-        init {
-            builders = ArrayDeque()
         }
 
         public open val builder: B
@@ -127,16 +126,26 @@ public fun interface SendingMessageParser {
 
     }
 
-    public class BuilderContext(
-        builderFactory: () -> MessageSendApi.Body.Builder
-    ) : AbstractBuilderContext<MessageSendApi.Body.Builder>(builderFactory)
+    public class BuilderContext @PublishedApi internal constructor(
+        public val bot: QGBot?,
+        builderFactory: () -> MessageSendApi.Body.Builder,
+    ) : AbstractBuilderContext<MessageSendApi.Body.Builder>(builderFactory) {
+        @Deprecated(message = "新增参数的兼容性次级构造", level = DeprecationLevel.ERROR)
+        public constructor(builderFactory: () -> MessageSendApi.Body.Builder) : this(null, builderFactory)
 
-    public class GroupAndC2CBuilderContext(
+        override val configuration: BotConfiguration?
+            get() = bot?.source?.configuration
+    }
+
+    public class GroupAndC2CBuilderContext @QGInternalApi constructor(
         public val bot: QGBot,
         public val type: GroupBuilderType,
         public val targetOpenid: String,
         builderFactory: () -> GroupAndC2CSendBody
-    ) : AbstractBuilderContext<GroupAndC2CSendBody>(builderFactory)
+    ) : AbstractBuilderContext<GroupAndC2CSendBody>(builderFactory) {
+        override val configuration: BotConfiguration
+            get() = bot.source.configuration
+    }
 }
 
 /**
@@ -191,6 +200,15 @@ public object MessageParsers {
         add(QGMessageParser)
     }
 
+    @Deprecated(message = "请明确提供 `bot` 参数", level = DeprecationLevel.ERROR)
+    public suspend inline fun parse(
+        message: SimbotMessage,
+        crossinline onEachPre: MessageSendApi.Body.Builder.() -> Unit = {},
+        onEachPost: MessageSendApi.Body.Builder.() -> Unit = {},
+    ): List<MessageSendApi.Body.Builder> {
+        return parse(null, message, onEachPre, onEachPost)
+    }
+
     /**
      * 将 [message] 解析为一个或多个 [MessageSendApi.Body.Builder]。
      *
@@ -226,11 +244,12 @@ public object MessageParsers {
     @OptIn(ExperimentalQGApi::class)
     @JvmSynthetic
     public suspend inline fun parse(
+        bot: QGBot?,
         message: SimbotMessage,
         crossinline onEachPre: MessageSendApi.Body.Builder.() -> Unit = {},
         onEachPost: MessageSendApi.Body.Builder.() -> Unit = {},
     ): List<MessageSendApi.Body.Builder> {
-        val context = SendingMessageParser.BuilderContext {
+        val context = SendingMessageParser.BuilderContext(bot) {
             MessageSendApi.Body.Builder().also(onEachPre)
         }
 
@@ -343,15 +362,14 @@ public object MessageParsers {
 
 }
 
+@TmfsDsl
 public class QGMessageForSendingForParse internal constructor() {
     public var sendBodyBuilder: MessageSendApi.Body.Builder = MessageSendApi.Body.Builder()
 
-    @TmfsDsl
     public inline fun forSending(block: MessageSendApi.Body.Builder.() -> Unit) {
         sendBodyBuilder.block()
     }
 
-    @TmfsDsl
     public fun contentAppend(contentText: String) {
         forSending {
             if (content == null) {
