@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. ForteScarlet.
+ * Copyright (c) 2024-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -34,3 +34,4 @@ internal class QGGroupMemberImpl(
 ) : QGGroupMember {
     override val coroutineContext: CoroutineContext = bot.newSupervisorCoroutineContext()
 }
+

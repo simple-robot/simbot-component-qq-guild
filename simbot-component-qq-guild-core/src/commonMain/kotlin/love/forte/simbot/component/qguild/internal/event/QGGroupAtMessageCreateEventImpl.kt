@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025. ForteScarlet.
+ * Copyright (c) 2024-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -23,9 +23,9 @@ import love.forte.simbot.common.id.ID
 import love.forte.simbot.common.id.StringID.Companion.ID
 import love.forte.simbot.component.qguild.event.QGGroupAtMessageCreateEvent
 import love.forte.simbot.component.qguild.group.QGGroup
-import love.forte.simbot.component.qguild.group.QGGroupMember
+import love.forte.simbot.component.qguild.group.QGGroupAuthor
 import love.forte.simbot.component.qguild.internal.bot.QGBotImpl
-import love.forte.simbot.component.qguild.internal.group.QGGroupMemberImpl
+import love.forte.simbot.component.qguild.internal.group.QGGroupAuthorImpl
 import love.forte.simbot.component.qguild.internal.group.toGroup
 import love.forte.simbot.component.qguild.internal.message.QGGroupAndC2CMessageContentImpl
 import love.forte.simbot.component.qguild.message.QGGroupAndC2CMessageContent
@@ -54,10 +54,10 @@ internal class QGGroupAtMessageCreateEventImpl(
     override val id: ID
         get() = eventId?.ID ?: sourceEventEntity.data.id.ID
 
-    override suspend fun author(): QGGroupMember {
-        return QGGroupMemberImpl(
+    override suspend fun author(): QGGroupAuthor {
+        return QGGroupAuthorImpl(
             bot,
-            sourceEventEntity.data.author.memberOpenid.ID,
+            sourceEventEntity.data.author,
         )
     }
 
