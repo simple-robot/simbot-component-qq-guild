@@ -27,9 +27,11 @@ class IntentsTest {
         Intents {
             audioAction()
             forumsEvent()
+            groupMembers()
         }.also {
             assertContains(it, EventIntents.AudioAction.intents)
             assertContains(it, EventIntents.ForumsEvent.intents)
+            assertContains(it, EventIntents.GroupMembers.intents)
         }
     }
 

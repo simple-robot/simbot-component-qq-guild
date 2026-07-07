@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. ForteScarlet.
+ * Copyright (c) 2024-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -19,6 +19,7 @@ package love.forte.simbot.qguild.event
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import love.forte.simbot.qguild.ApiModelConstructor
 
 /**
  * @property timestamp 加入的时间戳
@@ -32,6 +33,23 @@ public data class GroupRobotManagementData(
     val groupOpenid: String,
     @SerialName("op_member_openid")
     val opMemberOpenid: String,
+)
+
+/**
+ * [GroupMemberManagementDispatch] 事件的数据体。
+ * @property timestamp 触发时间戳
+ * @property groupOpenid 群 openid
+ * @property memberOpenid 群成员 openid
+ *
+ * @since 4.4.0
+ */
+@Serializable
+public data class GroupMemberManagementData @ApiModelConstructor internal constructor(
+    val timestamp: String,
+    @SerialName("group_openid")
+    val groupOpenid: String,
+    @SerialName("member_openid")
+    val memberOpenid: String,
 )
 
 /**
@@ -101,3 +119,47 @@ public data class GroupMsgReceive(
     @SerialName("d")
     override val data: GroupRobotManagementData
 ) : GroupRobotManagementDispatch()
+
+/**
+ * 群成员进退群聊事件。
+ * [data] 类型为 [GroupMemberManagementData]
+ *
+ * @since 4.4.0
+ */
+public sealed class GroupMemberManagementDispatch : Signal.Dispatch() {
+    abstract override val data: GroupMemberManagementData
+}
+
+/**
+ * [群成员加入群聊](https://bot.q.qq.com/wiki/develop/api-v2/server-inter/group/manage/event.html#群成员加入-退出群聊)
+ *
+ * 触发场景 成员加入群聊
+ *
+ * @since 4.4.0
+ */
+@Serializable
+@SerialName(EventIntents.GroupMembers.GROUP_MEMBER_ADD_TYPE)
+@DispatchTypeName(EventIntents.GroupMembers.GROUP_MEMBER_ADD_TYPE)
+public data class GroupMemberAdd @ApiModelConstructor internal constructor(
+    override val id: String? = null,
+    override val s: Long = DEFAULT_SEQ,
+    @SerialName("d")
+    override val data: GroupMemberManagementData
+) : GroupMemberManagementDispatch()
+
+/**
+ * [群成员退出群聊](https://bot.q.qq.com/wiki/develop/api-v2/server-inter/group/manage/event.html#群成员加入-退出群聊)
+ *
+ * 触发场景 成员退出群聊
+ *
+ * @since 4.4.0
+ */
+@Serializable
+@SerialName(EventIntents.GroupMembers.GROUP_MEMBER_REMOVE_TYPE)
+@DispatchTypeName(EventIntents.GroupMembers.GROUP_MEMBER_REMOVE_TYPE)
+public data class GroupMemberRemove @ApiModelConstructor internal constructor(
+    override val id: String? = null,
+    override val s: Long = DEFAULT_SEQ,
+    @SerialName("d")
+    override val data: GroupMemberManagementData
+) : GroupMemberManagementDispatch()
