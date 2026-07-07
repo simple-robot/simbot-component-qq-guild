@@ -21,8 +21,7 @@ import kotlinx.serialization.Serializable
 import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.Messages
-import love.forte.simbot.qguild.model.MessageKeyboard
-import kotlin.jvm.JvmStatic
+import love.forte.simbot.qguild.model.MessageKeyboards
 
 /**
  *
@@ -33,30 +32,13 @@ import kotlin.jvm.JvmStatic
  * @author ForteScarlet
  */
 @Serializable
-public data class QGKeyboard internal constructor(
-    public val keyboard: MessageKeyboard
+public data class QGKeyboards /* TODO internal */ constructor(
+    public val keyboards: MessageKeyboards
 ) : QGMessageElement {
-    public companion object {
-        /**
-         * 使用 [keyboard] 直接包装构建。
-         */
-        @JvmStatic
-        public fun create(keyboard: MessageKeyboard): QGKeyboard =
-            QGKeyboard(keyboard)
-
-        /**
-         * 使用 [id][MessageKeyboard.create] 构建。
-         *
-         * @see MessageKeyboard.create
-         */
-        @JvmStatic
-        public fun createById(id: String): QGKeyboard =
-            create(MessageKeyboard.create(id))
-    }
 }
 
-internal object KeyboardParser : SendingMessageParser {
-    internal val logger = LoggerFactory.getLogger("love.forte.simbot.component.qguild.message.KeyboardParser")
+internal object KeyboardsParser : SendingMessageParser {
+    internal val logger = LoggerFactory.getLogger("love.forte.simbot.component.qguild.message.KeyboardsParser")
 
     override suspend fun invoke(
         index: Int,
@@ -64,9 +46,9 @@ internal object KeyboardParser : SendingMessageParser {
         messages: Messages?,
         builderContext: SendingMessageParser.BuilderContext
     ) {
-        // 频道相关的消息发送不支持 keyboard
-        if (element is QGKeyboard) {
-            logger.warn("Keyboard message is not yet supported for sending to channel.")
+        // 频道相关的消息发送不支持 keyboards
+        if (element is QGKeyboards) {
+            logger.warn("Keyboards message is not yet supported for sending to channel.")
         }
     }
 
@@ -76,12 +58,12 @@ internal object KeyboardParser : SendingMessageParser {
         messages: Messages?,
         builderContext: SendingMessageParser.GroupAndC2CBuilderContext
     ) {
-        if (element is QGKeyboard) {
-            val keyboard = element.keyboard
+        if (element is QGKeyboards) {
+            val keyboards = element.keyboards
             val builder = builderContext.builderOrNew {
-                it.keyboard == null
+                it.keyboards == null
             }
-            builder.keyboard = keyboard
+            builder.keyboards = keyboards
         }
     }
 }

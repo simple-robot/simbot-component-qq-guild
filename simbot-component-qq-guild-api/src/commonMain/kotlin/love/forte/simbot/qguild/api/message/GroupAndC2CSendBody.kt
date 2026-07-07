@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. ForteScarlet.
+ * Copyright (c) 2024-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -24,6 +24,7 @@ import love.forte.simbot.qguild.api.message.group.GroupMessageSendApi
 import love.forte.simbot.qguild.api.message.user.UserMessageSendApi
 import love.forte.simbot.qguild.model.Message
 import love.forte.simbot.qguild.model.MessageKeyboard
+import love.forte.simbot.qguild.model.MessageKeyboards
 import love.forte.simbot.qguild.model.MessageMedia
 import kotlin.jvm.JvmStatic
 
@@ -51,6 +52,11 @@ public open class GroupAndC2CSendBody internal constructor(
     public open var msgType: Int,
 ) {
     public open var markdown: Message.Markdown? = null
+    @SerialName("keyboard")
+    public open var keyboards: MessageKeyboards? = null
+
+    // TODO 更好的兼容方式
+    @SerialName("_keyboard")
     public open var keyboard: MessageKeyboard? = null
     public open var media: MessageMedia? = null
     public open var ark: Message.Ark? = null
@@ -94,8 +100,9 @@ public open class GroupAndC2CSendBody internal constructor(
     }
 
     override fun toString(): String {
-        return "GroupAndC2CSendBody(content='$content', msgType=$msgType, markdown=$markdown, keyboard=$keyboard, media=$media, ark=$ark, messageReference=$messageReference, eventId=$eventId, msgId=$msgId, msgSeq=$msgSeq)"
+        return "GroupAndC2CSendBody(content='$content', msgType=$msgType, markdown=$markdown, keyboards=$keyboards, keyboard=$keyboard, media=$media, ark=$ark, messageReference=$messageReference, eventId=$eventId, msgId=$msgId, msgSeq=$msgSeq)"
     }
+
 }
 
 @QGInternalApi

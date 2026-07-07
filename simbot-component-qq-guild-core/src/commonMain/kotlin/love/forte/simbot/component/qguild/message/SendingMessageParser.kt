@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025. ForteScarlet.
+ * Copyright (c) 2022-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -184,6 +184,7 @@ public object MessageParsers {
         add(MediaParser)
         add(MarkdownParser)
         add(KeyboardParser)
+        add(KeyboardsParser)
     }
 
     @ExperimentalQGApi
