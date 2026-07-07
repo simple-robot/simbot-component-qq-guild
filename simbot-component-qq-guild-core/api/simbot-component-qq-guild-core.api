@@ -1728,8 +1728,7 @@ public abstract interface class love/forte/simbot/component/qguild/group/QGGroup
 }
 
 public abstract interface class love/forte/simbot/component/qguild/group/QGGroupAuthor : love/forte/simbot/component/qguild/group/QGGroupMember {
-	public fun getMemberRole ()Llove/forte/simbot/component/qguild/group/QGGroupRole;
-	public abstract fun getMemberRoleOrNull ()Llove/forte/simbot/component/qguild/group/QGGroupRole;
+	public abstract fun getMemberRole ()Llove/forte/simbot/component/qguild/group/QGGroupRole;
 	public abstract fun isBot ()Z
 }
 
