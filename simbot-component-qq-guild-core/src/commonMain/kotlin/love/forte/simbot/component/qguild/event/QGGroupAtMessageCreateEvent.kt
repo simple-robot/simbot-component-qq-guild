@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025. ForteScarlet.
+ * Copyright (c) 2024-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -23,7 +23,7 @@ import love.forte.simbot.common.time.Timestamp
 import love.forte.simbot.component.qguild.ExperimentalQGApi
 import love.forte.simbot.component.qguild.bot.QGBot
 import love.forte.simbot.component.qguild.group.QGGroup
-import love.forte.simbot.component.qguild.group.QGGroupMember
+import love.forte.simbot.component.qguild.group.QGGroupAuthor
 import love.forte.simbot.component.qguild.message.QGGroupAndC2CMessageContent
 import love.forte.simbot.component.qguild.utils.toTimestamp
 import love.forte.simbot.event.ChatGroupMessageEvent
@@ -68,7 +68,7 @@ public abstract class QGGroupAtMessageCreateEvent : QGBaseMessageEvent<GroupAtMe
     abstract override val messageContent: QGGroupAndC2CMessageContent
 
     @STP
-    abstract override suspend fun author(): QGGroupMember
+    abstract override suspend fun author(): QGGroupAuthor
 
     /**
      * 此消息事件所处的QQ群。

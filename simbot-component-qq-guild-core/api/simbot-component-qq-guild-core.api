@@ -1130,7 +1130,7 @@ public abstract class love/forte/simbot/component/qguild/event/QGGroupAtMessageC
 	public abstract synthetic fun author (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract synthetic fun content (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public synthetic fun getAuthor ()Llove/forte/simbot/common/id/IDContainer;
-	public fun getAuthor ()Llove/forte/simbot/component/qguild/group/QGGroupMember;
+	public fun getAuthor ()Llove/forte/simbot/component/qguild/group/QGGroupAuthor;
 	public synthetic fun getAuthor ()Llove/forte/simbot/definition/Actor;
 	public synthetic fun getAuthor ()Llove/forte/simbot/definition/Member;
 	public fun getAuthorAsync ()Ljava/util/concurrent/CompletableFuture;
@@ -1201,7 +1201,7 @@ public abstract class love/forte/simbot/component/qguild/event/QGGroupMessageCre
 	public abstract synthetic fun author (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract synthetic fun content (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public synthetic fun getAuthor ()Llove/forte/simbot/common/id/IDContainer;
-	public fun getAuthor ()Llove/forte/simbot/component/qguild/group/QGGroupMember;
+	public fun getAuthor ()Llove/forte/simbot/component/qguild/group/QGGroupAuthor;
 	public synthetic fun getAuthor ()Llove/forte/simbot/definition/Actor;
 	public synthetic fun getAuthor ()Llove/forte/simbot/definition/Member;
 	public fun getAuthorAsync ()Ljava/util/concurrent/CompletableFuture;
@@ -1725,6 +1725,12 @@ public abstract interface class love/forte/simbot/component/qguild/group/QGGroup
 	public fun uploadMediaAsync (Ljava/lang/String;I)Ljava/util/concurrent/CompletableFuture;
 	public fun uploadMediaBlocking (Ljava/lang/String;I)Llove/forte/simbot/component/qguild/message/QGMedia;
 	public fun uploadMediaReserve (Ljava/lang/String;I)Llove/forte/simbot/suspendrunner/reserve/SuspendReserve;
+}
+
+public abstract interface class love/forte/simbot/component/qguild/group/QGGroupAuthor : love/forte/simbot/component/qguild/group/QGGroupMember {
+	public fun getMemberRole ()Llove/forte/simbot/component/qguild/group/QGGroupRole;
+	public abstract fun getMemberRoleOrNull ()Llove/forte/simbot/component/qguild/group/QGGroupRole;
+	public abstract fun isBot ()Z
 }
 
 public abstract interface class love/forte/simbot/component/qguild/group/QGGroupMember : love/forte/simbot/definition/Member {
