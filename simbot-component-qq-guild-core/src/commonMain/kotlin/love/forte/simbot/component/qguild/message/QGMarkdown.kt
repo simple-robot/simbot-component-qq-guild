@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025. ForteScarlet.
+ * Copyright (c) 2024-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -33,7 +33,6 @@ import kotlin.jvm.JvmStatic
  * @author ForteScarlet
  */
 @Serializable
-@ConsistentCopyVisibility
 public data class QGMarkdown internal constructor(
     public val markdown: Message.Markdown
 ) : QGMessageElement {

@@ -25,9 +25,11 @@ import love.forte.simbot.qguild.QQGuild
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 
-
 /**
  * [消息交互=>消息按钮](https://bot.q.qq.com/wiki/develop/api-v2/server-inter/message/trans/msg-btn.html)
+ *
+ * @see buildMessageKeyboard
+ * @see MessageKeyboards
  *
  * @author ForteScarlet
  */
@@ -113,13 +115,32 @@ public data class MessageKeyboard @ApiModelConstructor constructor(
          */
         @SerialName("specify_role_ids")
         val specifyRoleIds: List<String>? = null,
-    )
+    ) {
+        public companion object {
+            /**
+             * 一个 type = 1 的 [ActionPermission]，表示仅管理者可操作。
+             *
+             * @since 4.4.0
+             */
+            @JvmStatic
+            public val AdminOnly: ActionPermission = ActionPermission(type = 1)
+
+            /**
+             * 一个 type = 2 的 [ActionPermission]，表示所有人可访问。
+             *
+             * @since 4.4.0
+             */
+            @JvmStatic
+            public val AllAccessible: ActionPermission = ActionPermission(type = 2)
+
+        }
+
+    }
 
     /**
      * [MessageKeyboard.action].
      * 参考 [官方文档](https://bot.q.qq.com/wiki/develop/api-v2/server-inter/message/trans/msg-btn.html)
      */
-    @ConsistentCopyVisibility
     @ApiModel
     @Serializable
     public data class Action @ApiModelConstructor internal constructor(
@@ -182,6 +203,7 @@ public data class MessageKeyboard @ApiModelConstructor constructor(
         /**
          * 用于兼容截止到 4.2.2 版本的 data class copy 函数而使用的兼容性函数。
          */
+        @Deprecated(message = "用于二进制兼容的函数，不应直接使用", level = DeprecationLevel.HIDDEN)
         public fun copy(
             permission: ActionPermission? = this.permission,
             data: String? = this.data,

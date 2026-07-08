@@ -344,15 +344,14 @@ public object MessageParsers {
 
 }
 
+@TmfsDsl
 public class QGMessageForSendingForParse internal constructor() {
     public var sendBodyBuilder: MessageSendApi.Body.Builder = MessageSendApi.Body.Builder()
 
-    @TmfsDsl
     public inline fun forSending(block: MessageSendApi.Body.Builder.() -> Unit) {
         sendBodyBuilder.block()
     }
 
-    @TmfsDsl
     public fun contentAppend(contentText: String) {
         forSending {
             if (content == null) {
@@ -367,5 +366,5 @@ public class QGMessageForSendingForParse internal constructor() {
 
 @Retention(AnnotationRetention.BINARY)
 @DslMarker
-internal annotation class TmfsDsl // TencentMessageForSendingBuilderDsl
+internal annotation class TmfsDsl
 

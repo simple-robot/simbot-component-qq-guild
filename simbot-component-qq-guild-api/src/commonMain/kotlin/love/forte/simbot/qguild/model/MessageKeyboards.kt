@@ -18,25 +18,73 @@
 package love.forte.simbot.qguild.model
 
 import kotlinx.serialization.Serializable
+import love.forte.simbot.qguild.QQGuild
+import love.forte.simbot.qguild.model.MessageKeyboards.Companion.builder
+import kotlin.jvm.JvmStatic
 
+public typealias MessageKeyboardButton = MessageKeyboard
 
 /**
  * [消息交互=>消息按钮](https://bot.q.qq.com/wiki/develop/api-v2/server-inter/message/trans/msg-btn.html)
  *
+ *
+ * Java 中可以通过 [builder] 构建实例；Kotlin 中还可以通过 DSL API 构建实例：
+ * ```Kotlin
+ * val keyboards = MessageKeyboards {
+ *     // this: MessageKeyboardsBuilder
+ *     // ...
+ * }
+ * ```
+ *
+ * @since 4.4.0
+ * @see MessageKeyboard
+ * @see MessageKeyboardsBuilder
+ *
  * @author ForteScarlet
  */
 @Serializable
-public data class MessageKeyboards(
-    val content: Content
-) {
+public data class MessageKeyboards internal constructor(val content: Content) {
+    /**
+     * 按钮内容，包含若干 [行][rows]。
+     */
     @Serializable
-    public data class Content(
-        public val rows: List<ContentRow>
-    )
+    public data class Content internal constructor(public val rows: List<ContentRow>)
 
+    /**
+     * 每行的内容，包含若干 [按钮][buttons]。
+     */
     @Serializable
-    public data class ContentRow(
-        val buttons: List<MessageKeyboard>
-    )
+    public data class ContentRow internal constructor(public val buttons: List<MessageKeyboardButton>)
 
+    public companion object {
+        /**
+         * 创建一个只有单行的 [消息按钮][MessageKeyboards]。
+         */
+        @JvmStatic
+        public fun create(singleRowButtons: Collection<MessageKeyboardButton>): MessageKeyboards =
+            MessageKeyboards(Content(listOf(ContentRow(singleRowButtons.toList()))))
+
+        /**
+         * 创建一个只有一个 [消息按钮][MessageKeyboards] 的 keyboard 对象。
+         */
+        @JvmStatic
+        public fun create(singleButton: MessageKeyboardButton): MessageKeyboards =
+            MessageKeyboards(Content(listOf(ContentRow(listOf(singleButton)))))
+
+        /**
+         * 将一个JSON字符串解析为 [MessageKeyboards] 对象。
+         */
+        @JvmStatic
+        public fun parse(jsonString: String): MessageKeyboards {
+            return QQGuild.DefaultJson.decodeFromString(serializer(), jsonString)
+        }
+
+        /**
+         * 获取一个 Builder。
+         */
+        @JvmStatic
+        public fun builder(): MessageKeyboardsBuilder {
+            return MessageKeyboardsBuilder()
+        }
+    }
 }

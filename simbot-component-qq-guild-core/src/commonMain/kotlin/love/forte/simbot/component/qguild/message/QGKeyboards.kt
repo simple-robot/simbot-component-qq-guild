@@ -21,20 +21,84 @@ import kotlinx.serialization.Serializable
 import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.Messages
+import love.forte.simbot.qguild.model.MessageKeyboardButton
 import love.forte.simbot.qguild.model.MessageKeyboards
+import love.forte.simbot.qguild.model.MessageKeyboardsBuilder
+import kotlin.jvm.JvmStatic
 
 /**
  *
- * markdown 消息内含有的按钮信息
+ * markdown 消息内含有的按钮信息。
  *
- * @since 4.2.0
+ * Kotlin 可以使用 DSL API 快速构建 [QGKeyboards] 对象实例：
+ * ```Kotlin
+ * QGKeyboards {
+ *   content {
+ *     // 第一行..
+ *     rows {
+ *       button { ... }
+ *       button { ... }
+ *     }
+ *     // 第二行..
+ *     rows {
+ *       button { ... }
+ *       button { ... }
+ *     }
+ *   }
+ * }
+ * ```
+ *
+ * @see QGKeyboards
+ *
+ * @since 4.4.0
  *
  * @author ForteScarlet
  */
 @Serializable
-public data class QGKeyboards /* TODO internal */ constructor(
-    public val keyboards: MessageKeyboards
-) : QGMessageElement {
+public data class QGKeyboards internal constructor(public val keyboards: MessageKeyboards) : QGMessageElement {
+
+    public companion object {
+        /**
+         * 使用 [keyboards] 直接包装构建。
+         *
+         * @see QGKeyboards
+         * @see MessageKeyboards.builder
+         */
+        @JvmStatic
+        public fun create(keyboards: MessageKeyboards): QGKeyboards = QGKeyboards(keyboards)
+
+        /**
+         * 使用 [singleButton] 直接包装构建一个单 button。
+         */
+        @JvmStatic
+        public fun create(singleButton: MessageKeyboardButton): QGKeyboards =
+            QGKeyboards(MessageKeyboards.create(singleButton))
+
+        /**
+         * 使用 [singleRowButtons] 直接包装构建一组单行 buttons。
+         */
+        @JvmStatic
+        public fun create(singleRowButtons: Collection<MessageKeyboardButton>): QGKeyboards =
+            QGKeyboards(MessageKeyboards.create(singleRowButtons))
+
+        /**
+         * 将一个JSON字符串解析为 [QGKeyboards] 对象。
+         */
+        @JvmStatic
+        public fun parse(jsonString: String): QGKeyboards {
+            return QGKeyboards(MessageKeyboards.parse(jsonString))
+        }
+
+    }
+}
+
+/**
+ * 构建 [QGKeyboards]。
+ *
+ * @since 4.4.0
+ */
+public inline fun QGKeyboards(builder: MessageKeyboardsBuilder.() -> Unit): QGKeyboards {
+    return QGKeyboards.create(MessageKeyboards { builder() })
 }
 
 internal object KeyboardsParser : SendingMessageParser {

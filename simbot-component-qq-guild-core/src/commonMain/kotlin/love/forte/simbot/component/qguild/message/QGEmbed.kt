@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024. ForteScarlet.
+ * Copyright (c) 2023-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -19,7 +19,6 @@ package love.forte.simbot.component.qguild.message
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import love.forte.simbot.event.MessageEvent
 import love.forte.simbot.message.Messages
 import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.qguild.message.EmbedBuilder
@@ -47,7 +46,6 @@ import kotlin.jvm.JvmStatic
  */
 @SerialName("qg.embed")
 @Serializable
-@ConsistentCopyVisibility
 public data class QGEmbed internal constructor(public val embed: Message.Embed) : QGMessageElement {
 
     public companion object {
