@@ -41,7 +41,10 @@ kotlin {
     applyDefaultHierarchyTemplate()
 
     compilerOptions {
-        freeCompilerArgs.add("-Xexpect-actual-classes")
+        freeCompilerArgs.addAll(
+            "-Xexpect-actual-classes",
+            "-Xconsistent-data-class-copy-visibility"
+        )
         optIn.addAll(
             "love.forte.simbot.qguild.QGInternalApi",
             "love.forte.simbot.qguild.ApiModelConstructor",
