@@ -140,6 +140,6 @@ class QGBotTests {
         // Verify the parsed message
         assertEquals(1, bodies.size)
         assertEquals("# Hello", bodies.first().markdown?.content)
-        assertEquals("123", bodies.first().keyboard?.id)
+        assertEquals("123", bodies.first().keyboards?.content?.rows?.single()?.buttons?.single()?.id)
     }
 }
