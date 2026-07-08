@@ -36,6 +36,7 @@ kotlin {
     applyDefaultHierarchyTemplate()
 
     compilerOptions {
+        freeCompilerArgs.add("-Xconsistent-data-class-copy-visibility")
         optIn.addAll(
             "love.forte.simbot.qguild.QGInternalApi",
             "love.forte.simbot.qguild.ApiModelConstructor"

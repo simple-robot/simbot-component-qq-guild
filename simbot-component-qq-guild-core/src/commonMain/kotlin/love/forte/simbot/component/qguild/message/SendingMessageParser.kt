@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025. ForteScarlet.
+ * Copyright (c) 2022-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -184,6 +184,7 @@ public object MessageParsers {
         add(MediaParser)
         add(MarkdownParser)
         add(KeyboardParser)
+        add(KeyboardsParser)
     }
 
     @ExperimentalQGApi
@@ -343,15 +344,14 @@ public object MessageParsers {
 
 }
 
+@TmfsDsl
 public class QGMessageForSendingForParse internal constructor() {
     public var sendBodyBuilder: MessageSendApi.Body.Builder = MessageSendApi.Body.Builder()
 
-    @TmfsDsl
     public inline fun forSending(block: MessageSendApi.Body.Builder.() -> Unit) {
         sendBodyBuilder.block()
     }
 
-    @TmfsDsl
     public fun contentAppend(contentText: String) {
         forSending {
             if (content == null) {
@@ -366,5 +366,5 @@ public class QGMessageForSendingForParse internal constructor() {
 
 @Retention(AnnotationRetention.BINARY)
 @DslMarker
-internal annotation class TmfsDsl // TencentMessageForSendingBuilderDsl
+internal annotation class TmfsDsl
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. ForteScarlet.
+ * Copyright (c) 2024-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -19,16 +19,24 @@ package love.forte.simbot.component.qguild.internal.event
 
 import love.forte.simbot.common.id.ID
 import love.forte.simbot.common.id.StringID.Companion.ID
-import love.forte.simbot.component.qguild.event.QGGroupAddRobotEvent
-import love.forte.simbot.component.qguild.event.QGGroupDelRobotEvent
-import love.forte.simbot.component.qguild.event.QGGroupMsgReceiveEvent
-import love.forte.simbot.component.qguild.event.QGGroupMsgRejectEvent
+import love.forte.simbot.component.qguild.event.*
 import love.forte.simbot.component.qguild.group.QGGroup
 import love.forte.simbot.component.qguild.group.QGGroupMember
 import love.forte.simbot.component.qguild.internal.bot.QGBotImpl
 import love.forte.simbot.component.qguild.internal.group.QGGroupMemberImpl
 import love.forte.simbot.component.qguild.internal.group.idGroup
+import love.forte.simbot.qguild.event.GroupMemberManagementData
 import love.forte.simbot.qguild.event.GroupRobotManagementData
+
+private fun QGBotImpl.group(groupOpenid: String): QGGroup =
+    idGroup(
+        bot = this,
+        id = groupOpenid.ID,
+        isFake = false
+    )
+
+private fun QGBotImpl.groupMember(memberOpenid: String): QGGroupMember =
+    QGGroupMemberImpl(this, memberOpenid.ID)
 
 internal class QGGroupAddRobotEventImpl(
     private val _id: String?,
@@ -40,15 +48,11 @@ internal class QGGroupAddRobotEventImpl(
         get() = _id?.ID ?: sourceEventEntity.computeId()
 
     override suspend fun content(): QGGroup {
-        return idGroup(
-            bot = bot,
-            id = sourceEventEntity.groupOpenid.ID,
-            isFake = false
-        )
+        return bot.group(sourceEventEntity.groupOpenid)
     }
 
     override suspend fun operator(): QGGroupMember {
-        return QGGroupMemberImpl(bot, sourceEventEntity.opMemberOpenid.ID)
+        return bot.groupMember(sourceEventEntity.opMemberOpenid)
     }
 }
 
@@ -62,15 +66,11 @@ internal class QGGroupDelRobotEventImpl(
         get() = _id?.ID ?: sourceEventEntity.computeId()
 
     override suspend fun content(): QGGroup {
-        return idGroup(
-            bot = bot,
-            id = sourceEventEntity.groupOpenid.ID,
-            isFake = false
-        )
+        return bot.group(sourceEventEntity.groupOpenid)
     }
 
     override suspend fun operator(): QGGroupMember {
-        return QGGroupMemberImpl(bot, sourceEventEntity.opMemberOpenid.ID)
+        return bot.groupMember(sourceEventEntity.opMemberOpenid)
     }
 }
 
@@ -84,15 +84,11 @@ internal class QGGroupMsgRejectEventImpl(
         get() = _id?.ID ?: sourceEventEntity.computeId()
 
     override suspend fun content(): QGGroup {
-        return idGroup(
-            bot = bot,
-            id = sourceEventEntity.groupOpenid.ID,
-            isFake = false
-        )
+        return bot.group(sourceEventEntity.groupOpenid)
     }
 
     override suspend fun operator(): QGGroupMember {
-        return QGGroupMemberImpl(bot, sourceEventEntity.opMemberOpenid.ID)
+        return bot.groupMember(sourceEventEntity.opMemberOpenid)
     }
 }
 
@@ -106,14 +102,46 @@ internal class QGGroupMsgReceiveEventImpl(
         get() = _id?.ID ?: sourceEventEntity.computeId()
 
     override suspend fun content(): QGGroup {
-        return idGroup(
-            bot = bot,
-            id = sourceEventEntity.groupOpenid.ID,
-            isFake = false
-        )
+        return bot.group(sourceEventEntity.groupOpenid)
     }
 
     override suspend fun operator(): QGGroupMember {
-        return QGGroupMemberImpl(bot, sourceEventEntity.opMemberOpenid.ID)
+        return bot.groupMember(sourceEventEntity.opMemberOpenid)
+    }
+}
+
+internal class QGGroupMemberAddEventImpl(
+    private val _id: String?,
+    override val bot: QGBotImpl,
+    override val sourceEventRaw: String,
+    override val sourceEventEntity: GroupMemberManagementData,
+) : QGGroupMemberAddEvent() {
+    override val id: ID
+        get() = _id?.ID ?: sourceEventEntity.computeId()
+
+    override suspend fun content(): QGGroup {
+        return bot.group(sourceEventEntity.groupOpenid)
+    }
+
+    override suspend fun member(): QGGroupMember {
+        return bot.groupMember(sourceEventEntity.memberOpenid)
+    }
+}
+
+internal class QGGroupMemberRemoveEventImpl(
+    private val _id: String?,
+    override val bot: QGBotImpl,
+    override val sourceEventRaw: String,
+    override val sourceEventEntity: GroupMemberManagementData,
+) : QGGroupMemberRemoveEvent() {
+    override val id: ID
+        get() = _id?.ID ?: sourceEventEntity.computeId()
+
+    override suspend fun content(): QGGroup {
+        return bot.group(sourceEventEntity.groupOpenid)
+    }
+
+    override suspend fun member(): QGGroupMember {
+        return bot.groupMember(sourceEventEntity.memberOpenid)
     }
 }

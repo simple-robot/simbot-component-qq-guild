@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2026. ForteScarlet.
+ * Copyright (c) 2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -15,23 +15,20 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package love.forte.simbot.component.qguild.internal.group
+package love.forte.simbot.component.qguild.internal.event
 
-import love.forte.simbot.common.id.ID
-import love.forte.simbot.component.qguild.group.QGGroupMember
+import love.forte.simbot.component.qguild.event.QGInteractionCreateEvent
 import love.forte.simbot.component.qguild.internal.bot.QGBotImpl
-import love.forte.simbot.component.qguild.internal.bot.newSupervisorCoroutineContext
-import kotlin.coroutines.CoroutineContext
+import love.forte.simbot.qguild.api.interaction.InteractionResponseApi
+import love.forte.simbot.qguild.event.InteractionCreate
+import love.forte.simbot.qguild.stdlib.requestDataBy
 
-
-/**
- *
- * @author ForteScarlet
- */
-internal class QGBotMemberImpl(private val bot: QGBotImpl) : QGGroupMember {
-    override val coroutineContext: CoroutineContext =
-        bot.newSupervisorCoroutineContext()
-
-    override val id: ID
-        get() = bot.id
+internal class QGInteractionCreateEventImpl(
+    override val bot: QGBotImpl,
+    override val sourceEventRaw: String,
+    override val sourceEventEntity: InteractionCreate,
+) : QGInteractionCreateEvent() {
+    override suspend fun respond(code: Int) {
+        InteractionResponseApi.create(sourceEventEntity.data.id, code).requestDataBy(bot.source)
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. ForteScarlet.
+ * Copyright (c) 2024-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -27,6 +27,7 @@ import love.forte.simbot.qguild.api.message.GroupAndC2CSendBody
 import love.forte.simbot.qguild.api.message.IgnoreWhenUseFormData
 import love.forte.simbot.qguild.model.Message
 import love.forte.simbot.qguild.model.MessageKeyboard
+import love.forte.simbot.qguild.model.MessageKeyboards
 import love.forte.simbot.qguild.model.SendMessageMedia
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
@@ -93,21 +94,42 @@ public class UserMessageSendApi private constructor(
          * @param markdown markdown消息内容
          */
         @JvmStatic
-        @JvmOverloads
+        @Deprecated("使用带 `MessageKeyboards` 的方法，而不是直接使用 `MessageKeyboard`")
         public fun createMarkdown(
             openid: String,
             markdown: String,
             keyboard: MessageKeyboard? = null
-        ): UserMessageSendApi =
-            create(
-                openid,
-                GroupAndC2CSendBody.create(
-                    content = markdown,
-                    msgType = MSG_TYPE_MARKDOWN,
-                ) {
-                    this.keyboard = keyboard
-                }
-            )
+        ): UserMessageSendApi = create(
+            openid,
+            GroupAndC2CSendBody.create(
+                content = markdown,
+                msgType = MSG_TYPE_MARKDOWN,
+            ) {
+                this.keyboards = keyboard?.let { btn -> MessageKeyboards.create(btn) }
+            }
+        )
+
+        /**
+         * Create a [UserMessageSendApi].
+         *
+         * @param markdown markdown消息内容
+         * @since 4.4.0
+         */
+        @JvmStatic
+        @JvmOverloads
+        public fun createMarkdown(
+            openid: String,
+            markdown: String,
+            keyboards: MessageKeyboards? = null
+        ): UserMessageSendApi = create(
+            openid,
+            GroupAndC2CSendBody.create(
+                content = markdown,
+                msgType = MSG_TYPE_MARKDOWN,
+            ) {
+                this.keyboards = keyboards
+            }
+        )
     }
 
     override val resultDeserializationStrategy: DeserializationStrategy<UserMessageSendResult>

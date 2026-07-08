@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. ForteScarlet.
+ * Copyright (c) 2024-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -25,7 +25,7 @@ import love.forte.simbot.message.MessageReceipt
 import kotlin.jvm.JvmSynthetic
 
 /**
- * 一个通过群消息事件得到的群成员信息。
+ * 一个通过群相关事件得到的群成员信息。
  * 只能得到它的 openid。
  */
 public interface QGGroupMember : Member {
@@ -83,5 +83,22 @@ public interface QGGroupMember : Member {
     }
 }
 
+/**
+ * 一个通过群消息事件得到的群成员信息。
+ *
+ * @since 4.4.0
+ */
+public interface QGGroupAuthor : QGGroupMember {
+    /**
+     * 消息发送者在群内的身份
+     */
+    public val memberRole: QGGroupRole
+
+    /**
+     * 是否为机器人
+     */
+    public val isBot: Boolean
+}
+
 private fun sendToMemberIsUnsupported(id: ID): Nothing =
-    throw UnsupportedOperationException("Send message to QGGroupMember(id=$id)")
+    throw UnsupportedOperationException("Send message to QGGroupMember(id=$id) is unsupported")

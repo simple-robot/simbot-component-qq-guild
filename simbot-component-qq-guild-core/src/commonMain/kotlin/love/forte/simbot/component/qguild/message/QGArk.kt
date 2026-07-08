@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2022-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -37,7 +37,6 @@ import love.forte.simbot.message.Message as SimbotMessage
  */
 @SerialName("qg.ark")
 @Serializable
-@ConsistentCopyVisibility
 public data class QGArk internal constructor(
     @SerialName("template_id")
     public val templateId: ID,
@@ -93,6 +92,7 @@ internal object ArkParser : SendingMessageParser {
         else -> false
     }
 
+    @Suppress("RemoveRedundantQualifierName")
     override suspend fun invoke(
         index: Int,
         element: love.forte.simbot.message.Message.Element,

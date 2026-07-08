@@ -337,6 +337,48 @@ public sealed class EventIntents {
 
     /**
      * ```
+     * GROUP_MEMBERS (1 << 24)
+     *   - GROUP_MEMBER_ADD       // 群成员加入群聊
+     *   - GROUP_MEMBER_REMOVE    // 群成员退出群聊
+     * ```
+     *
+     * 注意：官方并未提供此 intent 的标准名称，因此 `GROUP_MEMBERS` 并非官方标准名称，未来可能会根据情况修改或变化。
+     *
+     * @since 4.4.0
+     */
+    public data object GroupMembers : EventIntents() {
+        public const val INTENTS_INDEX: Int = 24
+        internal const val INTENTS: Int = 1 shl INTENTS_INDEX
+
+        /**
+         * 群成员进退群聊事件 `intents`
+         *
+         * @since 4.4.0
+         */
+        @get:JvmStatic
+        @get:JvmName("getIntents")
+        public val intents: Intents = Intents(INTENTS)
+
+        override val intentsValue: Int
+            get() = INTENTS
+
+        /**
+         * 群成员加入群聊
+         *
+         * @since 4.4.0
+         */
+        public const val GROUP_MEMBER_ADD_TYPE: String = "GROUP_MEMBER_ADD"
+
+        /**
+         * 群成员退出群聊
+         *
+         * @since 4.4.0
+         */
+        public const val GROUP_MEMBER_REMOVE_TYPE: String = "GROUP_MEMBER_REMOVE"
+    }
+
+    /**
+     * ```
      * GROUP_AND_C2C_EVENT (1 << 25)
      *   - C2C_MESSAGE_CREATE      // 用户单聊发消息给机器人时候
      *   - FRIEND_ADD              // 用户添加使用机器人

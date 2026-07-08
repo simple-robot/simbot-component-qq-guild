@@ -7,13 +7,11 @@ import love.forte.simbot.component.qguild.ExperimentalQGApi
 import love.forte.simbot.component.qguild.QQGuildComponent
 import love.forte.simbot.component.qguild.bot.config.QGBotComponentConfiguration
 import love.forte.simbot.component.qguild.internal.bot.QGBotImpl
-import love.forte.simbot.component.qguild.message.MessageParsers
-import love.forte.simbot.component.qguild.message.QGKeyboard
-import love.forte.simbot.component.qguild.message.QGMarkdown
-import love.forte.simbot.component.qguild.message.SendingMessageParser
+import love.forte.simbot.component.qguild.message.*
 import love.forte.simbot.event.*
 import love.forte.simbot.message.plus
 import love.forte.simbot.qguild.api.message.GroupAndC2CSendBody
+import love.forte.simbot.qguild.model.MessageKeyboard
 import love.forte.simbot.qguild.stdlib.BotFactory
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -71,7 +69,65 @@ class MessageParserTests {
 
         assertEquals(1, bodies.size)
         assertEquals("content", bodies.first().markdown?.content)
-        assertEquals("1", bodies.first().keyboard?.id)
+        assertEquals("1", bodies.first().keyboards?.content?.rows?.single()?.buttons?.single()?.id)
+    }
+
+    @OptIn(ExperimentalQGApi::class)
+    @Test
+    fun testKeyboardsParse() = runTest {
+        val keyboards = QGKeyboards {
+            content {
+                row {
+                    button {
+                        renderData("A")
+                        action(data = "a", unsupportTips = "unsupported")
+                    }
+                }
+                row {
+                    addButton(MessageKeyboard.create("template-id"))
+                }
+            }
+        }
+
+        val bot = QGBotImpl(
+            BotFactory.create("", "", ""),
+            QQGuildComponent(),
+            object : EventDispatcher {
+                override fun push(event: Event): Flow<EventResult> {
+                    TODO("Not yet implemented")
+                }
+
+                override fun dispose(listener: EventListener) {
+                    TODO("Not yet implemented")
+                }
+
+                override fun register(
+                    propertiesConsumer: ConfigurerFunction<EventListenerRegistrationProperties>?,
+                    listener: EventListener
+                ): EventListenerRegistrationHandle {
+                    TODO("Not yet implemented")
+                }
+
+                override val listeners: Sequence<EventListener>
+                    get() = TODO("Not yet implemented")
+            },
+            QGBotComponentConfiguration()
+        )
+
+        val bodies = MessageParsers.parseToGroupAndC2C(
+            bot = bot,
+            message = QGMarkdown.create("content") + keyboards,
+            builderType = SendingMessageParser.GroupBuilderType.GROUP,
+            targetOpenid = "123",
+            factory = {
+                GroupAndC2CSendBody.create("", GroupAndC2CSendBody.MSG_TYPE_MARKDOWN)
+            }
+        )
+
+        val body = bodies.single()
+        assertEquals("content", body.markdown?.content)
+        assertEquals("A", body.keyboards?.content?.rows?.get(0)?.buttons?.single()?.renderData?.label)
+        assertEquals("template-id", body.keyboards?.content?.rows?.get(1)?.buttons?.single()?.id)
     }
 
 }
