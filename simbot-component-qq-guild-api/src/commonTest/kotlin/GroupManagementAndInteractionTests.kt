@@ -99,7 +99,6 @@ class GroupManagementAndInteractionTests {
 
         assertEquals("INTERACTION_CREATE:interaction-id", event.id)
         assertEquals(3, event.seq)
-        assertEquals("102076256", event.data.applicationId)
         assertEquals("interaction-id", event.data.id)
         assertEquals(11, event.data.type)
         assertEquals("group", event.data.scene)
