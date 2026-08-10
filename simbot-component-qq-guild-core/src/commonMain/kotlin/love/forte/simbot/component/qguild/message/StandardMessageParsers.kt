@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2022-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -144,16 +144,16 @@ internal object QGMessageParser : ReceivingMessageParser {
                 "|<#(?<$MENTION_CHANNEL_VALUE>\\d+)>" +
                 "|<emoji:(?<$EMOJI_VALUE>\\d+)>" +
                 // 兼容之前的两个写法解析
-                "|<@!?(?<$AT_USER_OLD_VALUE>\\d+)>" +
+                "|<@!?(?<$AT_USER_OLD_VALUE>[.a-zA-Z0-9_-]+)>" +
                 "|(?<$AT_EVERYONE_OLD_GROUP>@everyone)"
     )
 
     private val replaceWithoutMentionAllRegex = Regex(
-        "<qqbot-at-user +id=\"(?<$AT_USER_VALUE>[.a-zA-Z0-9_-]+)\" */>" +
+        "<qqbot-at-user +id=\"(?<$AT_USER_VALUE>[a-zA-Z0-9_-]+)\" */>" +
                 "|<#(?<$MENTION_CHANNEL_VALUE>\\d+)>" +
                 "|<emoji:(?<$EMOJI_VALUE>\\d+)>" +
                 // 兼容之前的两个写法解析
-                "|<@!?(?<$AT_USER_OLD_VALUE>\\d+)>"
+                "|<@!?(?<$AT_USER_OLD_VALUE>[.a-zA-Z0-9_-]+)>"
     )
 
     override fun invoke(qgContent: String, context: ReceivingMessageParser.Context): ReceivingMessageParser.Context {
