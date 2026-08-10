@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025. ForteScarlet.
+ * Copyright (c) 2022-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -50,6 +50,7 @@ import love.forte.simbot.qguild.api.message.direct.CreateDmsApi
 import love.forte.simbot.qguild.api.message.direct.DmsSendApi
 import love.forte.simbot.qguild.model.DirectMessageSession
 import love.forte.simbot.qguild.model.Role
+import love.forte.simbot.qguild.stdlib.MessageDestination
 import love.forte.simbot.qguild.stdlib.requestDataBy
 import kotlin.concurrent.Volatile
 import kotlin.coroutines.CoroutineContext
@@ -161,7 +162,11 @@ internal class QGMemberImpl(
             }
 
             is InteractionMessage.Message -> {
-                val builder = MessageParsers.parse(message.message)
+                val builder = MessageParsers.parse(
+                    bot = bot,
+                    destination = MessageDestination.DMS,
+                    message = message.message
+                )
                 send0(builder)
             }
 
@@ -174,7 +179,11 @@ internal class QGMemberImpl(
                     return send0(body)
                 }
 
-                val builder = MessageParsers.parse(messageContent.messages)
+                val builder = MessageParsers.parse(
+                    bot = bot,
+                    destination = MessageDestination.DMS,
+                    message = messageContent.messages
+                )
                 send0(builder)
             }
 

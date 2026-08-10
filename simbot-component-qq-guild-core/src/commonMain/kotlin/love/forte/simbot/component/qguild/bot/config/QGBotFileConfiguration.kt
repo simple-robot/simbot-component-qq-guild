@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024. ForteScarlet.
+ * Copyright (c) 2023-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -28,6 +28,7 @@ import love.forte.simbot.qguild.event.EventIntents
 import love.forte.simbot.qguild.event.Signal
 import love.forte.simbot.qguild.stdlib.Bot
 import love.forte.simbot.qguild.stdlib.BotConfiguration
+import love.forte.simbot.qguild.stdlib.MessageDestination
 
 /**
  * 标记一个类型为**仅用于配置序列化**的类型。
@@ -240,6 +241,33 @@ public data class QGBotFileConfiguration(
          */
         @SerialName("dispatcher") public val dispatcherConfiguration: DispatcherConfiguration? = null,
 
+        /**
+         * 是否为全部消息目的地将普通内容作为 Markdown 发送。
+         *
+         * 具体的 [contentAsMarkdown] 配置会在此值之后覆盖对应目的地。
+         *
+         * @since 4.5.0
+         */
+        public val contentAsMarkdownAll: Boolean? = null,
+
+        /**
+         * 按消息目的地配置普通内容是否作为 Markdown 发送。
+         *
+         * ```JSON
+         * {
+         * "contentAsMarkdown": {
+         *      "CHANNEL": true,
+         *      "DMS": true,
+         *      "GROUP": true,
+         *      "USER": true
+         *   }
+         * }
+         * ```
+         *
+         * @since 4.5.0
+         */
+        public val contentAsMarkdown: Map<MessageDestination, Boolean>? = null,
+
     ) {
         /**
          * 是否禁用 ws
@@ -308,6 +336,8 @@ public data class QGBotFileConfiguration(
                 }
 
                 disableWs?.also { disableWs -> configuration.disableWs = disableWs }
+                contentAsMarkdownAll?.also(configuration::contentAsMarkdownAll)
+                contentAsMarkdown?.also(configuration.contentAsMarkdown::putAll)
             }
         }
     }
