@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2022-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -19,6 +19,7 @@ package love.forte.simbot.component.qguild.message
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import love.forte.simbot.common.id.ID
 import love.forte.simbot.common.id.StringID.Companion.ID
 import love.forte.simbot.component.qguild.bot.QGBot
@@ -53,6 +54,7 @@ public data class QGAttachmentMessage
 
     internal var bot: QGBot? = null
 
+    @Transient
     private lateinit var _source: Message.Attachment
 
     /**
@@ -62,7 +64,11 @@ public data class QGAttachmentMessage
      *
      */
     public val source: Message.Attachment
-        get() = if (::_source.isInitialized) _source else Message.Attachment(url, properties).also { _source = it }
+        get() = if (::_source.isInitialized) {
+            _source
+        } else {
+            Message.Attachment(url, properties).also { _source = it }
+        }
 
     @Deprecated("Just get url", ReplaceWith("url.ID", "love.forte.simbot.ID"))
     public val id: ID get() = url.ID
@@ -89,7 +95,9 @@ public data class QGAttachmentMessage
         @JvmName("of")
         public fun Message.Attachment.toMessage(): QGAttachmentMessage {
             val url0 = if (!url.startsWith("http")) "https://$url" else url
-            return QGAttachmentMessage(url0, properties)
+            return QGAttachmentMessage(url0, properties).also {
+                it._source = this
+            }
         }
     }
 }
@@ -122,7 +130,7 @@ internal object AttachmentParser : SendingMessageParser {
 
     override suspend fun invoke(
         index: Int,
-        element: love.forte.simbot.message.Message.Element,
+        element: SimbotMessage.Element,
         messages: Messages?,
         builderContext: SendingMessageParser.GroupAndC2CBuilderContext
     ) {
