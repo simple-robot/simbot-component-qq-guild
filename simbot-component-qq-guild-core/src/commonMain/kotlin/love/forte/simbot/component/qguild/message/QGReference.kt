@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024. ForteScarlet.
+ * Copyright (c) 2023-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -19,6 +19,7 @@ package love.forte.simbot.component.qguild.message
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import love.forte.simbot.common.id.ID
 import love.forte.simbot.common.id.StringID.Companion.ID
 import love.forte.simbot.common.id.literal
@@ -51,13 +52,17 @@ public class QGReference private constructor(
     override val id: ID
         get() = messageId
 
+    @Transient
     private lateinit var _source: Message.Reference
 
     /**
      * 得到当前 [QGReference] 对应的原始类型 [Message.Reference]。
      */
     public val source: Message.Reference
-        get() = if (::_source.isInitialized) _source else {
+        // 既然有概率通过外部初始化 _source, 那就直接用 getter，还省了编译体积
+        get() = if (::_source.isInitialized) {
+            _source
+        } else {
             Message.Reference(messageId.literal, ignoreGetMessageError).also {
                 _source = it
             }
