@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. ForteScarlet.
+ * Copyright (c) 2024-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -15,11 +15,13 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+import org.gradle.kotlin.dsl.kotlin
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import sun.jvmstat.monitor.MonitoredVmUtil.mainClass
 
 plugins {
     kotlin("jvm")
-    id("io.ktor.plugin") version "2.3.12"
+    id("io.ktor.plugin") version "2.3.13"
 }
 
 repositories {
@@ -47,7 +49,7 @@ dependencies {
     implementation(project(":simbot-component-qq-guild-core"))
     implementation(libs.simbot.core)
 
-    val ktorVersion = "2.3.12"
+    val ktorVersion = "2.3.13"
     implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
 

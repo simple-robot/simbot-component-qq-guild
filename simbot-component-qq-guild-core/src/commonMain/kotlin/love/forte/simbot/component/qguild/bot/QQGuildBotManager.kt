@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2025. ForteScarlet.
+ * Copyright (c) 2021-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -232,6 +232,7 @@ public annotation class QGBotManagerConfigurationDsl
 /**
  * [QQGuildBotManager] 使用的配置类描述。
  */
+@QGBotManagerConfigurationDsl
 public class QQGuildBotManagerConfiguration {
     /**
      * 当前 botManager 使用的协程上下文。
@@ -270,7 +271,6 @@ public class QQGuildBotManagerConfiguration {
      * botConfigure { appId, secret, token -> /* ... */ }
      * ```
      */
-    @QGBotManagerConfigurationDsl
     public fun botConfigure(configure: ConfigurableBotConfiguration.(appId: String, secret: String, token: String) -> Unit) {
         botConfigure.also { old ->
             botConfigure = { appId, secret, token ->

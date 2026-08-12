@@ -22,6 +22,7 @@ import io.ktor.client.engine.*
 import io.ktor.client.plugins.*
 import io.ktor.http.*
 import kotlinx.serialization.json.Json
+import love.forte.simbot.common.function.ConfigurerFunction
 import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.qguild.event.EventIntents
 import love.forte.simbot.qguild.event.Intents
@@ -174,6 +175,15 @@ public interface BotConfiguration {
      * @since 4.5.0
      */
     public val contentAsMarkdown: Map<MessageDestination, Boolean>
+
+    /**
+     * 在使用 [apiClientEngine] 或 [apiClientEngineFactory] 构建 [Bot.apiClient] 的过程中，
+     * 对  [HttpClientConfig] 进行额外的配置，
+     * 例如可以配置 Retry、Timeout 插件、日志配置、拦截器等内容。
+     *
+     * @since 4.5.0
+     */
+    public val apiClientAdditionalConfiguration: ConfigurerFunction<HttpClientConfig<*>>
 }
 
 
