@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2026. ForteScarlet.
+ * Copyright (c) 2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -15,30 +15,38 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = "qq-guild"
+package love.forte.simbot.qguild.stdlib
 
-pluginManagement {
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
-        mavenLocal()
-    }
+import kotlinx.serialization.Serializable
+
+/**
+ * QQ 机器人在发送消息时的目的地枚举。
+ *
+ * 此类型通常用来作为配置类中使用的内容。
+ *
+ * @since 4.5.0
+ */
+@Serializable
+public enum class MessageDestination {
+    /**
+     * QQ频道的某个(文字)子频道
+     */
+    CHANNEL,
+
+    /**
+     * QQ频道的某个私信会话
+     */
+    DMS,
+
+    /**
+     * QQ群
+     */
+    GROUP,
+
+    /**
+     * 单聊（QQ用户私信会话）
+     */
+    USER
+
+
 }
-
-// internals
-include(":internal-processors:api-reader")
-include(":internal-processors:dispatch-serializer-processor")
-include(":internal-processors:intents-processor")
-
-include(":simbot-component-qq-guild-api")
-include(":simbot-component-qq-guild-stdlib")
-include(":simbot-component-qq-guild-core")
-include(":simbot-component-qq-guild-internal-ed25519")
-
-// samples
-//include(":samples:webhook-server-ktor")
-//include(":samples:webhook-server-spring")
-//include(":samples:webhook-server-spring-webflux")
-
-//include(":tests:catalog-reject-test")
-

@@ -312,6 +312,24 @@ public class MessageSendApi private constructor(
                 }
             }
 
+            /**
+             * 拼接内容到 markdown 正文中。
+             * @since 4.5.0
+             */
+            public fun appendMarkdownContent(append: String) {
+                if (content.isNullOrEmpty()) {
+                    content = " "
+                }
+                val currentMarkdown = markdown ?: Message.Markdown()
+                var content = currentMarkdown.content
+                if (content == null) {
+                    content = append
+                } else {
+                    content += append
+                }
+                markdown = currentMarkdown.copy(content = content)
+            }
+
             public fun setFileImage(byteArray: ByteArray) {
                 fileImage = byteArray
             }

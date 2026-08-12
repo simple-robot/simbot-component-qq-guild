@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025. ForteScarlet.
+ * Copyright (c) 2022-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -22,6 +22,8 @@ import io.ktor.client.engine.*
 import io.ktor.client.plugins.*
 import io.ktor.http.*
 import kotlinx.serialization.json.Json
+import love.forte.simbot.common.function.ConfigurerFunction
+import love.forte.simbot.common.function.plus
 import love.forte.simbot.qguild.QQGuild
 import love.forte.simbot.qguild.event.*
 import kotlin.coroutines.CoroutineContext
@@ -174,13 +176,42 @@ public class ConfigurableBotConfiguration : BotConfiguration, IntentsAppender {
 
     override var disableWs: Boolean = false
 
-    /**
-     * 用于API请求结果反序列化的 [Json].
-     *
-     * 如果为null则会使用默认 Json [QQGuild.DefaultJson]
-     *
-     */
     override var apiDecoder: Json = QQGuild.DefaultJson
+
+    /**
+     * 控制各消息目的地是否将普通内容作为 Markdown 发送。
+     *
+     * @since 4.5.0
+     */
+    override val contentAsMarkdown: MutableMap<MessageDestination, Boolean> = mutableMapOf()
+
+    /**
+     * 为全部消息目的地设置普通内容的 Markdown 发送行为。
+     *
+     * @since 4.5.0
+     */
+    public fun contentAsMarkdownAll(value: Boolean = true): ConfigurableBotConfiguration = apply {
+        MessageDestination.entries.forEach { destination ->
+            contentAsMarkdown[destination] = value
+        }
+    }
+
+    /**
+     * 在使用 [apiClientEngine] 或 [apiClientEngineFactory] 构建 [Bot.apiClient] 的过程中，
+     * 对  [HttpClientConfig] 进行额外的配置，
+     * 例如可以配置 Retry、Timeout 插件、日志配置、拦截器等内容。
+     *
+     * @since 4.5.0
+     */
+    override var apiClientAdditionalConfiguration: ConfigurerFunction<HttpClientConfig<*>> = ConfigurerFunction {}
+
+    /**
+     * 向 [apiClientAdditionalConfiguration] 中追加配置逻辑。
+     * @since 4.5.0
+     */
+    public fun apiClientAdditionalConfiguration(configurer: ConfigurerFunction<HttpClientConfig<*>>) {
+        apiClientAdditionalConfiguration += configurer
+    }
 
     @Suppress("DEPRECATION")
     internal fun release(): BotConfiguration = BotConfigurationImpl(
@@ -199,6 +230,8 @@ public class ConfigurableBotConfiguration : BotConfiguration, IntentsAppender {
         wsClientEngineFactory = wsClientEngineFactory,
         disableWs = disableWs,
         apiDecoder = apiDecoder,
+        contentAsMarkdown = contentAsMarkdown.toMap(),
+        apiClientAdditionalConfiguration = apiClientAdditionalConfiguration,
     )
 
     public companion object
@@ -220,4 +253,6 @@ private class BotConfigurationImpl(
     override val wsClientEngineFactory: HttpClientEngineFactory<*>?,
     override val disableWs: Boolean,
     override val apiDecoder: Json,
+    override val contentAsMarkdown: Map<MessageDestination, Boolean>,
+    override val apiClientAdditionalConfiguration: ConfigurerFunction<HttpClientConfig<*>>,
 ) : BotConfiguration

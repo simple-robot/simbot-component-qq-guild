@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025. ForteScarlet.
+ * Copyright (c) 2022-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -89,9 +89,9 @@ apiValidation {
             "api-reader",
             "intents-processor",
             "dispatch-serializer-processor",
-            "webhook-server-ktor",
-            "webhook-server-spring",
-            "webhook-server-spring-webflux",
+//            "webhook-server-ktor",
+//            "webhook-server-spring",
+//            "webhook-server-spring-webflux",
         ),
     )
 

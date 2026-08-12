@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2022-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -23,6 +23,8 @@ import love.forte.simbot.component.qguild.QQGuildComponent
 import love.forte.simbot.component.qguild.message.QGAttachmentMessage.Companion.toMessage
 import love.forte.simbot.component.qguild.message.QGReference.Companion.toMessage
 import love.forte.simbot.message.*
+import love.forte.simbot.qguild.api.message.GroupAndC2CSendBody
+import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.qguild.message.ContentTextDecoder
 import love.forte.simbot.qguild.message.ContentTextEncoder
 import love.forte.simbot.qguild.model.Message
@@ -36,15 +38,26 @@ internal object ContentParser : SendingMessageParser {
         messages: Messages?,
         builderContext: SendingMessageParser.BuilderContext
     ) {
+        val contentAsMarkdown = builderContext.contentAsMarkdown
+
         when (element) {
-            is Text -> {
-                // 转义为无内嵌格式的文本
-                builderContext.builder.appendContent(ContentTextEncoder.encode(element.text))
+            is QGContentText -> {
+                if (contentAsMarkdown) {
+                    builderContext.builder.appendMarkdownContent(element.content)
+                } else {
+                    builderContext.builder.appendContent(element.content)
+                }
             }
 
-            is QGContentText -> {
-                builderContext.builder.appendContent(element.content)
+            is PlainText -> {
+                // 转义为无内嵌格式的文本
+                if (contentAsMarkdown) {
+                    builderContext.builder.appendMarkdownContent(ContentTextEncoder.encode(element.text))
+                } else {
+                    builderContext.builder.appendContent(ContentTextEncoder.encode(element.text))
+                }
             }
+
         }
     }
 
@@ -56,16 +69,48 @@ internal object ContentParser : SendingMessageParser {
     ) {
         fun builder() = builderContext.builder
 
+        val contentAsMarkdown = builderContext.contentAsMarkdown
+
         when (element) {
             is Text -> {
                 // 转义为无内嵌格式的文本
-                builder().content += ContentTextEncoder.encode(element.text)
+                builder().appendContent(ContentTextEncoder.encode(element.text), contentAsMarkdown)
             }
 
             is QGContentText -> {
-                builder().content += element.content
+                builder().appendContent(element.content, contentAsMarkdown)
             }
         }
+    }
+}
+
+/**
+ * 按配置将内容追加到频道或私信消息体。
+ */
+internal fun MessageSendApi.Body.Builder.appendContent(content: String, asMarkdown: Boolean) {
+    if (asMarkdown) {
+        if (this.content.isNullOrEmpty()) {
+            this.content = " "
+        }
+        appendMarkdownContent(content)
+    } else {
+        appendContent(content)
+    }
+}
+
+/**
+ * 按配置将内容追加到群聊或单聊消息体。
+ */
+internal fun GroupAndC2CSendBody.appendContent(content: String, asMarkdown: Boolean) {
+    if (asMarkdown) {
+        if (this.content.isEmpty()) {
+            this.content = " "
+        }
+        val currentMarkdown = markdown ?: Message.Markdown()
+        markdown = currentMarkdown.copy(content = (currentMarkdown.content ?: "") + content)
+        msgType = GroupAndC2CSendBody.MSG_TYPE_MARKDOWN
+    } else {
+        this.content += content
     }
 }
 
@@ -90,7 +135,7 @@ internal object FaceParser : SendingMessageParser {
     ) {
         if (element is Face) {
             val id = element.id.literal
-            builderContext.builder.appendContent("$EMOJI_PREFIX$id$EMOJI_SUFFIX")
+            builderContext.builder.appendContent("$EMOJI_PREFIX$id$EMOJI_SUFFIX", builderContext.contentAsMarkdown)
         }
     }
 
@@ -104,7 +149,7 @@ internal object FaceParser : SendingMessageParser {
             val builder = builderContext.builder
 
             val id = element.id.literal
-            builder.content += "$EMOJI_PREFIX$id$EMOJI_SUFFIX"
+            builder.appendContent("$EMOJI_PREFIX$id$EMOJI_SUFFIX", builderContext.contentAsMarkdown)
         }
     }
 }
@@ -119,19 +164,6 @@ internal object QGMessageParser : ReceivingMessageParser {
 
     private const val MENTION_CHANNEL_VALUE = "cv"
     private const val EMOJI_VALUE = "ev"
-//
-//    private val replaceRegex = Regex(
-//        "<@!?(?<$AT_USER_VALUE>\\d+)>" +
-//                "|(?<$AT_EVERYONE_GROUP>@everyone)" +
-//                "|<#(?<$MENTION_CHANNEL_VALUE>\\d+)>" +
-//                "|<emoji:(?<$EMOJI_VALUE>\\d+)>"
-//    )
-//
-//    private val replaceWithoutMentionAllRegex = Regex(
-//        "<@!?(?<$AT_USER_VALUE>\\d+)>" +
-//                "|<#(?<$MENTION_CHANNEL_VALUE>\\d+)>" +
-//                "|<emoji:(?<$EMOJI_VALUE>\\d+)>"
-//    )
 
     /*
      * 嵌入文本使用格式：<qqbot-at-user id="" /> 协议：<@userid>即将弃用，请使用上述最新格式。
@@ -144,16 +176,16 @@ internal object QGMessageParser : ReceivingMessageParser {
                 "|<#(?<$MENTION_CHANNEL_VALUE>\\d+)>" +
                 "|<emoji:(?<$EMOJI_VALUE>\\d+)>" +
                 // 兼容之前的两个写法解析
-                "|<@!?(?<$AT_USER_OLD_VALUE>\\d+)>" +
+                "|<@!?(?<$AT_USER_OLD_VALUE>[.a-zA-Z0-9_-]+)>" +
                 "|(?<$AT_EVERYONE_OLD_GROUP>@everyone)"
     )
 
     private val replaceWithoutMentionAllRegex = Regex(
-        "<qqbot-at-user +id=\"(?<$AT_USER_VALUE>[.a-zA-Z0-9_-]+)\" */>" +
+        "<qqbot-at-user +id=\"(?<$AT_USER_VALUE>[a-zA-Z0-9_-]+)\" */>" +
                 "|<#(?<$MENTION_CHANNEL_VALUE>\\d+)>" +
                 "|<emoji:(?<$EMOJI_VALUE>\\d+)>" +
                 // 兼容之前的两个写法解析
-                "|<@!?(?<$AT_USER_OLD_VALUE>\\d+)>"
+                "|<@!?(?<$AT_USER_OLD_VALUE>[.a-zA-Z0-9_-]+)>"
     )
 
     override fun invoke(qgContent: String, context: ReceivingMessageParser.Context): ReceivingMessageParser.Context {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025. ForteScarlet.
+ * Copyright (c) 2024-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -91,7 +91,7 @@ inline fun Project.configJavaCompileWithModule(
 
         if (moduleName != null) {
             options.compilerArgumentProviders.add(CommandLineArgumentProvider {
-                val sourceSet = sourceSets.findByName("main") ?: sourceSets.findByName("jvmMain")
+                val sourceSet = sourceSets0.findByName("main") ?: sourceSets0.findByName("jvmMain")
                 if (sourceSet != null) {
                     // Provide compiled Kotlin classes to javac – needed for Java/Kotlin mixed sources to work
                     listOf("--patch-module", "$moduleName=${sourceSet.output.asPath}")
@@ -106,5 +106,5 @@ inline fun Project.configJavaCompileWithModule(
 }
 
 @PublishedApi
-internal val Project.sourceSets: SourceSetContainer
+internal val Project.sourceSets0: SourceSetContainer
     get() = extensions.getByName<SourceSetContainer>("sourceSets")

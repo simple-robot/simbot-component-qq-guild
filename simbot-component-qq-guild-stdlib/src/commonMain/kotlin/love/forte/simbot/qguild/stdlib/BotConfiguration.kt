@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2022-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -22,6 +22,8 @@ import io.ktor.client.engine.*
 import io.ktor.client.plugins.*
 import io.ktor.http.*
 import kotlinx.serialization.json.Json
+import love.forte.simbot.common.function.ConfigurerFunction
+import love.forte.simbot.qguild.api.message.MessageSendApi
 import love.forte.simbot.qguild.event.EventIntents
 import love.forte.simbot.qguild.event.Intents
 import love.forte.simbot.qguild.event.Shard
@@ -160,9 +162,29 @@ public interface BotConfiguration {
      *
      */
     public val apiDecoder: Json
+
+    /**
+     * 向某个指定[目的地](MessageDestination)发送消息时总是作为 markdown 消息的 content 发送，
+     * 而不再使用 [love.forte.simbot.qguild.model.Message.content]。
+     * 默认为空。
+     *
+     * 如果某个目的地为 `true` （且它支持使用 markdown），则在发送消息时，
+     * 原本会被拼接到 [MessageSendApi.Body.content] 上的内容，
+     * 最终会被拼接到 [MessageSendApi.Body.markdown] 的 content 中。
+     *
+     * @since 4.5.0
+     */
+    public val contentAsMarkdown: Map<MessageDestination, Boolean>
+
+    /**
+     * 在使用 [apiClientEngine] 或 [apiClientEngineFactory] 构建 [Bot.apiClient] 的过程中，
+     * 对  [HttpClientConfig] 进行额外的配置，
+     * 例如可以配置 Retry、Timeout 插件、日志配置、拦截器等内容。
+     *
+     * @since 4.5.0
+     */
+    public val apiClientAdditionalConfiguration: ConfigurerFunction<HttpClientConfig<*>>
 }
-
-
 
 
 /**

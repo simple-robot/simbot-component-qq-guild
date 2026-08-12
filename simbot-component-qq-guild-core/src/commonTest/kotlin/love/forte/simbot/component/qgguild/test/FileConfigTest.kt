@@ -1,20 +1,25 @@
 package love.forte.simbot.component.qgguild.test
 
+import io.ktor.client.*
+import io.ktor.client.engine.mock.*
+import io.ktor.client.request.*
+import io.ktor.http.*
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.internal.FormatLanguage
 import kotlinx.serialization.modules.plus
 import love.forte.simbot.bot.SerializableBotConfiguration
+import love.forte.simbot.common.function.invokeWith
 import love.forte.simbot.component.qguild.QQGuildComponent
 import love.forte.simbot.component.qguild.bot.config.IntentsConfig
+import love.forte.simbot.component.qguild.bot.config.QGBotComponentConfiguration
 import love.forte.simbot.component.qguild.bot.config.QGBotFileConfiguration
 import love.forte.simbot.component.qguild.bot.config.ShardConfig
 import love.forte.simbot.qguild.event.EventIntents
 import love.forte.simbot.qguild.event.Intents
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertIs
-import kotlin.test.assertNotNull
+import love.forte.simbot.qguild.stdlib.ConfigurableBotConfiguration
+import love.forte.simbot.qguild.stdlib.MessageDestination
+import kotlin.test.*
 
 
 /**
@@ -90,7 +95,7 @@ class FileConfigTest {
         val decoded = json.decodeFromString(SerializableBotConfiguration.serializer(), jsonStr)
         assertIs<QGBotFileConfiguration>(decoded)
         assertNotNull(decoded.config)
-        assertIs<ShardConfig.Full>(decoded.config!!.shardConfig)
+        assertIs<ShardConfig.Full>(decoded.config.shardConfig)
     }
 
     @OptIn(InternalSerializationApi::class)
@@ -153,6 +158,94 @@ class FileConfigTest {
             123456789,
             intents.value
         )
+    }
+
+    @Test
+    fun contentAsMarkdownConfigurationTest() {
+        val decoded = json.decodeFromString<QGBotFileConfiguration>(
+            configJson(//language=json
+                """{
+                    "contentAsMarkdownAll": true,
+                    "contentAsMarkdown": {
+                        "DMS": false,
+                        "USER": false
+                    }
+                }""".trimIndent()
+            )
+        )
+        val componentConfiguration = QGBotComponentConfiguration()
+        decoded.includeConfig(componentConfiguration)
+        val botConfiguration = ConfigurableBotConfiguration()
+        componentConfiguration.botConfigure!!.invokeWith(botConfiguration)
+
+        assertTrue(botConfiguration.contentAsMarkdown.getValue(MessageDestination.CHANNEL))
+        assertFalse(botConfiguration.contentAsMarkdown.getValue(MessageDestination.DMS))
+        assertTrue(botConfiguration.contentAsMarkdown.getValue(MessageDestination.GROUP))
+        assertFalse(botConfiguration.contentAsMarkdown.getValue(MessageDestination.USER))
+    }
+
+    @Test
+    fun retryConfigurationTest() = kotlinx.coroutines.test.runTest {
+        val decoded = json.decodeFromString<QGBotFileConfiguration>(
+            configJson(//language=json
+                """{"retry": {
+                    "maxRetries": 1,
+                    "retryOnServerErrors": true
+                }}"""
+            )
+        )
+        val componentConfiguration = QGBotComponentConfiguration()
+        decoded.includeConfig(componentConfiguration)
+        val botConfiguration = ConfigurableBotConfiguration()
+        componentConfiguration.botConfigure!!.invokeWith(botConfiguration)
+
+        var requestCount = 0
+        val client = HttpClient(MockEngine {
+            requestCount++
+            respond(
+                content = "",
+                status = if (requestCount == 1) HttpStatusCode.InternalServerError else HttpStatusCode.OK
+            )
+        }) {
+            botConfiguration.apiClientAdditionalConfiguration.invokeWith(this)
+        }
+
+        try {
+            assertEquals(HttpStatusCode.OK, client.get("https://example.test/retry").status)
+            assertEquals(2, requestCount)
+        } finally {
+            client.close()
+        }
+    }
+
+    @Test
+    fun retryConfigurationWithoutMaxRetriesDoesNotEnableRetryTest() = kotlinx.coroutines.test.runTest {
+        val decoded = json.decodeFromString<QGBotFileConfiguration>(
+            configJson(//language=json
+                """{"retry": {
+                    "retryOnServerErrors": true
+                }}"""
+            )
+        )
+        val componentConfiguration = QGBotComponentConfiguration()
+        decoded.includeConfig(componentConfiguration)
+        val botConfiguration = ConfigurableBotConfiguration()
+        componentConfiguration.botConfigure!!.invokeWith(botConfiguration)
+
+        var requestCount = 0
+        val client = HttpClient(MockEngine {
+            requestCount++
+            respond(content = "", status = HttpStatusCode.InternalServerError)
+        }) {
+            botConfiguration.apiClientAdditionalConfiguration.invokeWith(this)
+        }
+
+        try {
+            assertEquals(HttpStatusCode.InternalServerError, client.get("https://example.test/no-retry").status)
+            assertEquals(1, requestCount)
+        } finally {
+            client.close()
+        }
     }
 
     companion object {
