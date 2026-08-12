@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025. ForteScarlet.
+ * Copyright (c) 2022-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -36,9 +36,9 @@ include(":simbot-component-qq-guild-core")
 include(":simbot-component-qq-guild-internal-ed25519")
 
 // samples
-include(":samples:webhook-server-ktor")
-include(":samples:webhook-server-spring")
-include(":samples:webhook-server-spring-webflux")
+//include(":samples:webhook-server-ktor")
+//include(":samples:webhook-server-spring")
+//include(":samples:webhook-server-spring-webflux")
 
 //include(":tests:catalog-reject-test")
 

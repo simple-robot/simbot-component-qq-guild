@@ -72,6 +72,7 @@ public class love/forte/simbot/qguild/stdlib/BotAlreadyCancelledException : java
 }
 
 public abstract interface class love/forte/simbot/qguild/stdlib/BotConfiguration {
+	public abstract fun getApiClientAdditionalConfiguration ()Llove/forte/simbot/common/function/ConfigurerFunction;
 	public abstract fun getApiClientEngine ()Lio/ktor/client/engine/HttpClientEngine;
 	public abstract fun getApiClientEngineFactory ()Lio/ktor/client/engine/HttpClientEngineFactory;
 	public abstract fun getApiDecoder ()Lkotlinx/serialization/json/Json;
@@ -144,9 +145,11 @@ public final class love/forte/simbot/qguild/stdlib/ConfigurableBotConfiguration 
 	public static final field Companion Llove/forte/simbot/qguild/stdlib/ConfigurableBotConfiguration$Companion;
 	public fun <init> ()V
 	public final fun addIntents (I)Llove/forte/simbot/qguild/stdlib/ConfigurableBotConfiguration;
+	public final fun apiClientAdditionalConfiguration (Llove/forte/simbot/common/function/ConfigurerFunction;)V
 	public fun appendIntents-NLurJl8 (I)V
 	public final fun contentAsMarkdownAll (Z)Llove/forte/simbot/qguild/stdlib/ConfigurableBotConfiguration;
 	public static synthetic fun contentAsMarkdownAll$default (Llove/forte/simbot/qguild/stdlib/ConfigurableBotConfiguration;ZILjava/lang/Object;)Llove/forte/simbot/qguild/stdlib/ConfigurableBotConfiguration;
+	public fun getApiClientAdditionalConfiguration ()Llove/forte/simbot/common/function/ConfigurerFunction;
 	public fun getApiClientEngine ()Lio/ktor/client/engine/HttpClientEngine;
 	public fun getApiClientEngineFactory ()Lio/ktor/client/engine/HttpClientEngineFactory;
 	public fun getApiDecoder ()Lkotlinx/serialization/json/Json;
@@ -164,6 +167,7 @@ public final class love/forte/simbot/qguild/stdlib/ConfigurableBotConfiguration 
 	public fun getShard ()Llove/forte/simbot/qguild/event/Shard;
 	public fun getWsClientEngine ()Lio/ktor/client/engine/HttpClientEngine;
 	public fun getWsClientEngineFactory ()Lio/ktor/client/engine/HttpClientEngineFactory;
+	public fun setApiClientAdditionalConfiguration (Llove/forte/simbot/common/function/ConfigurerFunction;)V
 	public fun setApiClientEngine (Lio/ktor/client/engine/HttpClientEngine;)V
 	public fun setApiClientEngineFactory (Lio/ktor/client/engine/HttpClientEngineFactory;)V
 	public fun setApiDecoder (Lkotlinx/serialization/json/Json;)V

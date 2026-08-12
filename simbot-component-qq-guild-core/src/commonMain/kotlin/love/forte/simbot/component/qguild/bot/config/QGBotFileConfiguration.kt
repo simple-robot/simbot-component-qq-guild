@@ -17,6 +17,7 @@
 
 package love.forte.simbot.component.qguild.bot.config
 
+import io.ktor.client.plugins.*
 import io.ktor.http.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -268,6 +269,14 @@ public data class QGBotFileConfiguration(
          */
         public val contentAsMarkdown: Map<MessageDestination, Boolean>? = null,
 
+        /**
+         * 与 [io.ktor.client.plugins.HttpRequestRetry] 插件相关的配置。
+         *
+         * 如果需要更精细化的配置，则需要通过代码进行配置。
+         *
+         * @since 4.5.0
+         */
+        public val retry: RetryConfig? = null,
     ) {
         /**
          * 是否禁用 ws
@@ -309,6 +318,36 @@ public data class QGBotFileConfiguration(
         val apiHttpSocketTimeoutMillis: Long? = null,
     )
 
+    /**
+     * 如果配置了 `retry`，则在转化为 [BotConfiguration] 的时候，
+     * 会通过 [BotConfiguration.apiClientAdditionalConfiguration] 注册并配置
+     * [io.ktor.client.plugins.HttpRequestRetry] 插件。
+     *
+     * 如果需要更精细化的配置，则需要通过代码进行配置。
+     *
+     * @since 4.5.0
+     */
+    @Serializable
+    public data class RetryConfig(
+        /**
+         * 最大重试次数。如果为 `null`，则不启用重试。
+         */
+        val maxRetries: Int? = null,
+        /**
+         * 是否启用指数延迟。如果启用，会使用
+         * [io.ktor.client.plugins.HttpRequestRetry.Configuration.exponentialDelay]
+         * 的默认值配置指数延迟。
+         */
+        val exponentialDelay: Boolean = false,
+        /**
+         * 是否启用服务器错误重试。如果启用，会使用
+         * [io.ktor.client.plugins.HttpRequestRetry.Configuration.retryOnServerErrors]
+         * 的默认值配置服务器错误重试。
+         */
+        val retryOnServerErrors: Boolean = false
+
+    )
+
     internal fun includeConfig(cpConfiguration: QGBotComponentConfiguration) {
         cpConfiguration.botConfig {
             val configuration = this
@@ -338,6 +377,21 @@ public data class QGBotFileConfiguration(
                 disableWs?.also { disableWs -> configuration.disableWs = disableWs }
                 contentAsMarkdownAll?.also(configuration::contentAsMarkdownAll)
                 contentAsMarkdown?.also(configuration.contentAsMarkdown::putAll)
+
+                retry?.also { retryConfig ->
+                    val maxRetries = retryConfig.maxRetries ?: return@also
+                    configuration.apiClientAdditionalConfiguration {
+                        install(HttpRequestRetry) {
+                            this.maxRetries = maxRetries
+                            if (retryConfig.exponentialDelay) {
+                                exponentialDelay()
+                            }
+                            if (retryConfig.retryOnServerErrors) {
+                                retryOnServerErrors()
+                            }
+                        }
+                    }
+                }
             }
         }
     }

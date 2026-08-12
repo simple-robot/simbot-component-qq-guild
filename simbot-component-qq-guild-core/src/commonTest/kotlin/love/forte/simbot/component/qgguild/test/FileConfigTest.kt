@@ -1,5 +1,9 @@
 package love.forte.simbot.component.qgguild.test
 
+import io.ktor.client.*
+import io.ktor.client.engine.mock.*
+import io.ktor.client.request.*
+import io.ktor.http.*
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.internal.FormatLanguage
@@ -179,6 +183,71 @@ class FileConfigTest {
         assertTrue(botConfiguration.contentAsMarkdown.getValue(MessageDestination.GROUP))
         assertFalse(botConfiguration.contentAsMarkdown.getValue(MessageDestination.USER))
     }
+
+    @Test
+    fun retryConfigurationTest() = kotlinx.coroutines.test.runTest {
+        val decoded = json.decodeFromString<QGBotFileConfiguration>(
+            configJson(//language=json
+                """{"retry": {
+                    "maxRetries": 1,
+                    "retryOnServerErrors": true
+                }}"""
+            )
+        )
+        val componentConfiguration = QGBotComponentConfiguration()
+        decoded.includeConfig(componentConfiguration)
+        val botConfiguration = ConfigurableBotConfiguration()
+        componentConfiguration.botConfigure!!.invokeWith(botConfiguration)
+
+        var requestCount = 0
+        val client = HttpClient(MockEngine {
+            requestCount++
+            respond(
+                content = "",
+                status = if (requestCount == 1) HttpStatusCode.InternalServerError else HttpStatusCode.OK
+            )
+        }) {
+            botConfiguration.apiClientAdditionalConfiguration.invokeWith(this)
+        }
+
+        try {
+            assertEquals(HttpStatusCode.OK, client.get("https://example.test/retry").status)
+            assertEquals(2, requestCount)
+        } finally {
+            client.close()
+        }
+    }
+
+    @Test
+    fun retryConfigurationWithoutMaxRetriesDoesNotEnableRetryTest() = kotlinx.coroutines.test.runTest {
+        val decoded = json.decodeFromString<QGBotFileConfiguration>(
+            configJson(//language=json
+                """{"retry": {
+                    "retryOnServerErrors": true
+                }}"""
+            )
+        )
+        val componentConfiguration = QGBotComponentConfiguration()
+        decoded.includeConfig(componentConfiguration)
+        val botConfiguration = ConfigurableBotConfiguration()
+        componentConfiguration.botConfigure!!.invokeWith(botConfiguration)
+
+        var requestCount = 0
+        val client = HttpClient(MockEngine {
+            requestCount++
+            respond(content = "", status = HttpStatusCode.InternalServerError)
+        }) {
+            botConfiguration.apiClientAdditionalConfiguration.invokeWith(this)
+        }
+
+        try {
+            assertEquals(HttpStatusCode.InternalServerError, client.get("https://example.test/no-retry").status)
+            assertEquals(1, requestCount)
+        } finally {
+            client.close()
+        }
+    }
+
     companion object {
         private const val CONFIG_JSON_PREFIX =
             "{\"ticket\":{\"appId\":\"\",\"secret\":\"\",\"token\":\"\"},\"config\":"
