@@ -24,6 +24,8 @@ import kotlinx.serialization.Serializable
 import love.forte.simbot.bot.SerializableBotConfiguration
 import love.forte.simbot.bot.configuration.DispatcherConfiguration
 import love.forte.simbot.component.qguild.QQGuildComponent
+import love.forte.simbot.logger.LoggerFactory
+import love.forte.simbot.logger.logger
 import love.forte.simbot.qguild.QQGuild
 import love.forte.simbot.qguild.event.EventIntents
 import love.forte.simbot.qguild.event.Signal
@@ -52,7 +54,7 @@ public annotation class UsedOnlyForConfigSerialization
  *    "ticket": {
  *      "appId": "appId-value",
  *      "secret": "secret-value",
- *      "token": "token-value",
+ *      "token": "token-value"
  *    },
  *    "config": null
  * }
@@ -348,6 +350,7 @@ public data class QGBotFileConfiguration(
 
     )
 
+    @Suppress("DEPRECATION")
     internal fun includeConfig(cpConfiguration: QGBotComponentConfiguration) {
         cpConfiguration.botConfig {
             val configuration = this
@@ -359,6 +362,12 @@ public data class QGBotFileConfiguration(
                 serverUrl?.also { su ->
                     if (su == Config.SERVER_URL_SANDBOX_VALUE) {
                         configuration.serverUrl = QQGuild.SANDBOX_URL
+                        logger.warn(
+                            "Sandbox URL {} was deprecated since `20260810`. See Official Documentation " +
+                                    "https://bot.q.qq.com/wiki/develop/api-v2/dev-prepare/api-call-guide.html " +
+                                    "for more details.",
+                            QQGuild.SANDBOX_URL,
+                        )
                     } else {
                         configuration.serverUrl = Url(su)
                     }
@@ -396,5 +405,7 @@ public data class QGBotFileConfiguration(
         }
     }
 
-    public companion object
+    public companion object {
+        private val logger = LoggerFactory.logger<QGBotFileConfiguration>()
+    }
 }
