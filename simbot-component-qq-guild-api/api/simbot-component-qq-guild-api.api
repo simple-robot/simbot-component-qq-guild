@@ -1611,6 +1611,19 @@ public final class love/forte/simbot/qguild/api/message/ArkMessageTemplates$Text
 	public fun getArk ()Llove/forte/simbot/qguild/model/Message$Ark;
 }
 
+public final class love/forte/simbot/qguild/api/message/DeleteChannelMessageApi : love/forte/simbot/qguild/api/DeleteQQGuildApi, love/forte/simbot/qguild/api/QQGuildApiWithoutResult {
+	public static final field Factory Llove/forte/simbot/qguild/api/message/DeleteChannelMessageApi$Factory;
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public static final fun create (Ljava/lang/String;Ljava/lang/String;)Llove/forte/simbot/qguild/api/message/DeleteChannelMessageApi;
+	public static final fun create (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;)Llove/forte/simbot/qguild/api/message/DeleteChannelMessageApi;
+}
+
+public final class love/forte/simbot/qguild/api/message/DeleteChannelMessageApi$Factory : love/forte/simbot/qguild/api/SimpleDeleteApiDescription {
+	public final fun create (Ljava/lang/String;Ljava/lang/String;)Llove/forte/simbot/qguild/api/message/DeleteChannelMessageApi;
+	public final fun create (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;)Llove/forte/simbot/qguild/api/message/DeleteChannelMessageApi;
+	public static synthetic fun create$default (Llove/forte/simbot/qguild/api/message/DeleteChannelMessageApi$Factory;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;ILjava/lang/Object;)Llove/forte/simbot/qguild/api/message/DeleteChannelMessageApi;
+}
+
 public final class love/forte/simbot/qguild/api/message/DeleteMessageApi : love/forte/simbot/qguild/api/DeleteQQGuildApi, love/forte/simbot/qguild/api/QQGuildApiWithoutResult {
 	public static final field Factory Llove/forte/simbot/qguild/api/message/DeleteMessageApi$Factory;
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -1820,6 +1833,16 @@ public final class love/forte/simbot/qguild/api/message/direct/DmsSendApiKt {
 	public static final synthetic fun create (Llove/forte/simbot/qguild/api/message/direct/DmsSendApi$Factory;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Llove/forte/simbot/qguild/api/message/direct/DmsSendApi;
 }
 
+public final class love/forte/simbot/qguild/api/message/group/GroupMessageDeleteApi : love/forte/simbot/qguild/api/DeleteQQGuildApi, love/forte/simbot/qguild/api/QQGuildApiWithoutResult {
+	public static final field Factory Llove/forte/simbot/qguild/api/message/group/GroupMessageDeleteApi$Factory;
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public static final fun create (Ljava/lang/String;Ljava/lang/String;)Llove/forte/simbot/qguild/api/message/group/GroupMessageDeleteApi;
+}
+
+public final class love/forte/simbot/qguild/api/message/group/GroupMessageDeleteApi$Factory : love/forte/simbot/qguild/api/SimpleDeleteApiDescription {
+	public final fun create (Ljava/lang/String;Ljava/lang/String;)Llove/forte/simbot/qguild/api/message/group/GroupMessageDeleteApi;
+}
+
 public final class love/forte/simbot/qguild/api/message/group/GroupMessageSendApi : love/forte/simbot/qguild/api/PostQQGuildApi {
 	public static final field Factory Llove/forte/simbot/qguild/api/message/group/GroupMessageSendApi$Factory;
 	public static final field MSG_TYPE_ARK I
@@ -1886,6 +1909,16 @@ public final class love/forte/simbot/qguild/api/message/setting/GetMessageSettin
 
 public final class love/forte/simbot/qguild/api/message/setting/GetMessageSettingApi$Factory : love/forte/simbot/qguild/api/SimpleGetApiDescription {
 	public final fun create (Ljava/lang/String;)Llove/forte/simbot/qguild/api/message/setting/GetMessageSettingApi;
+}
+
+public final class love/forte/simbot/qguild/api/message/user/UserMessageDeleteApi : love/forte/simbot/qguild/api/DeleteQQGuildApi, love/forte/simbot/qguild/api/QQGuildApiWithoutResult {
+	public static final field Factory Llove/forte/simbot/qguild/api/message/user/UserMessageDeleteApi$Factory;
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public static final fun create (Ljava/lang/String;Ljava/lang/String;)Llove/forte/simbot/qguild/api/message/user/UserMessageDeleteApi;
+}
+
+public final class love/forte/simbot/qguild/api/message/user/UserMessageDeleteApi$Factory : love/forte/simbot/qguild/api/SimpleDeleteApiDescription {
+	public final fun create (Ljava/lang/String;Ljava/lang/String;)Llove/forte/simbot/qguild/api/message/user/UserMessageDeleteApi;
 }
 
 public final class love/forte/simbot/qguild/api/message/user/UserMessageSendApi : love/forte/simbot/qguild/api/PostQQGuildApi {

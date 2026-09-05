@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2022-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -28,7 +28,7 @@ import love.forte.simbot.component.qguild.message.QGBaseMessageContent
 import love.forte.simbot.component.qguild.message.QGGroupAndC2CMessageContent
 import love.forte.simbot.component.qguild.message.QGMessageContent
 import love.forte.simbot.message.Messages
-import love.forte.simbot.qguild.api.message.DeleteMessageApi
+import love.forte.simbot.qguild.api.message.DeleteChannelMessageApi
 import love.forte.simbot.qguild.api.message.GetMessageApi
 import love.forte.simbot.qguild.model.Message
 
@@ -56,8 +56,8 @@ internal class QGMessageContentImpl(
 
     @OptIn(ExperimentalQGApi::class)
     override suspend fun delete(vararg options: DeleteOption) {
-        // TODO DeleteMessageApi.hidetip
-        val api = DeleteMessageApi.create(sourceMessage.channelId, sourceMessage.id)
+        // TODO DeleteChannelMessageApi.hidetip
+        val api = DeleteChannelMessageApi.create(sourceMessage.channelId, sourceMessage.id)
 
         kotlin.runCatching {
             bot.executeData(api)
@@ -96,6 +96,7 @@ internal class QGGroupAndC2CMessageContentImpl(
     override val id: ID,
     override val sourceContent: String,
     override val attachments: List<Message.Attachment>,
+    private val deleteAction: (suspend (Array<out DeleteOption>) -> Unit)? = null,
 ) : QGGroupAndC2CMessageContent() {
     private val parseContext by lazy(LazyThreadSafetyMode.PUBLICATION) {
         MessageParsers.parse(
@@ -109,6 +110,10 @@ internal class QGGroupAndC2CMessageContentImpl(
 
     override val plainText: String by lazy(LazyThreadSafetyMode.PUBLICATION) {
         parseContext.plainTextBuilder.toString()
+    }
+
+    override suspend fun delete(vararg options: DeleteOption) {
+        deleteAction?.invoke(options) ?: super.delete(*options)
     }
 
     override fun toString(): String {
