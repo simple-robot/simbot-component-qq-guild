@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2022-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -17,12 +17,12 @@
 
 package love.forte.simbot.component.qguild.internal.message
 
+import love.forte.simbot.ability.DeleteOption
 import love.forte.simbot.common.id.ID
 import love.forte.simbot.common.id.StringID.Companion.ID
-import love.forte.simbot.component.qguild.message.QGAggregatedIdMessageReceipt
-import love.forte.simbot.component.qguild.message.QGAggregatedMessageReceipt
-import love.forte.simbot.component.qguild.message.QGSingleIdMessageReceipt
-import love.forte.simbot.component.qguild.message.QGSingleMessageReceipt
+import love.forte.simbot.common.id.literal
+import love.forte.simbot.component.qguild.bot.QGBot
+import love.forte.simbot.component.qguild.message.*
 import love.forte.simbot.qguild.api.message.group.GroupMessageSendResult
 import love.forte.simbot.qguild.api.message.user.UserMessageSendResult
 import love.forte.simbot.qguild.model.Message
@@ -48,9 +48,27 @@ private class QGAggregatedMessageReceiptImpl(private val messages: List<QGSingle
 internal fun Iterable<Message>.asReceipt(): QGAggregatedMessageReceipt =
     QGAggregatedMessageReceiptImpl(this.map { QGSingleMessageReceiptImpl(it) })
 
-private class QGSingleIdMessageReceiptImpl(override val id: ID) : QGSingleIdMessageReceipt()
+private class QGGroupMessageReceiptImpl(
+    private val bot: QGBot,
+    private val groupOpenid: String,
+    override val id: ID,
+) : QGSingleIdMessageReceipt() {
+    override suspend fun delete(vararg options: DeleteOption) {
+        bot.deleteGroupMessage(groupOpenid, id.literal, *options)
+    }
+}
 
-private class QGAggregatedIdMessageReceiptImpl(private val messages: List<QGSingleIdMessageReceiptImpl>) :
+private class QGUserMessageReceiptImpl(
+    private val bot: QGBot,
+    private val userOpenid: String,
+    override val id: ID,
+) : QGSingleIdMessageReceipt() {
+    override suspend fun delete(vararg options: DeleteOption) {
+        bot.deleteUserMessage(userOpenid, id.literal, *options)
+    }
+}
+
+private class QGAggregatedIdMessageReceiptImpl(private val messages: List<QGSingleIdMessageReceipt>) :
     QGAggregatedIdMessageReceipt() {
     override val size: Int get() = messages.size
     override fun get(index: Int): QGSingleIdMessageReceipt = messages[index]
@@ -58,20 +76,32 @@ private class QGAggregatedIdMessageReceiptImpl(private val messages: List<QGSing
 }
 
 @PublishedApi
-internal fun GroupMessageSendResult.asReceipt(): QGSingleIdMessageReceipt = QGSingleIdMessageReceiptImpl(id.ID)
+internal fun GroupMessageSendResult.asReceipt(
+    bot: QGBot,
+    groupOpenid: String,
+): QGSingleIdMessageReceipt = QGGroupMessageReceiptImpl(bot, groupOpenid, id.ID)
 
 @PublishedApi
-internal fun Iterable<GroupMessageSendResult>.asGroupReceipt(): QGAggregatedIdMessageReceipt =
+internal fun Iterable<GroupMessageSendResult>.asGroupReceipt(
+    bot: QGBot,
+    groupOpenid: String,
+): QGAggregatedIdMessageReceipt =
     QGAggregatedIdMessageReceiptImpl(
-        map { QGSingleIdMessageReceiptImpl(it.id.ID) }
+        map { QGGroupMessageReceiptImpl(bot, groupOpenid, it.id.ID) }
     )
 
 @PublishedApi
-internal fun UserMessageSendResult.asReceipt(): QGSingleIdMessageReceipt = QGSingleIdMessageReceiptImpl(id.ID)
+internal fun UserMessageSendResult.asReceipt(
+    bot: QGBot,
+    userOpenid: String,
+): QGSingleIdMessageReceipt = QGUserMessageReceiptImpl(bot, userOpenid, id.ID)
 
 
 @PublishedApi
-internal fun Iterable<UserMessageSendResult>.asUserReceipt(): QGAggregatedIdMessageReceipt =
+internal fun Iterable<UserMessageSendResult>.asUserReceipt(
+    bot: QGBot,
+    userOpenid: String,
+): QGAggregatedIdMessageReceipt =
     QGAggregatedIdMessageReceiptImpl(
-        map { QGSingleIdMessageReceiptImpl(it.id.ID) }
+        map { QGUserMessageReceiptImpl(bot, userOpenid, it.id.ID) }
     )

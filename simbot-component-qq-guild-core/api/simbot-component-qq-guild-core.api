@@ -1966,11 +1966,11 @@ public final class love/forte/simbot/component/qguild/internal/bot/QGBotImpl$inl
 }
 
 public final class love/forte/simbot/component/qguild/internal/message/QGMessageReceiptImplKt {
-	public static final fun asGroupReceipt (Ljava/lang/Iterable;)Llove/forte/simbot/component/qguild/message/QGAggregatedIdMessageReceipt;
-	public static final fun asReceipt (Llove/forte/simbot/qguild/api/message/group/GroupMessageSendResult;)Llove/forte/simbot/component/qguild/message/QGSingleIdMessageReceipt;
-	public static final fun asReceipt (Llove/forte/simbot/qguild/api/message/user/UserMessageSendResult;)Llove/forte/simbot/component/qguild/message/QGSingleIdMessageReceipt;
+	public static final fun asGroupReceipt (Ljava/lang/Iterable;Llove/forte/simbot/component/qguild/bot/QGBot;Ljava/lang/String;)Llove/forte/simbot/component/qguild/message/QGAggregatedIdMessageReceipt;
+	public static final fun asReceipt (Llove/forte/simbot/qguild/api/message/group/GroupMessageSendResult;Llove/forte/simbot/component/qguild/bot/QGBot;Ljava/lang/String;)Llove/forte/simbot/component/qguild/message/QGSingleIdMessageReceipt;
+	public static final fun asReceipt (Llove/forte/simbot/qguild/api/message/user/UserMessageSendResult;Llove/forte/simbot/component/qguild/bot/QGBot;Ljava/lang/String;)Llove/forte/simbot/component/qguild/message/QGSingleIdMessageReceipt;
 	public static final fun asReceipt (Llove/forte/simbot/qguild/model/Message;)Llove/forte/simbot/component/qguild/message/QGSingleMessageReceipt;
-	public static final fun asUserReceipt (Ljava/lang/Iterable;)Llove/forte/simbot/component/qguild/message/QGAggregatedIdMessageReceipt;
+	public static final fun asUserReceipt (Ljava/lang/Iterable;Llove/forte/simbot/component/qguild/bot/QGBot;Ljava/lang/String;)Llove/forte/simbot/component/qguild/message/QGAggregatedIdMessageReceipt;
 }
 
 public final class love/forte/simbot/component/qguild/message/ImageParser : love/forte/simbot/component/qguild/message/SendingMessageParser {

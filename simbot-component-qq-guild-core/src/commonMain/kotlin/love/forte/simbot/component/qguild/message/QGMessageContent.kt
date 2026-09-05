@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. ForteScarlet.
+ * Copyright (c) 2022-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -20,7 +20,6 @@ package love.forte.simbot.component.qguild.message
 import love.forte.simbot.ability.DeleteOption
 import love.forte.simbot.ability.StandardDeleteOption
 import love.forte.simbot.common.id.ID
-import love.forte.simbot.component.qguild.QQGuildComponent
 import love.forte.simbot.message.*
 import love.forte.simbot.qguild.message.ContentTextDecoder
 import love.forte.simbot.qguild.model.Message
@@ -217,7 +216,7 @@ public abstract class QGGroupAndC2CMessageContent : QGBaseMessageContent() {
     public abstract val attachments: List<Message.Attachment>
 
     /**
-     * 暂时不支持消息撤回。
+     * 群聊消息事件的具体实现可以支持撤回；C2C 单聊消息和未提供撤回上下文的实现不支持。
      * 如果 [options] 中不包含
      * [StandardDeleteOption.IGNORE_ON_UNSUPPORTED]
      * 则抛出 [UnsupportedOperationException]

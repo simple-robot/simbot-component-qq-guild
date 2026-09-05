@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024. ForteScarlet.
+ * Copyright (c) 2023-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -44,7 +44,8 @@ import kotlin.jvm.JvmSynthetic
  */
 public interface QGMessageReceipt : MessageReceipt {
     /**
-     * 消息暂时不支持撤回。
+     * 由群聊或单聊消息发送得到的具体回执可以撤回对应的机器人消息。
+     * 未保留目标消息上下文的回执不支持撤回。
      * 如果 [options] 不包含 [StandardDeleteOption.IGNORE_ON_UNSUPPORTED]
      * 则会抛出 [UnsupportedOperationException] 异常。
      */
