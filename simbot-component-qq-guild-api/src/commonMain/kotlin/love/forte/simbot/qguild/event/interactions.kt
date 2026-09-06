@@ -31,7 +31,7 @@ import love.forte.simbot.qguild.ApiModelConstructor
  * @property id 互动事件 ID, 用于回应互动事件
  * @property scene 事件发生的场景: `c2c`, `group`, `guild`
  * @property timestamp 触发时间 RFC 3339 格式
- * @property type 互动类型。消息按钮: `11`, 单聊快捷菜单: `12`
+ * @property type 互动类型。消息按钮: `11`, 自定义菜单: `12`
  * @property guildId 频道 openid, 仅频道场景提供
  * @property channelId 文字子频道 openid, 仅频道场景提供
  * @property userOpenid 单聊按钮触发用户 openid, 仅单聊场景提供
@@ -82,12 +82,12 @@ public data class InteractionCreateEventData @ApiModelConstructor internal const
         public const val TYPE_BUTTON: Int = 11
 
         /**
-         * 表示*单聊快捷菜单*的 [InteractionCreateEventData.type]。
+         * 表示*自定义菜单*的 [InteractionCreateEventData.type]。
          */
         public const val TYPE_MENU: Int = 12
 
         /**
-         * 表示*频道场景*的 [InteractionCreateEventData.scene]。
+         * 表示*C2C 单聊场景*的 [InteractionCreateEventData.scene]。
          */
         public const val SCENE_C2C: String = "c2c"
 
@@ -106,7 +106,7 @@ public data class InteractionCreateEventData @ApiModelConstructor internal const
 /**
  * 互动事件的数据。
  *
- * @property type 互动类型。消息按钮: `11`, 单聊快捷菜单: `12`
+ * @property type 互动类型。消息按钮: `11`, 自定义菜单: `12`
  * @property resolved 互动事件解析后的数据
  *
  * @since 4.4.0

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025. ForteScarlet.
+ * Copyright (c) 2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -15,16 +15,6 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-plugins {
-    kotlin("jvm")
-}
+package love.forte.simbot.qguild.utils
 
-kotlin {
-
-}
-
-dependencies {
-    implementation(project(":simbot-component-qq-guild-core"))
-//    implementation("io.ktor:ktor-client-core:3.1.2")
-//    implementation("io.ktor:ktor-client-core:2.3.12")
-}
+internal fun <T> Collection<T>.toListIfNotEmpty(): List<T>? = takeIf { it.isNotEmpty() }?.toList()
