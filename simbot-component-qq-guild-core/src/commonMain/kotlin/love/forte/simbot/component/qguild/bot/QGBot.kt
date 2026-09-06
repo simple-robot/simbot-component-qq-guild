@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024. ForteScarlet.
+ * Copyright (c) 2021-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -29,15 +29,18 @@ import love.forte.simbot.common.id.literal
 import love.forte.simbot.component.qguild.ExperimentalQGApi
 import love.forte.simbot.component.qguild.QQGuildComponent
 import love.forte.simbot.component.qguild.channel.QGTextChannel
-import love.forte.simbot.component.qguild.dms.QGDmsContact
 import love.forte.simbot.component.qguild.event.QGAtMessageCreateEvent
 import love.forte.simbot.component.qguild.event.QGGroupAtMessageCreateEvent
 import love.forte.simbot.component.qguild.friend.QGFriend
 import love.forte.simbot.component.qguild.group.QGGroup
 import love.forte.simbot.component.qguild.group.QGGroupRelation
 import love.forte.simbot.component.qguild.guild.QGGuildRelation
+import love.forte.simbot.component.qguild.internal.menu.QGCustomMenuManagerImpl
 import love.forte.simbot.component.qguild.internal.message.QGMessageContentImpl
+import love.forte.simbot.component.qguild.internal.panel.QGCommandPanelManagerImpl
+import love.forte.simbot.component.qguild.menu.QGCustomMenuManager
 import love.forte.simbot.component.qguild.message.*
+import love.forte.simbot.component.qguild.panel.QGCommandPanelManager
 import love.forte.simbot.event.Event
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
@@ -166,6 +169,23 @@ public interface QGBot : Bot, EventMentionAware {
     override val guildRelation: QGGuildRelation
 
     /**
+     * 自定义菜单的相关操作。
+     *
+     * @since 4.7.0
+     */
+    public val customMenus: QGCustomMenuManager
+        get() = QGCustomMenuManagerImpl(this)
+
+    /**
+     * 指令面板的相关操作。
+     *
+     * @since 4.7.0
+     */
+    public val commandPanels: QGCommandPanelManager
+        get() = QGCommandPanelManagerImpl(this)
+
+
+    /**
      * 直接向目标子频道发送消息。
      *
      * 此频道需要为文字子频道，否则会产生异常，但是此异常不会由程序检测，
@@ -232,7 +252,7 @@ public interface QGBot : Bot, EventMentionAware {
     /**
      * 直接向目标DMS(频道私聊会话)发送消息。
      *
-     * [sendDmsTo] 相对于 [QGDmsContact.send] 而言更加“不可靠”
+     * [sendDmsTo] 相对于 [love.forte.simbot.component.qguild.dms.QGDmsContact.send] 而言更加“不可靠”
      * —— 因为它失去了在消息中自动填充 `msgId` 等透明行为，
      * 且直接使用ID也会存在一些细微的隐患。
      *
@@ -250,7 +270,7 @@ public interface QGBot : Bot, EventMentionAware {
     /**
      * 直接向目标DMS(频道私聊会话)发送消息。
      *
-     * [sendDmsTo] 相对于 [QGDmsContact.send] 而言更加“不可靠”
+     * [sendDmsTo] 相对于 [love.forte.simbot.component.qguild.dms.QGDmsContact.send] 而言更加“不可靠”
      * —— 因为它失去了在消息中自动填充 `msgId` 等透明行为，
      * 且直接使用ID也会存在一些细微的隐患。
      *

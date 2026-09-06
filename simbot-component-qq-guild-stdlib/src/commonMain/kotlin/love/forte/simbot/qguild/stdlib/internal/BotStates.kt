@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024. ForteScarlet.
+ * Copyright (c) 2023-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -423,6 +423,8 @@ internal class ReceiveEvent(
                     logger.debug("Received other signal with opcode: {}, raw: {}", opcode, raw)
                 }
             }
+        } catch (cancel: CancellationException) {
+            throw cancel
         } catch (serEx: SerializationException) {
             logger.error("Serialization exception: {}", serEx.message, serEx)
         } catch (other: Throwable) {
@@ -485,6 +487,3 @@ internal class Resume(
 private suspend inline fun HttpClient.ws(crossinline gatewayInfo: () -> GatewayInfo): DefaultClientWebSocketSession {
     return webSocketSession { url(gatewayInfo().url) }
 }
-
-
-

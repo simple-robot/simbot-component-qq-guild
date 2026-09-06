@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025. ForteScarlet.
+ * Copyright (c) 2024-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -27,7 +27,6 @@ import love.forte.simbot.component.qguild.message.QGGroupAndC2CMessageContent
 import love.forte.simbot.component.qguild.message.QGMessageReceipt
 import love.forte.simbot.component.qguild.utils.toTimestamp
 import love.forte.simbot.event.ContactMessageEvent
-import love.forte.simbot.event.FuzzyEventTypeImplementation
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.qguild.event.C2CMessageCreate
@@ -42,7 +41,6 @@ import love.forte.simbot.suspendrunner.STP
  *
  * @author ForteScarlet
  */
-@OptIn(FuzzyEventTypeImplementation::class)
 public abstract class QGC2CMessageCreateEvent : QGBaseMessageEvent<C2CMessageCreate>(), ContactMessageEvent {
     abstract override val bot: QGBot
 
@@ -54,6 +52,27 @@ public abstract class QGC2CMessageCreateEvent : QGBaseMessageEvent<C2CMessageCre
 
     override val authorId: ID
         get() = sourceEventEntity.data.author.userOpenid.ID
+
+    /**
+     * 平台定义的消息类型。
+     *
+     * 当上游事件未提供该字段时为 `null`。
+     *
+     * @since 4.7.0
+     */
+    public val messageType: Int?
+        get() = sourceEventEntity.data.messageType
+
+    /**
+     * C2C 消息的来源和场景扩展信息。
+     *
+     * 自定义菜单的开关结果位于 [C2CMessageCreate.MessageScene.ext]；
+     * 当上游事件未提供该字段时为 `null`。
+     *
+     * @since 4.7.0
+     */
+    public val messageScene: C2CMessageCreate.MessageScene?
+        get() = sourceEventEntity.data.messageScene
 
     abstract override val messageContent: QGGroupAndC2CMessageContent
 

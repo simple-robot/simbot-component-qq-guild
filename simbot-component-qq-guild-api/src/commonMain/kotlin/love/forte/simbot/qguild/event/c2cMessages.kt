@@ -43,9 +43,12 @@ public data class C2CMessageCreate(
      * @property author 发送者
      * @property content 文本消息内容
      * @property timestamp 消息生产时间（RFC3339）
+     * @property messageType 消息类型
+     * @property messageScene 消息场景；自定义菜单开关操作的设置结果位于 [MessageScene.ext] 中
      * @property attachments 富媒体文件附件，文件类型："图片，语音，视频，文件"
      * `{"content_type": "", "filename": "", "height": "", "width": "", "size": "", "url": ""}`
      *
+     * TODO: 官方单聊消息事件还声明了 `ark_data` 和 `msg_elements`；待抽象对应 ARK 与消息元素模型后补齐。
      */
     @Serializable
     public data class Data(
@@ -54,10 +57,87 @@ public data class C2CMessageCreate(
         public val content: String,
         public val timestamp: String,
         public val attachments: List<Message.Attachment> = emptyList(),
+        /**
+         * 消息类型。
+         *
+         * @since 4.7.0
+         */
+        @SerialName("message_type")
+        public val messageType: Int? = null,
+        /**
+         * 消息场景信息。
+         *
+         * @since 4.7.0
+         */
+        @SerialName("message_scene")
+        public val messageScene: MessageScene? = null,
+    ) {
+        // TODO: 升级 Kotlin 并可用 `@IntroducedAt` 后，使用它替代下面为构造函数和 copy 保留的 ABI 兼容入口。
+        /**
+         * 保留 4.7.0 前的 JVM 构造函数签名。
+         *
+         * @since 4.7.0
+         */
+        @Deprecated(message = "用于二进制兼容的构造函数，不应直接使用", level = DeprecationLevel.HIDDEN)
+        public constructor(
+            id: String,
+            author: Author,
+            content: String,
+            timestamp: String,
+            attachments: List<Message.Attachment> = emptyList(),
+        ) : this(
+            id = id,
+            author = author,
+            content = content,
+            timestamp = timestamp,
+            attachments = attachments,
+            messageType = null,
+            messageScene = null,
+        )
+
+        /**
+         * 保留 4.7.0 前的 JVM [copy] 函数签名。
+         *
+         * @since 4.7.0
+         */
+        @Deprecated(message = "用于二进制兼容的函数，不应直接使用", level = DeprecationLevel.HIDDEN)
+        public fun copy(
+            id: String = this.id,
+            author: Author = this.author,
+            content: String = this.content,
+            timestamp: String = this.timestamp,
+            attachments: List<Message.Attachment> = this.attachments,
+        ): Data = copy(
+            id = id,
+            author = author,
+            content = content,
+            timestamp = timestamp,
+            attachments = attachments,
+            messageType = messageType,
+            messageScene = messageScene,
+        )
+    }
+
+    /**
+     * C2C 消息的场景信息。
+     *
+     * [ext] 中的元素是 `key=value` 形式的扩展信息。自定义菜单的开关操作会在此处携带开关设置结果。
+     *
+     * @since 4.7.0
+     */
+    @Serializable
+    public class MessageScene(
+        /** 消息来源。 */
+        public val source: String? = null,
+        /** 场景扩展信息。 */
+        public val ext: List<String> = emptyList(),
     )
 
     /**
      * The [Data.author].
+     *
+     * TODO: 官方单聊消息事件还声明了 `id`、`username`、`bot`、`union_openid`、`union_user_account`、
+     * `member_openid` 与 `member_role`；待确认跨 C2C/群聊的统一作者模型后补齐。
      */
     @Serializable
     public data class Author(

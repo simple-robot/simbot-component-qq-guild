@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024. ForteScarlet.
+ * Copyright (c) 2023-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -36,6 +36,7 @@ import love.forte.simbot.qguild.initCause0
 import love.forte.simbot.qguild.isNotFound
 import love.forte.simbot.qguild.model.Role
 import love.forte.simbot.qguild.stdlib.requestDataBy
+import love.forte.simbot.qguild.utils.runCatchingCancellable
 
 
 /**
@@ -65,7 +66,7 @@ internal class QGMemberRoleImpl(
     }
 
     private suspend fun delete0(channelId: String?, vararg options: DeleteOption) {
-        kotlin.runCatching {
+        runCatchingCancellable {
             RemoveMemberRoleApi.create(guildId.literal, memberId.literal, id.literal, channelId)
                 .requestDataBy(bot.source)
         }.onFailure { e ->
@@ -100,4 +101,3 @@ internal fun QGGuildRoleImpl.toMemberRole(
     guildRole = this,
     memberId = memberId
 )
-

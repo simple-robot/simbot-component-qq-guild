@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. ForteScarlet.
+ * Copyright (c) 2024-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -44,6 +44,8 @@ module simbot.component.qqguild.core {
     exports love.forte.simbot.component.qguild.friend;
     exports love.forte.simbot.component.qguild.group;
     exports love.forte.simbot.component.qguild.message;
+    exports love.forte.simbot.component.qguild.menu;
+    exports love.forte.simbot.component.qguild.panel;
     exports love.forte.simbot.component.qguild.role;
     exports love.forte.simbot.component.qguild.utils;
 
