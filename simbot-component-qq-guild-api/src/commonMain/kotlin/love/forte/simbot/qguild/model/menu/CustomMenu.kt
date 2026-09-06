@@ -95,6 +95,10 @@ public class CustomMenu @ApiModelConstructor internal constructor(
              */
             public const val TYPE_MENU: String = "menu"
         }
+
+        override fun toString(): String {
+            return "Item(link=$link, name=$name, type=$type, subMenuItems=$subMenuItems, sendMessage=$sendMessage, switch=$switch)"
+        }
     }
 
     /**
@@ -134,6 +138,10 @@ public class CustomMenu @ApiModelConstructor internal constructor(
              */
             public const val TYPE_LINK: String = Item.TYPE_LINK
         }
+
+        override fun toString(): String {
+            return "SubItem(link=$link, name=$name, type=$type, sendMessage=$sendMessage)"
+        }
     }
 
     /**
@@ -154,7 +162,11 @@ public class CustomMenu @ApiModelConstructor internal constructor(
          */
         @SerialName("default")
         public val defaultValue: Boolean? = null,
-    )
+    ) {
+        override fun toString(): String {
+            return "Switch(defaultValue=$defaultValue, switchId=$switchId)"
+        }
+    }
 
     public companion object {
         /**
@@ -169,6 +181,10 @@ public class CustomMenu @ApiModelConstructor internal constructor(
         @JvmStatic
         public fun parse(jsonString: String): CustomMenu =
             QQGuild.DefaultJson.decodeFromString(serializer(), jsonString)
+    }
+
+    override fun toString(): String {
+        return "CustomMenu(items=$items)"
     }
 }
 
@@ -188,7 +204,11 @@ public class CustomMenuSnapshot @ApiModelConstructor internal constructor(
      * 当前生效的菜单；从未设置时为空。
      */
     public val menu: CustomMenu? = null,
-)
+) {
+    override fun toString(): String {
+        return "CustomMenuSnapshot(menu=$menu, version=$version)"
+    }
+}
 
 /**
  * 自定义菜单更新后的版本。
@@ -202,4 +222,8 @@ public class CustomMenuUpdated @ApiModelConstructor internal constructor(
      * 更新后的菜单版本。
      */
     public val version: Int = 0,
-)
+) {
+    override fun toString(): String {
+        return "CustomMenuUpdated(version=$version)"
+    }
+}

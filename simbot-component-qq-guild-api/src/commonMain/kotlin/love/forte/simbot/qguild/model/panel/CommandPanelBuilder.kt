@@ -260,7 +260,7 @@ public class CommandPanelCreateBuilder {
     /**
      * 设置群 OpenID 列表。
      */
-    public fun groupOpenids(groupOpenids: Iterable<String>): CommandPanelCreateBuilder = also {
+    public fun addGroupOpenids(groupOpenids: Iterable<String>): CommandPanelCreateBuilder = also {
         this.groupOpenids.addAll(groupOpenids)
     }
 
@@ -336,7 +336,7 @@ public class CommandPanelTargetUpdateBuilder {
     /**
      * 设置群 OpenID 列表。
      */
-    public fun groupOpenids(groupOpenids: Collection<String>): CommandPanelTargetUpdateBuilder = also {
+    public fun addGroupOpenids(groupOpenids: Iterable<String>): CommandPanelTargetUpdateBuilder = also {
         this.groupOpenids.addAll(groupOpenids)
     }
 
