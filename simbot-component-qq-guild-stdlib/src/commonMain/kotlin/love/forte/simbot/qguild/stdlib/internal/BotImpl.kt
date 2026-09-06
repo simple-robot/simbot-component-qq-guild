@@ -56,6 +56,7 @@ import love.forte.simbot.qguild.event.*
 import love.forte.simbot.qguild.model.User
 import love.forte.simbot.qguild.stdlib.*
 import love.forte.simbot.qguild.stdlib.DisposableHandle
+import love.forte.simbot.qguild.utils.runCatchingCancellable
 import kotlin.concurrent.Volatile
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.max
@@ -402,7 +403,7 @@ internal class BotImpl(
     }
 
     private suspend fun getNewAccessToken(api: GetAppAccessTokenApi): AppAccessToken =
-        runCatching {
+        runCatchingCancellable {
             api.requestData(
                 client = apiClient,
                 token = null,
@@ -607,7 +608,7 @@ internal suspend fun BotImpl.emitEvent(dispatch: Signal.Dispatch, raw: String) {
     logger.debug("Emit event {} from raw {}", dispatch, raw)
     // 先顺序地使用 preProcessor 处理
     preProcessorQueue.forEach { processor ->
-        runCatching {
+        runCatchingCancellable {
             processor.doInvoke(dispatch, raw)
         }.onFailure { e ->
             if (logger.isDebugEnabled) {
@@ -624,7 +625,7 @@ internal suspend fun BotImpl.emitEvent(dispatch: Signal.Dispatch, raw: String) {
     // bot launch or session launch?
     launch {
         processorQueue.forEach { processor ->
-            runCatching {
+            runCatchingCancellable {
                 processor.doInvoke(dispatch, raw)
             }.onFailure { e ->
                 if (logger.isDebugEnabled) {

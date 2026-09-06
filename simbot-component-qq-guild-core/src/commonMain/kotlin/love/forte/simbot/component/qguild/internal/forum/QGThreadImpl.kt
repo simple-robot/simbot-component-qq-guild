@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024. ForteScarlet.
+ * Copyright (c) 2023-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -35,6 +35,7 @@ import love.forte.simbot.qguild.initCause0
 import love.forte.simbot.qguild.isNotFound
 import love.forte.simbot.qguild.model.forum.Thread
 import love.forte.simbot.qguild.stdlib.requestDataBy
+import love.forte.simbot.qguild.utils.runCatchingCancellable
 import kotlin.coroutines.CoroutineContext
 
 
@@ -55,7 +56,7 @@ internal class QGThreadImpl(
 
 
     override suspend fun delete(vararg options: DeleteOption) {
-        kotlin.runCatching {
+        runCatchingCancellable {
             DeleteThreadApi.create(source.channelId, source.threadInfo.threadId).requestDataBy(bot.source)
         }.onFailure { e ->
             val stdOpts = options.standardAnalysis()

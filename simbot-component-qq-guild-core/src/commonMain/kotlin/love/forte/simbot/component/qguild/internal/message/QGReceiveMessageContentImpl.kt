@@ -31,6 +31,7 @@ import love.forte.simbot.message.Messages
 import love.forte.simbot.qguild.api.message.DeleteChannelMessageApi
 import love.forte.simbot.qguild.api.message.GetMessageApi
 import love.forte.simbot.qguild.model.Message
+import love.forte.simbot.qguild.utils.runCatchingCancellable
 
 /**
  *
@@ -59,7 +60,7 @@ internal class QGMessageContentImpl(
         // TODO DeleteChannelMessageApi.hidetip
         val api = DeleteChannelMessageApi.create(sourceMessage.channelId, sourceMessage.id)
 
-        kotlin.runCatching {
+        runCatchingCancellable {
             bot.executeData(api)
         }.onFailure { e ->
             if (StandardDeleteOption.IGNORE_ON_FAILURE !in options) {

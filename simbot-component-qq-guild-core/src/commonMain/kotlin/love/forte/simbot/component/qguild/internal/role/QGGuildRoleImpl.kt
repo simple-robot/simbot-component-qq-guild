@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024. ForteScarlet.
+ * Copyright (c) 2023-2026. ForteScarlet.
  *
  * This file is part of simbot-component-qq-guild.
  *
@@ -44,6 +44,7 @@ import love.forte.simbot.qguild.api.role.DeleteGuildRoleApi
 import love.forte.simbot.qguild.isNotFound
 import love.forte.simbot.qguild.model.Role
 import love.forte.simbot.qguild.stdlib.requestDataBy
+import love.forte.simbot.qguild.utils.runCatchingCancellable
 import kotlin.concurrent.Volatile
 
 
@@ -81,7 +82,7 @@ internal class QGGuildRoleImpl(
 
     override suspend fun delete(vararg options: DeleteOption) {
         val stdOpts = options.standardAnalysis()
-        kotlin.runCatching {
+        runCatchingCancellable {
             DeleteGuildRoleApi.create(guildId.literal, source.id).requestDataBy(bot.source)
         }.onFailure { e ->
             if (e is QQGuildApiException) {

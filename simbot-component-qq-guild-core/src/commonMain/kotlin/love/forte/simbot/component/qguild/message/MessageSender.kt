@@ -40,6 +40,7 @@ import love.forte.simbot.qguild.api.message.user.UserMessageSendApi
 import love.forte.simbot.qguild.message.ContentTextEncoder
 import love.forte.simbot.qguild.stdlib.MessageDestination
 import love.forte.simbot.qguild.stdlib.requestDataBy
+import love.forte.simbot.qguild.utils.runCatchingCancellable
 
 private val logger = LoggerFactory.getLogger("love.forte.simbot.component.qguild.message.MessageSenderKt")
 
@@ -328,7 +329,7 @@ private suspend inline fun executeMessageDelete(
     targetLogValue: () -> String = { "" },
     request: suspend () -> Unit,
 ) {
-    runCatching { request() }.onFailure { e ->
+    runCatchingCancellable { request() }.onFailure { e ->
         if (StandardDeleteOption.IGNORE_ON_FAILURE !in options) {
             throw e
         } else {
