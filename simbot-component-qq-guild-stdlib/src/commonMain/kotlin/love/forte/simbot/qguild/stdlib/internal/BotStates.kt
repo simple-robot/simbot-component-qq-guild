@@ -423,8 +423,6 @@ internal class ReceiveEvent(
                     logger.debug("Received other signal with opcode: {}, raw: {}", opcode, raw)
                 }
             }
-        } catch (cancel: CancellationException) {
-            throw cancel
         } catch (serEx: SerializationException) {
             logger.error("Serialization exception: {}", serEx.message, serEx)
         } catch (other: Throwable) {

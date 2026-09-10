@@ -608,7 +608,7 @@ internal suspend fun BotImpl.emitEvent(dispatch: Signal.Dispatch, raw: String) {
     logger.debug("Emit event {} from raw {}", dispatch, raw)
     // 先顺序地使用 preProcessor 处理
     preProcessorQueue.forEach { processor ->
-        runCatchingCancellable {
+        runCatching {
             processor.doInvoke(dispatch, raw)
         }.onFailure { e ->
             if (logger.isDebugEnabled) {
