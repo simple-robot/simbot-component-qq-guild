@@ -8487,12 +8487,6 @@ public final class love/forte/simbot/qguild/model/panel/CommandPanelPage$Compani
 
 public final class love/forte/simbot/qguild/model/panel/CommandPanelRecord {
 	public static final field Companion Llove/forte/simbot/qguild/model/panel/CommandPanelRecord$Companion;
-	public static final field SCOPE_C2C Ljava/lang/String;
-	public static final field SCOPE_CHANNEL Ljava/lang/String;
-	public static final field SCOPE_DM Ljava/lang/String;
-	public static final field SCOPE_GROUP Ljava/lang/String;
-	public static final field TARGET_TYPE_ALL Ljava/lang/String;
-	public static final field TARGET_TYPE_SPECIFIC Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/lang/String;
 	public final fun getGroupOpenids ()Ljava/util/List;
 	public final fun getPanel ()Llove/forte/simbot/qguild/model/panel/CommandPanel;
@@ -8518,6 +8512,20 @@ public synthetic class love/forte/simbot/qguild/model/panel/CommandPanelRecord$$
 
 public final class love/forte/simbot/qguild/model/panel/CommandPanelRecord$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class love/forte/simbot/qguild/model/panel/CommandPanelScopeValues {
+	public static final field C2C Ljava/lang/String;
+	public static final field CHANNEL Ljava/lang/String;
+	public static final field DM Ljava/lang/String;
+	public static final field GROUP Ljava/lang/String;
+	public static final field INSTANCE Llove/forte/simbot/qguild/model/panel/CommandPanelScopeValues;
+}
+
+public final class love/forte/simbot/qguild/model/panel/CommandPanelTargetTypeValues {
+	public static final field ALL Ljava/lang/String;
+	public static final field INSTANCE Llove/forte/simbot/qguild/model/panel/CommandPanelTargetTypeValues;
+	public static final field SPECIFIC Ljava/lang/String;
 }
 
 public final class love/forte/simbot/qguild/model/panel/CommandPanelTargetUpdate {

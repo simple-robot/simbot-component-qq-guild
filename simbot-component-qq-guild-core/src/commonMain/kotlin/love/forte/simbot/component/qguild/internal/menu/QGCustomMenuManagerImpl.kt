@@ -19,6 +19,7 @@ package love.forte.simbot.component.qguild.internal.menu
 
 import love.forte.simbot.component.qguild.ExperimentalQGApi
 import love.forte.simbot.component.qguild.bot.QGBot
+import love.forte.simbot.component.qguild.menu.InternalForInheritanceQGMenuApi
 import love.forte.simbot.component.qguild.menu.QGCustomMenuManager
 import love.forte.simbot.component.qguild.menu.QGCustomMenuSnapshot
 import love.forte.simbot.component.qguild.menu.QGCustomMenuUpdateReceipt
@@ -26,7 +27,7 @@ import love.forte.simbot.qguild.api.menu.GetCustomMenuApi
 import love.forte.simbot.qguild.api.menu.ModifyCustomMenuApi
 import love.forte.simbot.qguild.model.menu.CustomMenu
 
-@OptIn(ExperimentalQGApi::class)
+@OptIn(ExperimentalQGApi::class, InternalForInheritanceQGMenuApi::class)
 internal class QGCustomMenuManagerImpl(private val bot: QGBot) : QGCustomMenuManager {
     override suspend fun get(): QGCustomMenuSnapshot {
         val source = bot.executeData(GetCustomMenuApi.create())

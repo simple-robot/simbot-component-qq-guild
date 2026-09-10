@@ -8,7 +8,7 @@ import love.forte.simbot.common.id.StringID.Companion.ID
 import love.forte.simbot.component.qguild.internal.bot.QGBotImpl
 import love.forte.simbot.component.qguild.panel.create
 import love.forte.simbot.component.qguild.panel.update
-import love.forte.simbot.qguild.model.panel.CommandPanelRecord
+import love.forte.simbot.qguild.model.panel.CommandPanelScopeValues
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotSame
@@ -83,7 +83,7 @@ class QGMenuPanelCoreTests : AbstractInteractionTests() {
 
         try {
             val handle = bot.commandPanels.create {
-                scope = CommandPanelRecord.SCOPE_C2C
+                scope = CommandPanelScopeValues.C2C
                 targetType = "future-target"
             }
             assertEquals("created-panel", handle.id.toString())

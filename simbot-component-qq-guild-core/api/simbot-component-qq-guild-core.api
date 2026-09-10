@@ -1977,6 +1977,9 @@ public final class love/forte/simbot/component/qguild/internal/message/QGMessage
 	public static final fun asUserReceipt (Ljava/lang/Iterable;Llove/forte/simbot/component/qguild/bot/QGBot;Ljava/lang/String;)Llove/forte/simbot/component/qguild/message/QGAggregatedIdMessageReceipt;
 }
 
+public abstract interface annotation class love/forte/simbot/component/qguild/menu/InternalForInheritanceQGMenuApi : java/lang/annotation/Annotation {
+}
+
 public abstract interface class love/forte/simbot/component/qguild/menu/QGCustomMenuManager {
 	public abstract synthetic fun get (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun getAsync ()Ljava/util/concurrent/CompletableFuture;

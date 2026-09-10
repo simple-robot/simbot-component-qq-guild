@@ -175,38 +175,6 @@ public class CommandPanelRecord @ApiModelConstructor internal constructor(
     public val groupOpenids: List<String>? = null,
 ) {
 
-    public companion object {
-        /**
-         * C2C 单聊场景。
-         */
-        public const val SCOPE_C2C: String = "c2c"
-
-        /**
-         * 群聊场景。
-         */
-        public const val SCOPE_GROUP: String = "group"
-
-        /**
-         * 文字子频道场景。
-         */
-        public const val SCOPE_CHANNEL: String = "channel"
-
-        /**
-         * 频道私信场景。
-         */
-        public const val SCOPE_DM: String = "dm"
-
-        /**
-         * 对指定场景下的所有目标生效。
-         */
-        public const val TARGET_TYPE_ALL: String = "all"
-
-        /**
-         * 仅对指定用户或群生效。
-         */
-        public const val TARGET_TYPE_SPECIFIC: String = "specific"
-    }
-
     override fun toString(): String {
         return "CommandPanelRecord(panelId='$panelId', scope='$scope', targetType='$targetType', panel=$panel, createdAt=$createdAt, updatedAt=$updatedAt, version=$version, userOpenids=$userOpenids, groupOpenids=$groupOpenids)"
     }

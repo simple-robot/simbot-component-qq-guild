@@ -33,6 +33,7 @@ import kotlin.jvm.JvmSynthetic
  *
  * @since 4.7.0
  */
+@SubclassOptInRequired(InternalForInheritanceQGMenuApi::class)
 public interface QGCustomMenuManager {
     /**
      * 获取当前生效的自定义菜单快照。
