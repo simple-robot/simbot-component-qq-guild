@@ -8,7 +8,7 @@
   <img alt="simbot logo" src=".simbot/logo.svg" width="260" />
 </picture>
 <h2>
-    ~ Simple Robot ~ <br/> <small>QQ频道组件</small>
+    ~ Simple Robot ~ <br/> <small>QQ机器人组件</small>
 </h2>
 <a href="https://github.com/simple-robot/simbot-component-qq-guild/releases/latest"><img alt="release" src="https://img.shields.io/github/v/release/simple-robot/simbot-component-qq-guild" /></a>
 <a href="https://repo1.maven.org/maven2/love/forte/simbot/component/simbot-component-qq-guild-api/" target="_blank">
@@ -46,6 +46,14 @@ SDK 实现库，
 >
 > 本仓库会继续保留并维护当前的 4.x 版本直到 5.x 正式推出，之后会进入归档状态。
 
+## 命名说明
+
+QQ机器人组件命名为 `simbot-component-qq-guild` ，
+因为最早开始的时候 QQ 并未开放普通个人开发者使用QQ群聊、QQ单聊的功能，因此此组件当时仅支持QQ频道。
+在开放后，其两端可以合并在一起使用，因此QQ群相关的能力才被支持。
+
+目前，QQ机器人组件已经支持QQ频道、QQ群聊、QQ单聊等所有支持场景。
+
 ## 文档与引导
 
 - 手册: [Simple Robot 应用手册](https://simbot.forte.love) 及其中 [**QQ机器人组件**](https://simbot.forte.love/component-qq-guild.html) 部分
@@ -69,14 +77,6 @@ QQ机器人组件是对 [simbot4核心库](https://github.com/simple-robot/simpl
 
 👉 [前往模块](simbot-component-qq-guild-core) 了解更多~
 
-## 命名说明
-
-QQ机器人组件命名为 `simbot-component-qq-guild` ， 
-因为最早开始QQ并未开放普通个人开发者使用QQ群聊、QQ单聊的功能，
-因此此组件当时仅支持QQ频道。
-在开放后，其两端可以合并在一起使用，因此QQ群相关的能力才被支持。
-
-> 也许未来会更名为 `simbot-component-qq` ?
 
 ## 法欧莉!
 
