@@ -28,7 +28,7 @@ import love.forte.simbot.qguild.model.panel.CommandPanelRecord
 internal class QGCommandPanelRecordImpl(
     bot: QGBot,
     override val source: CommandPanelRecord,
-) : QGCommandPanelRecord,
+) : QGCommandPanelRecord(),
     QGCommandPanelHandle by QGCommandPanelHandleOperator(bot, source.panelId.ID) {
     override fun toString(): String {
         return "QGCommandPanelRecordImpl(source=$source)"

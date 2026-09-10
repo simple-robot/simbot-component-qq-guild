@@ -29,7 +29,7 @@ import love.forte.simbot.qguild.model.panel.CommandPanelRecord
  * @since 4.7.0
  */
 @SubclassOptInRequired(InternalForInheritanceQGPanelApi::class)
-public interface QGCommandPanelRecord : QGObjectiveContainer<CommandPanelRecord>, QGCommandPanelHandle {
+public abstract class QGCommandPanelRecord : QGObjectiveContainer<CommandPanelRecord>, QGCommandPanelHandle {
     /**
      * 面板生效场景的原始值。
      */
