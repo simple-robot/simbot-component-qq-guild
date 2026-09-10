@@ -70,6 +70,8 @@ public class CommandPanel @ApiModelConstructor internal constructor(
          * 可选值：
          * - `command`（指令）
          * - `link`（链接跳转）
+         *
+         * @see CommandPanelItemTypeValues
          */
         public val type: String? = null,
         /**
@@ -80,22 +82,10 @@ public class CommandPanel @ApiModelConstructor internal constructor(
         @SerialName("only_admin")
         public val onlyAdmin: Boolean? = null,
         /**
-         * 仅 [TYPE_LINK] 有效的跳转链接。
+         * 仅 [CommandPanelItemTypeValues.LINK] 有效的跳转链接。
          */
         public val link: String? = null,
     ) {
-        public companion object {
-            /**
-             * 指令元素类型。
-             */
-            public const val TYPE_COMMAND: String = "command"
-
-            /**
-             * 链接元素类型。
-             */
-            public const val TYPE_LINK: String = "link"
-        }
-
         override fun toString(): String {
             return "Item(name=$name, desc=$desc, type=$type, onlyAdmin=$onlyAdmin, link=$link)"
         }

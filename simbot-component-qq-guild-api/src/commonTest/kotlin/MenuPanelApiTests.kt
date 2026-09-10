@@ -10,7 +10,7 @@ import love.forte.simbot.qguild.api.menu.GetCustomMenuApi
 import love.forte.simbot.qguild.api.menu.ModifyCustomMenuApi
 import love.forte.simbot.qguild.api.panel.*
 import love.forte.simbot.qguild.model.menu.CustomMenu
-import love.forte.simbot.qguild.model.panel.CommandPanel
+import love.forte.simbot.qguild.model.panel.CommandPanelItemTypeValues
 import love.forte.simbot.qguild.model.panel.CommandPanelScopeValues
 import love.forte.simbot.qguild.model.panel.CommandPanelTargetTypeValues
 import love.forte.simbot.qguild.model.panel.CommandPanelTargetUpdate
@@ -70,7 +70,7 @@ class MenuPanelApiTests {
                 item {
                     name = "/help"
                     desc = "show help"
-                    type = CommandPanel.Item.TYPE_COMMAND
+                    type = CommandPanelItemTypeValues.COMMAND
                     onlyAdmin = false
                 }
             }
@@ -79,7 +79,7 @@ class MenuPanelApiTests {
         val modify = ModifyCommandPanelApi.create("panel-id") {
             item {
                 name = "resource"
-                type = CommandPanel.Item.TYPE_LINK
+                type = CommandPanelItemTypeValues.LINK
                 link = "https://example.com"
             }
         }

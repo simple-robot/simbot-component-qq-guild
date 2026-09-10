@@ -8326,8 +8326,6 @@ public final class love/forte/simbot/qguild/model/panel/CommandPanel$Companion {
 
 public final class love/forte/simbot/qguild/model/panel/CommandPanel$Item {
 	public static final field Companion Llove/forte/simbot/qguild/model/panel/CommandPanel$Item$Companion;
-	public static final field TYPE_COMMAND Ljava/lang/String;
-	public static final field TYPE_LINK Ljava/lang/String;
 	public fun <init> ()V
 	public final fun getDesc ()Ljava/lang/String;
 	public final fun getLink ()Ljava/lang/String;
@@ -8459,6 +8457,12 @@ public final class love/forte/simbot/qguild/model/panel/CommandPanelItemBuilder 
 	public final fun setOnlyAdmin (Ljava/lang/Boolean;)V
 	public final fun setType (Ljava/lang/String;)V
 	public final fun type (Ljava/lang/String;)Llove/forte/simbot/qguild/model/panel/CommandPanelItemBuilder;
+}
+
+public final class love/forte/simbot/qguild/model/panel/CommandPanelItemTypeValues {
+	public static final field COMMAND Ljava/lang/String;
+	public static final field INSTANCE Llove/forte/simbot/qguild/model/panel/CommandPanelItemTypeValues;
+	public static final field LINK Ljava/lang/String;
 }
 
 public final class love/forte/simbot/qguild/model/panel/CommandPanelPage {
