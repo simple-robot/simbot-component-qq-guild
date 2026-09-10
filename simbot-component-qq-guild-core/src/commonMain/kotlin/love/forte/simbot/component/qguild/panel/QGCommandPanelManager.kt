@@ -139,15 +139,6 @@ public suspend inline fun QGCommandPanelManager.create(block: CommandPanelCreate
     create(CommandPanelCreateBuilder().apply(block).build())
 
 /**
- * 使用 [love.forte.simbot.qguild.model.panel.CommandPanelBuilder] DSL 整体覆盖此面板的内容与备注。
- *
- * @since 4.7.0
- */
-public suspend inline fun QGCommandPanelHandle.update(
-    block: CommandPanelBuilder.() -> Unit
-): QGCommandPanelUpdateReceipt = update(CommandPanelBuilder().apply(block).build())
-
-/**
  * 指令面板内容更新后的服务端回执。
  *
  * @property version 服务端返回的更新后面板版本。

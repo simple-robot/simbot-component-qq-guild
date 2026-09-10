@@ -21,6 +21,7 @@ import love.forte.simbot.ability.DeleteOption
 import love.forte.simbot.ability.DeleteSupport
 import love.forte.simbot.common.id.ID
 import love.forte.simbot.qguild.model.panel.CommandPanel
+import love.forte.simbot.qguild.model.panel.CommandPanelBuilder
 import love.forte.simbot.suspendrunner.ST
 
 /**
@@ -126,3 +127,12 @@ public interface QGCommandPanelHandle : DeleteSupport {
     @ST
     override suspend fun delete(vararg options: DeleteOption)
 }
+
+/**
+ * 使用 [love.forte.simbot.qguild.model.panel.CommandPanelBuilder] DSL 整体覆盖此面板的内容与备注。
+ *
+ * @since 4.7.0
+ */
+public suspend inline fun QGCommandPanelHandle.update(
+    block: CommandPanelBuilder.() -> Unit
+): QGCommandPanelUpdateReceipt = update(CommandPanelBuilder().apply(block).build())
