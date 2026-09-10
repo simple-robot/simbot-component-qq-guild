@@ -25,6 +25,7 @@ import love.forte.simbot.common.id.StringID.Companion.ID
 import love.forte.simbot.common.id.literal
 import love.forte.simbot.component.qguild.ExperimentalQGApi
 import love.forte.simbot.component.qguild.bot.QGBot
+import love.forte.simbot.component.qguild.panel.InternalForInheritanceQGPanelApi
 import love.forte.simbot.component.qguild.panel.QGCommandPanelHandle
 import love.forte.simbot.component.qguild.panel.QGCommandPanelManager
 import love.forte.simbot.qguild.api.panel.CreateCommandPanelApi
@@ -33,7 +34,7 @@ import love.forte.simbot.qguild.api.panel.GetCommandPanelListApi
 import love.forte.simbot.qguild.model.panel.CommandPanelCreate
 import love.forte.simbot.qguild.model.panel.CommandPanelRecord
 
-@OptIn(ExperimentalQGApi::class)
+@OptIn(ExperimentalQGApi::class, InternalForInheritanceQGPanelApi::class)
 internal class QGCommandPanelManagerImpl(
     private val bot: QGBot,
 ) : QGCommandPanelManager {

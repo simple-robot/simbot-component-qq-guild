@@ -19,10 +19,12 @@ package love.forte.simbot.component.qguild.internal.panel
 
 import love.forte.simbot.common.id.StringID.Companion.ID
 import love.forte.simbot.component.qguild.bot.QGBot
+import love.forte.simbot.component.qguild.panel.InternalForInheritanceQGPanelApi
 import love.forte.simbot.component.qguild.panel.QGCommandPanelHandle
 import love.forte.simbot.component.qguild.panel.QGCommandPanelRecord
 import love.forte.simbot.qguild.model.panel.CommandPanelRecord
 
+@OptIn(InternalForInheritanceQGPanelApi::class)
 internal class QGCommandPanelRecordImpl(
     bot: QGBot,
     override val source: CommandPanelRecord,

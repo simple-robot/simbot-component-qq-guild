@@ -2559,6 +2559,9 @@ public final class love/forte/simbot/component/qguild/message/SendingMessagePars
 	public static fun values ()[Llove/forte/simbot/component/qguild/message/SendingMessageParser$GroupBuilderType;
 }
 
+public abstract interface annotation class love/forte/simbot/component/qguild/panel/InternalForInheritanceQGPanelApi : java/lang/annotation/Annotation {
+}
+
 public abstract interface class love/forte/simbot/component/qguild/panel/QGCommandPanelHandle : love/forte/simbot/ability/DeleteSupport {
 	public synthetic fun addGroupTargets (Ljava/util/Collection;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun addGroupTargetsAsync (Ljava/util/Collection;)Ljava/util/concurrent/CompletableFuture;
@@ -2619,10 +2622,7 @@ public abstract interface class love/forte/simbot/component/qguild/panel/QGComma
 	public abstract fun handle (Llove/forte/simbot/common/id/ID;)Llove/forte/simbot/component/qguild/panel/QGCommandPanelHandle;
 	public fun list (Ljava/lang/String;)Llove/forte/simbot/common/collectable/Collectable;
 	public abstract fun list (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Z)Llove/forte/simbot/common/collectable/Collectable;
-	public fun list (Llove/forte/simbot/component/qguild/panel/QGCommandPanelScope;)Llove/forte/simbot/common/collectable/Collectable;
-	public fun list (Llove/forte/simbot/component/qguild/panel/QGCommandPanelScope;Ljava/lang/String;Ljava/lang/Integer;Z)Llove/forte/simbot/common/collectable/Collectable;
 	public static synthetic fun list$default (Llove/forte/simbot/component/qguild/panel/QGCommandPanelManager;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;ZILjava/lang/Object;)Llove/forte/simbot/common/collectable/Collectable;
-	public static synthetic fun list$default (Llove/forte/simbot/component/qguild/panel/QGCommandPanelManager;Llove/forte/simbot/component/qguild/panel/QGCommandPanelScope;Ljava/lang/String;Ljava/lang/Integer;ZILjava/lang/Object;)Llove/forte/simbot/common/collectable/Collectable;
 }
 
 public final class love/forte/simbot/component/qguild/panel/QGCommandPanelManagerKt {
@@ -2632,40 +2632,9 @@ public final class love/forte/simbot/component/qguild/panel/QGCommandPanelManage
 
 public abstract interface class love/forte/simbot/component/qguild/panel/QGCommandPanelRecord : love/forte/simbot/component/qguild/QGObjectiveContainer, love/forte/simbot/component/qguild/panel/QGCommandPanelHandle {
 	public fun getPanel ()Llove/forte/simbot/qguild/model/panel/CommandPanel;
-	public fun getScope ()Llove/forte/simbot/component/qguild/panel/QGCommandPanelScope;
 	public fun getScopeValue ()Ljava/lang/String;
-	public fun getTargetType ()Llove/forte/simbot/component/qguild/panel/QGCommandPanelTargetType;
 	public fun getTargetTypeValue ()Ljava/lang/String;
 	public fun getVersion ()Ljava/lang/Integer;
-}
-
-public final class love/forte/simbot/component/qguild/panel/QGCommandPanelScope : java/lang/Enum {
-	public static final field C2C Llove/forte/simbot/component/qguild/panel/QGCommandPanelScope;
-	public static final field CHANNEL Llove/forte/simbot/component/qguild/panel/QGCommandPanelScope;
-	public static final field DM Llove/forte/simbot/component/qguild/panel/QGCommandPanelScope;
-	public static final field GROUP Llove/forte/simbot/component/qguild/panel/QGCommandPanelScope;
-	public static fun getEntries ()Lkotlin/enums/EnumEntries;
-	public final fun getValue ()Ljava/lang/String;
-	public static fun valueOf (Ljava/lang/String;)Llove/forte/simbot/component/qguild/panel/QGCommandPanelScope;
-	public static fun values ()[Llove/forte/simbot/component/qguild/panel/QGCommandPanelScope;
-}
-
-public final class love/forte/simbot/component/qguild/panel/QGCommandPanelTargetOperation : java/lang/Enum {
-	public static final field ADD Llove/forte/simbot/component/qguild/panel/QGCommandPanelTargetOperation;
-	public static final field DEL Llove/forte/simbot/component/qguild/panel/QGCommandPanelTargetOperation;
-	public static fun getEntries ()Lkotlin/enums/EnumEntries;
-	public final fun getValue ()Ljava/lang/String;
-	public static fun valueOf (Ljava/lang/String;)Llove/forte/simbot/component/qguild/panel/QGCommandPanelTargetOperation;
-	public static fun values ()[Llove/forte/simbot/component/qguild/panel/QGCommandPanelTargetOperation;
-}
-
-public final class love/forte/simbot/component/qguild/panel/QGCommandPanelTargetType : java/lang/Enum {
-	public static final field ALL Llove/forte/simbot/component/qguild/panel/QGCommandPanelTargetType;
-	public static final field SPECIFIC Llove/forte/simbot/component/qguild/panel/QGCommandPanelTargetType;
-	public static fun getEntries ()Lkotlin/enums/EnumEntries;
-	public final fun getValue ()Ljava/lang/String;
-	public static fun valueOf (Ljava/lang/String;)Llove/forte/simbot/component/qguild/panel/QGCommandPanelTargetType;
-	public static fun values ()[Llove/forte/simbot/component/qguild/panel/QGCommandPanelTargetType;
 }
 
 public final class love/forte/simbot/component/qguild/panel/QGCommandPanelUpdateReceipt : love/forte/simbot/component/qguild/QGObjectiveContainer {
